@@ -1,6 +1,11 @@
 Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
+v0.4.2
+----------
+Released: 2025-08-18
+- Converted documentation to RST format.
+
 v0.4.1
 ----------
 Released: 2025-03-25

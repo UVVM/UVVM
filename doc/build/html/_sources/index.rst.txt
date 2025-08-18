@@ -24,6 +24,7 @@ UVVM consists currently of the following elements:
    uvvm_intro.rst
    uvvm_getting_started.rst
    utility_library.rst
+   uvvm_assertions.rst
    rand_pkg_overview.rst
    func_cov_pkg_overview.rst
    optimized_rand.rst

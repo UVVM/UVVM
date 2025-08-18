@@ -86,8 +86,8 @@ package axi_bfm_pkg is
     num_r_pipe_stages        : natural; -- Read Data Channel pipeline steps.
     num_b_pipe_stages        : natural; -- Response Channel pipeline steps.
     id_for_bfm               : t_msg_id; -- The message ID used as a general message ID in the AXI BFM
-    id_for_bfm_wait          : t_msg_id; -- The message ID used for logging waits in the AXI BFM
-    id_for_bfm_poll          : t_msg_id; -- The message ID used for logging polling in the AXI BFM
+    id_for_bfm_wait          : t_msg_id; -- The message ID used for logging waits in the AXI BFM   -- DEPRECATE: will be removed
+    id_for_bfm_poll          : t_msg_id; -- The message ID used for logging polling in the AXI BFM -- DEPRECATE: will be removed
   end record;
 
   constant C_AXI_BFM_CONFIG_DEFAULT : t_axi_bfm_config := (

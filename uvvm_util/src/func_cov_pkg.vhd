@@ -3582,7 +3582,7 @@ package body func_cov_pkg is
       return priv_rand_gen.get_rand_seeds(VOID);
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure enable_auto_sampling(
         constant target : in string;
         constant trigger : in string;
@@ -3594,7 +3594,7 @@ package body func_cov_pkg is
             vendor_func_cov_set_sampling_var(vendor_coverpoint_id, trigger);
             return;
         else
-            alert(TB_ERROR, "Procedure enable_auto_sampling() is only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure enable_auto_sampling() is only supported in Questa One 2025.3 and newer", C_SCOPE);
         end if;
     end procedure;
 

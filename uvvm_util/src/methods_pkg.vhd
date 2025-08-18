@@ -30,7 +30,7 @@ use std.env.all;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2025.05.11";
+  constant C_UVVM_VERSION : string := "v2 2025.08.18";
 
   -- -- ============================================================================
   -- -- Initialisation and license

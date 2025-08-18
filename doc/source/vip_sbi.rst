@@ -96,24 +96,29 @@ Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
-|                              |                              | NLY             |   enter on the first falling edge, estimate the |
-|                              |                              |                 |   clock period,                                 |
-|                              |                              |                 | | synchronize the output signals and exit ¼     |
-|                              |                              |                 |   clock period after a succeeding rising edge.  |
-|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
-|                              |                              |                 |   will use the configured setup_time, hold_time |
-|                              |                              |                 |   and                                           |
-|                              |                              |                 | | clock_period to synchronize output signals    |
-|                              |                              |                 |   with clock edges.                             |
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
+|                              |                              | NLY             | enter on the first falling edge, estimate the   |
+|                              |                              |                 | clock period,                                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | synchronize the output signals and exit ¼       |
+|                              |                              |                 | clock period after a succeeding rising edge.    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
+|                              |                              |                 | will use the configured setup_time, hold_time   |
+|                              |                              |                 | and                                             |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | clock_period to synchronize output signals      |
+|                              |                              |                 | with clock edges.                               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
@@ -410,7 +415,7 @@ Initializes the SBI interface. All the BFM outputs are set to '0', and BFM input
 .. code-block::
 
     -- Examples:
-    sbi_if <= init_sbi_if_signals(sbi_if.addr'length, sbi_if.wdata'length)
+    sbi_if <= init_sbi_if_signals(sbi_if.addr'length, sbi_if.wdata'length);
 
 
 Local BFM overloads
@@ -582,16 +587,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_SBI_INTER_BFM\| | Delay between any requested BFM accesses      |
-|                              |                              | _DELAY_DEFAULT  |   towards the DUT.                              |
-|                              |                              |                 | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_SBI_INTER_BFM\| Delay between any requested BFM accesses        |
+|                              |                              | _DELAY_DEFAULT  | towards the DUT.                                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -681,6 +689,11 @@ sbi_write()
 |          |                    |        |                              | or full address depending on the DUT.                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be written to the addressed register  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | num_words          | in     | natural                      | Number of times the procedure is called to send new     |
+|          |                    |        |                              | random data words                                       |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | randomisation      | in     | t_randomisation              | Randomization profile                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+

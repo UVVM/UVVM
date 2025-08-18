@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -294,32 +295,28 @@ hold_time exceeds clock_period/2.</p></td>
 <tr class="row-odd"><td><p>bfm_sync</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
 <td><p>SYNC_ON_CLOCK_ONLY</p></td>
-<td><div class="line-block">
-<div class="line">When set to SYNC_ON_CLOCK_ONLY the BFM will
+<td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
 enter on the first falling edge, estimate the
-clock period,</div>
-<div class="line">synchronize the output signals and exit ¼
-clock period after a succeeding rising edge.</div>
-<div class="line">When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+clock period,</p>
+<p>synchronize the output signals and exit ¼
+clock period after a succeeding rising edge.</p>
+<p>When set to SYNC_WITH_SETUP_AND_HOLD the BFM
 will use the configured setup_time, hold_time
-and</div>
-<div class="line">clock_period to synchronize output signals
-with clock edges.</div>
-</div>
+and</p>
+<p>clock_period to synchronize output signals
+with clock edges.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>match_strictness</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
 <td><p>MATCH_EXACT</p></td>
-<td><div class="line-block">
-<div class="line">Matching strictness for std_logic values in
-check procedures.</div>
-<div class="line">MATCH_EXACT requires both values to be the
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
 same. Note that the expected value can contain
-the don’t care operator ‘-‘.</div>
-<div class="line">MATCH_STD allows comparisons between ‘H’ and
-‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
-</div>
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm</p></td>
@@ -799,7 +796,7 @@ value is C_SBI_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">sbi_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_sbi_if_signals</span><span class="p">(</span><span class="n">sbi_if</span><span class="p">.</span><span class="n">addr</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">.</span><span class="n">wdata</span><span class="na">&#39;length</span><span class="p">)</span>
+<span class="n">sbi_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_sbi_if_signals</span><span class="p">(</span><span class="n">sbi_if</span><span class="p">.</span><span class="n">addr</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">.</span><span class="n">wdata</span><span class="na">&#39;length</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1032,18 +1029,16 @@ vectors need to be constrained when the interface signals are instantiated. For 
 <tr class="row-even"><td><p>inter_bfm_delay</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
 <td><p>C_SBI_INTER_BFM_DELAY_DEFAULT</p></td>
-<td><div class="line-block">
-<div class="line">Delay between any requested BFM accesses
-towards the DUT.</div>
-<div class="line">TIME_START2START: Time from a BFM start to the
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
 next BFM start (a TB_WARNING will be issued if
-access takes longer than TIME_START2START).</div>
-<div class="line">TIME_FINISH2START: Time from a BFM end to the
-next BFM start.</div>
-<div class="line">Any insert_delay() command will add to the
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
 above minimum delays, giving for instance the
-ability to skew the BFM starting time.</div>
-</div>
+ability to skew the BFM starting time.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
@@ -1203,6 +1198,19 @@ or full address depending on the DUT.</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p></td>
 <td><p>The data value to be written to the addressed register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>num_words</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number of times the procedure is called to send new
+random data words</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>randomisation</p></td>
+<td><p>in</p></td>
+<td><p>t_randomisation</p></td>
+<td><p>Randomization profile</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -1775,7 +1783,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

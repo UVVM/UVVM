@@ -28,6 +28,7 @@ package types_pkg is
 
   type t_void is (VOID);
 
+  type t_boolean_array is array (natural range <>) of boolean;
   type t_natural_array is array (natural range <>) of natural;
   type t_integer_array is array (natural range <>) of integer;
   type t_slv_array is array (natural range <>) of std_logic_vector;
@@ -263,6 +264,14 @@ package types_pkg is
 
   type t_relational_operator is (LT, GT, EQ, LE, GE, NE);
   type t_arithmetic_operator is (ADD, SUB, MULT, DIV);
+
+  -----------------------------------------
+  -- UVVM ASSERTIONS
+  -----------------------------------------
+  type t_pos_ack_kind is (EVERY, FIRST);
+  type t_shift_one_ness_cond is (ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE);
+  type t_accept_all_zeros is (ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED);
+
 end package types_pkg;
 
 package body types_pkg is

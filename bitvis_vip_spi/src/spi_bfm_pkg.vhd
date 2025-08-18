@@ -52,8 +52,8 @@ package spi_bfm_pkg is
     inter_word_delay         : time;            -- Minimum time between words, from ss_n inactive to ss_n active
     match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm               : t_msg_id;        -- The message ID used as a general message ID in the SPI BFM
-    id_for_bfm_wait          : t_msg_id;        -- The message ID used for logging waits in the SPI BFM
-    id_for_bfm_poll          : t_msg_id;        -- The message ID used for logging polling in the SPI BFM
+    id_for_bfm_wait          : t_msg_id;        -- The message ID used for logging waits in the SPI BFM -- DEPRECATE: will be removed
+    id_for_bfm_poll          : t_msg_id;        -- The message ID used for logging polling in the SPI BFM -- DEPRECATE: will be removed
   end record;
 
   constant C_SPI_BFM_CONFIG_DEFAULT : t_spi_bfm_config := (
@@ -1199,7 +1199,7 @@ package body spi_bfm_pkg is
       case when_to_start_transfer is
         when START_TRANSFER_ON_NEXT_SS =>
           if (ss_n = '0') and (ss_n'last_active > 0 ns) then
-            wait until ((ss_n = '0') and (ss_n'last_active <= 0 ns)) or (terminate_access = '1');
+            wait until falling_edge(ss_n) or (terminate_access = '1');
           end if;
         when others =>                  -- START_TRANSFER_IMMEDIATE
           null;

@@ -100,6 +100,8 @@ package adaptations_pkg is
     ID_FUNC_COV_CONFIG,                 -- Used for logging functional coverage configuration changes
     -- General
     ID_POS_ACK,                         -- To write a positive acknowledge on a check
+    -- UVVM assertions
+    ID_UVVM_ASSERTION,                  -- Used for logging UVVM assertions
     -- Directly inside test sequencers
     ID_LOG_HDR,                         -- ONLY allowed in test sequencer, Log section headers
     ID_LOG_HDR_LARGE,                   -- ONLY allowed in test sequencer, Large log section headers
@@ -331,6 +333,13 @@ package adaptations_pkg is
   constant C_AXISTREAM_BFM_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
   constant C_AXISTREAM_BFM_MAX_TID_BITS   : positive := 8;  -- Recommended maximum in protocol specification (ARM IHI0051A)
   constant C_AXISTREAM_BFM_MAX_TDEST_BITS : positive := 4;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+
+
+  -------------------------------------------------------------------------------------------------------------------
+  -- UVVM Assertions
+  -------------------------------------------------------------------------------------------------------------------
+  -- Maximum number of cycles to wait for an assertion to complete
+  constant C_MAX_CYCLES            : positive := 1000; -- NOTE: is only used in trigger->trigger window assertions as the array keeping track requires a size.
 
 
   -- =============================================================================================================================

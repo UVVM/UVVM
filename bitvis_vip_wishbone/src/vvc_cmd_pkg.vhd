@@ -10,6 +10,10 @@
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -20,34 +24,13 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.transaction_pkg.all;
+
 --========================================================================================================================
 --========================================================================================================================
 package vvc_cmd_pkg is
 
-  --========================================================================================================================
-  -- t_operation
-  -- - VVC and BFM operations
-  --========================================================================================================================
-  type t_operation is (
-    -- UVVM common
-    NO_OPERATION,
-    AWAIT_COMPLETION,
-    AWAIT_ANY_COMPLETION,
-    ENABLE_LOG_MSG,
-    DISABLE_LOG_MSG,
-    FLUSH_COMMAND_QUEUE,
-    FETCH_RESULT,
-    INSERT_DELAY,
-    TERMINATE_CURRENT_COMMAND,
-    -- VVC local
-    WRITE, READ, CHECK
-  );
-
-  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH;
-  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_WISHBONE_VVC_MAX_INSTANCE_NUM;
+  alias t_operation is work.transaction_pkg.t_operation;
 
   --========================================================================================================================
   -- t_vvc_cmd_record
@@ -73,7 +56,7 @@ package vvc_cmd_pkg is
     delay               : time;
     quietness           : t_quietness;
     parent_msg_id_panel : t_msg_id_panel;
-  end record;
+  end record t_vvc_cmd_record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
     addr                => (others => '0'),
@@ -113,6 +96,7 @@ package vvc_cmd_pkg is
   --   It can also be defined as a record if multiple return values shall be transported from the BFM
   --===============================================================================================
   subtype t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+
   type t_vvc_result_queue_element is record
     cmd_idx : natural;                  -- from UVVM handshake mechanism
     result  : t_vvc_result;
@@ -143,4 +127,3 @@ end package vvc_cmd_pkg;
 package body vvc_cmd_pkg is
 
 end package body vvc_cmd_pkg;
-

@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
@@ -354,8 +355,12 @@ supporting adding multiple types of bins in a single line.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The maximum number of bins which can be added at once using a single <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> call is limited by C_FC_MAX_NUM_NEW_BINS
-defined in adaptations_pkg.</p>
+<ul class="simple">
+<li><p>The maximum number of bins which can be added at once using a single <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> call is limited by C_FC_MAX_NUM_NEW_BINS
+defined in adaptations_pkg.</p></li>
+<li><p>If many bins are added at once using concatenation, there will be a temporary increase in memory usage due to the big array
+being created to hold all the bins. However, after <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> has finished, the memory will be released.</p></li>
+</ul>
 </div>
 <section id="ignore-bins">
 <h3>Ignore bins<a class="headerlink" href="#ignore-bins" title="Link to this heading"></a></h3>
@@ -1334,7 +1339,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -764,13 +764,15 @@ of expected VVCs registered in the VVC activity register but will not have any e
 +------------------+------------------------+-----------------+-------------------------------------------------------------------+
 | Name             | Type                   | Default         | Description                                                       |
 +==================+========================+=================+===================================================================+
-| num_exp_vvc      | natural                | <none>          | | Expected number of VVCs which is expected to be registered in   |
-|                  |                        |                 |   the VVC activity register (including any clock generator VVC).  |
-|                  |                        |                 | | Note 1: each channel is counted as an independent VVC expected  |
-|                  |                        |                 |   to be registered in the VVC activity register.                  |
-|                  |                        |                 | | Note 2: setting num_exp_vvc = 0 will disable checking of number |
-|                  |                        |                 |   of expected VVCs vs actual number of VVCs registered in the VVC |
-|                  |                        |                 |   activity register.                                              |
+| num_exp_vvc      | natural                | <none>          | Expected number of VVCs which is expected to be registered in     |
+|                  |                        |                 | the VVC activity register (including any clock generator VVC).    |
+|                  |                        |                 |                                                                   |
+|                  |                        |                 | Note 1: each channel is counted as an independent VVC expected    |
+|                  |                        |                 | to be registered in the VVC activity register.                    |
+|                  |                        |                 |                                                                   |
+|                  |                        |                 | Note 2: setting num_exp_vvc = 0 will disable checking of number   |
+|                  |                        |                 | of expected VVCs vs actual number of VVCs registered in the VVC   |
+|                  |                        |                 | activity register.                                                |
 +------------------+------------------------+-----------------+-------------------------------------------------------------------+
 | timeout          | time                   | <none>          | Timeout value after last VVC activity.                            |
 +------------------+------------------------+-----------------+-------------------------------------------------------------------+
@@ -851,8 +853,9 @@ as shown below example. Note that the unwanted activity detection must be enable
 
 When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
 resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
-to the logic low '0', and vice versa. These are intended behaviors that should not be monitored by the unwanted activity detection. 
-The signal transitions that are excluded from unwanted activity detection are summarized below.
+to the logic low '0', and vice versa. It is also possible for signal transitions to occur from the unknown state 'X' to the logic low '0' 
+or logic high '1' when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by 
+the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.
 
 +----------------+-----------------------------------+
 | From           | To                                |
@@ -866,6 +869,8 @@ The signal transitions that are excluded from unwanted activity detection are su
 | 'H'            | '1'                               |
 +----------------+-----------------------------------+
 | '1'            | 'H'                               |
++----------------+-----------------------------------+
+| 'X'            | '0', '1'                          |
 +----------------+-----------------------------------+
 
 For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
@@ -987,29 +992,35 @@ with some fields potentially unused.
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
     +=========================+==============================+====================================================================+
-    | operation               | t_operation                  | | Protocol operation on the given DUT interface. E.g. NO_OPERATION,|
-    |                         |                              |   WRITE, READ, TRANSMIT, POLL_UNTIL, ...                           |
-    |                         |                              | | NO_OPERATION is default and thus used when there is no access.   |
-    |                         |                              | | All operations will be separated with a NO_OPERATION for at least|
-    |                         |                              |   1 delta cycle, e.g. NO_OPERATION - WRITE - NO_OPERATION - READ - |
-    |                         |                              |   NO_OPERATION.                                                    |
+    | operation               | t_operation                  | Protocol operation on the given DUT interface. E.g. NO_OPERATION,  |
+    |                         |                              | WRITE, READ, TRANSMIT, POLL_UNTIL, ...                             |
+    |                         |                              |                                                                    |
+    |                         |                              | NO_OPERATION is default and thus used when there is no access.     |
+    |                         |                              |                                                                    |
+    |                         |                              | All operations will be separated with a NO_OPERATION for at least  |
+    |                         |                              | 1 delta cycle, e.g. NO_OPERATION - WRITE - NO_OPERATION - READ -   |
+    |                         |                              | NO_OPERATION.                                                      |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | | **<optional protocol**| **<protocol dedicated>**     | | One or more fields required to complete the transaction info.    |
-    | | **dedicated           |                              | | E.g. for UART: single field 'data'; for SBI: field 1: 'addr',    |
-    |   field(s)>**           |                              |   field 2: 'data'; for Ethernet: most Ethernet fields as separate  |
-    |                         |                              |   fields, or a better solution, include as a complete sub-record.  |
+    | **<optional protocol**  | **<protocol dedicated>**     | One or more fields required to complete the transaction info.      |
+    |                         |                              |                                                                    |
+    | **dedicated field(s)>** |                              | E.g. for UART: single field 'data'; for SBI: field 1: 'addr',      |
+    |                         |                              | field 2: 'data'; for Ethernet: most Ethernet fields as separate    |
+    |                         |                              | fields, or a better solution, include as a complete sub-record.    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | transaction_status      | t_transaction_status         | | Handled slightly different from a VVC and a Monitor.             |
-    |                         |                              | | VVC: Will show IN_PROGRESS during the transaction, then COMPLETED|
-    |                         |                              |   when the transaction ends (for one delta cycle) and finally      |
-    |                         |                              |   INACTIVE until the next transaction (for at least one delta      |
-    |                         |                              |   cycle).                                                          |
-    |                         |                              | | Monitor: Will show FAILED or SUCCEEDED immediately as soon as    |
-    |                         |                              |   this is 100% certain - and keep this info for the display period |
-    |                         |                              |   defined in the Monitor configuration record, or until the start  |
-    |                         |                              |   of the next transaction,                                         |
-    |                         |                              | | whichever occurs first. Other than that, it will show IN_PROGRESS|
-    |                         |                              |   when active or INACTIVE when not.                                |
+    | transaction_status      | t_transaction_status         | Handled slightly different from a VVC and a Monitor.               |
+    |                         |                              |                                                                    |
+    |                         |                              | VVC: Will show IN_PROGRESS during the transaction, then COMPLETED  |
+    |                         |                              | when the transaction ends (for one delta cycle) and finally        |
+    |                         |                              | INACTIVE until the next transaction (for at least one delta        |
+    |                         |                              | cycle).                                                            |
+    |                         |                              |                                                                    |
+    |                         |                              | Monitor: Will show FAILED or SUCCEEDED immediately as soon as      |
+    |                         |                              | this is 100% certain - and keep this info for the display period   |
+    |                         |                              | defined in the Monitor configuration record, or until the start    |
+    |                         |                              | of the next transaction,                                           |
+    |                         |                              |                                                                    |
+    |                         |                              | whichever occurs first. Other than that, it will show IN_PROGRESS  |
+    |                         |                              | when active or INACTIVE when not.                                  |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | vvc_meta                | t_vvc_meta                   | Additional transaction information - only known by the VVC. So far |
     |                         |                              | 'msg' and 'cmd_idx' (the free running command index). A Monitor has|
@@ -1020,12 +1031,14 @@ with some fields potentially unused.
     |                         |                              | Ethernet. If no error injection or detection has been implemented, |
     |                         |                              | this sub-record may be left out.                                   |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | | *Note: For transaction info from a VVC, the record reflects the command status, i.e. the status assumed by the VVC when   |
-    |   initiating the command, whereas the Monitor will set up the record only after knowing whether the transaction has failed  |
-    |   or succeeded.*                                                                                                            |
-    | | *However, the transaction info from a VVC is also updated at the end of the command, which can be useful to fetch the data|
-    |   from read/receive operations.*                                                                                            |
-    | | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behavior.*     |
+    | *Note: For transaction info from a VVC, the record reflects the command status, i.e. the status assumed by the VVC when     |
+    | initiating the command, whereas the Monitor will set up the record only after knowing whether the transaction has failed    |
+    | or succeeded.*                                                                                                              |
+    |                                                                                                                             |
+    | *However, the transaction info from a VVC is also updated at the end of the command, which can be useful to fetch the data  |
+    | from read/receive operations.*                                                                                              |
+    |                                                                                                                             |
+    | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behavior.*       |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
 .. table:: Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields
@@ -1158,11 +1171,13 @@ t_transaction_status type, which is defined in types_pkg).
     | ---> stop_bir_er\| boolean                | False           | The DUT transaction will have a stop bit error if entry is set|
     | ror [#f4]_       |                        |                 | to true                                                       |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | ct [#f5]_        | t_compound_transaction | C_COMPOUND_TRAN\| | Transaction Info record entry for compound transaction      |
-    |                  |                        | SACTION_SET_DEF\| | Note that sub-record entries would typically have the same  |
-    |                  |                        | AULT            |   entries as for a base transaction, and that this entry does |
-    |                  |                        |                 |   not have to be suited for all interface Transaction Info    |
-    |                  |                        |                 |   records.                                                    |
+    | ct [#f5]_        | t_compound_transaction | C_COMPOUND_TRAN\| Transaction Info record entry for compound transaction        |
+    |                  |                        | SACTION_SET_DEF\|                                                               |
+    |                  |                        | AULT            | Note that sub-record entries would typically have the same    |
+    |                  |                        |                 | entries as for a base transaction, and that this entry does   |
+    |                  |                        |                 |                                                               |
+    |                  |                        |                 | not have to be suited for all interface Transaction Info      |
+    |                  |                        |                 | records.                                                      |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
 
 .. note::
@@ -1376,6 +1391,8 @@ base transaction):
     #. It should be possible to terminate the sequence immediately after each leaf (or base) transaction - on request from the 
        central sequencer issuing a terminate_current_command() or terminate_all_commands().
 
+.. _vvc_framework_error_injection:
+
 Protocol Aware Error Injection
 ==================================================================================================================================
 Error injection into the DUT could be very useful in a testbench in order to test how the DUT handles interface errors when these 
@@ -1483,8 +1500,9 @@ to allow users to add more profiles.
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | RANDOM                     | Uniform distribution                                                                              |
 +----------------------------+---------------------------------------------------------------------------------------------------+
-| RANDOM_FAVOUR_EDGES        | | Significantly more edge cases, where "edge" differs between various interfaces.                 |
-|                            | | E.g. UART: Cover patterns like 01111111, 00000000, 11111111, 11111110, 01010101, 10101010.      |
+| RANDOM_FAVOUR_EDGES        | Significantly more edge cases, where "edge" differs between various interfaces.                   |
+|                            |                                                                                                   |
+|                            | E.g. UART: Cover patterns like 01111111, 00000000, 11111111, 11111110, 01010101, 10101010.        |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | <user-defined>             |                                                                                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
@@ -1574,13 +1592,9 @@ The profile names are defined in the type :ref:`t_data_routing`, which is define
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | TO_SB                      | Data is passed on to the Scoreboard for the given VVC                                             |
 +----------------------------+---------------------------------------------------------------------------------------------------+
-| FROM_BUFFER                | Data is sourced from the UVVM global buffer                                                       |
+| FROM_BUFFER                | Data is sourced from the UVVM global buffer. Not yet implemented.                                 |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | TO_BUFFER                  | Data is also sent to the UVVM global buffer                                                       |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| TO_FILE                    | TBD – Not yet implemented (Do not use – as this may change)                                       |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| FROM_FILE                  | TBD – Not yet implemented (Do not use – as this may change)                                       |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | <user-defined>             |                                                                                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
@@ -1588,6 +1602,8 @@ The profile names are defined in the type :ref:`t_data_routing`, which is define
 VVC Command Syntax
 ----------------------------------------------------------------------------------------------------------------------------------
 See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and options.
+
+.. _vvc_framework_property_checkers:
 
 Controlling Property Checkers
 ==================================================================================================================================
@@ -2053,11 +2069,15 @@ The VVC mandatory data fields are the following:
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | cmd_idx                    | Command index.                                                                                    |
 +----------------------------+---------------------------------------------------------------------------------------------------+
-| gen_integer_array          | | Generic integer array (0 to 1).                                                                 |
-|                            | | (0) Used as delay in clock cycles in the insert_delay command.                                  |
-|                            | | (0) Used as wanted cmd_idx in the fetch_result command.                                         |
-|                            | | (0) Used as wanted cmd_idx in old await_completion and await_any_completion commands. DEPRECATED|
-|                            | | (1) Used awaiting_completion_idx in old await_any_completion command. DEPRECATED.               |
+| gen_integer_array          | Generic integer array (0 to 1).                                                                   |
+|                            |                                                                                                   |
+|                            | ->(0) Used as delay in clock cycles in the insert_delay command.                                  |
+|                            |                                                                                                   |
+|                            | ->(0) Used as wanted cmd_idx in the fetch_result command.                                         |
+|                            |                                                                                                   |
+|                            | ->(0) Used as wanted cmd_idx in old await_completion and await_any_completion commands. DEPRECATED|
+|                            |                                                                                                   |
+|                            | ->(1) Used awaiting_completion_idx in old await_any_completion command. DEPRECATED.               |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | gen_boolean                | Generic boolean. Used in old await_completion command. DEPRECATED.                                |
 +----------------------------+---------------------------------------------------------------------------------------------------+
@@ -2345,6 +2365,17 @@ After the script has completed, the files need some user interaction before they
 "\--<USER_INPUT>" there will be instructions on how to properly modify the VVC for your BFM. Additionally, if you created a VVC 
 with multiple channels, please make sure to add these channels to the t_channel type located in the UVVM-Util adaptations_pkg.vhd 
 file. By default, this type only contains 'TX' and 'RX' channels but more can be added to fit any project.
+
+
+**********************************************************************************************************************************
+TI VVC Framework Support Package
+**********************************************************************************************************************************
+Type definitions used in the VVC Framework.
+
+.. toctree::
+   :maxdepth: 1
+
+   ti_vvc_framework_support_pkg.rst
 
 
 **********************************************************************************************************************************

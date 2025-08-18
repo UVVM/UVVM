@@ -16,12 +16,13 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Name                         | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| GC_START_TIME                | time                         | 0 ns            | | The error injector will wait the specified    |
-|                              |                              |                 |   time after initialization before starting to  |
-|                              |                              |                 |   monitor signal events, and injecting error if |
-|                              |                              |                 |   configured to.                                |
-|                              |                              |                 | | Note that default is 0 ns, i.e. not waiting   |
-|                              |                              |                 |   after initialization.                         |
+| GC_START_TIME                | time                         | 0 ns            | The error injector will wait the specified      |
+|                              |                              |                 | time after initialization before starting to    |
+|                              |                              |                 | monitor signal events, and injecting error if   |
+|                              |                              |                 | configured to.                                  |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note that default is 0 ns, i.e. not waiting     |
+|                              |                              |                 | after initialization.                           |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the error injector    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -115,28 +116,34 @@ Accessible via **shared_ei_config**
 | width_max                    | time                         | 0 ns            | Setting the max parameter will generate a       |
 |                              |                              |                 | randomized timing parameter. (2)                |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| interval                     | positive                     | 1               | | Errors will be injected in this interval, e.g.|
-|                              |                              |                 |   1 for every signal event, 2 for every second  |
-|                              |                              |                 |   signal event, etc. (3,5)                      |
-|                              |                              |                 | | Interval = 1: SL will experience error        |
-|                              |                              |                 |   injection on every second signal event, e.g.  |
-|                              |                              |                 |   every rising edge.                            |
-|                              |                              |                 | | SLV will experience error injection on every  |
-|                              |                              |                 |   signal event.                                 |
-|                              |                              |                 | | Interval = 2: SL will experience error        |
-|                              |                              |                 |   injection on every fourth signal event, e.g.  |
-|                              |                              |                 |   every second rising edge.                     |
-|                              |                              |                 | | SLV will experience error injection on every  |
-|                              |                              |                 |   second signal event.                          |
+| interval                     | positive                     | 1               | Errors will be injected in this interval, e.g.  |
+|                              |                              |                 | 1 for every signal event, 2 for every second    |
+|                              |                              |                 | signal event, etc. (3,5)                        |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Interval = 1: SL will experience error          |
+|                              |                              |                 | injection on every second signal event, e.g.    |
+|                              |                              |                 | every rising edge.                              |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | SLV will experience error injection on every    |
+|                              |                              |                 | signal event.                                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Interval = 2: SL will experience error          |
+|                              |                              |                 | injection on every fourth signal event, e.g.    |
+|                              |                              |                 | every second rising edge.                       |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | SLV will experience error injection on every    |
+|                              |                              |                 | second signal event.                            |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| base_value                   | std_logic                    | '0'             | | The initial edge in an SL error injection will|
-|                              |                              |                 |   start on the transition from base_value to    |
-|                              |                              |                 |   another value, e.g. from '0' to '1'.          |
-|                              |                              |                 | | The return edge in an SL error injection will |
-|                              |                              |                 |   be the transition back to base_value. (6)     |
-|                              |                              |                 | | Note that setting base_value = '-' will start |
-|                              |                              |                 |   SL error injection on first upcoming edge     |
-|                              |                              |                 |   after configuration, regardless of input value|
+| base_value                   | std_logic                    | '0'             | The initial edge in an SL error injection will  |
+|                              |                              |                 | start on the transition from base_value to      |
+|                              |                              |                 | another value, e.g. from '0' to '1'.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The return edge in an SL error injection will   |
+|                              |                              |                 | be the transition back to base_value. (6)       |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note that setting base_value = '-' will start   |
+|                              |                              |                 | SL error injection on first upcoming edge       |
+|                              |                              |                 | after configuration, regardless of input value  |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -173,42 +180,48 @@ Description
 +===========================+===================================================+=================================================+
 | BYPASS                    | Signal is preserved and no error is injected      | As for std_logic                                |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
-| PULSE                     | | Signal will experience a pulse of width "width" | As for std_logic                                |
-|                           |   after a time of "initial_delay". (1)            |                                                 |
-|                           | | Note that the pulse value will be the value     |                                                 |
-|                           |   prior to initial event                          |                                                 |
+| PULSE                     | Signal will experience a pulse of width "width"   | As for std_logic                                |
+|                           | after a time of "initial_delay". (1)              |                                                 |
+|                           |                                                   |                                                 |
+|                           | Note that the pulse value will be the value       |                                                 |
+|                           | prior to initial event                            |                                                 |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
-| DELAY                     | | Signal will be skewed for a time of "initial_de\| As for std_logic                                |
-|                           |   lay" on initial edge and on return edge. (1)    |                                                 |
-|                           | | Any signal activity while error injection is    |                                                 |
-|                           |   active will override the error injection.       |                                                 |
+| DELAY                     | Signal will be skewed for a time of "initial_de\  | As for std_logic                                |
+|                           | lay" on initial edge and on return edge. (1)      |                                                 |
+|                           |                                                   |                                                 |
+|                           | Any signal activity while error injection is      |                                                 |
+|                           | active will override the error injection.         |                                                 |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
-| JITTER                    | | As for DELAY, but with different values on edge | Not applicable for vector signals               |
-|                           |   delays                                          |                                                 |
-|                           | | Note that only positive jitter is supported, and|                                                 |
-|                           |   that reordering of positive and negative edges  |                                                 |
-|                           |   yield an invalid configuration and will not work|                                                 |
+| JITTER                    | As for DELAY, but with different values on edge   | Not applicable for vector signals               |
+|                           | delays                                            |                                                 |
+|                           |                                                   |                                                 |
+|                           | Note that only positive jitter is supported, and  |                                                 |
+|                           | that reordering of positive and negative edges    |                                                 |
+|                           | yield an invalid configuration and will not work  |                                                 |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
-| INVERT                    | | The signal is inverted as long as the error     | As for std_logic                                |
-|                           |   injection configuration is set to INVERT.       |                                                 |
-|                           | | Note that when error injection configuration is |                                                 |
-|                           |   changed from INVERT, a new signal event is      |                                                 |
-|                           |   required for the new configuration to take      |                                                 |
-|                           |   effect                                          |                                                 |
+| INVERT                    | The signal is inverted as long as the error       | As for std_logic                                |
+|                           | injection configuration is set to INVERT.         |                                                 |
+|                           |                                                   |                                                 |
+|                           | Note that when error injection configuration is   |                                                 |
+|                           | changed from INVERT, a new signal event is        |                                                 |
+|                           | required for the new configuration to take        |                                                 |
+|                           | effect                                            |                                                 |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
-| STUCK_AT_OLD              | | The signal will be stuck at the value it had    | As for std_logic                                |
-|                           |   prior to initial signal event, and released to  |                                                 |
-|                           |   the current signal value after the specified    |                                                 |
-|                           |   "width_min" time. (1)                           |                                                 |
-|                           | | Note that any signal event during STUCK_AT_OLD  |                                                 |
-|                           |   is ignored                                      |                                                 |
+| STUCK_AT_OLD              | The signal will be stuck at the value it had      | As for std_logic                                |
+|                           | prior to initial signal event, and released to    |                                                 |
+|                           | the current signal value after the specified      |                                                 |
+|                           | "width_min" time. (1)                             |                                                 |
+|                           |                                                   |                                                 |
+|                           | Note that any signal event during STUCK_AT_OLD    |                                                 |
+|                           | is ignored                                        |                                                 |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
-| STUCK_AT_NEW              | | The signal will be stuck at the value it had    | As for std_logic                                |
-|                           |   prior to initial signal event, and released to  |                                                 |
-|                           |   the current signal value after a specified      |                                                 |
-|                           |   "width_min" time. (1)                           |                                                 |
-|                           | | Note that any signal event during STUCK_AT_NEW  |                                                 |
-|                           |   is ignored                                      |                                                 |
+| STUCK_AT_NEW              | The signal will be stuck at the value it had      | As for std_logic                                |
+|                           | prior to initial signal event, and released to    |                                                 |
+|                           | the current signal value after a specified        |                                                 |
+|                           | "width_min" time. (1)                             |                                                 |
+|                           |                                                   |                                                 |
+|                           | Note that any signal event during STUCK_AT_NEW    |                                                 |
+|                           | is ignored                                        |                                                 |
 +---------------------------+---------------------------------------------------+-------------------------------------------------+
 
 .. note::

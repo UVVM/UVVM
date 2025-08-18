@@ -1071,12 +1071,14 @@ package body ti_vvc_framework_support_pkg is
   ) is
     variable v_last_value   : std_logic := tracked_signal'last_value;
   begin
-    -- Exclude checks for signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'
+    -- Exclude checks for signal transitions from 'U', 'L' to/from '0', 'H' to/from '1', 'X' to '0'/'1'
     if not (v_last_value = 'U' or
            (v_last_value = 'L' and tracked_signal = '0') or
            (v_last_value = '0' and tracked_signal = 'L') or
            (v_last_value = 'H' and tracked_signal = '1') or
-           (v_last_value = '1' and tracked_signal = 'H')) then
+           (v_last_value = '1' and tracked_signal = 'H') or
+           (v_last_value = 'X' and tracked_signal = '0') or
+           (v_last_value = 'X' and tracked_signal = '1')) then
       if tracked_signal'event then
         alert(alert_level, "Unwanted activity detected. " & signal_name & " changed from " &
           to_string(tracked_signal'last_value) & " to " & to_string(tracked_signal), scope);
@@ -1095,12 +1097,14 @@ package body ti_vvc_framework_support_pkg is
   begin
     -- Loop through each bit in the vector and check for unwanted activity
     for i in 0 to tracked_signal'length - 1 loop
-      -- Exclude signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'
+      -- Exclude signal transitions from 'U', 'L' to/from '0', 'H' to/from '1', 'X' to '0'/'1'
       if not (v_last_value(i) = 'U' or
              (v_last_value(i) = 'L' and tracked_signal(i) = '0') or
              (v_last_value(i) = '0' and tracked_signal(i) = 'L') or
              (v_last_value(i) = 'H' and tracked_signal(i) = '1') or
-             (v_last_value(i) = '1' and tracked_signal(i) = 'H')) then
+             (v_last_value(i) = '1' and tracked_signal(i) = 'H') or
+             (v_last_value(i) = 'X' and tracked_signal(i) = '0') or
+             (v_last_value(i) = 'X' and tracked_signal(i) = '1')) then
         v_is_unwanted_activity := true;
       end if;
     end loop;

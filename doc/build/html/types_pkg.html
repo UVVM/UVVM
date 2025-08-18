@@ -16,12 +16,12 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Enhanced Randomization" href="rand_pkg_overview.html" />
+    <link rel="next" title="UVVM Assertions (BETA)" href="uvvm_assertions.html" />
     <link rel="prev" title="Utility Library" href="utility_library.html" /> 
 </head>
 
@@ -86,6 +86,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#t-byte-endianness">t_byte_endianness</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#t-test-status">t_test_status</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#t-extent-tickoff">t_extent_tickoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-action-when-transfer-is-done">t_action_when_transfer_is_done</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-action-between-words">t_action_between_words</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-when-to-start-transfer">t_when_to_start_transfer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-stop-bits">t_stop_bits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-parity">t_parity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-necessary-condition">t_necessary_condition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-pos-ack-kind">t_pos_ack_kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-accept-all-zeros">t_accept_all_zeros</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="utility_library.html#message-ids">Message IDs</a></li>
@@ -96,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="utility_library.html#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -357,7 +366,7 @@ binary radix.</p>
 </section>
 <section id="t-data-routing">
 <span id="id28"></span><h1>t_data_routing<a class="headerlink" href="#t-data-routing" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">TO_RECEIVE_BUFFER</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_BUFFER</span>
 </pre></div>
 </div>
 </section>
@@ -397,19 +406,61 @@ binary radix.</p>
 </pre></div>
 </div>
 </section>
+<section id="t-action-when-transfer-is-done">
+<span id="id35"></span><h1>t_action_when_transfer_is_done<a class="headerlink" href="#t-action-when-transfer-is-done" title="Link to this heading"></a></h1>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span>
+</pre></div>
+</div>
+</section>
+<section id="t-action-between-words">
+<span id="id36"></span><h1>t_action_between_words<a class="headerlink" href="#t-action-between-words" title="Link to this heading"></a></h1>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_BETWEEN_WORDS</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_BETWEEN_WORDS</span>
+</pre></div>
+</div>
+</section>
+<section id="t-when-to-start-transfer">
+<span id="id37"></span><h1>t_when_to_start_transfer<a class="headerlink" href="#t-when-to-start-transfer" title="Link to this heading"></a></h1>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">START_TRANSFER_IMMEDIATE</span><span class="p">,</span><span class="w"> </span><span class="n">START_TRANSFER_ON_NEXT_SS</span>
+</pre></div>
+</div>
+</section>
+<section id="t-stop-bits">
+<span id="id38"></span><h1>t_stop_bits<a class="headerlink" href="#t-stop-bits" title="Link to this heading"></a></h1>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">STOP_BITS_ONE</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_ONE_AND_HALF</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_TWO</span>
+</pre></div>
+</div>
+</section>
+<section id="t-parity">
+<span id="id39"></span><h1>t_parity<a class="headerlink" href="#t-parity" title="Link to this heading"></a></h1>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">PARITY_NONE</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_ODD</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_EVEN</span>
+</pre></div>
+</div>
+</section>
+<section id="t-necessary-condition">
+<span id="id40"></span><h1>t_necessary_condition<a class="headerlink" href="#t-necessary-condition" title="Link to this heading"></a></h1>
+<p>ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE</p>
+</section>
+<section id="t-pos-ack-kind">
+<span id="id41"></span><h1>t_pos_ack_kind<a class="headerlink" href="#t-pos-ack-kind" title="Link to this heading"></a></h1>
+<p>EVERY, FIRST</p>
+</section>
+<section id="t-accept-all-zeros">
+<span id="id42"></span><h1>t_accept_all_zeros<a class="headerlink" href="#t-accept-all-zeros" title="Link to this heading"></a></h1>
+<p>ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED</p>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="utility_library.html" class="btn btn-neutral float-left" title="Utility Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rand_pkg_overview.html" class="btn btn-neutral float-right" title="Enhanced Randomization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="uvvm_assertions.html" class="btn btn-neutral float-right" title="UVVM Assertions (BETA)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

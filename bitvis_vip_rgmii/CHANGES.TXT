@@ -1,6 +1,10 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v4.1.1
+----------
+Released: 2025-08-18
+- Converted documentation to RST format.
 
 v4.1.0
 ----------

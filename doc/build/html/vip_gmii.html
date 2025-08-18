@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -65,8 +66,49 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP GMII</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#signal-record">Signal Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gmii-write">gmii_write()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gmii-read">gmii_read()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gmii-expect">gmii_expect()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init-gmii-if-signals">init_gmii_if_signals()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gmii-write-vvc">gmii_write()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gmii-read-vvc">gmii_read()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gmii-expect-vvc">gmii_expect()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Additional Documentation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
@@ -108,13 +150,1144 @@
              
   <section id="bitvis-vip-gmii">
 <h1>Bitvis VIP GMII<a class="headerlink" href="#bitvis-vip-gmii" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#gmii-write-bfm"><span class="std std-ref">gmii_write()</span></a></p></li>
+<li><p><a class="reference internal" href="#gmii-read-bfm"><span class="std std-ref">gmii_read()</span></a></p></li>
+<li><p><a class="reference internal" href="#gmii-expect-bfm"><span class="std std-ref">gmii_expect()</span></a></p></li>
+<li><p><a class="reference internal" href="#init-gmii-if-signals-bfm"><span class="std std-ref">init_gmii_if_signals()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#gmii-write-vvc"><span class="std std-ref">gmii_write()</span></a></p></li>
+<li><p><a class="reference internal" href="#gmii-read-vvc"><span class="std std-ref">gmii_read()</span></a></p></li>
+<li><p><a class="reference internal" href="#gmii-expect-vvc"><span class="std std-ref">gmii_expect()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
 <section id="bfm">
-<span id="vip-gmii-bfm"></span><h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_gmii/doc/gmii_bfm_QuickRef.pdf">gmii_bfm_QuickRef.pdf</a></p>
+<h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>This is a stripped-down version of GMII with only data lines.</p></li>
+<li><p>BFM functionality is implemented in gmii_bfm_pkg.vhd</p></li>
+</ul>
+<section id="signal-record">
+<span id="t-gmii-if"></span><h3>Signal Record<a class="headerlink" href="#signal-record" title="Link to this heading"></a></h3>
+<p><strong>t_gmii_tx_if</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>gtxclk</p></td>
+<td><p>std_logic</p></td>
+<td><p>TX reference clock</p></td>
+</tr>
+<tr class="row-odd"><td><p>txd</p></td>
+<td><p>std_logic_vector(7 downto 0)</p></td>
+<td><p>TX data lines (to DUT)</p></td>
+</tr>
+<tr class="row-even"><td><p>txen</p></td>
+<td><p>std_logic</p></td>
+<td><p>TX enable</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>t_gmii_rx_if</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rxclk</p></td>
+<td><p>std_logic</p></td>
+<td><p>RX reference clock</p></td>
+</tr>
+<tr class="row-odd"><td><p>rxd</p></td>
+<td><p>std_logic_vector(7 downto 0)</p></td>
+<td><p>RX data lines (from DUT)</p></td>
+</tr>
+<tr class="row-even"><td><p>rxdv</p></td>
+<td><p>std_logic</p></td>
+<td><p>RX data valid</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="configuration-record">
+<span id="t-gmii-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_gmii_bfm_config</strong></p>
+<p>Default value for the record is C_GMII_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>max_wait_cycles</p></td>
+<td><p>integer</p></td>
+<td><p>12</p></td>
+<td><p>The maximum number of clock cycles to wait for
+the DUT signals before reporting a timeout alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_wait_cycles_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>The above timeout will have this severity</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_period</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Period of the clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_period_margin</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Input clock period margin to specified
+clock_period. Will check ‘T/2’ if input clock is
+low when BFM is called and ‘T’ if input clock is
+high.</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_margin_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>TB_ERROR</p></td>
+<td><p>The above margin will have this severity</p></td>
+</tr>
+<tr class="row-odd"><td><p>setup_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals setup time. Suggested value
+is clock_period/4. An alert is reported if
+setup_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-even"><td><p>hold_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals hold time. Suggested value
+is clock_period/4. An alert is reported if
+hold_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_sync</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
+<td><p>SYNC_ON_CLOCK_ONLY</p></td>
+<td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
+enter on the first falling edge, estimate the
+clock period,</p>
+<p>synchronize the output signals and exit ¼
+clock period after a succeeding rising edge.</p>
+<p>When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+will use the configured setup_time, hold_time
+and</p>
+<p>clock_period to synchronize output signals
+with clock edges.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_EXACT</p></td>
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul>
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+<li><p>For clarity, data_array is required to be ascending, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_BYTES</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="mi">7</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<section id="gmii-write">
+<span id="gmii-write-bfm"></span><h4>gmii_write()<a class="headerlink" href="#gmii-write" title="Link to this heading"></a></h4>
+<p>Writes data to the DUT. The length and data are defined by the “data_array” argument, which is a t_slv_array. data_array(0) is
+written first, while data_array(data_array’high) is written last.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_write</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_tx_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_array</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of bytes containing the data to be written</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>gmii_tx_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-gmii-if"><span class="std std-ref">t_gmii_tx_if</span></a></p></td>
+<td><p>GMII TX signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether to release or hold the TXEN line after the
+procedure is finished. Useful when transmitting a packet
+of data through several procedures, e.g. from Ethernet
+HVVC. Default value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GMII BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gmii-bfm-config"><span class="std std-ref">t_gmii_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GMII_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_write</span><span class="p">((</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;02&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;03&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;04&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Write 4 bytes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_tx_if</span><span class="p">);</span>
+<span class="n">gmii_write</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_bytes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Write v_num_bytes bytes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_tx_if</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_bfm_config</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gmii-read">
+<span id="gmii-read-bfm"></span><h4>gmii_read()<a class="headerlink" href="#gmii-read" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT. The received data is stored in the data_array output, which is a t_slv_array. The number of valid bytes
+in the data_array is stored in data_len. data_array(0) is read first, while data_array(data_array’high) is read last.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_read</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="n">data_len</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_rx_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>data_array</p></td>
+<td><p>out</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of bytes containing the data to be read</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>data_len</p></td>
+<td><p>out</p></td>
+<td><p>natural</p></td>
+<td><p>The number of valid bytes in the data_array. Note that
+the data_array can be bigger and that is why the length
+is returned.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>gmii_rx_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-gmii-if"><span class="std std-ref">t_gmii_rx_if</span></a></p></td>
+<td><p>GMII RX signal interface record</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GMII BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gmii-bfm-config"><span class="std std-ref">t_gmii_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GMII_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_read</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">,</span><span class="w"> </span><span class="n">v_num_bytes</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read GMII data&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_rx_if</span><span class="p">);</span>
+<span class="n">gmii_read</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">,</span><span class="w"> </span><span class="n">v_num_bytes</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read GMII data&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_rx_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_bfm_config</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gmii-expect">
+<span id="gmii-expect-bfm"></span><h4>gmii_expect()<a class="headerlink" href="#gmii-expect" title="Link to this heading"></a></h4>
+<p>Calls the <a class="reference internal" href="#gmii-read-bfm"><span class="std std-ref">gmii_read()</span></a> procedure, then compares the received data with data_exp.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_expect</span><span class="p">(</span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_rx_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of bytes containing the data to be expected</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>gmii_rx_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-gmii-if"><span class="std std-ref">t_gmii_rx_if</span></a></p></td>
+<td><p>GMII RX signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GMII BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gmii-bfm-config"><span class="std std-ref">t_gmii_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GMII_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_expect</span><span class="p">((</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;02&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;03&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;04&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Expect 4 bytes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_rx_if</span><span class="p">);</span>
+<span class="n">gmii_expect</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_bytes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Expect v_num_bytes bytes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_rx_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_bfm_config</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="init-gmii-if-signals">
+<span id="init-gmii-if-signals-bfm"></span><h4>init_gmii_if_signals()<a class="headerlink" href="#init-gmii-if-signals" title="Link to this heading"></a></h4>
+<p>Initializes the GMII interface. All the BFM outputs are set to ‘0’, and BFM inputs are set to ‘Z’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_gmii_rx_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_gmii_if_signals</span>
+<span class="n">t_gmii_tx_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_gmii_if_signals</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_rx_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_gmii_if_signals</span><span class="p">;</span>
+<span class="n">gmii_tx_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_gmii_if_signals</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_write</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;msg&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_write</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gmii_tx_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GMII_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">gmii_write</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">gmii_write</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span><span class="w">               </span><span class="c1">-- Keep as is</span>
+<span class="w">             </span><span class="n">msg</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Keep as is</span>
+<span class="w">             </span><span class="n">gmii_tx_if</span><span class="p">,</span><span class="w">               </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">             </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Use the default</span>
+<span class="w">             </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w">      </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="w">             </span><span class="n">C_GMII_BFM_CONFIG_LOCAL</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Use locally defined configuration or C_GMII_BFM_CONFIG_DEFAULT</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Bus Functional Model (BFM) for GMII.</p></li>
+<li><p>The given BFM complies with the basic GMII protocol and thus allows a normal access towards a GMII interface.</p></li>
+<li><p>This BFM is not a GMII protocol checker.</p></li>
+<li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
 </section>
 <section id="vvc">
-<span id="vip-gmii-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_gmii/doc/gmii_vvc_QuickRef.pdf">gmii_vvc_QuickRef.pdf</a></p>
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in gmii_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>N/A</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_GMII_BFM_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-gmii-bfm-config"><span class="std std-ref">t_gmii_bfm_config</span></a></p></td>
+<td><p>C_GMII_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the GMII BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>gmii_vvc_tx_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-gmii-if"><span class="std std-ref">t_gmii_tx_if</span></a></p></td>
+<td><p>GMII TX signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>gmii_vvc_rx_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-gmii-if"><span class="std std-ref">t_gmii_rx_if</span></a></p></td>
+<td><p>GMII RX signal interface record</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id1">
+<h3>Configuration Record<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_gmii_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_GMII_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-gmii-bfm-config"><span class="std std-ref">t_gmii_bfm_config</span></a></p></td>
+<td><p>C_GMII_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the GMII BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">id_for_bfm</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ID_BFM</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_gmii_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul>
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+<li><p>For clarity, data_array is required to be ascending, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_BYTES</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="mi">7</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<section id="gmii-write-vvc">
+<span id="id3"></span><h4>gmii_write()<a class="headerlink" href="#gmii-write-vvc" title="Link to this heading"></a></h4>
+<p>Adds a write command to the GMII VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gmii-write-bfm"><span class="std std-ref">gmii_write()</span></a> procedure. data_array(0) is written first, while
+data_array(data_array’high) is written last.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_write</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_array</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of bytes containing the data to be written</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether to release or hold the TXEN line after the
+procedure is finished. Useful when transmitting a packet
+of data through several procedures, e.g. from Ethernet
+HVVC. Default value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_write</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;02&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;03&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;04&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Write 4 bytes&quot;</span><span class="p">);</span>
+<span class="n">gmii_write</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_bytes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Write v_num_bytes bytes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gmii-read-vvc">
+<span id="id4"></span><h4>gmii_read()<a class="headerlink" href="#gmii-read-vvc" title="Link to this heading"></a></h4>
+<p>Adds a read command to the GMII VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gmii-read-bfm"><span class="std std-ref">gmii_read()</span></a> procedure.</p>
+<p>The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the
+read data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+If the data_routing is set to TO_SB, the read data will be sent to the GMII VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_read</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">num_bytes</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">,]</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>num_bytes</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>Number of bytes to be read</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the read data</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_read</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read data and store it in the VVC&quot;</span><span class="p">);</span>
+<span class="n">gmii_read</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read 10 bytes of data&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gmii_read</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read data and send to Scoreboard for checking&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last read</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read.</span>
+<span class="p">...</span>
+<span class="n">gmii_read</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read data in VVC&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for read to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from read operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="gmii-expect-vvc">
+<span id="id5"></span><h4>gmii_expect()<a class="headerlink" href="#gmii-expect-vvc" title="Link to this heading"></a></h4>
+<p>Adds an expect command to the GMII VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gmii-expect-bfm"><span class="std std-ref">gmii_expect()</span></a> procedure. The gmii_expect() procedure will perform a
+read operation, then check if the read data is equal to the expected data in the data parameter. If the read data is not equal to
+the expected data parameter, an alert with severity ‘alert_level’ will be issued. The read data will not be stored in this procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gmii_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of bytes containing the data to be expected</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gmii_expect</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;02&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;03&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;04&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Expect 4 bytes from DUT&quot;</span><span class="p">);</span>
+<span class="n">gmii_expect</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_bytes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Expect v_num_bytes from DUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-text">GMII transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_gmii_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>data_array</p></td>
+<td><p>t_slv_array(0 to 2047)(7
+downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data for GMII read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. gmii_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
+TO_SB parameter is applied. The GMII scoreboard is accessible from the testbench as a shared variable GMII_VVC_SB, located in the
+vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">GMII_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_GMII_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the GMII VVC scoreboard using the GMII_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The unwanted activity detection is ignored when the rxdv signal goes low within one clock period after the VVC becomes inactive.
+This is to handle the situation when the read command exits before the next rising edge, causing signal transitions during the
+first clock cycle after the VVC is inactive.</p>
+<p>For GMII VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature is only implemented on gmii_rx_vvc.</p>
+</div>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id6">
+<h3>Compilation<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>The GMII VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>GMII BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the GMII VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-text">Compile order for the GMII VVC</span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>gmii_bfm_pkg.vhd</p></td>
+<td><p>GMII BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gmii</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>GMII transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>GMII VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gmii</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gmii</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>GMII VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>GMII VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gmii</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gmii</p></td>
+<td><p>gmii_tx_vvc.vhd</p></td>
+<td><p>GMII TX VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>gmii_rx_vvc.vhd</p></td>
+<td><p>GMII RX VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gmii</p></td>
+<td><p>gmii_vvc.vhd</p></td>
+<td><p>GMII VVC wrapper for the TX and RX VVCs</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gmii</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>GMII VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id7">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id8">
+<h3>Additional Documentation<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for GMII.</p></li>
+<li><p>The given VIP complies with the basic GMII protocol and thus allows a normal access towards a GMII interface.</p></li>
+<li><p>This VIP is not a GMII protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -122,6 +1295,7 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
 </section>
 </section>
 
@@ -136,7 +1310,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

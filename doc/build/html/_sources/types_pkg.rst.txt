@@ -274,7 +274,7 @@ t_data_routing
 ----------------------------------------------------------------------------------------------------------------------------------
 .. code-block::
 
-    NA, TO_SB, TO_BUFFER, FROM_BUFFER, TO_RECEIVE_BUFFER
+    NA, TO_SB, TO_BUFFER, FROM_BUFFER
 
 
 .. _t_report_alert_counters:
@@ -329,3 +329,69 @@ t_extent_tickoff
 .. code-block::
 
     LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF
+
+
+.. _t_action_when_transfer_is_done:
+
+t_action_when_transfer_is_done
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_AFTER_TRANSFER
+
+
+.. _t_action_between_words:
+
+t_action_between_words
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    RELEASE_LINE_BETWEEN_WORDS, HOLD_LINE_BETWEEN_WORDS
+
+
+.. _t_when_to_start_transfer:
+
+t_when_to_start_transfer
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    START_TRANSFER_IMMEDIATE, START_TRANSFER_ON_NEXT_SS
+
+
+.. _t_stop_bits:
+
+t_stop_bits
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    STOP_BITS_ONE, STOP_BITS_ONE_AND_HALF, STOP_BITS_TWO
+
+
+.. _t_parity:
+
+t_parity
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    PARITY_NONE, PARITY_ODD, PARITY_EVEN
+
+
+.. _t_necessary_condition:
+
+t_necessary_condition
+----------------------------------------------------------------------------------------------------------------------------------
+ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE
+
+
+.. _t_pos_ack_kind:
+
+t_pos_ack_kind
+----------------------------------------------------------------------------------------------------------------------------------
+EVERY, FIRST
+
+
+.. _t_accept_all_zeros:
+
+t_accept_all_zeros
+----------------------------------------------------------------------------------------------------------------------------------
+ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED

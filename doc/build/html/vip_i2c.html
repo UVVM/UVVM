@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -68,8 +69,58 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP I2C</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#signal-record">Signal Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-transmit">i2c_master_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-receive">i2c_master_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-check">i2c_master_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-quick-command">i2c_master_quick_command()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-slave-transmit">i2c_slave_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-slave-receive">i2c_slave_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-slave-check">i2c_slave_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init-i2c-if-signals">init_i2c_if_signals()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-configuration">Local BFM configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-transmit-vvc">i2c_master_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-receive-vvc">i2c_master_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-check-vvc">i2c_master_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-master-quick-command-vvc">i2c_master_quick_command()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-slave-transmit-vvc">i2c_slave_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-slave-receive-vvc">i2c_slave_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2c-slave-check-vvc">i2c_slave_check()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Additional Documentation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
@@ -108,13 +159,2018 @@
              
   <section id="bitvis-vip-i2c">
 <h1>Bitvis VIP I2C<a class="headerlink" href="#bitvis-vip-i2c" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#i2c-master-transmit-bfm"><span class="std std-ref">i2c_master_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-master-receive-bfm"><span class="std std-ref">i2c_master_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-master-check-bfm"><span class="std std-ref">i2c_master_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-master-quick-command-bfm"><span class="std std-ref">i2c_master_quick_command()</span></a></p></li>
+<li><p><a class="reference internal" href="#init-i2c-if-signals-bfm"><span class="std std-ref">init_i2c_if_signals()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-slave-transmit-bfm"><span class="std std-ref">i2c_slave_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-slave-receive-bfm"><span class="std std-ref">i2c_slave_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-slave-check-bfm"><span class="std std-ref">i2c_slave_check()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#i2c-master-transmit-vvc"><span class="std std-ref">i2c_master_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-master-receive-vvc"><span class="std std-ref">i2c_master_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-master-check-vvc"><span class="std std-ref">i2c_master_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-master-quick-command-vvc"><span class="std std-ref">i2c_master_quick_command()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-slave-transmit-vvc"><span class="std std-ref">i2c_slave_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-slave-receive-vvc"><span class="std std-ref">i2c_slave_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#i2c-slave-check-vvc"><span class="std std-ref">i2c_slave_check()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
 <section id="bfm">
-<span id="vip-i2c-bfm"></span><h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_i2c/doc/i2c_bfm_QuickRef.pdf">i2c_bfm_QuickRef.pdf</a></p>
+<h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
+<p>BFM functionality is implemented in i2c_bfm_pkg.vhd</p>
+<section id="signal-record">
+<span id="t-i2c-if"></span><h3>Signal Record<a class="headerlink" href="#signal-record" title="Link to this heading"></a></h3>
+<p><strong>t_i2c_if</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scl</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>sda</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>BFM calls can also be made with listing of single signals rather than t_i2c_if.</p>
+</div>
+</section>
+<section id="configuration-record">
+<span id="t-i2c-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_i2c_bfm_config</strong></p>
+<p>Default value for the record is C_I2C_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>enable_10_bits_addressing</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>True: 10-bits addressing enabled. False: 7-bits
+addressing enabled.</p></td>
+</tr>
+<tr class="row-odd"><td><p>master_sda_to_scl</p></td>
+<td><p>time</p></td>
+<td><p>20 ns</p></td>
+<td><p>Time from activation of SDA until activation of
+SCL. Used for start condition.</p></td>
+</tr>
+<tr class="row-even"><td><p>master_scl_to_sda</p></td>
+<td><p>time</p></td>
+<td><p>20 ns</p></td>
+<td><p>Time from last SCL until SDA off. Used for stop
+condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p>master_stop_condition_hold_time</p></td>
+<td><p>time</p></td>
+<td><p>20 ns</p></td>
+<td><p>Ensures that the master holds the stop condition
+for a certain amount of time before the next
+operation is started.</p></td>
+</tr>
+<tr class="row-even"><td><p>max_wait_scl_change</p></td>
+<td><p>time</p></td>
+<td><p>10 ms</p></td>
+<td><p>Timeout when checking the SCL active period.</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_wait_scl_change_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>failure</p></td>
+<td><p>The above timeout will have this severity.</p></td>
+</tr>
+<tr class="row-even"><td><p>max_wait_sda_change</p></td>
+<td><p>time</p></td>
+<td><p>10 ms</p></td>
+<td><p>Used when receiving and in slave transmit.</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_wait_sda_change_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>failure</p></td>
+<td><p>The above timeout will have this severity.</p></td>
+</tr>
+<tr class="row-even"><td><p>i2c_bit_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Bit period. Will give a TB_ERROR if not set to
+a different value than -1.</p></td>
+</tr>
+<tr class="row-odd"><td><p>i2c_bit_time_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>failure</p></td>
+<td><p>A master method will report an alert with this
+severity if a slave performs clock stretching
+for longer than i2c_bit_time.</p></td>
+</tr>
+<tr class="row-even"><td><p>acknowledge_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>failure</p></td>
+<td><p>Severity of alert if message not acknowledged.</p></td>
+</tr>
+<tr class="row-odd"><td><p>slave_mode_address</p></td>
+<td><p>unsigned(9 downto 0)</p></td>
+<td><p>0</p></td>
+<td><p>The slave methods expect to receive this address
+from the I2C master DUT.</p></td>
+</tr>
+<tr class="row-even"><td><p>slave_mode_address_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>failure</p></td>
+<td><p>The methods will report an alert with this
+severity if the address format is wrong or the
+address is not as expected.</p></td>
+</tr>
+<tr class="row-odd"><td><p>slave_rw_bit_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>failure</p></td>
+<td><p>The methods will report an alert with this
+severity if the Read/Write bit is not as
+expected.</p></td>
+</tr>
+<tr class="row-even"><td><p>reserved_address_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>warning</p></td>
+<td><p>The methods will trigger an alert with this
+severity if the slave address is equal to one
+of the reserved addresses from the NXP I2C
+Specification.</p>
+<p>For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_EXACT</p></td>
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm_wait</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_WAIT</p></td>
+<td><p>Message ID used for logging waits in the BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm_poll</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_POLL</p></td>
+<td><p>Message ID used for logging polling in the BFM</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The record <a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a> can be replaced with the signals listed in said record.</p></li>
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The BFM configuration has to be defined and used when calling the I2C BFM procedures. See <a class="reference internal" href="#i2c-local-bfm-config"><span class="std std-ref">Local BFM configuration</span></a> for an
+example of how to define a local BFM config.</p>
+</div>
+<section id="i2c-master-transmit">
+<span id="i2c-master-transmit-bfm"></span><h4>i2c_master_transmit()<a class="headerlink" href="#i2c-master-transmit" title="Link to this heading"></a></h4>
+<p>Transmits the data to the slave DUT at the specified address using the I2C protocol. For protocol details, see <a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a>.</p>
+<p>The procedure reports an alert if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The i2c_if signals do not change within the timeouts given in config. Verifies that the bus is alive.</p></li>
+<li><p>The ‘addr_value’ is wider than 7 bits in 7-bit addressing mode.</p></li>
+<li><p>The ‘addr_value’ is wider than 10 bits in 10-bit addressing mode.</p></li>
+<li><p>The ‘addr_value’ is equal to a I2C specification reserved address in 7-bit addressing mode.</p></li>
+<li><p>If ‘data’ is of type std_logic_vector: The data is wider than 8 bits.</p></li>
+<li><p>If ‘data’ is of type t_byte_array: The byte array is descending (using downto).</p></li>
+<li><p>A slave holds the ‘scl’ signal low for longer than ‘config.i2c_bit_time’.</p></li>
+<li><p>The acknowledge bit set by the slave DUT after every transmitted byte is not ‘0’.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to be transmitted to the DUT, either a
+single byte or a byte array.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;10&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">);</span>
+<span class="n">i2c_master_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">byte_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Transmitting data to peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A to DUT&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-master-receive">
+<span id="i2c-master-receive-bfm"></span><h4>i2c_master_receive()<a class="headerlink" href="#i2c-master-receive" title="Link to this heading"></a></h4>
+<p>Receives data from the slave DUT at the specified address using the I2C protocol and stores it in ‘data_output’. For protocol
+details, see <a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a>.</p>
+<p>The procedure will report alerts for the same conditions as the <a class="reference internal" href="#i2c-master-transmit-bfm"><span class="std std-ref">i2c_master_transmit()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_receive</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>data</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value read from the addressed register, either
+a single byte or a byte array.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_receive</span><span class="p">(</span><span class="mh">x&quot;BB&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">);</span>
+<span class="n">i2c_master_receive</span><span class="p">(</span><span class="mh">x&quot;BB&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span>
+<span class="w">                   </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_master_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from Peripheral 1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-master-check">
+<span id="i2c-master-check-bfm"></span><h4>i2c_master_check()<a class="headerlink" href="#i2c-master-check" title="Link to this heading"></a></h4>
+<p>Receives data from the slave DUT at the given address, using the receive procedure as described in <a class="reference internal" href="#i2c-master-receive-bfm"><span class="std std-ref">i2c_master_receive()</span></a>.
+After receiving data, the data is compared with the expected data.</p>
+<ul class="simple">
+<li><p>If the check was successful, and the received data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the received data did not match the expected data, an alert with severity ‘alert_level’ will be reported.</p></li>
+<li><p>The procedure will report alerts for the same conditions as the <a class="reference internal" href="#i2c-master-transmit-bfm"><span class="std std-ref">i2c_master_transmit()</span></a> procedure.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_check</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to expect when receiving the addressed
+register, either a single byte or a byte array. A
+mismatch results in an alert with severity ‘alert_level’</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_check</span><span class="p">(</span><span class="mh">x&quot;CC&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on I2C&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">);</span>
+<span class="n">i2c_master_check</span><span class="p">(</span><span class="mh">x&quot;CC&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on I2C&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="w">               </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_master_check</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-master-quick-command">
+<span id="i2c-master-quick-command-bfm"></span><h4>i2c_master_quick_command()<a class="headerlink" href="#i2c-master-quick-command" title="Link to this heading"></a></h4>
+<p>Transmits a zero-byte message to a slave DUT at the specified address using the I2C protocol.</p>
+<ul class="simple">
+<li><p>The procedure will report alerts for the same conditions as the <a class="reference internal" href="#i2c-master-transmit-bfm"><span class="std std-ref">i2c_master_transmit()</span></a> procedure.</p></li>
+<li><p>It will also report an error of ‘alert_level’ severity if ‘exp_ack’ is false and the DUT acks the quick command or if ‘exp_ack’
+is true and the DUT does not ack the quick command.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">rw_bit</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">exp_ack</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>rw_bit</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Expected R/W bit. ‘1’: read, ‘0’: write. Default value
+is ‘0’ (write).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>exp_ack</p></td>
+<td><p>in</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true or false depending on whether or not the
+slave is expected to acknowledge the quick command.
+Default value is true.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Pinging I2C slave, expecting ACK&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">);</span>
+<span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending read QC to I2C slave&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="w">                         </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="n">C_ADDR_S1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Pinging I2C slave, expecting ACK&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-slave-transmit">
+<span id="i2c-slave-transmit-bfm"></span><h4>i2c_slave_transmit()<a class="headerlink" href="#i2c-slave-transmit" title="Link to this heading"></a></h4>
+<p>Transmits the data to the master DUT using the I2C protocol. For protocol details, see <a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a>.</p>
+<p>The procedure reports an alert if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The i2c_if signals do not change within the timeouts given in config. Verifies that the bus is alive.</p></li>
+<li><p>The ‘config.slave_mode_address’ has its 3 most-significant bits (9-7) set when in 7-bit addressing mode.</p></li>
+<li><p>The ‘config.slave_mode_address’ is equal to a I2C specification reserved address in 7-bit addressing mode.</p></li>
+<li><p>If ‘data’ is of type std_logic_vector: The data is wider than 8 bits.</p></li>
+<li><p>If ‘data’ is of type t_byte_array: The byte array is descending (using downto).</p></li>
+<li><p>The received address is not equal to the address set in ‘config.slave_mode_address’.</p></li>
+<li><p>The Read/Write bit received from the master is not as expected.</p></li>
+<li><p>The acknowledge bit set by the master DUT after every transmitted byte is not as expected. Expects ACK (‘0’) after every
+byte except the very last byte where a NACK (‘1’) is expected.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to be transmitted to the DUT, either a
+single byte or a byte array.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">);</span>
+<span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A to master&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-slave-receive">
+<span id="i2c-slave-receive-bfm"></span><h4>i2c_slave_receive()<a class="headerlink" href="#i2c-slave-receive" title="Link to this heading"></a></h4>
+<p>Receives data from the master DUT using the I2C protocol and stores it in ‘data’. For protocol details, see <a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a>.</p>
+<p>The procedure will report alerts for the same conditions as the <a class="reference internal" href="#i2c-slave-transmit-bfm"><span class="std std-ref">i2c_slave_transmit()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>data</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value read from the addressed register, either
+a single byte or a byte array.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">);</span>
+<span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from master&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-slave-check">
+<span id="i2c-slave-check-bfm"></span><h4>i2c_slave_check()<a class="headerlink" href="#i2c-slave-check" title="Link to this heading"></a></h4>
+<p>Receives data from the master DUT, using the receive procedure as described in <a class="reference internal" href="#i2c-slave-receive-bfm"><span class="std std-ref">i2c_slave_receive()</span></a>.
+After receiving data, the data is compared with the expected data.</p>
+<ul class="simple">
+<li><p>If the check was successful, and the received data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the received data did not match the expected data, an alert with severity ‘alert_level’ will be reported.</p></li>
+<li><p>The procedure will report alerts for the same conditions as the <a class="reference internal" href="#i2c-slave-transmit-bfm"><span class="std std-ref">i2c_slave_transmit()</span></a> procedure.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">exp_rw_bit</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to expect when receiving the addressed
+register, either a single byte or a byte array. A
+mismatch results in an alert with severity ‘alert_level’</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>i2c_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>exp_rw_bit</p></td>
+<td><p>inout</p></td>
+<td><p>std_logic</p></td>
+<td><p>Expected R/W bit. ‘1’: read, ‘0’: write. Default value
+is ‘0’ (write). If this parameter is set to ‘1’ (read)
+the data_exp parameter needs to be an empty byte_array,
+otherwise, an error will be reported.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on I2C&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">);</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on I2C&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_WRITE_BIT</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="init-i2c-if-signals">
+<span id="init-i2c-if-signals-bfm"></span><h4>init_i2c_if_signals()<a class="headerlink" href="#init-i2c-if-signals" title="Link to this heading"></a></h4>
+<p>Initializes the I2C interface. All the BFM outputs are set to ‘0’, and BFM inputs are set to ‘Z’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_i2c_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_i2c_if_signals</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_i2c_if_signals</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">C_SLAVE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">C_SLAVE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i2c_if</span><span class="p">,</span><span class="w"> </span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_CONFIG_LOCAL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">i2c_master_transmit</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">addr_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">unsigned</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
+<span class="w">                      </span><span class="n">data_value</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
+<span class="w">                      </span><span class="n">msg</span><span class="p">,</span><span class="w">                         </span><span class="c1">-- Keep as is</span>
+<span class="w">                      </span><span class="n">i2c_if</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">                      </span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Shall generate stop condition at the end of every transmit</span>
+<span class="w">                      </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">                     </span><span class="c1">-- Use the default</span>
+<span class="w">                      </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w">         </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="w">                      </span><span class="n">C_I2C_CONFIG_LOCAL</span><span class="p">);</span><span class="w">         </span><span class="c1">-- Use locally defined configuration or C_I2C_CONFIG_DEFAULT</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Have address value as natural – and convert in the overload</p></li>
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="local-bfm-configuration">
+<span id="i2c-local-bfm-config"></span><h3>Local BFM configuration<a class="headerlink" href="#local-bfm-configuration" title="Link to this heading"></a></h3>
+<p>The I2C BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM
+configuration is defined with a I2C bit time of -1 ns so that the BFM can detect and alert the user that the configuration has not
+been set.</p>
+<p>Defining a local I2C BFM configuration::</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_I2C_CONFIG_LOCAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_i2c_bfm_config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">enable_10_bits_addressing</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">false</span><span class="p">,</span>
+<span class="w">  </span><span class="n">master_sda_to_scl</span><span class="w">               </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">400</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
+<span class="w">  </span><span class="n">master_scl_to_sda</span><span class="w">               </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">505</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
+<span class="w">  </span><span class="n">master_stop_condition_hold_time</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">505</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
+<span class="w">  </span><span class="n">max_wait_scl_change</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span>
+<span class="w">  </span><span class="n">max_wait_scl_change_severity</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">failure</span><span class="p">,</span>
+<span class="w">  </span><span class="n">max_wait_sda_change</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span>
+<span class="w">  </span><span class="n">max_wait_sda_change_severity</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">failure</span><span class="p">,</span>
+<span class="w">  </span><span class="n">i2c_bit_time</span><span class="w">                    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">1100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
+<span class="w">  </span><span class="n">i2c_bit_time_severity</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">failure</span><span class="p">,</span>
+<span class="w">  </span><span class="n">acknowledge_severity</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">failure</span><span class="p">,</span>
+<span class="w">  </span><span class="n">slave_mode_address</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_I2C_SLAVE_DUT_ADDR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">slave_mode_address_severity</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">failure</span><span class="p">,</span>
+<span class="w">  </span><span class="n">slave_rw_bit_severity</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">failure</span><span class="p">,</span>
+<span class="w">  </span><span class="n">reserved_address_severity</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">warning</span><span class="p">,</span>
+<span class="w">  </span><span class="n">match_strictness</span><span class="w">                </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">MATCH_EXACT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm</span><span class="w">                      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm_wait</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM_WAIT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm_poll</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM_POLL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<span id="i2c-additional-doc"></span><h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<p>For additional documentation on the I2C protocol, please see the NXP I2C specification “UM10204 I2C-bus specification and user
+manual Rev. 6”, available from NXP Semiconductors.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Bus Functional Model (BFM) for I2C.</p></li>
+<li><p>The given BFM complies with the basic I2C protocol and thus allows a normal access towards a I2C interface.</p></li>
+<li><p>This BFM is not a I2C protocol checker.</p></li>
+<li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
 </section>
 <section id="vvc">
-<span id="vip-i2c-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_i2c/doc/i2c_vvc_QuickRef.pdf">i2c_vvc_QuickRef.pdf</a></p>
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in i2c_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_MASTER_MODE</p></td>
+<td><p>boolean</p></td>
+<td><p>true</p></td>
+<td><p>When set to ‘true’ the VVC may only use the
+‘i2c_master_&lt;transmit/check&gt;’ methods. When set
+to ‘false’ it may only use the
+‘i2c_slave_&lt;transmit/check&gt;’ methods.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_I2C_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>C_I2C_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the I2C BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>i2c_vvc_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-i2c-if"><span class="std std-ref">t_i2c_if</span></a></p></td>
+<td><p>I2C signal interface record</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id1">
+<h3>Configuration Record<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_i2c_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_I2C_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-i2c-bfm-config"><span class="std std-ref">t_i2c_bfm_config</span></a></p></td>
+<td><p>C_I2C_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the I2C BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">i2c_bit_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_i2c_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="i2c-master-transmit-vvc">
+<span id="id3"></span><h4>i2c_master_transmit()<a class="headerlink" href="#i2c-master-transmit-vvc" title="Link to this heading"></a></h4>
+<p>Adds a master transmit command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed.
+When the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-master-transmit-bfm"><span class="std std-ref">i2c_master_transmit()</span></a> procedure. This procedure can only
+be called when the I2C VVC is instantiated in master mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘true’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to be transmitted to the DUT, either a
+single byte or a byte array.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_SLAVE_0_ADDR</span><span class="p">,</span><span class="w">  </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to slave 0&quot;</span><span class="p">);</span>
+<span class="n">i2c_master_transmit</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_SLAVE_1_ADDR</span><span class="p">,</span><span class="w">  </span><span class="n">byte_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Transmitting byte array to slave 1 without generating stop condition at the end&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-master-receive-vvc">
+<span id="id4"></span><h4>i2c_master_receive()<a class="headerlink" href="#i2c-master-receive-vvc" title="Link to this heading"></a></h4>
+<p>Adds a master receive command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-master-receive-bfm"><span class="std std-ref">i2c_master_receive()</span></a> procedure.</p>
+<p>The received data will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the received
+data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+If the data_routing is set to TO_SB, the received data will be sent to the I2C VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench). This procedure can only be called when the I2C VVC is instantiated
+in master mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘true’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_receive</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">num_bytes</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">,]</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>num_bytes</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number of data bytes to receive.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the received data</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_receive</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_SLAVE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving 4 bytes from I2C Slave with address C_I2C_SLAVE_ADDR&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">i2c_master_receive</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_SLAVE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving 4 bytes and send to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read.</span>
+<span class="p">...</span>
+<span class="n">i2c_master_receive</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_I2C_SLAVE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Master receives 4 bytes from Slave with address C_I2C_SLAVE_ADDR&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="i2c-master-check-vvc">
+<span id="id5"></span><h4>i2c_master_check()<a class="headerlink" href="#i2c-master-check-vvc" title="Link to this heading"></a></h4>
+<p>Adds a master check command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-master-check-bfm"><span class="std std-ref">i2c_master_check()</span></a> procedure. The i2c_master_check() procedure
+will perform a receive operation, then check if the received data is equal to the expected data in the data parameter. If the
+received data is not equal to the expected data parameter, an alert with severity ‘alert_level’ will be issued.</p>
+<p>The received data will not be stored by this procedure. This procedure can only be called when the I2C VVC is instantiated in
+master mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘true’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_check</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to expect when receiving the addressed
+register, either a single byte or a byte array. A
+mismatch results in an alert with severity ‘alert_level’</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_SLAVE_0_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">byte_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Expecting byte array from Slave 0&quot;</span><span class="p">);</span>
+<span class="n">i2c_master_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_SLAVE_1_ADDR</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from Slave 1 without generating stop condition at the end&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-master-quick-command-vvc">
+<span id="id6"></span><h4>i2c_master_quick_command()<a class="headerlink" href="#i2c-master-quick-command-vvc" title="Link to this heading"></a></h4>
+<p>Adds a master quick command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed.
+When the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-master-quick-command-bfm"><span class="std std-ref">i2c_master_quick_command()</span></a> procedure. This procedure can only
+be called when the I2C VVC is instantiated in master mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘true’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">rw_bit</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">exp_ack</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">action_when_transfer_is_done</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>Slave address. Valid address lengths are 7 bits and 10
+bits. 7-bit addresses with the four most-significant
+bits equal to x”0” and x”F” are reserved by the I2C
+standard. For a list of reserved addresses, please see
+<a class="reference internal" href="#i2c-additional-doc"><span class="std std-ref">Additional Documentation</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>rw_bit</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Expected R/W bit. ‘1’: read, ‘0’: write. Default value
+is ‘0’ (write).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>exp_ack</p></td>
+<td><p>in</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true or false depending on whether or not the
+slave is expected to acknowledge the quick command.
+Default value is true.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>action_when_transfer_is_done</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>Whether or not the I2C master method shall generate a
+stop condition after the operation is finished. Default
+value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_SLAVE_0_ADDR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Quick Command to Slave 0&quot;</span><span class="p">);</span>
+<span class="n">i2c_master_quick_command</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_SLAVE_0_ADDR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending QC to I2C slave&quot;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-slave-transmit-vvc">
+<span id="id7"></span><h4>i2c_slave_transmit()<a class="headerlink" href="#i2c-slave-transmit-vvc" title="Link to this heading"></a></h4>
+<p>Adds a slave transmit command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed.
+When the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-slave-transmit-bfm"><span class="std std-ref">i2c_slave_transmit()</span></a> procedure. This procedure can only
+be called when the I2C VVC is instantiated in slave mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘false’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to be transmitted to the DUT, either a
+single byte or a byte array.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting a single byte to master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">i2c_slave_transmit</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">byte_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">9</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Transmitting an array of bytes to master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="i2c-slave-receive-vvc">
+<span id="id8"></span><h4>i2c_slave_receive()<a class="headerlink" href="#i2c-slave-receive-vvc" title="Link to this heading"></a></h4>
+<p>Adds a slave receive command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-slave-receive-bfm"><span class="std std-ref">i2c_slave_receive()</span></a> procedure.</p>
+<p>The received data will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the received
+data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+If the data_routing is set to TO_SB, the received data will be sent to the I2C VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench). This procedure can only be called when the I2C VVC is instantiated
+in slave mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘false’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">num_bytes</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">,]</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>num_bytes</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number of data bytes to receive.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the received data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;One byte from master to slave&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;One byte from master to slave sent to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read.</span>
+<span class="p">...</span>
+<span class="n">i2c_slave_receive</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Slave receives 4 bytes from Master&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="i2c-slave-check-vvc">
+<span id="id9"></span><h4>i2c_slave_check()<a class="headerlink" href="#i2c-slave-check-vvc" title="Link to this heading"></a></h4>
+<p>Adds a slave check command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#i2c-slave-check-bfm"><span class="std std-ref">i2c_slave_check()</span></a> procedure. The i2c_slave_check() procedure
+will perform a receive operation, then check if the received data is equal to the expected data in the data parameter. If the
+received data is not equal to the expected data parameter, an alert with severity ‘alert_level’ will be issued.</p>
+<p>The received data will not be stored by this procedure. This procedure can only be called when the I2C VVC is instantiated in
+slave mode, i.e. setting the VVC entity generic constant ‘GC_MASTER_MODE’ to ‘false’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">rw_bit</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">rw_bit</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p>
+<p>t_byte_array</p>
+</td>
+<td><p>The data value to expect when receiving the addressed
+register, either a single byte or a byte array. A
+mismatch results in an alert with severity ‘alert_level’</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>rw_bit</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Expected R/W bit. ‘1’: read, ‘0’: write. Default value
+is ‘0’ (write).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from master&quot;</span><span class="p">);</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting write type Quick Command from master&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-text">I2C transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_i2c_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>addr</p></td>
+<td><p>unsigned(9 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Slave address to interact with when VVC is in
+master mode</p></td>
+</tr>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>t_byte_array(0 to 63)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data for I2C receive or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_bytes</p></td>
+<td><p>natural</p></td>
+<td><p>0</p></td>
+<td><p>Number of bytes to be received</p></td>
+</tr>
+<tr class="row-even"><td><p>action_when_transfer_is_done</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done"><span class="std std-ref">t_action_when_transfer_is_done</span></a></p></td>
+<td><p>RELEASE_LINE_AFTER_TRANSFER</p></td>
+<td><p>Whether or not the I2C master method generates a
+stop condition after the operation is finished</p></td>
+</tr>
+<tr class="row-odd"><td><p>exp_ack</p></td>
+<td><p>boolean</p></td>
+<td><p>true</p></td>
+<td><p>Expected acknowledge bit during a Quick Command.
+Can be used to identify if a slave is present on
+the bus.</p></td>
+</tr>
+<tr class="row-even"><td><p>rw_bit</p></td>
+<td><p>std_logic</p></td>
+<td><p>‘0’</p></td>
+<td><p>Bit set in the R/W# slot of the Quick Command</p></td>
+</tr>
+<tr class="row-odd"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. i2c_master_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method
+when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable I2C_VVC_SB, located
+in the vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">I2C_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_I2C_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_i2c_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The I2C scoreboard is per default a 64 bits wide standard logic vector. When sending expected data to the scoreboard, where the
+data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_i2c_sb() function, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">I2C_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="o">&lt;</span><span class="n">I2C</span><span class="w"> </span><span class="n">VVC</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="n">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">pad_i2c_sb</span><span class="p">(</span><span class="o">&lt;</span><span class="n">exp</span><span class="w"> </span><span class="n">data</span><span class="o">&gt;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the I2C VVC scoreboard using the I2C_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If multiple I2C slave VVCs are connected to the same master DUT, unwanted activity will give alerts on the inactive slave VVCs. In
+order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive slave VVCs. Note that the unwanted
+activity detection must be enabled again after the data transfer is complete.</p>
+<p>For I2C VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id10">
+<h3>Compilation<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>The I2C VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>I2C BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the I2C VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id14">
+<caption><span class="caption-text">Compile order for the I2C VVC</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_i2c</p></td>
+<td><p>i2c_bfm_pkg.vhd</p></td>
+<td><p>I2C BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_i2c</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>I2C transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_i2c</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>I2C VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_i2c</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_i2c</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_i2c</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>I2C VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_i2c</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>I2C VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_i2c</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_i2c</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_i2c</p></td>
+<td><p>i2c_vvc.vhd</p></td>
+<td><p>I2C VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_i2c</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>I2C VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id11">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id12">
+<h3>Additional Documentation<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p>For additional documentation on the I2C protocol, please see the NXP I2C specification “UM10204 I2C-bus specification and user
+manual Rev. 6”, available from NXP Semiconductors.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for I2C.</p></li>
+<li><p>The given VIP complies with the basic I2C protocol and thus allows a normal access towards a I2C interface.</p></li>
+<li><p>This VIP is not a I2C protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -122,6 +2178,7 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
 </section>
 </section>
 
@@ -136,7 +2193,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

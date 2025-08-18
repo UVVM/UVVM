@@ -43,16 +43,20 @@ Default value for the record is C_GPIO_BFM_CONFIG_DEFAULT.
 +==============================+==============================+=================+=================================================+
 | clock_period                 | time                         | -1 ns           | Specifies the clock period                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_STD       | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | timeout                      | time                         | -1 ns           | Timeout value for the expected procedures. This |
 |                              |                              |                 | is only used if no timeout parameter is given   |
@@ -476,16 +480,19 @@ Signals
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| signal   | gpio_vvc_if        | inout  | std_logic_vector             | | This interface can be used as input, output or inout. |
-|          |                    |        |                              | | If the GC_DEFAULT_LINE_VALUE is set to 'Z', 'H' or 'L'|
-|          |                    |        |                              |   , the interface can be used as an input, output or    |
-|          |                    |        |                              |   inout.                                                |
-|          |                    |        |                              | | If the default is set to '1', '0' or 'U', the         |
-|          |                    |        |                              |   interface must be used as an output.                  |
-|          |                    |        |                              | | When using the interface as inout, the process        |
-|          |                    |        |                              |   currently driving the signal (DUT or VVC) must set it |
-|          |                    |        |                              |   to 'Z' after it is finished in order to release the   |
-|          |                    |        |                              |   interface so that the other process can drive it.     |
+| signal   | gpio_vvc_if        | inout  | std_logic_vector             | This interface can be used as input, output or inout.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If the GC_DEFAULT_LINE_VALUE is set to 'Z', 'H' or 'L', |
+|          |                    |        |                              | the interface can be used as an input, output or        |
+|          |                    |        |                              | inout.                                                  |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If the default is set to '1', '0' or 'U', the           |
+|          |                    |        |                              | interface must be used as an output.                    |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | When using the interface as inout, the process          |
+|          |                    |        |                              | currently driving the signal (DUT or VVC) must set it   |
+|          |                    |        |                              | to 'Z' after it is finished in order to release the     |
+|          |                    |        |                              | interface so that the other process can drive it.       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 Configuration Record
@@ -495,16 +502,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_GPIO_INTER_BF\| | Delay between any requested BFM accesses      |
-|                              |                              | M_DELAY_DEFAULT |   towards the DUT.                              |
-|                              |                              |                 | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_GPIO_INTER_BF\| Delay between any requested BFM accesses        |
+|                              |                              | M_DELAY_DEFAULT | towards the DUT.                                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -540,7 +550,7 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
 |                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+|                              |                              |                 | disabled with NO_ALERT severity by default.     |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -762,7 +772,7 @@ command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_bfm` p
 .. code-block::
 
     -- Examples:
-    gpio_expect(GPIO_VVCT, 1, x"0D", 2 ms, "Read UART RX until CR is found or timeout", ERROR, C_SCOPE);
+    gpio_expect(GPIO_VVCT, 0, x"0D", 2 ms, "Read UART RX until CR is found or timeout", ERROR, C_SCOPE);
 
 
 .. _gpio_expect_stable_vvc:
@@ -805,7 +815,7 @@ the command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_st
 .. code-block::
 
     -- Examples:
-    gpio_expect_stable(GPIO_VVCT, 1, x"0D", 100 us, FROM_NOW, 2 ms, "Read UART RX until CR is found and check that it remains stable for 100 us", ERROR, C_SCOPE);
+    gpio_expect_stable(GPIO_VVCT, 0, x"0D", 100 us, FROM_NOW, 2 ms, "Read UART RX until CR is found and check that it remains stable for 100 us", ERROR, C_SCOPE);
 
 
 Activity Watchdog

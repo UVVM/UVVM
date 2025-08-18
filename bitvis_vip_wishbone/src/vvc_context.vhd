@@ -16,6 +16,7 @@
 
 context vvc_context is
   library bitvis_vip_wishbone;
+  use bitvis_vip_wishbone.transaction_pkg.all;
   use bitvis_vip_wishbone.vvc_methods_pkg.all;
   use bitvis_vip_wishbone.td_vvc_framework_common_methods_pkg.all;
   use bitvis_vip_wishbone.wishbone_bfm_pkg.all;

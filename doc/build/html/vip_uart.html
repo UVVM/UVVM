@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -74,9 +75,64 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP UART</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#monitor">Monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uart-transmit">uart_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uart-receive">uart_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uart-expect">uart_expect()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-configuration">Local BFM configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uart-transmit-vvc">uart_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uart-receive-vvc">uart_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uart-expect-vvc">uart_expect()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Additional Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#monitor">Monitor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#t-uart-monitor-config">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Transaction info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#message-ids">Message IDs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id15">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Additional Documentation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
@@ -109,17 +165,1606 @@
              
   <section id="bitvis-vip-uart">
 <h1>Bitvis VIP UART<a class="headerlink" href="#bitvis-vip-uart" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#uart-transmit-bfm"><span class="std std-ref">uart_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#uart-receive-bfm"><span class="std std-ref">uart_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#uart-expect-bfm"><span class="std std-ref">uart_expect()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#uart-transmit-vvc"><span class="std std-ref">uart_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#uart-receive-vvc"><span class="std std-ref">uart_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#uart-expect-vvc"><span class="std std-ref">uart_expect()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#monitor">Monitor</a></p></li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
 <section id="bfm">
 <span id="vip-uart-bfm"></span><h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_uart/doc/uart_bfm_QuickRef.pdf">uart_bfm_QuickRef.pdf</a></p>
+<p>BFM functionality is implemented in uart_bfm_pkg.vhd</p>
+<section id="configuration-record">
+<span id="t-uart-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_uart_bfm_config</strong></p>
+<p>Default value for the record is C_UART_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bit_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>The time it takes to transfer one bit. Will
+raise an error if not set.</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_data_bits</p></td>
+<td><p>natural range 7 to 8</p></td>
+<td><p>8</p></td>
+<td><p>Number of data bits to send per transmission</p></td>
+</tr>
+<tr class="row-even"><td><p>idle_state</p></td>
+<td><p>std_logic</p></td>
+<td><p>‘1’</p></td>
+<td><p>Bit value when line is idle</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_stop_bits</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-stop-bits"><span class="std std-ref">t_stop_bits</span></a></p></td>
+<td><p>STOP_BITS_ONE</p></td>
+<td><p>Number of stop-bits to use per transmission</p></td>
+</tr>
+<tr class="row-even"><td><p>parity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-parity"><span class="std std-ref">t_parity</span></a></p></td>
+<td><p>PARITY_ODD</p></td>
+<td><p>Transmission parity bit</p></td>
+</tr>
+<tr class="row-odd"><td><p>timeout</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>The maximum time to wait for the UART start bit
+on the RX line before timeout</p></td>
+</tr>
+<tr class="row-even"><td><p>timeout_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>The above timeout will have this severity</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_bytes_to_log_before_expected_data</p></td>
+<td><p>natural</p></td>
+<td><p>10</p></td>
+<td><p>Maximum number of bytes to save ahead of the
+expected data in the receive buffer. The bytes
+in the receive buffer will be logged.</p></td>
+</tr>
+<tr class="row-even"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_EXACT</p></td>
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm_wait</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_WAIT</p></td>
+<td><p>Message ID used for logging waits in the BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm_poll</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_POLL</p></td>
+<td><p>DEPRECATED</p></td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm_poll_summary</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_POLL_SUMMARY</p></td>
+<td><p>Message ID used for logging polling summary in
+the BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>error_injection</p></td>
+<td><p>t_bfm_error_injection</p></td>
+<td><p>C_BFM_ERROR_INJECTION_INACTIVE</p></td>
+<td><p>Record to set up error injection in the BFM
+procedure calls</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>t_bfm_error_injection</strong></p>
+<p>Default value for the record is C_BFM_ERROR_INJECTION_INACTIVE.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>parity_bit_error</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Will invert the parity bit in a transmission if
+TRUE, and thus generate a parity error.</p></td>
+</tr>
+<tr class="row-odd"><td><p>stop_bit_error</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Will invert the first stop bit in a transmission
+if TRUE. Note that the following UART frame may
+be misinterpreted if there is no Idle period or
+additional stop bits after the error injection.
+Hence a stop_bit_error may lead to multiple
+following UART frame errors.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For more information on error injection, please see <a class="reference internal" href="vvc_framework.html#vvc-framework-error-injection"><span class="std std-ref">Protocol Aware Error Injection</span></a>.</p>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The BFM configuration has to be defined and used when calling the UART BFM procedures. See <a class="reference internal" href="#uart-local-bfm-config"><span class="std std-ref">Local BFM configuration</span></a> for an
+example of how to define a local BFM config.</p>
+</div>
+<section id="uart-transmit">
+<span id="uart-transmit-bfm"></span><h4>uart_transmit()<a class="headerlink" href="#uart-transmit" title="Link to this heading"></a></h4>
+<p>Transmits data to the DUT using the UART protocol. For protocol details, see the UART specification.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The start bit, stop bit, parity, number of stop bits and number of data bits per transmission is defined in the ‘config’
+parameter.</p></li>
+<li><p>Errors may be injected depending on the ‘config.error_injection’ sub-record.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be transmitted to the DUT</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tx</p></td>
+<td><p>inout</p></td>
+<td><p>std_logic</p></td>
+<td><p>The UART BFM transmission signal. Must be connected to
+the UART DUT ‘rx’ port.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_UART_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“UART BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A to DUT UART&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="uart-receive">
+<span id="uart-receive-bfm"></span><h4>uart_receive()<a class="headerlink" href="#uart-receive" title="Link to this heading"></a></h4>
+<p>Receives data from the DUT using the UART protocol. For protocol details, see the UART specification.</p>
+<p>When called, the procedure will wait for the start bit to be present on the rx line. The initial wait for the start bit will be
+terminated if one of the following occurs:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>The start bit is present on the rx line.</p></li>
+<li><p>The terminate_loop flag is set to ‘1’.</p></li>
+<li><p>The number of clock cycles waited for the start bit exceeds ‘config.max_wait_cycles’ clock cycles.</p></li>
+</ol>
+</div></blockquote>
+<p>Once all the bits have been received according to the UART specification, the parity and stop bit are checked. If correct, the
+read data is placed on the output ‘data_value’ and the procedure returns.</p>
+<p>The procedure reports an alert if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Timeout occurs, i.e. start bit does not occur within ‘config.max_wait_cycles’ clock cycles (alert level: ‘config.max_wait_cycles_severity’)</p></li>
+<li><p>terminate_loop is set to ‘1’ (alert level: WARNING)</p></li>
+<li><p>Expected stop_bit does not match received stop bit(s) (alert level: ERROR)</p></li>
+<li><p>Calculated parity ‘config.parity’ does not match received parity (alert level: ERROR)</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_receive</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_loop</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>data_value</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value received from the DUT</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>rx</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The UART BFM reception signal. Must be connected to the
+UART DUT ‘tx’ port.</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>terminate_loop</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>External control of loop termination to e.g. stop expect
+procedure prematurely</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_UART_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“UART BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from DUT UART&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="uart-expect">
+<span id="uart-expect-bfm"></span><h4>uart_expect()<a class="headerlink" href="#uart-expect" title="Link to this heading"></a></h4>
+<p>Receives data from the DUT using the UART protocol described under <a class="reference internal" href="#uart-receive-bfm"><span class="std std-ref">uart_receive()</span></a>. After receiving data from the DUT, the
+received data is compared with the expected data. If the received data does not match the expected data, another uart_receive()
+procedure will be initiated. This process will repeat until one of the following occurs:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>The received data matches the expected data.</p></li>
+<li><p>A timeout occurs.</p></li>
+<li><p>The process has repeated ‘max_receptions’ number of times.</p></li>
+<li><p>The ‘terminate_loop’ signal is set to ‘1’.</p></li>
+</ol>
+</div></blockquote>
+<div class="line-block">
+<div class="line">A log message with ID ‘config.id_for_bfm’ is issued when the procedure starts.</div>
+<div class="line">If the data was received successfully, and the received data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</div>
+<div class="line">If the received data did not match the expected data, an alert with severity ‘alert_level’ will be reported.</div>
+<div class="line">This procedure reports an alert if:</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘max_receptions’ and ‘timeout’ are set to 0, which will result in a possible infinite loop (alert_level: ERROR)</p></li>
+<li><p>The expected data is not received within the time set in ‘timeout’ (alert_level: ‘alert_level’)</p></li>
+<li><p>The expected data is not received within the number of received packets set in ‘max_receptions’ (alert_level: ‘alert_level’)</p></li>
+<li><p>‘terminate_loop’ is set to ‘1’ (alert_level: WARNING)</p></li>
+<li><p>The same alert conditions as the <a class="reference internal" href="#uart-receive-bfm"><span class="std std-ref">uart_receive()</span></a> procedure.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_expect</span><span class="p">(</span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_loop</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">max_receptions</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when receiving the data. A
+mismatch results in an alert with severity ‘alert_level’</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>rx</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The UART BFM reception signal. Must be connected to the
+UART DUT ‘tx’ port.</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>terminate_loop</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>External control of loop termination to e.g. stop expect
+procedure prematurely</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>max_receptions</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>The maximum number of bytes received before the expected
+data must be received. Exceeding this limit results in
+an alert with severity ‘alert_level’. Setting this value
+to 0 will be interpreted as no limit. Default value is 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be received. Exceeding this limit results in an alert
+with severity ‘alert_level’. Setting this value to 0
+will be interpreted as no timeout. Default value is the
+BFM config timeout.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_UART_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“UART BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return&quot;</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_TIMEOUT</span><span class="p">,</span><span class="w"> </span><span class="n">C_MAX_RECEPTIONS</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">uart_transmit</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w">           </span><span class="c1">-- Keep as is</span>
+<span class="w">                </span><span class="n">msg</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
+<span class="w">                </span><span class="n">tx</span><span class="p">,</span><span class="w">                   </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">                </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Use locally defined configuration or C_UART_CONFIG_DEFAULT</span>
+<span class="w">                </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">              </span><span class="c1">-- Use the default</span>
+<span class="w">                </span><span class="n">shared_msg_id_panel</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="local-bfm-configuration">
+<span id="uart-local-bfm-config"></span><h3>Local BFM configuration<a class="headerlink" href="#local-bfm-configuration" title="Link to this heading"></a></h3>
+<p>The UART BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM
+configuration is defined with a clock period of -1 ns so that the BFM can detect and alert the user that the configuration has not
+been set.</p>
+<p>Defining a local UART BFM configuration::</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_uart_bfm_config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">bit_time</span><span class="w">                              </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_UART_BIT_TIME</span><span class="p">,</span>
+<span class="w">  </span><span class="n">num_data_bits</span><span class="w">                         </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">  </span><span class="n">idle_state</span><span class="w">                            </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">num_stop_bits</span><span class="w">                         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">STOP_BITS_ONE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">parity</span><span class="w">                                </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">PARITY_ODD</span><span class="p">,</span>
+<span class="w">  </span><span class="n">timeout</span><span class="w">                               </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
+<span class="w">  </span><span class="n">timeout_severity</span><span class="w">                      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">error</span><span class="p">,</span>
+<span class="w">  </span><span class="n">num_bytes_to_log_before_expected_data</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="n">match_strictness</span><span class="w">                      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">MATCH_EXACT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm</span><span class="w">                            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm_wait</span><span class="w">                       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM_WAIT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm_poll</span><span class="w">                       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM_POLL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">id_for_bfm_poll_summary</span><span class="w">               </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ID_BFM_POLL_SUMMARY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">error_injection</span><span class="w">                       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_BFM_ERROR_INJECTION_INACTIVE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<p>For additional documentation on the UART protocol, please see the UART specification.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Bus Functional Model (BFM) for UART TX and RX.</p></li>
+<li><p>The given BFM complies with the basic UART protocol and thus allows a normal access towards a UART interface.</p></li>
+<li><p>This BFM is not a UART protocol checker.</p></li>
+<li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
 </section>
 <section id="vvc">
 <span id="vip-uart-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_uart/doc/uart_vvc_QuickRef.pdf">uart_vvc_QuickRef.pdf</a></p>
+<ul class="simple">
+<li><p>VVC functionality is implemented in uart_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_DATA_WIDTH</p></td>
+<td><p>natural</p></td>
+<td><p>8</p></td>
+<td><p>Bits in the UART byte. Note that this will
+initialize num_data_bits in the BFM
+configuration and override the setting in
+GC_UART_CONFIG.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_UART_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a></p></td>
+<td><p>C_UART_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the UART BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>uart_vvc_rx</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>UART VVC RX signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>uart_vvc_tx</p></td>
+<td><p>inout</p></td>
+<td><p>std_logic</p></td>
+<td><p>UART VVC TX signal</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id1">
+<h3>Configuration Record<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_uart_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_UART_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a></p></td>
+<td><p>C_UART_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the UART BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>error_injection</p></td>
+<td><p>t_vvc_error_injection</p></td>
+<td><p>C_VVC_ERROR_INJECTION_INACTIVE</p></td>
+<td><p>Record to set up the error injection policy in
+the BFM procedure calls</p></td>
+</tr>
+<tr class="row-even"><td><p>bit_rate_checker</p></td>
+<td><p>t_bit_rate_checker</p></td>
+<td><p>C_BIT_RATE_CHECKER_DEFAULT</p></td>
+<td><p>Configure the UART property checker behavior</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">;</span>
+<span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">num_data_bits</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>t_vvc_error_injection</strong></p>
+<p>Default value for the record is C_VVC_ERROR_INJECTION_INACTIVE.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>parity_bit_error_prob</p></td>
+<td><p>real</p></td>
+<td><p>-1.0</p></td>
+<td><p>The probability that the VVC will request a
+parity_bit_error when calling a BFM transmission
+procedure. (See <a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>stop_bit_error_prob</p></td>
+<td><p>real</p></td>
+<td><p>-1.0</p></td>
+<td><p>The probability that the VVC will request a
+stop_bit_error when calling a BFM transmission
+procedure. (See <a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a>)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>A value of 1.0 means every transmission should have this error injection, whereas 0.0 means error injection is turned off.
+Anything in between means randomization with the given probability.</p></li>
+<li><p>The error_injection config in the VVC config will override any error injection specified in the BFM config, unless set to
+-1.0 (default) in which case the BFM config error injection setting will be used.</p></li>
+</ul>
+</div>
+<p>For more information on error injection, please see <a class="reference internal" href="vvc_framework.html#vvc-framework-error-injection"><span class="std std-ref">Protocol Aware Error Injection</span></a>.</p>
+<p><strong>t_bit_rate_checker</strong></p>
+<p>Default value for the record is C_BIT_RATE_CHECKER_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>enable</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Enables or disables the complete bit rate
+checker</p></td>
+</tr>
+<tr class="row-odd"><td><p>min_period</p></td>
+<td><p>time</p></td>
+<td><p>0.0</p></td>
+<td><p>The minimum allowed bit period for any bit (any
+bit level change to the next)</p></td>
+</tr>
+<tr class="row-even"><td><p>alert_level</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>Alert generated if min_period is violated</p></td>
+</tr>
+</tbody>
+</table>
+<p>For more information on property checking, please see <a class="reference internal" href="vvc_framework.html#vvc-framework-property-checkers"><span class="std std-ref">Controlling Property Checkers</span></a>.</p>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_uart_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="uart-transmit-vvc">
+<span id="id3"></span><h4>uart_transmit()<a class="headerlink" href="#uart-transmit-vvc" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line">Adds a transmit command to the UART TX VVC executor queue, which will run as soon as all preceding commands have completed. It
+has two variants using either just data for a basic single transaction, or num_words + randomization for a more advanced version.</div>
+<div class="line">When the basic transmit command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#uart-transmit-bfm"><span class="std std-ref">uart_transmit()</span></a> procedure. This
+procedure scan only be called using the UART TX channel, i.e. setting ‘channel’ to ‘TX’.</div>
+<div class="line">When the more advanced randomization command is applied, the basic BFM uart_transmit() transaction is executed num_words times
+with new random data each time - according to the given randomization profile. Current defined randomization profiles are:
+RANDOM: Standard uniform random. This is provided as an example.</div>
+<div class="line">Errors may be injected depending on the ‘config.error_injection’ sub-record.</div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">num_words</span><span class="p">,</span><span class="w"> </span><span class="n">randomisation</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be transmitted</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>num_words</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number of times the procedure is called to send new
+random data words</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>randomisation</p></td>
+<td><p>in</p></td>
+<td><p>t_randomisation</p></td>
+<td><p>Randomization profile</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending data to DUT UART instance 0&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">RANDOM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending 5 random bytes to DUT UART instance 0&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="uart-receive-vvc">
+<span id="id4"></span><h4>uart_receive()<a class="headerlink" href="#uart-receive-vvc" title="Link to this heading"></a></h4>
+<p>Adds a receive command to the UART RX VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#uart-receive-bfm"><span class="std std-ref">uart_receive()</span></a> procedure.</p>
+<p>The received data from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the
+received data will be stored in the VVC for a potential future fetch (see example with fetch_result below). This procedure can
+only be called using the UART RX channel, i.e. setting ‘channel’ to ‘RX’.
+If the data_routing is set to TO_SB, the received data will be sent to the UART VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_receive</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">,]</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the read data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Unused. DEPRECATED</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving from DUT UART instance 0&quot;</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from DUT UART instance 0 and passing on to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from receive.</span>
+<span class="p">...</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving from DUT UART instance 0&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="uart-expect-vvc">
+<span id="id5"></span><h4>uart_expect()<a class="headerlink" href="#uart-expect-vvc" title="Link to this heading"></a></h4>
+<p>Adds an expect command to the UART RX VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls BFM <a class="reference internal" href="#uart-expect-bfm"><span class="std std-ref">uart_expect()</span></a> procedure. The uart_expect() procedure will perform
+a receive operation, then check if the received data is equal to the expected data in the data parameter. If the received data is
+not equal to the expected data parameter, an alert with severity ‘alert_level’ will be issued. The received data will not be
+stored in this procedure. This procedure can only be called using the UART RX channel, i.e. setting ‘channel’ to ‘RX’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">max_receptions</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The expected data value to be received</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max_receptions</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>The maximum number of bytes received before the expected
+data must be received. Exceeding this limit results in
+an alert with severity ‘alert_level’. Setting this value
+to 0 will be interpreted as no limit. Default value is 1</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be received. Exceeding this limit results in an alert
+with severity ‘alert_level’. Setting this value to 0
+will be interpreted as no timeout. Default value is the
+BFM config timeout.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return from DUT UART instance 0&quot;</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return from DUT UART instance 0&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<span id="uart-vvc-transaction-info"></span><h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id17">
+<caption><span class="caption-text">UART transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_uart_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>data</p></td>
+<td><p>std_logic_vector(7 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data for UART receive or transmit transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>error_info</p></td>
+<td><p>t_error_info</p></td>
+<td><p>C_ERROR_INFO_DEFAULT</p></td>
+<td><p>Error injection status</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; parity_bit_error</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Status of the parity bit error injection</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; stop_bit_error</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Status of the stop bit error injection</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. uart_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
+TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable UART_VVC_SB, located in the
+vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">UART_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_UART_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the UART VVC scoreboard using the UART_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For UART VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature is only implemented on uart_rx_vvc.</p>
+</div>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id6">
+<h3>Compilation<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>The UART VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>UART BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the UART VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id18">
+<caption><span class="caption-text">Compile order for the UART VVC</span><a class="headerlink" href="#id18" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_bfm_pkg.vhd</p></td>
+<td><p>UART BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>UART transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>UART VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>monitor_cmd_pkg.vhd</p></td>
+<td><p>UART Monitor package. Only include this file if
+you intend to use Monitor.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>UART VVC scoreboard</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>UART VVC methods</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_rx_vvc.vhd</p></td>
+<td><p>UART RX VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_tx_vvc.vhd</p></td>
+<td><p>UART TX VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_vvc.vhd</p></td>
+<td><p>UART VVC wrapper for the TX and RX VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_monitor.vhd</p></td>
+<td><p>UART Monitor. Only include this file if you
+intend to use Monitor.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>UART VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id7">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id8">
+<h3>Additional Documentation<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>For additional documentation on the UART protocol, please see the UART specification.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for UART TX and RX.</p></li>
+<li><p>The given VIP complies with the basic UART protocol and thus allows a normal access towards a UART interface.</p></li>
+<li><p>This VIP is not a UART protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
 </section>
 <section id="monitor">
 <h2>Monitor<a class="headerlink" href="#monitor" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_uart/doc/uart_monitor_QuickRef.pdf">uart_monitor_QuickRef.pdf</a></p>
+<section id="id9">
+<h3>Entity<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<section id="id10">
+<h4>Generics<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_MONITOR_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-uart-monitor-config"><span class="std std-ref">t_uart_monitor_config</span></a></p></td>
+<td><p>C_UART_MONITOR_CONFIG_DEFAULT</p></td>
+<td><p>Configuration of the UART monitor, both channels
+get initiated with this configuration</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id11">
+<h4>Signals<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>uart_dut_rx</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Input of DUTs UART RX signal.</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>uart_dut_tx</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Input of DUTs UART TX signal.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="t-uart-monitor-config">
+<span id="id12"></span><h3>Configuration Record<a class="headerlink" href="#t-uart-monitor-config" title="Link to this heading"></a></h3>
+<p><strong>t_uart_monitor_config</strong> accessible via <strong>shared_uart_monitor_config</strong></p>
+<p>Default value for the record is C_UART_MONITOR_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scope_name</p></td>
+<td><p>string</p></td>
+<td><p>“set scope name”</p></td>
+<td><p>Describes the scope from which the log/alert
+originates.</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_UART_MONITOR_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>Monitor dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-even"><td><p>interface_config</p></td>
+<td><p>t_uart_interface_config</p></td>
+<td><p>C_UART_MONITOR_INTERFACE_CONFIG_DEFAULT</p></td>
+<td><p>The configuration for the interface</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_display_time</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>After this amount of time operation is set to
+NO_OPERATION and transaction_status is set to
+INACTIVE if a new transaction is not received.
+If set to 0 ns, operation and transaction_status
+will be unchanged until the next transfer is
+started.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_uart_monitor_config</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_MONITOR_IDX</span><span class="p">).</span><span class="n">msg_id_panel</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">new_msg_id_panel</span><span class="p">;</span>
+<span class="n">shared_uart_monitor_config</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_MONITOR_IDX</span><span class="p">).</span><span class="n">interface_config</span><span class="p">.</span><span class="n">num_data_bits</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>t_uart_interface_config</strong></p>
+<p>Default value for the record is C_UART_MONITOR_INTERFACE_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bit_time</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>The time it takes to transfer one bit</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_data_bits</p></td>
+<td><p>natural range 7 to 8</p></td>
+<td><p>8</p></td>
+<td><p>Number of data bits to send per transmission</p></td>
+</tr>
+<tr class="row-even"><td><p>parity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-parity"><span class="std std-ref">t_parity</span></a></p></td>
+<td><p>PARITY_ODD</p></td>
+<td><p>Transmission parity bit</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_stop_bits</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-stop-bits"><span class="std std-ref">t_stop_bits</span></a></p></td>
+<td><p>STOP_BITS_ONE</p></td>
+<td><p>Number of stop-bits to use per transmission</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id13">
+<h3>Transaction info<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<div class="line-block">
+<div class="line">All transaction information from the UART Monitor is accessible via <strong>shared_uart_monitor_transaction_info</strong></div>
+<div class="line">The global trigger pulsed when UART Monitor transaction info is available is accessible via <strong>global_uart_monitor_transaction_trigger</strong></div>
+</div>
+<p>An example of use of the global_uart_monitor_transaction and shared_uart_monitor_transaction_info is seen below. A process
+extracts the transaction info from the shared variable when the global signal is triggered.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">p_monitor_tx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
+<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">v_transaction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_uart_transaction</span><span class="p">;</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">global_uart_monitor_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">shared_uart_monitor_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SUCCEEDED</span><span class="w"> </span><span class="k">or</span>
+<span class="w">      </span><span class="n">shared_uart_monitor_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FAILED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="n">v_transaction</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">shared_uart_monitor_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">bt</span><span class="p">;</span>
+<span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">-- Processing received transaction</span>
+<span class="w">  </span><span class="p">...</span>
+
+<span class="k">end</span><span class="w"> </span><span class="k">process</span><span class="w"> </span><span class="nc">p_monitor_tx</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For more information on the type, please see <a class="reference internal" href="#uart-vvc-transaction-info"><span class="std std-ref">VVC Transaction Info</span></a>.</p>
+</section>
+<section id="message-ids">
+<h3>Message IDs<a class="headerlink" href="#message-ids" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>ID_FRAME_INITIATE: Logs start of UART frame</p></li>
+<li><p>ID_MONITOR: Logs information about monitored transaction</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>Compilation<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p>The UART Monitor must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>UART BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the UART Monitor, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id19">
+<caption><span class="caption-text">Compile order for the UART Monitor</span><a class="headerlink" href="#id19" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_bfm_pkg.vhd</p></td>
+<td><p>UART BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>UART transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>UART VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>monitor_cmd_pkg.vhd</p></td>
+<td><p>UART Monitor package</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>UART VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_uart</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>UART VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_uart</p></td>
+<td><p>uart_monitor.vhd</p></td>
+<td><p>UART Monitor</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id15">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id16">
+<h3>Additional Documentation<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<p>For additional documentation on the UART protocol, please see the UART specification.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -127,6 +1772,7 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
 </section>
 </section>
 
@@ -141,7 +1787,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

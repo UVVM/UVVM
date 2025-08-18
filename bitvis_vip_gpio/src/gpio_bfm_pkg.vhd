@@ -37,7 +37,7 @@ package gpio_bfm_pkg is
     clock_period     : time;
     match_strictness : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm       : t_msg_id;        -- The message ID used as a general message ID in the GPIO BFM
-    id_for_bfm_wait  : t_msg_id;        -- The message ID used for logging waits in the GPIO BFM.
+    id_for_bfm_wait  : t_msg_id;        -- The message ID used for logging waits in the GPIO BFM. -- DEPRECATE: will be removed
     timeout          : time;            -- Timeout value for the expect procedures
   end record;
 

@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -205,16 +206,14 @@
 </tr>
 <tr class="row-odd"><td><p>match_strictness</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
-<td><p>MATCH_STD</p></td>
-<td><div class="line-block">
-<div class="line">Matching strictness for std_logic values in
-check procedures.</div>
-<div class="line">MATCH_EXACT requires both values to be the
+<td><p>MATCH_EXACT</p></td>
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
 same. Note that the expected value can contain
-the don’t care operator ‘-‘.</div>
-<div class="line">MATCH_STD allows comparisons between ‘H’ and
-‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
-</div>
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm</p></td>
@@ -223,7 +222,12 @@ the don’t care operator ‘-‘.</div>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
 </tr>
-<tr class="row-odd"><td><p>timeout</p></td>
+<tr class="row-odd"><td><p>id_for_bfm_wait</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_WAIT</p></td>
+<td><p>DEPRECATED</p></td>
+</tr>
+<tr class="row-even"><td><p>timeout</p></td>
 <td><p>time</p></td>
 <td><p>-1 ns</p></td>
 <td><p>Timeout value for the expected procedures. This
@@ -901,18 +905,16 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 <td><p>gpio_vvc_if</p></td>
 <td><p>inout</p></td>
 <td><p>std_logic_vector</p></td>
-<td><div class="line-block">
-<div class="line">This interface can be used as input, output or inout.</div>
-<div class="line">If the GC_DEFAULT_LINE_VALUE is set to ‘Z’, ‘H’ or ‘L’
-, the interface can be used as an input, output or
-inout.</div>
-<div class="line">If the default is set to ‘1’, ‘0’ or ‘U’, the
-interface must be used as an output.</div>
-<div class="line">When using the interface as inout, the process
+<td><p>This interface can be used as input, output or inout.</p>
+<p>If the GC_DEFAULT_LINE_VALUE is set to ‘Z’, ‘H’ or ‘L’,
+the interface can be used as an input, output or
+inout.</p>
+<p>If the default is set to ‘1’, ‘0’ or ‘U’, the
+interface must be used as an output.</p>
+<p>When using the interface as inout, the process
 currently driving the signal (DUT or VVC) must set it
 to ‘Z’ after it is finished in order to release the
-interface so that the other process can drive it.</div>
-</div>
+interface so that the other process can drive it.</p>
 </td>
 </tr>
 </tbody>
@@ -934,18 +936,16 @@ interface so that the other process can drive it.</div>
 <tr class="row-even"><td><p>inter_bfm_delay</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
 <td><p>C_GPIO_INTER_BFM_DELAY_DEFAULT</p></td>
-<td><div class="line-block">
-<div class="line">Delay between any requested BFM accesses
-towards the DUT.</div>
-<div class="line">TIME_START2START: Time from a BFM start to the
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
 next BFM start (a TB_WARNING will be issued if
-access takes longer than TIME_START2START).</div>
-<div class="line">TIME_FINISH2START: Time from a BFM end to the
-next BFM start.</div>
-<div class="line">Any insert_delay() command will add to the
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
 above minimum delays, giving for instance the
-ability to skew the BFM starting time.</div>
-</div>
+ability to skew the BFM starting time.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
@@ -1006,7 +1006,7 @@ use verbosity control.</p></td>
 <td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
 <td><p>Severity of alert to be issued if unwanted
 activity on the DUT outputs is detected. It is
-enabled with ERROR severity by default.</p></td>
+disabled with NO_ALERT severity by default.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1385,7 +1385,7 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">gpio_expect</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found or timeout&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_expect</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found or timeout&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1463,7 +1463,7 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found and check that it remains stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found and check that it remains stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1671,7 +1671,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

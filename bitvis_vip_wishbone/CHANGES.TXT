@@ -1,6 +1,11 @@
-Bitvis VIP Wishbone - Overview of Versions and Changes
+Bitvis VIP Wishbone - Overview on Versions and Changes
 ==============================================================
 
+v0.2.1 BETA
+----------
+Released: 2025-08-18
+- Added transaction_pkg.
+- Converted documentation to RST format.
 
 v0.2.0 BETA
 ----------

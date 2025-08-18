@@ -92,24 +92,29 @@ Default value for the record is C_AVALON_ST_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
-|                              |                              | NLY             |   enter on the first falling edge, estimate the |
-|                              |                              |                 |   clock period,                                 |
-|                              |                              |                 | | synchronize the output signals and exit ¼     |
-|                              |                              |                 |   clock period after a succeeding rising edge.  |
-|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
-|                              |                              |                 |   will use the configured setup_time, hold_time |
-|                              |                              |                 |   and                                           |
-|                              |                              |                 | | clock_period to synchronize output signals    |
-|                              |                              |                 |   with clock edges.                             |
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
+|                              |                              | NLY             | enter on the first falling edge, estimate the   |
+|                              |                              |                 | clock period,                                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | synchronize the output signals and exit ¼       |
+|                              |                              |                 | clock period after a succeeding rising edge.    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
+|                              |                              |                 | will use the configured setup_time, hold_time   |
+|                              |                              |                 | and                                             |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | clock_period to synchronize output signals      |
+|                              |                              |                 | with clock edges.                               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | symbol_width                 | natural                      | 8               | Number of data bits per symbol                  |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -428,10 +433,11 @@ The following signals from the Avalon-ST interface are supported:
 | valid             | Master | 1      | Yes              | This signal qualifies all other master to slave signals. A transfer    |
 |                   |        |        |                  | takes place when both valid and ready are asserted.                    |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| empty             | Master | 1-5    | Yes              | | Number of symbols that are empty during the end_of_packet cycle. The |
-|                   |        |        |                  |   signal width in bits is ceil[log2(symbols_per_cycle)].               |
-|                   |        |        |                  | | Only required when the data signal carries more than one symbol of   |
-|                   |        |        |                  |   data per cycle and has a variable packet length.                     |
+| empty             | Master | 1-5    | Yes              | Number of symbols that are empty during the end_of_packet cycle. The   |
+|                   |        |        |                  | signal width in bits is ceil[log2(symbols_per_cycle)].                 |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | Only required when the data signal carries more than one symbol of     |
+|                   |        |        |                  | data per cycle and has a variable packet length.                       |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
 | end_of_packet     | Master | 1      | Yes              | When '1', it indicates that the data is the last word of the packet    |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
@@ -470,25 +476,30 @@ Generics
 |                              |                              |                 | VVC. Set to false when data shall be input to   |
 |                              |                              |                 | this VVC.                                       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_CHANNEL_WIDTH             | integer                      | 1               | | Width of the Avalon-ST channel signal.        |
-|                              |                              |                 | | Note 1: if CHANNEL is wider than 8, increase  |
-|                              |                              |                 |   the value of the constant C_AVALON_ST_CHANNEL\|
-|                              |                              |                 |   _MAX_LENGTH in the local_adaptations_pkg.     |
-|                              |                              |                 | | Note 2: If the CHANNEL signal is not used,    |
-|                              |                              |                 |   refer to `Signals`_                           |
+| GC_CHANNEL_WIDTH             | integer                      | 1               | Width of the Avalon-ST channel signal.          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 1: if CHANNEL is wider than 8, increase    |
+|                              |                              |                 | the value of the constant C_AVALON_ST_CHANNEL\  |
+|                              |                              |                 | _MAX_LENGTH in the local_adaptations_pkg.       |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 2: If the CHANNEL signal is not used,      |
+|                              |                              |                 | refer to `Signals`_                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_DATA_WIDTH                | integer                      | N/A             | | Width of the Avalon-ST data bus.              |
-|                              |                              |                 | | Note: if DATA is wider than 512, increase the |
-|                              |                              |                 |   value of the constant C_AVALON_ST_WORD_MAX_LE\|
-|                              |                              |                 |   GTH in the local_adaptations_pkg              |
+| GC_DATA_WIDTH                | integer                      | N/A             | Width of the Avalon-ST data bus.                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note: if DATA is wider than 512, increase the   |
+|                              |                              |                 | value of the constant C_AVALON_ST_WORD_MAX_LE\  |
+|                              |                              |                 | GTH in the local_adaptations_pkg                |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_DATA_ERROR_WIDTH          | integer                      | 1               | | Width of the Avalon-ST data error signal.     |
-|                              |                              |                 | | Note: If the DATA_ERROR signal is not used,   |
-|                              |                              |                 |   refer to `Signals`_                           |
+| GC_DATA_ERROR_WIDTH          | integer                      | 1               | Width of the Avalon-ST data error signal.       |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note: If the DATA_ERROR signal is not used,     |
+|                              |                              |                 | refer to `Signals`_                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_EMPTY_WIDTH               | integer                      | 1               | | Width of the Avalon-ST empty signal.          |
-|                              |                              |                 | | Note: If the EMPTY signal is not used, refer  |
-|                              |                              |                 |   to `Signals`_                                 |
+| GC_EMPTY_WIDTH               | integer                      | 1               | Width of the Avalon-ST empty signal.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note: If the EMPTY signal is not used, refer    |
+|                              |                              |                 | to `Signals`_                                   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -591,16 +602,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AVALON_ST_INT\| | Delay between any requested BFM accesses      |
-|                              |                              | ER_BFM_DELAY_DE\|   towards the DUT.                              |
-|                              |                              | FAULT           | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AVALON_ST_INT\| Delay between any requested BFM accesses        |
+|                              |                              | ER_BFM_DELAY_DE\| towards the DUT.                                |
+|                              |                              | FAULT           |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -840,6 +854,14 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 More information can be found in :ref:`Essential Mechanisms - Distribution of Transaction Info <vvc_framework_transaction_info>`.
+
+
+Scoreboard
+==================================================================================================================================
+This VVC does not have a built in Scoreboard functionality due to the complexity to make it generic for several use cases. However, 
+a dedicated Scoreboard can be added by the user if needed.
+
+See the :ref:`vip_scoreboard` for a complete list of available commands and additional information.
 
 
 Unwanted Activity Detection

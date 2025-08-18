@@ -1274,7 +1274,7 @@ package rand_pkg is
       constant set_of_values : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure excl_range(
       constant min           : in integer;
       constant max           : in integer;
@@ -1292,12 +1292,12 @@ package rand_pkg is
       constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-      -- Questa 2025.2+ only
+      -- Requires Questa One 2025.3 or later
     procedure vector_sum_min(
       constant min        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-      -- Questa 2025.2+ only
+      -- Requires Questa One 2025.3 or later
     procedure vector_sum_max(
       constant max        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -1326,7 +1326,7 @@ package rand_pkg is
       constant set_of_values : in real_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-      -- Questa 2025.2+ only
+      -- Requires Questa One 2025.3 or later
     procedure excl_range_real(
       constant min           : in real;
       constant max           : in real;
@@ -1373,7 +1373,7 @@ package rand_pkg is
       constant set_of_values : in time_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-      -- Questa 2025.2+ only
+      -- Requires Questa One 2025.3 or later
     procedure excl_range_time(
       constant min           : in time;
       constant max           : in time;
@@ -1496,7 +1496,7 @@ package rand_pkg is
     return std_logic_vector;
     
     ------------------------------------------------------------
-    -- Get Value (Questa 2025.2+ only)
+    -- Get Value (Requires Questa One 2025.3 or later)
     ------------------------------------------------------------
     impure function get_value(
       constant VOID : t_void)
@@ -1535,19 +1535,19 @@ package rand_pkg is
     return std_logic_vector;
 
     ------------------------------------------------------------
-    -- Linking Variables (Questa 2025.2+ only)
+    -- Linking Variables (Requires Questa One 2025.3 or later)
     ------------------------------------------------------------
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function create_rand(
       constant VOID : t_void)
     return integer;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure link(
       constant op : t_relational_operator;
       constant var2: integer);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure link(
       constant arith_op: t_arithmetic_operator;
       constant var2: integer;
@@ -1555,30 +1555,30 @@ package rand_pkg is
       constant valOrVarId3: integer;
       constant isVarId3 : boolean := false);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure unlink(
       constant var2: integer);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure unlink(
       constant VOID: t_void);
 
     ------------------------------------------------------------
     -- Bitwise Constraints
     ------------------------------------------------------------
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure nonzero_bitwise_and(
       constant mask : integer);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure zero_bitwise_and(
       constant mask : integer);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure force_bits_to(
         constant mask : string);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure one_hot(
       constant VOID : t_void);
 
@@ -1812,7 +1812,7 @@ package body rand_pkg is
     variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl => new t_null_range_uns_vec);
     variable priv_sig_constraints         : t_sig_constraints                   := (ran_incl => new t_null_range_sig_vec);
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     variable vendor_var_id                : integer                             := -1;
 
     -- The number of attempts for a random value to be generated with exclude constraints is multiplied by this constant
@@ -2320,7 +2320,7 @@ package body rand_pkg is
       end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure check_and_initialize_vendor_varid(
       constant VOID : t_void) is
     begin
@@ -2496,7 +2496,9 @@ package body rand_pkg is
       DEALLOCATE(priv_cyclic_current_function);
       priv_cyclic_current_function := new string'("");
       DEALLOCATE(priv_cyclic_list);
-      priv_cyclic_queue.reset(VOID);
+      if priv_cyclic_queue.get_scope(VOID) /= "" then
+        priv_cyclic_queue.reset(VOID);
+      end if;
     end procedure;
 
     procedure report_config(
@@ -2603,7 +2605,7 @@ package body rand_pkg is
       priv_seed1 := C_RAND_INIT_SEED_1;
       priv_seed2 := C_RAND_INIT_SEED_2;
       
-      -- Questa 2025.2+ only
+      -- Requires Questa One 2025.3 or later
       if (C_VENDOR_EXTENSION_IS_ENABLED) then
         check_and_initialize_vendor_varid(void);
         vendor_randvar_set_seed(vendor_var_id, str);
@@ -6491,7 +6493,7 @@ package body rand_pkg is
       priv_int_constraints.val_excl(priv_int_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_int_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure excl_range(
       constant min        : in integer;
       constant max        : in integer;
@@ -6501,7 +6503,7 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             vendor_add_exclude_range_int(vendor_var_id, min, max, 0);
         else
-            alert(TB_ERROR, "Procedure excl_range() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure excl_range() is only supported in Questa One 2025.3 and newer", C_SCOPE);
         end if;
     end procedure;
 
@@ -6555,7 +6557,7 @@ package body rand_pkg is
       priv_int_constraints.weighted_config                                    := true;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure vector_sum_max(
       constant max        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -6564,11 +6566,11 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             vendor_add_vector_sum_max(vendor_var_id, max);
         else
-            alert(TB_ERROR, "Procedure vector_sum_max() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure vector_sum_max() is only supported in Questa One 2025.3 and newer", C_SCOPE);
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure vector_sum_min(
       constant min        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -6577,7 +6579,7 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             vendor_add_vector_sum_min(vendor_var_id, min);
         else
-            alert(TB_ERROR, "Procedure vector_sum_min() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure vector_sum_min() is only supported in Questa One 2025.3 and newer", C_SCOPE);
         end if;
     end procedure;
 
@@ -6676,7 +6678,7 @@ package body rand_pkg is
       priv_real_constraints.val_excl(priv_real_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_real_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure excl_range_real(
       constant min        : in real;
       constant max        : in real;
@@ -6686,7 +6688,7 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             vendor_add_exclude_range_real(vendor_var_id, min, max, 0);
         else
-            alert(TB_ERROR, "Procedure excl_range_real() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure excl_range_real() is only supported in Questa One 2025.3 and newer", C_SCOPE);
         end if;
     end procedure;
 
@@ -6841,7 +6843,7 @@ package body rand_pkg is
       priv_time_constraints.val_excl(priv_time_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_time_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure excl_range_time(
       constant min        : in time;
       constant max        : in time;
@@ -6851,7 +6853,7 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             vendor_add_exclude_range_time(vendor_var_id, min, max, 0);
         else
-            alert(TB_ERROR, "Procedure excl_range_time() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure excl_range_time() is only supported in Questa One 2025.3 and newer", C_SCOPE);
         end if;
     end procedure;
 
@@ -7975,7 +7977,7 @@ package body rand_pkg is
       return std_logic_vector(v_ret);
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant VOID : t_void)
     return integer is
@@ -7984,12 +7986,12 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             return vendor_randvar_get_value_int(vendor_var_id);
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return 0;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant VOID : t_void)
     return real is
@@ -7998,12 +8000,12 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             return vendor_randvar_get_value_real(vendor_var_id);
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return 0.0;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant VOID : t_void)
     return time is
@@ -8012,12 +8014,12 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             return vendor_randvar_get_value_time(vendor_var_id);
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return 0 ns;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant length : positive)
     return integer_vector is
@@ -8028,12 +8030,12 @@ package body rand_pkg is
             vendor_randvar_get_value_int_array(vendor_var_id, retval);
             return retval;
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return retval;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant length : positive)
     return real_vector is
@@ -8044,12 +8046,12 @@ package body rand_pkg is
             vendor_randvar_get_value_real_array(vendor_var_id, retval);
             return retval;
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return retval;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant length : positive)
     return time_vector is
@@ -8060,60 +8062,60 @@ package body rand_pkg is
             vendor_randvar_get_value_time_array(vendor_var_id, retval);
             return retval;
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return retval;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant length : positive)
     return signed is
-    variable retval : signed(0 to length-1);
+    variable retval : signed(length-1 downto 0);
     begin
         if (C_VENDOR_EXTENSION_IS_ENABLED) then
             check_and_initialize_vendor_varid(void);
             vendor_randvar_get_value_signed(vendor_var_id, retval);
             return retval;
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return retval;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant length : positive)
     return unsigned is
-    variable retval : unsigned(0 to length-1);
+    variable retval : unsigned(length-1 downto 0);
     begin
         if (C_VENDOR_EXTENSION_IS_ENABLED) then
             check_and_initialize_vendor_varid(void);
             vendor_randvar_get_value_unsigned(vendor_var_id, retval);
             return retval;
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return retval;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function get_value(
       constant length : positive)
     return std_logic_vector is
-    variable retval : std_logic_vector(0 to length-1);
+    variable retval : std_logic_vector(length-1 downto 0);
     begin
         if (C_VENDOR_EXTENSION_IS_ENABLED) then
             check_and_initialize_vendor_varid(void);
             vendor_randvar_get_value_slv(vendor_var_id, retval);
             return retval;
         else
-            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function get_value() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return retval;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     impure function create_rand(
       constant VOID : t_void)
     return integer is
@@ -8122,12 +8124,12 @@ package body rand_pkg is
             check_and_initialize_vendor_varid(void);
             return vendor_var_id;
         else
-            alert(TB_ERROR, "Function create_rand() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Function create_rand() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return 0;
         end if;
     end function;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure link(
       constant op : t_relational_operator;
       constant var2: integer) is
@@ -8137,12 +8139,12 @@ package body rand_pkg is
             vendor_randvar_add_link(vendor_var_id, var2, t_relational_operator'pos(op));
             return;
         else
-            alert(TB_ERROR, "Procedure link() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure link() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure link(
       constant arith_op: t_arithmetic_operator;
       constant var2: integer;
@@ -8157,7 +8159,7 @@ package body rand_pkg is
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure unlink(
       constant var2: integer) is
     begin
@@ -8166,12 +8168,12 @@ package body rand_pkg is
             vendor_randvar_delete_link(vendor_var_id, var2);
             return;
         else
-            alert(TB_ERROR, "Procedure link() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure link() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure unlink(
       constant VOID: t_void) is
     begin
@@ -8180,12 +8182,12 @@ package body rand_pkg is
             vendor_randvar_delete_link(vendor_var_id, -1);
             return;
         else
-            alert(TB_ERROR, "Procedure unlink() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure unlink() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure nonzero_bitwise_and(
       constant mask : integer) is
     begin
@@ -8194,12 +8196,12 @@ package body rand_pkg is
             vendor_randvar_nonzero_bitwise_and(vendor_var_id, mask);
             return;
         else
-            alert(TB_ERROR, "Procedure nonzero_bitwise_and() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure nonzero_bitwise_and() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure zero_bitwise_and(
       constant mask : integer) is
     begin
@@ -8208,12 +8210,12 @@ package body rand_pkg is
             vendor_randvar_zero_bitwise_and(vendor_var_id, mask);
             return;
         else
-            alert(TB_ERROR, "Procedure zero_bitwise_and() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure zero_bitwise_and() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure force_bits_to(
       constant mask : string) is
     begin
@@ -8222,12 +8224,12 @@ package body rand_pkg is
             vendor_randvar_force_bits_to(vendor_var_id, mask);
             return;
         else
-            alert(TB_ERROR, "Procedure force_bits_to() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure force_bits_to() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;
 
-    -- Questa 2025.2+ only
+    -- Requires Questa One 2025.3 or later
     procedure one_hot(
       constant VOID : t_void) is
     begin
@@ -8236,7 +8238,7 @@ package body rand_pkg is
             vendor_randvar_one_hot(vendor_var_id);
             return;
         else
-            alert(TB_ERROR, "Procedure one_hot() only supported in Questa 2025.2+", C_SCOPE);
+            alert(TB_ERROR, "Procedure one_hot() is only supported in Questa One 2025.3 and newer", C_SCOPE);
             return;
         end if;
     end procedure;

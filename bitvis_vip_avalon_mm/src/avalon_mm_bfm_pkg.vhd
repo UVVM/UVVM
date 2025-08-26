@@ -73,8 +73,8 @@ package avalon_mm_bfm_pkg is
     use_response_signal      : boolean; -- Whether or not to check the response signal on read
     use_begintransfer        : boolean; -- Whether or not to assert begintransfer on start of transfer (Altera recommends not to use)
     id_for_bfm               : t_msg_id; -- The message ID used as a general message ID in the Avalon BFM
-    id_for_bfm_wait          : t_msg_id; -- The message ID used for logging waits in the Avalon BFM
-    id_for_bfm_poll          : t_msg_id; -- The message ID used for logging polling in the Avalon BFM
+    id_for_bfm_wait          : t_msg_id; -- The message ID used for logging waits in the Avalon BFM    -- DEPRECATE: will be removed
+    id_for_bfm_poll          : t_msg_id; -- The message ID used for logging polling in the Avalon BFM  -- DEPRECATE: will be removed
   end record;
 
   constant C_AVALON_MM_BFM_CONFIG_DEFAULT : t_avalon_mm_bfm_config := (

@@ -1,0 +1,1998 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UVVM Assertions (BETA) &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Enhanced Randomization" href="rand_pkg_overview.html" />
+    <link rel="prev" title="t_alert_level" href="types_pkg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Assertions (BETA)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage examples:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simplest-usage">Simplest usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#normal-usage">Normal usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-concepts">Basic concepts:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#clocked-and-async">clocked and async</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-the-assertion">configuring the assertion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pos-ack-and-pos-ack-kind">pos_ack and pos_ack_kind</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#assertions">Assertions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-assertions">Basic assertions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#assert-value">assert_value()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-one-of">assert_one_of()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-one-hot">assert_one_hot()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-value-in-range">assert_value_in_range()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-shift-one-from-left">assert_shift_one_from_left()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#window-assertions">window assertions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#assert-value-from-min-to-max-cycles-after-trigger">assert_value_from_min_to_max_cycles_after_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-change-to-value-from-min-to-max-cycles-after-trigger">assert_change_to_value_from_min_to_max_cycles_after_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-change-from-min-to-max-cycles-after-trigger">assert_change_from_min_to_max_cycles_after_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-stable-from-min-to-max-cycles-after-trigger">assert_stable_from_min_to_max_cycles_after_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-value-from-start-to-end-trigger">assert_value_from_start_to_end_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-change-to-value-from-start-to-end-trigger">assert_change_to_value_from_start_to_end_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-change-from-start-to-end-trigger">assert_change_from_start_to_end_trigger()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assert-stable-from-start-to-end-trigger">assert_stable_from_start_to_end_trigger()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#accellera-ovl-comparison-functions">Accellera OVL comparison functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">UVVM Assertions (BETA)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/uvvm_assertions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="uvvm-assertions-beta">
+<h1>UVVM Assertions (BETA)<a class="headerlink" href="#uvvm-assertions-beta" title="Link to this heading"></a></h1>
+<p>VHDL assertions are statements used to verify conditions or assumptions during simulation and synthesis. Normal VHDL assertions check signal values or system states at runtime,
+issuing messages or halting simulation upon violation of predefined constraints. UVVM Assertions is a collection of assertions that can be used inside the UVVM logging and methodology framework.
+Like pure VHDL assertions, UVVM assertions consist of a condition to check, a message to log if the condition fails, and a severity level to indicate the importance of the failure,
+and other features such as enable signal, positive acknowledge, and more. The simplest of them: <cite>assert_value</cite> can be used to log a simple VHDL assert statement within the UVVM log.</p>
+<p>These assertions are designed to catch some of the fundamental features typically targeted by assertion libraries (such as PSL or OVL),
+and have been largely influenced by the assertions found in <em>Accellera Standard OVL V2</em>, and a substitution table can be found at the very bottom of this page.</p>
+<section id="usage-examples">
+<h2>Usage examples:<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h2>
+<section id="simplest-usage">
+<span id="simplest-assertion-usage"></span><h3>Simplest usage<a class="headerlink" href="#simplest-usage" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="id1">
+<img alt="Most basic usage with assertion instantiated in the TB arch body" src="_images/assertions_simple.png" />
+<figcaption>
+<p><span class="caption-text">Figure 1 - assert_value instantiated in the TB arch body</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Figure 1</strong> shows the simplest usage of UVVM assertions, which can replace normal VHDL assertions is to use <cite>assert_value</cite> with boolean entries.
+Below is a code example of an UVVM testbench where <cite>assert_value</cite> is instantiated with some logic to assert a signal property of the DUT,
+as well as the pure VHDL code to do the same.</p>
+<p>Here we control the assertion from the DUT, using the <cite>count_valid</cite> signal as the enable signal.
+In this example the assertion is checking that the <cite>count</cite> signal is never equal to 13, by using an auxiliary signal <cite>assert_count_not_13</cite>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">IEEE</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">IEEE.std_logic_1164.</span><span class="k">all</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">IEEE.numeric_std.</span><span class="k">all</span><span class="p">;</span>
+
+<span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
+
+<span class="k">entity</span><span class="w"> </span><span class="nc">simple_assertion_tb</span><span class="w"> </span><span class="k">is</span>
+<span class="k">end</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">simple_assertion_tb</span><span class="p">;</span>
+
+<span class="k">architecture</span><span class="w"> </span><span class="nc">func</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nc">simple_assertion_tb</span><span class="w"> </span><span class="k">is</span>
+<span class="w">    </span><span class="k">constant</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">clk</span><span class="w">         </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">rst</span><span class="w">         </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">count</span><span class="w">       </span><span class="o">:</span><span class="w"> </span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">count_valid</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">assert_count_not_13</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span>
+<span class="k">begin</span>
+
+<span class="c1">-----------------------------------------------------------------------------</span>
+<span class="c1">-- The simplest clock generator</span>
+<span class="c1">-----------------------------------------------------------------------------</span>
+<span class="n">clk</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="k">after</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+
+<span class="c1">-----------------------------------------------------------------------------</span>
+<span class="c1">-- Instantiate DUT</span>
+<span class="c1">-----------------------------------------------------------------------------</span>
+<span class="n">i_counter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">work</span><span class="p">.</span><span class="n">lucky_counter</span>
+<span class="w">    </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">    </span><span class="n">clk</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">    </span><span class="n">rst</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">rst</span><span class="p">,</span>
+<span class="w">    </span><span class="n">count</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="c1">-- will always skip 13 as this is an unlucky number</span>
+<span class="w">    </span><span class="n">count_valid</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">count_valid</span><span class="w"> </span><span class="c1">-- we will let the DUT control the assertion enable</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="c1">-----------------------------------------------------------------------------</span>
+<span class="c1">-- Assertions</span>
+<span class="c1">-----------------------------------------------------------------------------</span>
+<span class="n">p_assert_pure_vhdl</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
+<span class="k">begin</span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">rising_edge</span><span class="p">(</span><span class="n">clk</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">count_valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="c1">-- Check if the count is not equal to 13</span>
+<span class="w">    </span><span class="k">assert</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">13</span>
+<span class="w">        </span><span class="n">report</span><span class="w"> </span><span class="s">&quot;Pure VHDL assertion failed: count should not be 13&quot;</span>
+<span class="w">        </span><span class="k">severity</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
+<span class="k">end</span><span class="w"> </span><span class="k">process</span><span class="w"> </span><span class="nc">p_assert_pure_vhdl</span><span class="p">;</span>
+
+<span class="n">assert_count_not_13</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">13</span><span class="p">;</span>
+<span class="n">p_uvvm_assertion</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">assert_value</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">count_valid</span><span class="p">,</span><span class="w"> </span><span class="n">assert_count_not_13</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;count must never be 13&quot;</span><span class="p">);</span>
+
+<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
+<span class="k">begin</span>
+<span class="w">    </span><span class="n">log</span><span class="p">(</span><span class="n">ID_LOG_HDR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;STARTING SIMULATION&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">rst</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Assert reset</span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="n">C_CLK_PERIOD</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Wait for 10 clock cycles</span>
+<span class="w">    </span><span class="n">rst</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Deassert reset</span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">200</span><span class="o">*</span><span class="n">C_CLK_PERIOD</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">log</span><span class="p">(</span><span class="n">ID_LOG_HDR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SIMULATION COMPLETED&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">-- Finish the simulation</span>
+<span class="w">    </span><span class="nn">std.env</span><span class="p">.</span><span class="n">stop</span><span class="p">;</span>
+<span class="w">    </span><span class="k">wait</span><span class="p">;</span><span class="w">                               </span><span class="c1">-- to stop completely</span>
+
+<span class="k">end</span><span class="w"> </span><span class="k">process</span><span class="w"> </span><span class="nc">p_main</span><span class="p">;</span>
+
+<span class="k">end</span><span class="w"> </span><span class="nc">func</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="normal-usage">
+<h3>Normal usage<a class="headerlink" href="#normal-usage" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="id2">
+<img alt="Signal Monitors Placement in Testbench with VVCs" src="_images/assertions.png" />
+<figcaption>
+<p><span class="caption-text">Figure 2 - Signal Assertions Placement in Test-Harness (with VVCs)</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Figure 2</strong> shows a typical usage of UVVM assertions inside a test-harness, with VCCs controlling the DUT.
+The assertion in the test-harness is controlled by both the testbench, and the DUT using an auxiliary signal <cite>assertion_ena_combined</cite>,
+The user made VCCs is shown to contain an assertion (<cite>assert_one_of_async</cite>) placed concurrently inside it to check an assumption about the VCC output.
+The code example below matches the figure, but without the optional VVCs.
+In this example the assertion (<cite>assert_value_in_range</cite>), placed concurrently in the test-harness is checking that
+the output of a simple counter is always within a certain range (0-250).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">entity</span><span class="w"> </span><span class="nc">tb</span><span class="w"> </span><span class="k">is</span>
+<span class="k">end</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">tb</span><span class="p">;</span>
+
+<span class="k">architecture</span><span class="w"> </span><span class="nc">sim</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nc">tb</span><span class="w"> </span><span class="k">is</span>
+<span class="w">    </span><span class="c1">-- signals</span>
+<span class="k">begin</span>
+
+<span class="w">    </span><span class="n">i_test_harness</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">work</span><span class="p">.</span><span class="n">uvvm_assertion_demo_th</span>
+<span class="w">        </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">            </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">assert_value_in_range_ena</span><span class="p">,</span>
+<span class="w">            </span><span class="n">clock_ena</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clock_ena</span>
+<span class="w">        </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">-- Test sequencer</span>
+<span class="w">    </span><span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">-- continuously monitor the DUT output is in range (some time to allow for rst to be done)</span>
+<span class="w">        </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="w">        </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">process</span><span class="w"> </span><span class="nc">p_main</span><span class="p">;</span>
+<span class="k">end</span><span class="w"> </span><span class="k">architecture</span><span class="w"> </span><span class="nc">rtl</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">entity</span><span class="w"> </span><span class="nc">th</span><span class="w"> </span><span class="k">is</span>
+<span class="w">  </span><span class="k">port</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic</span><span class="p">;</span>
+<span class="w">    </span><span class="n">clock_ena</span><span class="w">                 </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic</span><span class="p">;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="k">end</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">th</span><span class="p">;</span>
+
+<span class="k">architecture</span><span class="w"> </span><span class="nc">sim</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nc">th</span><span class="w"> </span><span class="k">is</span>
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">dut_counter_value</span><span class="o">:</span><span class="w"> </span><span class="kt">integer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">dut_counter_valid</span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">signal</span><span class="w"> </span><span class="n">assertion_ena_combined</span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="k">begin</span>
+<span class="w">    </span><span class="c1">-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="c1">-- DUT Instantiation - Simple Counter</span>
+<span class="w">    </span><span class="c1">-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="n">i_simple_counter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">simple_counter</span>
+<span class="w">        </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">            </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">            </span><span class="n">enable</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="n">counter_val</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_counter_value</span><span class="p">,</span>
+<span class="w">            </span><span class="n">counter_valid</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_counter_valid</span>
+<span class="w">        </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="c1">-- Assertion - Check counter value stays within range</span>
+<span class="w">    </span><span class="c1">-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="n">assertion_ena_combined</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">dut_counter_valid</span><span class="p">;</span>
+<span class="w">    </span><span class="n">assert_value_in_range</span><span class="p">(</span>
+<span class="w">        </span><span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">assertion_ena_combined</span><span class="p">,</span>
+<span class="w">        </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_counter_value</span><span class="p">,</span>
+<span class="w">        </span><span class="n">lower_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Minimum valid counter value</span>
+<span class="w">        </span><span class="n">upper_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">250</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Maximum valid counter value (set by requirement)</span>
+<span class="w">        </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;DUT counter value valid range (0-250)&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="c1">-- Clock Generator</span>
+<span class="w">    </span><span class="c1">-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="n">clock_generator</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">clock_ena</span><span class="p">,</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DUT TB clock&quot;</span><span class="p">);</span>
+
+<span class="k">end</span><span class="w"> </span><span class="k">architecture</span><span class="w"> </span><span class="nc">sim</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>More examples of uvvm assertions can be found in the <cite>uvvm_assertions_demo</cite> ( <cite>_tb.vhd</cite> / <cite>_th.vhd</cite> ) testbench and test-harness in the uvvm_util/tb/ directory.</p>
+</div>
+</section>
+</section>
+<section id="basic-concepts">
+<h2>Basic concepts:<a class="headerlink" href="#basic-concepts" title="Link to this heading"></a></h2>
+<section id="clocked-and-async">
+<h3>clocked and async<a class="headerlink" href="#clocked-and-async" title="Link to this heading"></a></h3>
+<p>Most UVVM assertions are provided in two variants: a clocked version, which checks on the rising edge of a clock,
+and a non-clocked version, which checks whenever any signal parameter has an <cite>’event</cite>. (assuming the enable signal is active).
+Note that for the clocked assertions, the <cite>tracked_value</cite> will be checked at the same delta cycle as the rising edge of the clock,
+meaning that any changes to the tracked signal after this will be checked on the next rising edge of the clock.</p>
+</section>
+<section id="configuring-the-assertion">
+<h3>configuring the assertion<a class="headerlink" href="#configuring-the-assertion" title="Link to this heading"></a></h3>
+<p>All UVVM assertions have parameters defined as constants that can be used to configure the behavior of the assertion.
+These configuration parameters will be locked to their set value when the assertion is activated by the enable signal.
+If the configuration parameters need to be changed, the enable signal must be set low before changing the parameters to the desired value.</p>
+</section>
+<section id="pos-ack-and-pos-ack-kind">
+<h3>pos_ack and pos_ack_kind<a class="headerlink" href="#pos-ack-and-pos-ack-kind" title="Link to this heading"></a></h3>
+<p>All UVVM assertions will log on the <code class="code docutils literal notranslate"><span class="pre">msg_id</span> <span class="pre">:=</span> <span class="pre">ID_UVVM_ASSERTION</span></code> (can be changed by setting the <cite>msg_id</cite> constant in the procedure call)
+A positive acknowledgment will be logged when the assertion is sure that the assertion has passed.
+The default behavior is to only log the first time. By setting <code class="code docutils literal notranslate"><span class="pre">pos_ack_kind</span> <span class="pre">&lt;=</span> <span class="pre">EVERY</span></code>, the positive acknowledgment will come each time.</p>
+</section>
+</section>
+<section id="assertions">
+<h2>Assertions<a class="headerlink" href="#assertions" title="Link to this heading"></a></h2>
+<p>All UVVM assertions have some common traits which are useful to know before using them. All assertions require
+that the enable signal is set to ‘1’ (called active) for the assertion to be considered.
+If the assertion fails, UVVM will raise an alert with the severity set by the <cite>alert_level</cite> parameter, and
+as stated above, using the non-clocked version of the assertion will consider the assertion on any signal change.
+Most of this behavioral info is also written on each assertion procedure header.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Optional parameters</strong>
+“[]” in port map mean the parameter is optional</p>
+<p><strong>Legend</strong>
+bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer, exp=expected, ena=enable</p>
+</div>
+<section id="basic-assertions">
+<h3>Basic assertions<a class="headerlink" href="#basic-assertions" title="Link to this heading"></a></h3>
+<section id="assert-value">
+<h4>assert_value()<a class="headerlink" href="#assert-value" title="Link to this heading"></a></h4>
+<p>The <cite>assert_value()</cite> assertions will check if the signal given in the <cite>tracked_value</cite> is equal to <cite>exp_value</cite>.
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. For <cite>assert_value()</cite> using <code class="code docutils literal notranslate"><span class="pre">clk(sl)</span></code>, the check is done at the rising edge of the clock, and
+for the non-clocked version, the check is done on any signal change. (both assertions require the enable to be active). The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w">             </span><span class="n">exp_value</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w">             </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w">              </span><span class="n">exp_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w">              </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">               </span><span class="n">exp_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">               </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">t_slv_array</span><span class="p">),</span><span class="w">      </span><span class="n">exp_value</span><span class="p">(</span><span class="n">t_slv_array</span><span class="p">),</span><span class="w">      </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">t_unsigned_array</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">t_unsigned_array</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">t_signed_array</span><span class="p">),</span><span class="w">   </span><span class="n">exp_value</span><span class="p">(</span><span class="n">t_signed_array</span><span class="p">),</span><span class="w">   </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w">                </span><span class="n">exp_value</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w">                </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">                </span><span class="n">exp_value</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">                </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w">              </span><span class="n">exp_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w">              </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w">             </span><span class="n">exp_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w">             </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span><span class="w">             </span><span class="n">exp_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span><span class="w">             </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal. When used, the check will only be performed on rising edge,
+when omitted any signal ‘event will activate the assertion</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal. must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Test expression value, alert when not equal to exp_value on check</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>exp_value</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Expected value for the tracked_value (default: bool:true, other types has no default)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_value</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DUT signal must be &#39;1&#39; at rising edge of clk:200MHz&quot;</span><span class="p">);</span>
+
+<span class="n">assert_value</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">assertion_enable</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span>
+<span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;DUT signal must be &#39;1&#39; at rising edge of clk:200MHz&quot;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you wish to use the <cite>assert_value</cite> to assert if a signal is <em>never equal</em> to a certain value,
+you must use the <cite>assert_value(bool)</cite> variant and supply the <cite>tracked_value</cite> as an auxiliary boolean signal with the value of <cite>tracked_value /= exp_value</cite>.
+(see simple example at the top of this page)</p>
+</div>
+</section>
+<section id="assert-one-of">
+<h4>assert_one_of()<a class="headerlink" href="#assert-one-of" title="Link to this heading"></a></h4>
+<p>The <cite>assert_one_of()</cite> assertion will check if the signal given in the <cite>assert_one_of</cite> is equal to any of the values in <cite>allowed_values</cite>.
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. For <cite>assert_one_of()</cite> using <code class="code docutils literal notranslate"><span class="pre">clk(sl)</span></code>, the check is done at the rising edge of the clock,
+and for the non-clocked version, the check is done on any signal change. (both assertions require the enable to be active).
+The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w">  </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">t_slv_array</span><span class="p">),</span><span class="w">      </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">   </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w">              </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w">    </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">t_unsigned_array</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">    </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">t_signed_array</span><span class="p">),</span><span class="w">   </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w">  </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">t_integer_array</span><span class="p">),</span><span class="w">  </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">real_vector</span><span class="p">),</span><span class="w">      </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_one_of</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span><span class="w"> </span><span class="n">allowed_values</span><span class="p">(</span><span class="n">time_vector</span><span class="p">),</span><span class="w">      </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal. When used, the check will only be performed on rising edge,
+when omitted any signal ‘event will activate the assertion</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal. must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Test expression value, alert when not equal to one of the allowed_values on clock rising edge</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>allowed_values</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>A set of allowed values in the tracked_value</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that &quot;dut_output&quot; is always within valid digital values (L, H, 0, 1)</span>
+<span class="c1">-- avoiding non-valid logic states (X, Z, U, W, -) in the std_logic signal.</span>
+<span class="c1">-- The assertion will be tested on the rising edge of clk:200MHz</span>
+<span class="n">assert_one_of</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">enable</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span>
+<span class="n">allowed_values</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;LH01&quot;</span><span class="p">,</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Only DUT signal std_logic values constrained to: L, H, 0, and 1 are allowed at clk:200MHz&quot;</span>
+<span class="p">);</span>
+
+<span class="n">assert_one_of</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LH01&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Only DUT signal std_logic values constrained to: L, H, 0, and 1 are allowed at clk:200MHz&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-one-hot">
+<h4>assert_one_hot()<a class="headerlink" href="#assert-one-hot" title="Link to this heading"></a></h4>
+<p>The <cite>assert_one_hot()</cite> assertion will check if the signal given in the <cite>tracked_value</cite> is a one-hot signal (e.i that only one bit is set to ‘1’ and all others are ‘0’).
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. For the <cite>assert_one_hot()</cite> using <code class="code docutils literal notranslate"><span class="pre">clk(sl)</span></code>, the check is done at the rising edge of the clock,
+and for the non-clocked version, the check is done on any signal change. (both assertions require the enable to be active).</p>
+<p><strong>NOTE:</strong> this assertion may be used to also cover all zeros as a one-hot signal by setting <cite>accept_all_zero</cite> to <cite>ALL_ZERO_ALLOWED</cite>.
+The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_one_hot</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">accept_all_zero</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal. When used, the check will only be performed on rising edge,
+when omitted any signal ‘event will activate the assertion</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal. must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Test expression value, alert when not a one hot signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>accept_all_zero</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-accept-all-zeros"><span class="std std-ref">t_accept_all_zeros</span></a></p></td>
+<td><p>Accept all zeros as a one-hot signal. Default is ALL_ZERO_NOT_ALLOWED</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the positive acknowledge should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that &quot;dut_output&quot; is a one-hot signal at the rising edge of clk:200MHz</span>
+<span class="n">assert_one_hot</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">assertion_enable</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;DUT signal must be a one-hot signal at rising edge of clk:200MHz&quot;</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span>
+<span class="n">accept_all_zero</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ALL_ZERO_ALLOWED</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Also accept all zeros as valid state</span>
+<span class="p">);</span>
+
+<span class="n">assert_one_hot</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DUT signal must be a one-hot signal at rising edge of clk:200MHz&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-value-in-range">
+<h4>assert_value_in_range()<a class="headerlink" href="#assert-value-in-range" title="Link to this heading"></a></h4>
+<p>The <cite>assert_value_in_range()</cite> assertion will check if the signal given in the <cite>tracked_value</cite> is within the range (inclusive) of <cite>lower_limit</cite> and <cite>upper_limit</cite>.
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. For <cite>assert_value_in_range()</cite> using <code class="code docutils literal notranslate"><span class="pre">clk(sl)</span></code>, the check is done at the rising edge of the clock,
+and for the non-clocked version, the check is done on any signal change. (both assertions require the enable to be active).
+The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_value_in_range</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w">    </span><span class="n">lower_limit</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w">    </span><span class="n">upper_limit</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w">    </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value_in_range</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">    </span><span class="n">lower_limit</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">    </span><span class="n">upper_limit</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">    </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value_in_range</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w">  </span><span class="n">lower_limit</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w">  </span><span class="n">upper_limit</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w">  </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value_in_range</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">lower_limit</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">upper_limit</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value_in_range</span><span class="p">([</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">)],</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span><span class="w"> </span><span class="n">lower_limit</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span><span class="w"> </span><span class="n">upper_limit</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal. When used, the check will only be performed on rising edge,
+when omitted any signal ‘event will activate the assertion</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal. must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Test expression value, alert when not in range</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>lower_limit</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Lower bound of the allowed range (inclusive)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>upper_limit</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Upper bound of the allowed range (inclusive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the motor PWM duty cycle always remains within the safe operating range</span>
+<span class="c1">-- at the rising edge of clk:100MHz</span>
+<span class="n">assert_value_in_range</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk_100mhz</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">tb_asserts_enable</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">motor_pwm_duty_cycle</span><span class="p">,</span>
+<span class="c1">-- ** CONFIG **</span>
+<span class="n">lower_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">    </span><span class="c1">-- Min 5% duty cycle to ensure motor startup</span>
+<span class="n">upper_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Max 95% duty cycle to prevent overheating</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Motor PWM duty cycle must be in operating range (5-95%) @ clk:100MHz&quot;</span>
+<span class="p">);</span>
+
+<span class="n">assert_value_in_range</span><span class="p">(</span><span class="n">clk_100mhz</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">motor_pwm_duty_cycle</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Motor PWM duty cycle must be in operating range (5-95%) @ clk:100MHz&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-shift-one-from-left">
+<h4>assert_shift_one_from_left()<a class="headerlink" href="#assert-shift-one-from-left" title="Link to this heading"></a></h4>
+<p>The <cite>assert_shift_one_from_left()</cite> assertion will verify that the <cite>tracked_value</cite> signal follows the <cite>srl</cite> pattern from left to right.
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_shift_one_from_left</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">necessary_condition</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<p>When enabled, the assertion checks that a ‘1’ shifts from the leftmost bit to the rightmost bit, one position at each clock cycle.
+The assertion will give out an positive acknowledgement on the final bit (rightmost) being set to ‘1’.
+An alert will be raised if the sequence is broken based on the <cite>necessary_condition</cite> configuration.</p>
+<p>When using <cite>necessary_condition</cite> set as <code class="code docutils literal notranslate"><span class="pre">ANY_BIT_ALERT</span></code> or <code class="code docutils literal notranslate"><span class="pre">LAST_BIT_ALERT</span></code>, the assertion will allow for pipelined sequences,
+meaning that any new leftmost <cite>‘1’</cite> will start a new sequence, being tracked independently of the previous sequence.
+If the <cite>necessary_condition</cite> is set as <code class="code docutils literal notranslate"><span class="pre">ANY_BIT_ALERT_NO_PIPE</span></code> or <code class="code docutils literal notranslate"><span class="pre">LAST_BIT_ALERT_NO_PIPE</span></code>, the assertion will not allow for pipelined sequences,
+and any new leftmost <cite>‘1’</cite> while in an ongoing sequence will be ignored.
+If the sequence is broken, the assertion will drop all ongoing sequences, and give out an alert based on which <cite>necessary_condition</cite> is set, and which bit broke the sequence.</p>
+<p>Example of sequences:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- NOTE: &quot;b&quot; is a placeholder for any bit (0 or 1)</span>
+<span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b1bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb1b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb1</span><span class="w"> </span><span class="c1">-- a sequence of 4 bits with no errors</span>
+<span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">11</span><span class="n">bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b11b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb11</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb1</span><span class="w"> </span><span class="c1">-- two sequences of 4 bits with no errors (pipelined)</span>
+
+<span class="c1">-- Examples of sequences with errors:</span>
+<span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b1bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb1b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb0</span><span class="w"> </span><span class="c1">-- All necessary_conditions will give an alert</span>
+<span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b1bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb0b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb0</span><span class="w"> </span><span class="c1">-- Only necessary_condition ANY_BIT_ALERT and ANY_BIT_ALERT_NO_PIPE will give an alert</span>
+<span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">11</span><span class="n">bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b11b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb11</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb0</span><span class="w"> </span><span class="c1">-- (pipelined) necessary_condition ANY_BIT_ALERT and LAST_BIT_ALERT will give an alert</span>
+<span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">11</span><span class="n">bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b11b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb01</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb1</span><span class="w"> </span><span class="c1">-- (pipelined) Only necessary_condition ANY_BIT_ALERT will give an alert</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Test expression value, will alert if the shift pattern from left to right is broken</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>necessary_condition</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-necessary-condition"><span class="std std-ref">t_necessary_condition</span></a></p></td>
+<td><p>Sets when to alert. Default is ANY_BIT_ALERT</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Pipeline Stage Valid Signal Tracking</span>
+<span class="c1">-- This assertion monitors the &quot;valid&quot; signal as it propagates through a 4-stage</span>
+<span class="c1">-- image processing pipeline (each bit represents a valid flag in one stage)</span>
+<span class="n">assert_shift_one_from_left</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pixel_clock</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pipeline_active</span><span class="p">,</span><span class="w">       </span><span class="c1">-- Enable signal for the pipeline</span>
+<span class="n">tracked_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pipeline_stage_valid</span><span class="p">,</span><span class="w">  </span><span class="c1">-- 4-bit signal, one per pipeline stage</span>
+<span class="n">necessary_condition</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w">         </span><span class="c1">-- Alert on any stage that drops the valid flag</span>
+<span class="n">msg</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Image processing pipeline stage valid signal must shift one-hot from left to right&quot;</span><span class="p">,</span>
+<span class="n">alert_level</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">assert_shift_one_from_left</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">pipeline_active</span><span class="p">,</span><span class="w"> </span><span class="n">pipeline_stage_valid</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Image processing pipeline stage valid signal must shift one-hot from left to right&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="window-assertions">
+<h3>window assertions<a class="headerlink" href="#window-assertions" title="Link to this heading"></a></h3>
+<p>Window assertions are a collection of assertions to check signal properties within a defined window, either set by a number of cycles after a trigger signal or between two trigger signals.
+The window assertions which exist for both cycle-bound and end-trigger bound are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Bound by</p></th>
+<th class="head"><p>asserts</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>assert_value_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Cycles</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> signal is equal to <cite>exp_value</cite> on each rising edge in window.</p></td>
+</tr>
+<tr class="row-odd"><td><p>assert_change_to_value_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Cycles</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> signal is equal to a non-<cite>exp_value</cite> at any rising edge in window, and then later is equal to <cite>exp_value</cite> on a rising edge in window.</p></td>
+</tr>
+<tr class="row-even"><td><p>assert_change_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Cycles</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> has two different values on two rising edges in window.</p></td>
+</tr>
+<tr class="row-odd"><td><p>assert_stable_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Cycles</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> signal is stable (the same value) on all rising edges in window.</p></td>
+</tr>
+<tr class="row-even"><td><p>assert_value_from_start_to_end_trigger</p></td>
+<td><p>Trigger</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> signal is equal to <cite>exp_value</cite> on each rising edge in window.</p></td>
+</tr>
+<tr class="row-odd"><td><p>assert_change_to_value_from_start_to_end_trigger</p></td>
+<td><p>Trigger</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> signal is equal to a non-<cite>exp_value</cite> at any rising edge in window, and then later is equal to <cite>exp_value</cite> on a rising edge in window.</p></td>
+</tr>
+<tr class="row-even"><td><p>assert_change_from_start_to_end_trigger</p></td>
+<td><p>Trigger</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> has two different values on two rising edges in window.</p></td>
+</tr>
+<tr class="row-odd"><td><p>assert_stable_from_start_to_end_trigger</p></td>
+<td><p>Trigger</p></td>
+<td><p>Checks that the <cite>tracked_value</cite> signal is stable (the same value) on all rising edges in window.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The number of cycles is <strong>0</strong> at the first <cite>rising_edge(clk)</cite> where trigger = ‘1’.</p></li>
+<li><p>Setting <cite>min_cycles = 0</cite> and <cite>max_cycles = 0</cite> will result in the first and last check on the first <cite>rising_edge(clk)</cite> where trigger = ‘1’.</p></li>
+<li><p>After the first assertion OK event, the assertion will be dropped and give a positive acknowledge (unless using <em>_stable_</em> where the entire window must be checked).</p></li>
+<li><p>The number of cycles and start/end triggers are inclusive, with the exception of the “change” assertions not considering a change on the -1 to 0 cycle transition (as the tracked_value is first stored on trigger rising edge).</p></li>
+</ul>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>All window assertions can be pipelined (if <cite>trigger</cite>/<cite>start_trigger</cite> is ‘1’ while another window assertion is in progress). The assertion will check each window independently, giving an positive acknowledge or alert for each pipe independently.</p>
+<p>toggling <cite>ena &lt;= ‘0’</cite> will stop the assertion from checking all pipes and resets all internal saved values (as with the other assertions).</p>
+<p>Pipe numbering start on zero at the first trigger, and will be printed out as <cite>pipe: (N)</cite> for all non zero pipes in the assertion log message.</p>
+</div>
+<p>Example:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="id3">
+<img alt="Simple example of `assert_change_to_value_from_min_to_max_cycles_after_trigger` using `min_cycles = 1` and `max_cycles = 3`, where `exp_value = '1'`" src="_images/wavedrom_change_to_equal_example.png" />
+<figcaption>
+<p><span class="caption-text">Figure 3 - Simple example of <cite>assert_change_to_value_from_min_to_max_cycles_after_trigger</cite></span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Figure 3</strong> shows a simple example of <cite>assert_change_to_value_from_min_to_max_cycles_after_trigger</cite> using <cite>min_cycles = 1</cite> and <cite>max_cycles = 3</cite>, where <cite>exp_value = ‘1’</cite>.
+<strong>Note-1:</strong> That the number 1-cycle (0 on the trigger rising edge) rising edge is the first time <cite>tracked_value</cite> is considered, and the 3-cycle rising edge is the last time <cite>tracked_value</cite> is considered.
+<strong>Note-2:</strong> The “signal” <cite>valid window</cite> is used to illustrate when the window is active in the assertion, and is not a signal in the assertion itself.</p>
+<section id="assert-value-from-min-to-max-cycles-after-trigger">
+<h4>assert_value_from_min_to_max_cycles_after_trigger()<a class="headerlink" href="#assert-value-from-min-to-max-cycles-after-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_value_from_min_to_max_cycles_after_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal is equal to <cite>exp_value</cite> (on rising edge of clock) within a range of cycles after the <cite>trigger</cite> signal is ‘1’. The range is defined by the <cite>min_cycles</cite> and <cite>max_cycles</cite> constants.
+<strong>NOTE</strong>: If the min_cycles is set to 0, the assertion will check if the <cite>tracked_value</cite> signal is equal to <cite>exp_value</cite> at the same cycle as the <cite>trigger</cite> signal is ‘1’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Test expression to assert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Minimum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Maximum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>exp_value</p></td>
+<td><p>in</p></td>
+<td><p><em>see overloads</em></p></td>
+<td><p>Expected value of the tracked signal to check for</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the data_valid_flag remains high for the entire duration of a data transfer</span>
+<span class="c1">-- (from cycle 0 when transfer starts through cycle 3, covering all 4 cycles of the transfer window)</span>
+<span class="n">assert_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">interface_active</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_valid_flag</span><span class="p">,</span>
+<span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">start_transfer</span><span class="p">,</span>
+<span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Start checking immediately when transfer begins</span>
+<span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Check through the entire 4-cycle transfer window (cycles 0,1,2,3)</span>
+<span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Data valid must remain high throughout the entire transfer</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Data valid flag must remain asserted for the entire 4-cycle transfer window&quot;</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">assert_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">data_valid_flag</span><span class="p">,</span><span class="w"> </span><span class="n">start_transfer</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Data valid flag must remain asserted for the entire 4-cycle transfer window&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-change-to-value-from-min-to-max-cycles-after-trigger">
+<h4>assert_change_to_value_from_min_to_max_cycles_after_trigger()<a class="headerlink" href="#assert-change-to-value-from-min-to-max-cycles-after-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_change_to_value_from_min_to_max_cycles_after_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal is <strong>different</strong> from <cite>exp_value</cite>
+at any rising edge within the window, and then later changes to <cite>exp_value</cite> on a subsequent rising edge within the window.
+The range is defined by the <cite>min_cycles</cite> and <cite>max_cycles</cite> constants. If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>.
+The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_change_to_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_change_to_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression to assert, must change to exp_value within window</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Minimum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Maximum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>exp_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Expected value the tracked signal must change to</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the acknowledge signal changes to high within 2-5 cycles after request</span>
+<span class="n">assert_change_to_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">protocol_active</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span>
+<span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span>
+<span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Allow 2 cycles minimum response time</span>
+<span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Require response within 5 cycles maximum</span>
+<span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Expected value is acknowledge high</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active within required timing window (2-5 cycles) after request&quot;</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">assert_change_to_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active within required timing window (2-5 cycles) after request&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-change-from-min-to-max-cycles-after-trigger">
+<h4>assert_change_from_min_to_max_cycles_after_trigger()<a class="headerlink" href="#assert-change-from-min-to-max-cycles-after-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_change_from_min_to_max_cycles_after_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal is two different values on two rising edges within the window.
+<strong>Note:</strong> This assertion requires the <cite>max_cycles</cite> to be greater than <cite>min_cycles</cite> to allow for at least one change to be detected (window consisting of at least two rising edges).
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>.
+The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_change_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_change_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression to assert, must change within window</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Minimum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Maximum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the interrupt line toggles (changes state) within a window</span>
+<span class="c1">-- after a peripheral operation starts, indicating the operation completed</span>
+<span class="n">assert_change_from_min_to_max_cycles_after_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">interrupt_line</span><span class="p">,</span>
+<span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">start_peripheral_operation</span><span class="p">,</span>
+<span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Earliest expected response (operation takes minimum 5 cycles)</span>
+<span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">    </span><span class="c1">-- Latest allowed response (operation timeout at 20 cycles)</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Peripheral interrupt line must toggle within expected operation window (5-20 cycles)&quot;</span><span class="p">,</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">WARNING</span>
+<span class="p">);</span>
+
+<span class="n">assert_change_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">interrupt_line</span><span class="p">,</span><span class="w"> </span><span class="n">start_peripheral_operation</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Peripheral interrupt line must toggle within expected operation window (5-20 cycles)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-stable-from-min-to-max-cycles-after-trigger">
+<h4>assert_stable_from_min_to_max_cycles_after_trigger()<a class="headerlink" href="#assert-stable-from-min-to-max-cycles-after-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_stable_from_min_to_max_cycles_after_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal is the same value on all rising edges of the <cite>clk</cite> signal within the window.
+<strong>Note:</strong> Setting <cite>min_cycles = 0</cite> and <cite>max_cycles = 0</cite> will result in the assertion to always pass (as the value is always the same value on “all” rising edges of the <cite>clk</cite> signal in the window).
+The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_stable_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_stable_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">min_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">max_cycles</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression value, must remain stable throughout the window</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Minimum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max_cycles</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Maximum number of cycles after trigger signal to check (inclusive)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the memory data bus remains stable during a read operation</span>
+<span class="c1">-- after the data_ready signal is asserted until the transaction completes</span>
+<span class="n">assert_stable_from_min_to_max_cycles_after_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">memory_interface_active</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">memory_data_bus</span><span class="p">,</span>
+<span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_ready</span><span class="p">,</span>
+<span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Start checking immediately when data is ready</span>
+<span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Check stability for 4 cycles (cycles 0,1,2,3)</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Memory data bus must remain stable after data_ready until transfer completes&quot;</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">assert_stable_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">memory_interface_active</span><span class="p">,</span><span class="w"> </span><span class="n">memory_data_bus</span><span class="p">,</span><span class="w"> </span><span class="n">data_ready</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Memory data bus must remain stable after data_ready until transfer completes&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-value-from-start-to-end-trigger">
+<h4>assert_value_from_start_to_end_trigger()<a class="headerlink" href="#assert-value-from-start-to-end-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_value_from_start_to_end_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal is equal to <cite>exp_value</cite> on each rising edge of the <cite>clk</cite> signal in the window defined by the start and end trigger signals.
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression value, must equal exp_value between the trigger signals</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>start_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal that begins the assertion window</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>end_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>End event signal that closes the assertion window</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>exp_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Expected value the tracked signal must maintain between triggers</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default value is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default value is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default value is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default value is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the bus data remains valid (equal to &#39;1&#39;) during an entire</span>
+<span class="c1">-- bus transaction from the request signal until the acknowledge signal</span>
+<span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_valid</span><span class="p">,</span>
+<span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">bus_request</span><span class="p">,</span>
+<span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">bus_acknowledge</span><span class="p">,</span>
+<span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Data must remain valid (1) during entire transaction</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Data valid signal must remain high during entire bus transaction (from request to acknowledge)&quot;</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">data_valid</span><span class="p">,</span><span class="w"> </span><span class="n">bus_request</span><span class="p">,</span><span class="w"> </span><span class="n">bus_acknowledge</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Data valid signal must remain high during entire bus transaction (from request to acknowledge)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-change-to-value-from-start-to-end-trigger">
+<h4>assert_change_to_value_from_start_to_end_trigger()<a class="headerlink" href="#assert-change-to-value-from-start-to-end-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_change_to_value_from_start_to_end_trigger</cite> assertion checks if the <cite>tracked_value</cite> is a different value than <cite>exp_value</cite> at any rising edge within the window, and then later changes to <cite>exp_value</cite> on a subsequent rising edge within the window.
+<strong>Note:</strong> <cite>end_trigger</cite> must come at least one clock cycle after <cite>start_trigger</cite> to allow for at least one change to be detected (window consisting of at least two rising edges).
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_change_to_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_change_to_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">exp_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression value, must change to exp_value between trigger signals</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>start_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal that begins the assertion window</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>end_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>End event signal that closes the assertion window</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>exp_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Expected value the tracked signal must change to between triggers</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the acknowledge signal changes to high between request and completion</span>
+<span class="n">assert_change_to_value_from_start_to_end_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span>
+<span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span>
+<span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operation_complete</span><span class="p">,</span>
+<span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Expected value is acknowledge high</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active during protocol transaction&quot;</span><span class="p">,</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TB_ERROR</span>
+<span class="p">);</span>
+
+<span class="n">assert_change_to_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span><span class="w"> </span><span class="n">operation_complete</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active during protocol transaction&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-change-from-start-to-end-trigger">
+<h4>assert_change_from_start_to_end_trigger()<a class="headerlink" href="#assert-change-from-start-to-end-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_change_from_start_to_end_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal has two different values on two rising edges within the window defined by the start and end trigger signals.
+<strong>Note:</strong> <cite>end_trigger</cite> must come at least one clock cycle after <cite>start_trigger</cite> to allow for at least one change to be detected (window consisting of at least two rising edges).
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_change_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_change_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression value, must change at least once between trigger signals</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>start_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal that begins the assertion window</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>end_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>End event signal that closes the assertion window</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the response signal changes state at least once between</span>
+<span class="c1">-- the start of a command and its completion</span>
+<span class="n">assert_change_from_start_to_end_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">device_active</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">device_response</span><span class="p">,</span>
+<span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">command_start</span><span class="p">,</span>
+<span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">command_complete</span><span class="p">,</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Device must produce a response signal transition during command execution&quot;</span><span class="p">,</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span>
+<span class="p">);</span>
+
+<span class="n">assert_change_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">device_active</span><span class="p">,</span><span class="w"> </span><span class="n">device_response</span><span class="p">,</span><span class="w"> </span><span class="n">command_start</span><span class="p">,</span><span class="w"> </span><span class="n">command_complete</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Device must produce a response signal transition during command execution&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assert-stable-from-start-to-end-trigger">
+<h4>assert_stable_from_start_to_end_trigger()<a class="headerlink" href="#assert-stable-from-start-to-end-trigger" title="Link to this heading"></a></h4>
+<p>The <cite>assert_stable_from_start_to_end_trigger</cite> assertion checks if the <cite>tracked_value</cite> signal is the same value on all rising edges of the <cite>clk</cite> signal in the window defined by the start and end trigger signals.
+If the assertion fails, UVVM will raise an alert with the severity <cite>alert_level</cite>. The input map is:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">assert_stable_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w">  </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+<span class="n">assert_stable_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">ena</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">tracked_value</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">start_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">end_trigger</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">pos_ack_kind</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>ena</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Enable signal, must be ‘1’ for the assertion to be considered</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>tracked_value</p></td>
+<td><p>in</p></td>
+<td><p><strong>see overloads</strong></p></td>
+<td><p>Test expression value, must remain stable between trigger signals</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>start_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>Start event signal that begins the assertion window</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>end_trigger</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>End event signal that closes the assertion window</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Assertion log message</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default is ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope of the assertion. Default is C_SCOPE</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>pos_ack_kind</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-pos-ack-kind"><span class="std std-ref">t_pos_ack_kind</span></a></p></td>
+<td><p>How often the pos ack should come. Default is FIRST</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID for the assertion. Default is ID_UVVM_ASSERTION</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Message ID panel for the assertion. Default is shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of usage:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This will check that the configuration register remains stable</span>
+<span class="c1">-- during the entire data transfer operation (from start to complete signals)</span>
+<span class="n">assert_stable_from_start_to_end_trigger</span><span class="p">(</span>
+<span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
+<span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span>
+<span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">configuration_register</span><span class="p">,</span>
+<span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transfer_start</span><span class="p">,</span>
+<span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transfer_complete</span><span class="p">,</span>
+<span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Configuration register must remain stable during the entire transfer operation&quot;</span><span class="p">,</span>
+<span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span>
+<span class="p">);</span>
+
+<span class="n">assert_stable_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">configuration_register</span><span class="p">,</span><span class="w"> </span><span class="n">transfer_start</span><span class="p">,</span><span class="w"> </span><span class="n">transfer_complete</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Configuration register must remain stable during the entire transfer operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="accellera-ovl-comparison-functions">
+<h3>Accellera OVL comparison functions<a class="headerlink" href="#accellera-ovl-comparison-functions" title="Link to this heading"></a></h3>
+<p>The Accellera Standard OVL V2 has been an inspiration for the UVVM assertion library, therefore under we have a list of the Assertions that are similar to the OVL V2 assertions.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>OVL assertion name</p></th>
+<th class="head"><p>UVVM assertion equivalent</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ovl_always &amp; ovl_never</p></td>
+<td><p>assert_value</p></td>
+<td><p>The <cite>exp_value</cite> constant allows checking for a specific <cite>tracked_value</cite>, covering both OVL assertions</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_always_on_edge</p></td>
+<td><p>assert_value</p></td>
+<td><p>Same as <cite>ovl_always</cite>, but checks <cite>tracked_value</cite> on the rising edge of <cite>sampling_event</cite> signal</p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_cycle_sequence</p></td>
+<td><p>assert_shift_one_from_left</p></td>
+<td><p>Minor edge case differences; OVL <cite>necessary_condition</cite> is represented as a constant</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_implication</p></td>
+<td><p>assert_value</p></td>
+<td><p>OVLs new trigger signal must be covered by an auxiliary signal (<code class="code docutils literal notranslate"><span class="pre">c</span> <span class="pre">&lt;=</span> <span class="pre">a</span> <span class="pre">and</span> <span class="pre">b</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_never_unknown</p></td>
+<td><p>assert_one_of</p></td>
+<td><p><cite>allowed_values</cite> constant defines allowed <cite>tracked_value</cite> values (e.g., “01H”)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_never_unknown_async</p></td>
+<td><p>assert_one_of</p></td>
+<td><p>See <cite>assert_always_one_of</cite>, but use without <cite>clk</cite> in parameter map</p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_one_hot</p></td>
+<td><p>assert_one_hot</p></td>
+<td><p>Direct equivalent assertion</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_range</p></td>
+<td><p>assert_value_in_range</p></td>
+<td><p>Name emphasizes checking a value within a range (e.g <cite>int</cite>)</p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_zero_one_hot</p></td>
+<td><p>assert_one_hot</p></td>
+<td><p>There is a constant <cite>accept_all_zero</cite> which allows all zeros to count as a one-hot signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_next</p></td>
+<td><p>assert_value_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Uses <cite>min_cycles</cite> and <cite>max_cycles</cite> to define the range of cycles to check</p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_req_ack_unique</p></td>
+<td><p>assert_change_to_value_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Ensures unique <cite>tracked_value = exp_value</cite> event within a cycle range after <cite>trigger</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_time</p></td>
+<td><p>assert_value_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Uses both <cite>min_cycles</cite> and <cite>max_cycles</cite>, unlike OVL which only uses <cite>max_cycles</cite></p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_unchange</p></td>
+<td><p>assert_stable_from_min_to_max_cycles_after_trigger</p></td>
+<td><p>Ensures <cite>tracked_value</cite> remains stable over a defined cycle range</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_win_change</p></td>
+<td><p>assert_change_from_start_to_end_trigger</p></td>
+<td><p>Checks for changes within the start-to-end trigger window</p></td>
+</tr>
+<tr class="row-even"><td><p>ovl_win_unchange</p></td>
+<td><p>assert_stable_from_start_to_end_trigger</p></td>
+<td><p>Ensures stability within the start-to-end trigger window</p></td>
+</tr>
+<tr class="row-odd"><td><p>ovl_window</p></td>
+<td><p>assert_value_from_start_to_end_trigger</p></td>
+<td><p>Ensures activation within the start-to-end trigger window</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="types_pkg.html" class="btn btn-neutral float-left" title="t_alert_level" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rand_pkg_overview.html" class="btn btn-neutral float-right" title="Enhanced Randomization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

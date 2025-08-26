@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -62,7 +63,36 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Ethernet</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#hvvc">HVVC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hvvc">HVVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ethernet-transmit">ethernet_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ethernet-receive">ethernet_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ethernet-expect">ethernet_expect()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#support-package">Support package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-ethernet-protocol-config">t_ethernet_protocol_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-ethernet-frame">t_ethernet_frame</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
@@ -105,9 +135,798 @@
              
   <section id="bitvis-vip-ethernet">
 <h1>Bitvis VIP Ethernet<a class="headerlink" href="#bitvis-vip-ethernet" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#hvvc">HVVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ethernet-transmit"><span class="std std-ref">ethernet_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#ethernet-receive"><span class="std std-ref">ethernet_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#ethernet-expect"><span class="std std-ref">ethernet_expect()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
 <section id="hvvc">
-<span id="vip-ethernet-hvvc"></span><h2>HVVC<a class="headerlink" href="#hvvc" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_ethernet/doc/ethernet_hvvc_QuickRef.pdf">ethernet_hvvc_QuickRef.pdf</a></p>
+<h2>HVVC<a class="headerlink" href="#hvvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>This Ethernet Hierarchical-VVC is based on IEEE 802.3.</p></li>
+<li><p>It does not support optional fields or EtherType, only length is supported.</p></li>
+<li><p>HVVCs are different than normal VVCs since they represent a higher protocol level than the physical layer, i.e. they have no
+physical connections. However due to similarities in the core code, the VVC term is used instead.</p></li>
+<li><p>HVVC functionality is implemented in ethernet_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>N/A</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_PHY_INTERFACE</p></td>
+<td><p><a class="reference internal" href="utility_library.html#adaptations-pkg"><span class="std std-ref">t_interface</span></a></p></td>
+<td><p>N/A</p></td>
+<td><p>Physical VVC interface type, e.g. SBI, GMII.
+(see note below)</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_PHY_VVC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>N/A</p></td>
+<td><p>Instance number of the physical VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_PHY_MAX_ACCESS_TIME</p></td>
+<td><p>time</p></td>
+<td><p>1 us</p></td>
+<td><p>Maximum time that the physical VVC takes to
+execute an access, e.g. GMII write 1 byte. It
+should also account for any margin it needs.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_DUT_IF_FIELD_CONFIG</p></td>
+<td><p><a class="reference internal" href="ti_vvc_framework_support_pkg.html#t-dut-if-field-config-direction-array"><span class="std std-ref">t_dut_if_field_config_direction_array</span></a></p></td>
+<td><p>C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT</p></td>
+<td><p>Array of configurations for address based VVC
+interfaces</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_ETHERNET_PROTOCOL_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-ethernet-protocol-config"><span class="std std-ref">t_ethernet_protocol_config</span></a></p></td>
+<td><p>C_ETHERNET_PROTOCOL_CONFIG_DEFAULT</p></td>
+<td><p>Configuration of the Ethernet protocol</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can use any of the physical interfaces already implemented just by using the appropriate name in GC_PHY_INTERFACE and
+instantiating the corresponding VVC in the testbench (in addition to the HVVC). For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.
+If you however want to use an interface type which is not already included, see <a class="reference internal" href="vip_hvvc_to_vvc_bridge.html#vip-hvvc-to-vvc-bridge"><span class="std std-ref">Bitvis VIP HVVC-to-VVC Bridge</span></a> for more info.</p>
+</div>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<p>Since HVVCs represent a higher protocol level than the physical layer, they have no physical connections. The actual signals
+controlled by the HVVC are those from the physical interface defined by GC_PHY_INTERFACE and GC_PHY_VVC_INSTANCE_IDX.</p>
+</section>
+</section>
+<section id="configuration-record">
+<h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_ethernet_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_ETHERNET_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-ethernet-protocol-config"><span class="std std-ref">t_ethernet_protocol_config</span></a></p></td>
+<td><p>C_ETHERNET_PROTOCOL_CONFIG_DEFAULT</p></td>
+<td><p>Not strictly a bus functional model (BFM) but
+holds BFM-like configuration data for the
+Ethernet protocol</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ethernet_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_ethernet_vvc_config</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">interpacket_gap_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">96</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_ethernet_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="ethernet-transmit">
+<span id="id1"></span><h4>ethernet_transmit()<a class="headerlink" href="#ethernet-transmit" title="Link to this heading"></a></h4>
+<p>Adds a transmit command to the Ethernet VVC executor queue, which will runs as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the priv_ethernet_transmit_to_bridge() procedure. This procedure builds an
+Ethernet packet and transmits each field using the HVVC-to-VVC bridge which then transfers the data to the lower level VVC
+(physical interface). After it has finished, it waits for the configured interpacket gap time.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ethernet_transmit</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">mac_destination</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">mac_source</span><span class="p">],</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>mac_destination</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+<td><p>The MAC address of destination</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>mac_source</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+<td><p>The MAC address of source</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>payload</p></td>
+<td><p>in</p></td>
+<td><p>t_byte_array</p></td>
+<td><p>The payload of the packet</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">ethernet_transmit</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">v_mac_dest</span><span class="p">,</span><span class="w"> </span><span class="n">v_mac_src</span><span class="p">,</span><span class="w"> </span><span class="n">v_payload</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmit an ethernet packet&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">ethernet_transmit</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">v_payload</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmit an ethernet packet using default MAC addresses&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="ethernet-receive">
+<span id="id2"></span><h4>ethernet_receive()<a class="headerlink" href="#ethernet-receive" title="Link to this heading"></a></h4>
+<p>Adds a receive command to the Ethernet VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the priv_ethernet_receive_from_bridge() procedure. This procedure receives an
+Ethernet packet by requesting each field from the HVVC-to-VVC bridge which calls the lower level VVC (physical interface) to read
+the data. When the complete packet is received, it computes the FCS and checks that it corresponds to the one received in the
+packet.</p>
+<p>The received data from the DUT is not to be returned in this procedure call since it is non-blocking for the sequencer/caller, but
+it will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+If the data_routing is set to TO_SB, the read data will be sent to the Ethernet VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ethernet_receive</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the read data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">ethernet_receive</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive an ethernet packet and store it in the VVC&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">ethernet_receive</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive an ethernet packet and send to Scoreboard for checking&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from receive.</span>
+<span class="p">...</span>
+<span class="n">ethernet_receive</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive ethernet packet&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="ethernet-expect">
+<span id="id3"></span><h4>ethernet_expect()<a class="headerlink" href="#ethernet-expect" title="Link to this heading"></a></h4>
+<p>Adds an expect command to the Ethernet VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the priv_ethernet_expect_from_bridge() procedure. This procedure performs a
+receive operation, then checks if the received data is equal to the expected data. The received data is not stored in this
+procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ethernet_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">mac_destination</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">mac_source</span><span class="p">],</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel</p></td>
+<td><p>in</p></td>
+<td><p>t_channel</p></td>
+<td><p>The VVC channel of the VVC instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>mac_destination</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+<td><p>The MAC address of destination</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>mac_source</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+<td><p>The MAC address of source</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>payload</p></td>
+<td><p>in</p></td>
+<td><p>t_byte_array</p></td>
+<td><p>The payload of the packet</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">ethernet_expect</span><span class="p">(</span><span class="n">ETHERNET_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_mac_dest</span><span class="p">,</span><span class="w"> </span><span class="n">v_mac_src</span><span class="p">,</span><span class="w"> </span><span class="n">v_payload</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect an ethernet packet&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id6">
+<caption><span class="caption-text">Ethernet transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_ethernet_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>ethernet_frame</p></td>
+<td><p><a class="reference internal" href="#t-ethernet-frame"><span class="std std-ref">t_ethernet_frame</span></a></p></td>
+<td><p>C_ETHERNET_FRAME_DEFAULT</p></td>
+<td><p>Ethernet frame</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. ethernet_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method
+when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable ETHERNET_VVC_SB,
+located in the vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ETHERNET_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_ETH_GMII_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected_frame</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the Ethernet VVC scoreboard using the ETHERNET_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>Since HVVCs do not contain any physical ports, the unwanted activity detection is found in the physical layer VVC connected to the
+HVVC, e.g. GMII/RGMII/SBI. Thus, when the data is not expected from the DUT, i.e. Ethernet VVC receive/expect methods are not
+called, an alert of severity will be generated from the physical layer VVCs.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g. for GMII VVC:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Note that the unwanted activity detection is enabled (unwanted_activity_severity := ERROR) by default for the GMII/RGMII/SBI VVCs.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="support-package">
+<h3>Support package<a class="headerlink" href="#support-package" title="Link to this heading"></a></h3>
+<p>Contains constants and types for the Ethernet protocol, defined in support_pkg.vhd</p>
+<p>The table below shows which index in the DUT IF field configuration array (<a class="reference internal" href="ti_vvc_framework_support_pkg.html#t-dut-if-field-config-direction-array"><span class="std std-ref">t_dut_if_field_config_direction_array</span></a>) the
+Ethernet fields are associated with. These configurations are only necessary when the lower level VVC is address-based, e.g. SBI.
+The DUT IF field configuration array is a two-dimensional array (direction and index). If the same configuration is used for all
+fields, only one configuration per direction is needed. The highest indexed configuration is used for indexes higher than those
+supplied. E.g. if the array consists of two configurations the first configuration, index 0, is used for the field preamble &amp; SFD
+and the other fields use the last configuration, index 1. Each index holds an element of type <a class="reference internal" href="ti_vvc_framework_support_pkg.html#t-dut-if-field-config"><span class="std std-ref">t_dut_if_field_config</span></a>,
+see table below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Ethernet field</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Index</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Preamble &amp; SFD</p></td>
+<td><p>C_FIELD_IDX_PREAMBLE_AND_SFD</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>MAC destination</p></td>
+<td><p>C_FIELD_IDX_MAC_DESTINATION</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>MAC source</p></td>
+<td><p>C_FIELD_IDX_MAC_SOURCE</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Payload length</p></td>
+<td><p>C_FIELD_IDX_PAYLOAD_LENGTH</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>Payload</p></td>
+<td><p>C_FIELD_IDX_PAYLOAD</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>FCS</p></td>
+<td><p>C_FIELD_IDX_FCS</p></td>
+<td><p>5</p></td>
+</tr>
+</tbody>
+</table>
+<section id="t-ethernet-protocol-config">
+<span id="id4"></span><h4>t_ethernet_protocol_config<a class="headerlink" href="#t-ethernet-protocol-config" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mac_destination</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>mac_source</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>fcs_error_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>interpacket_gap_time</p></td>
+<td><p>time</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Interpacket gap is implemented as a wait statement after the ethernet packet has been transmitted.</p></li>
+<li><p>Check of interpacket gap on receive is not implemented.</p></li>
+<li><p>If the physical VVC has a timeout, e.g. max_wait_cycles, it must be big enough to handle the interpacket gap and any other
+delays in the transmission.</p></li>
+</ul>
+</div>
+</section>
+<section id="t-ethernet-frame">
+<span id="id5"></span><h4>t_ethernet_frame<a class="headerlink" href="#t-ethernet-frame" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mac_destination</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>mac_source</p></td>
+<td><p>unsigned(47 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>payload_length</p></td>
+<td><p>integer</p></td>
+</tr>
+<tr class="row-odd"><td><p>payload</p></td>
+<td><p>t_byte_array(0 to 1499)</p></td>
+</tr>
+<tr class="row-even"><td><p>fcs</p></td>
+<td><p>std_logic_vector(31 downto 0)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<p>The Ethernet VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>Library of the physical interface used (e.g. Bitvis VIP GMII)</p></li>
+<li><p>HVVC-to-VVC Bridge</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the Ethernet VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-text">Compile order for the Ethernet VVC</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>support_pkg.vhd</p></td>
+<td><p>Ethernet support package</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>Ethernet transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>Ethernet VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>Ethernet VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>Ethernet VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>ethernet_rx_vvc.vhd</p></td>
+<td><p>Ethernet RX VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>ethernet_tx_vvc.vhd</p></td>
+<td><p>Ethernet TX VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>ethernet_vvc.vhd</p></td>
+<td><p>Ethernet VVC wrapper for the RX and TX VVCs</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_ethernet</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>Ethernet VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for Ethernet.</p></li>
+<li><p>This Ethernet VVC is based on IEEE 802.3</p></li>
+<li><p>It does not support optional fields or EtherType, only length is supported.</p></li>
+<li><p>This VIP is not an Ethernet protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -115,6 +934,7 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
 </section>
 </section>
 
@@ -129,7 +949,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

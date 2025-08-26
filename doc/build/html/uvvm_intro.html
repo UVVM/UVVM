@@ -59,6 +59,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -178,7 +179,7 @@ differentiator, thus allowing an extremely efficient reuse from one VVC to anoth
 <li><p>A logging and alert system that supports full verbosity control of functionality and hierarchy</p></li>
 <li><p>A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through
 the execution queue - until it is executed and completed towards the DUT</p></li>
-<li><p>Allows 3rd party randomization and functional coverage to be included in the central test sequencer - or even better - inside
+<li><p>Allows randomization and functional coverage to be included in the central test sequencer - or even better - inside
 the VVCs in the local sequencers for better control and encapsulation</p></li>
 <li><p>Simple integration with regression test tools like Jenkins</p></li>
 <li><p>Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs</p></li>
@@ -191,15 +192,17 @@ to handle just the AXI4-Lite interface with everything else being your proprieta
 <ul class="simple">
 <li><p>Avalon MM</p></li>
 <li><p>Avalon ST - master and slave</p></li>
+<li><p>AXI4</p></li>
 <li><p>AXI4-Lite</p></li>
 <li><p>AXI-Stream - master and slave</p></li>
-<li><p>SBI (Simple Bus Interface - A single cycle simple parallel bus interface)</p></li>
-<li><p>UART</p></li>
-<li><p>SPI - master and slave</p></li>
-<li><p>I2C - master and slave</p></li>
-<li><p>GPIO</p></li>
+<li><p>Ethernet</p></li>
 <li><p>GMII</p></li>
+<li><p>GPIO</p></li>
+<li><p>I2C - master and slave</p></li>
 <li><p>RGMII</p></li>
+<li><p>SBI (Simple Bus Interface - A single cycle simple parallel bus interface)</p></li>
+<li><p>SPI - master and slave</p></li>
+<li><p>UART</p></li>
 <li><p>More are coming</p></li>
 </ul>
 <div class="admonition important">
@@ -213,10 +216,10 @@ checkers.</p>
 <p>UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 The latest release of UVVM has been tested with the following simulators:</p>
 <ul class="simple">
-<li><p>ModelSim</p></li>
-<li><p>Riviera-PRO</p></li>
-<li><p>Questa</p></li>
 <li><p>GHDL</p></li>
+<li><p>ModelSim/Questa</p></li>
+<li><p>NVC</p></li>
+<li><p>Riviera-PRO</p></li>
 </ul>
 <p>UVVM will work with all VHDL-2008 compatible simulators.</p>
 <p>See <a class="reference internal" href="tool_compatibility.html#tool-compatibility"><span class="std std-ref">Tool Compatibility</span></a> for known issues.</p>
@@ -234,7 +237,7 @@ fast access links to some interesting info:</p>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
 <div class="line-block">
-<div class="line">Copyright 2024 UVVM</div>
+<div class="line">Copyright 2025 UVVM</div>
 <div class="line">Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License.
 You may obtain a copy of the License at <a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a> and in the provided LICENSE.TXT.</div>
 </div>
@@ -264,7 +267,7 @@ and handle any required verification and documentation.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

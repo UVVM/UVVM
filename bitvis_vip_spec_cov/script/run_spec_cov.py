@@ -1483,8 +1483,8 @@ def build_partial_cov_list(run_configuration, container):
     # Get the delimiter from the partial_cov file
     #==========================================================================
     partial_coverage_pass = False
+    pc_file_name = ""
     try:
-        pc_file_name = ""
         if len(partial_coverage_files) == 0:
             pc_file_name = "NO_FILE_FOUND"
             msg = "Error: No valid partial coverage files found"

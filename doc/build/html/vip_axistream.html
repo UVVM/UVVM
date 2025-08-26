@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -101,6 +102,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id10">Compilation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id11">Simulator compatibility and setup</a></li>
@@ -287,44 +289,38 @@ hold_time exceeds clock_period/2.</p></td>
 <tr class="row-odd"><td><p>bfm_sync</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
 <td><p>SYNC_ON_CLOCK_ONLY</p></td>
-<td><div class="line-block">
-<div class="line">When set to SYNC_ON_CLOCK_ONLY the BFM will
+<td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
 enter on the first falling edge, estimate the
-clock period,</div>
-<div class="line">synchronize the output signals and exit ¼
-clock period after a succeeding rising edge.</div>
-<div class="line">When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+clock period,</p>
+<p>synchronize the output signals and exit ¼
+clock period after a succeeding rising edge.</p>
+<p>When set to SYNC_WITH_SETUP_AND_HOLD the BFM
 will use the configured setup_time, hold_time
-and</div>
-<div class="line">clock_period to synchronize output signals
-with clock edges.</div>
-</div>
+and</p>
+<p>clock_period to synchronize output signals
+with clock edges.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>match_strictness</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
 <td><p>MATCH_EXACT</p></td>
-<td><div class="line-block">
-<div class="line">Matching strictness for std_logic values in
-check procedures.</div>
-<div class="line">MATCH_EXACT requires both values to be the
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
 same. Note that the expected value can contain
-the don’t care operator ‘-‘.</div>
-<div class="line">MATCH_STD allows comparisons between ‘H’ and
-‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
-</div>
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>byte_endianness</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-byte-endianness"><span class="std std-ref">t_byte_endianness</span></a></p></td>
 <td><p>LOWER_BYTE_LEFT</p></td>
-<td><div class="line-block">
-<div class="line">Little-endian or big-endian endianness byte
+<td><p>Little-endian or big-endian endianness byte
 ordering when using a t_slv_array with
-multiple-byte width per array element.</div>
-<div class="line">Possible values are LOWER_BYTE_LEFT or
-LOWER_BYTE_RIGHT.</div>
-</div>
+multiple-byte width per array element.</p>
+<p>Possible values are LOWER_BYTE_LEFT or
+LOWER_BYTE_RIGHT.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>valid_low_at_word_num</p></td>
@@ -466,68 +462,60 @@ the data to be sent</p></td>
 <td><p>user_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-user-array">t_user_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TUSER signal.</div>
-<div class="line">The number of entries in user_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">For example, if 16 bytes shall be sent, and there are
+<td><p>Side-band data to be sent via the TUSER signal.</p>
+<p>The number of entries in user_array equals the number
+of data words, i.e. transfers.</p>
+<p>For example, if 16 bytes shall be sent, and there are
 8 bytes transmitted per transfer, the user_array has
-2 entries.</div>
-<div class="line">The number of bits actually used in each user_array
-entry corresponds to the width of axistream_if.tuser.</div>
-<div class="line">Note: If axistream_if.tuser is wider than 32, increase
+2 entries.</p>
+<p>The number of bits actually used in each user_array
+entry corresponds to the width of axistream_if.tuser.</p>
+<p>Note: If axistream_if.tuser is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>strb_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-strb-array">t_strb_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TSTRB signal. The
-BFM transmits the values without affecting TDATA.</div>
-<div class="line">The number of entries in strb_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each strb_array
-entry corresponds to the width of axistream_if.tstrb.</div>
-<div class="line">Note: If axistream_if.tstrb is wider than 32, increase
+<td><p>Side-band data to be sent via the TSTRB signal. The</p>
+<p>BFM transmits the values without affecting TDATA.
+The number of entries in strb_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each strb_array
+entry corresponds to the width of axistream_if.tstrb.</p>
+<p>Note: If axistream_if.tstrb is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>id_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-id-array">t_id_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TID signal.</div>
-<div class="line">The number of entries in id_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each id_array
-entry corresponds to the width of axistream_if.tid.</div>
-<div class="line">Note: If axistream_if.tid is wider than 8, increase
+<td><p>Side-band data to be sent via the TID signal.</p>
+<p>The number of entries in id_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each id_array
+entry corresponds to the width of axistream_if.tid.</p>
+<p>Note: If axistream_if.tid is wider than 8, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>dest_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-dest-array">t_dest_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TDEST signal.</div>
-<div class="line">The number of entries in dest_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each dest_array
-entry corresponds to the width of axistream_if.tdest.</div>
-<div class="line">Note: If axistream_if.tdest is wider than 4, increase
+<td><p>Side-band data to be sent via the TDEST signal.</p>
+<p>The number of entries in dest_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each dest_array
+entry corresponds to the width of axistream_if.tdest.</p>
+<p>Note: If axistream_if.tdest is wider than 4, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -634,68 +622,60 @@ bytes in data_array</p></td>
 <td><p>user_array</p></td>
 <td><p>inout</p></td>
 <td><p><a class="reference internal" href="#t-user-array">t_user_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be received via the TUSER signal.</div>
-<div class="line">The number of entries in user_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">For example, if 16 bytes shall be received, and there
+<td><p>Side-band data to be received via the TUSER signal.</p>
+<p>The number of entries in user_array equals the number
+of data words, i.e. transfers.</p>
+<p>For example, if 16 bytes shall be received, and there
 are 8 bytes received per transfer, the user_array has
-2 entries.</div>
-<div class="line">The number of bits actually used in each user_array
-entry corresponds to the width of axistream_if.tuser.</div>
-<div class="line">Note: If axistream_if.tuser is wider than 32, increase
+2 entries.</p>
+<p>The number of bits actually used in each user_array
+entry corresponds to the width of axistream_if.tuser.</p>
+<p>Note: If axistream_if.tuser is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>variable</p></td>
 <td><p>strb_array</p></td>
 <td><p>inout</p></td>
 <td><p><a class="reference internal" href="#t-strb-array">t_strb_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be received via the TSTRB signal.
-The BFM receives the values without affecting TDATA.</div>
-<div class="line">The number of entries in strb_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each strb_array
-entry corresponds to the width of axistream_if.tstrb.</div>
-<div class="line">Note: If axistream_if.tstrb is wider than 32, increase
+<td><p>Side-band data to be received via the TSTRB signal.
+The BFM receives the values without affecting TDATA.</p>
+<p>The number of entries in strb_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each strb_array
+entry corresponds to the width of axistream_if.tstrb.</p>
+<p>Note: If axistream_if.tstrb is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>variable</p></td>
 <td><p>id_array</p></td>
 <td><p>inout</p></td>
 <td><p><a class="reference internal" href="#t-id-array">t_id_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be received via the TID signal.</div>
-<div class="line">The number of entries in id_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each id_array
-entry corresponds to the width of axistream_if.tid.</div>
-<div class="line">Note: If axistream_if.tid is wider than 8, increase
+<td><p>Side-band data to be received via the TID signal.</p>
+<p>The number of entries in id_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each id_array
+entry corresponds to the width of axistream_if.tid.</p>
+<p>Note: If axistream_if.tid is wider than 8, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>variable</p></td>
 <td><p>dest_array</p></td>
 <td><p>inout</p></td>
 <td><p><a class="reference internal" href="#t-dest-array">t_dest_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be received via the TDEST signal.</div>
-<div class="line">The number of entries in dest_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each dest_array
-entry corresponds to the width of axistream_if.tdest.</div>
-<div class="line">Note: If axistream_if.tdest is wider than 4, increase
+<td><p>Side-band data to be received via the TDEST signal.</p>
+<p>The number of entries in dest_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each dest_array
+entry corresponds to the width of axistream_if.tdest.</p>
+<p>Note: If axistream_if.tdest is wider than 4, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
@@ -780,68 +760,60 @@ the expected data to be received</p></td>
 <td><p>exp_user_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-user-array">t_user_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TUSER signal.</div>
-<div class="line">The number of entries in user_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">For example, if 16 bytes shall be sent, and there are
+<td><p>Expected side-band data via the TUSER signal.</p>
+<p>The number of entries in user_array equals the number
+of data words, i.e. transfers.</p>
+<p>For example, if 16 bytes shall be sent, and there are
 8 bytes transmitted per transfer, the user_array has
-2 entries.</div>
-<div class="line">The number of bits actually used in each user_array
-entry corresponds to the width of axistream_if.tuser.</div>
-<div class="line">Note: If axistream_if.tuser is wider than 32, increase
+2 entries.</p>
+<p>The number of bits actually used in each user_array
+entry corresponds to the width of axistream_if.tuser.</p>
+<p>Note: If axistream_if.tuser is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>exp_strb_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-strb-array">t_strb_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TSTRB signal. The BFM
-transmits the values without affecting TDATA.</div>
-<div class="line">The number of entries in strb_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each strb_array
-entry corresponds to the width of axistream_if.tstrb.</div>
-<div class="line">Note: If axistream_if.tstrb is wider than 32, increase
+<td><p>Expected side-band data via the TSTRB signal. The BFM
+transmits the values without affecting TDATA.</p>
+<p>The number of entries in strb_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each strb_array
+entry corresponds to the width of axistream_if.tstrb.</p>
+<p>Note: If axistream_if.tstrb is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>exp_id_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-id-array">t_id_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TID signal.</div>
-<div class="line">The number of entries in id_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each id_array
-entry corresponds to the width of axistream_if.tid.</div>
-<div class="line">Note: If axistream_if.tid is wider than 8, increase
+<td><p>Expected side-band data via the TID signal.</p>
+<p>The number of entries in id_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each id_array
+entry corresponds to the width of axistream_if.tid.</p>
+<p>Note: If axistream_if.tid is wider than 8, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>exp_dest_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-dest-array">t_dest_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TDEST signal.</div>
-<div class="line">The number of entries in dest_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each dest_array
-entry corresponds to the width of axistream_if.tdest.</div>
-<div class="line">Note: If axistream_if.tdest is wider than 4, increase
+<td><p>Expected side-band data via the TDEST signal.</p>
+<p>The number of entries in dest_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each dest_array
+entry corresponds to the width of axistream_if.tdest.</p>
+<p>Note: If axistream_if.tdest is wider than 4, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1092,28 +1064,24 @@ both TVALID and TREADY are asserted.</p></td>
 <td><p>Master</p></td>
 <td><p>1:32</p></td>
 <td><p>Yes</p></td>
-<td><div class="line-block">
-<div class="line">Side-band info transmitted alongside the data stream.</div>
-<div class="line">If axistream_if.tuser is wider than 32, increase
-C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-</div>
+<td><p>Side-band info transmitted alongside the data stream.</p>
+<p>If axistream_if.tuser is wider than 32, increase
+C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>TSTRB</p></td>
 <td><p>Master</p></td>
 <td><p>1:32</p></td>
 <td><p>Yes</p></td>
-<td><div class="line-block">
-<div class="line">The protocol uses this signal for marking TDATA as position byte, but
-the BFM simply sends/receives/checks the values of TSTRB</div>
-<div class="line">as specified by the sequencer without affecting TDATA.</div>
-<div class="line">While transmitting, the test sequencer defines what TSTRB values to
-send. The BFM transmits TDATA regardless of the TSTRB value.</div>
-<div class="line">While receiving, the received TSTRB values are presented to the test
-sequencer. The BFM presents TDATA regardless of the TSTRB value.</div>
-<div class="line">If axistream_if.tstrb is wider than 32, increase
-C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
-</div>
+<td><p>The protocol uses this signal for marking TDATA as position byte, but
+the BFM simply sends/receives/checks the values of TSTRB</p>
+<p>as specified by the sequencer without affecting TDATA.</p>
+<p>While transmitting, the test sequencer defines what TSTRB values to
+send. The BFM transmits TDATA regardless of the TSTRB value.</p>
+<p>While receiving, the received TSTRB values are presented to the test
+sequencer. The BFM presents TDATA regardless of the TSTRB value.</p>
+<p>If axistream_if.tstrb is wider than 32, increase
+C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>TKEEP</p></td>
@@ -1121,13 +1089,11 @@ C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
 <td><p>TDATA’length
 / 8</p></td>
 <td><p>Partly</p></td>
-<td><div class="line-block">
-<div class="line">When TKEEP is ‘0’, it indicates a null byte that can be removed from
-the stream.</div>
-<div class="line">Null bytes are only used for signalling the number of valid bytes in
-the last data word.</div>
-<div class="line">Leading or intermediate null bytes are not supported.</div>
-</div>
+<td><p>When TKEEP is ‘0’, it indicates a null byte that can be removed from
+the stream.</p>
+<p>Null bytes are only used for signalling the number of valid bytes in
+the last data word.</p>
+<p>Leading or intermediate null bytes are not supported.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>TLAST</p></td>
@@ -1140,32 +1106,28 @@ the last data word.</div>
 <td><p>Master</p></td>
 <td><p>1:8</p></td>
 <td><p>Yes</p></td>
-<td><div class="line-block">
-<div class="line">Indicates different streams of data. Usually used by routing
-infrastructures.</div>
-<div class="line">When BFM is transmitting, the test sequencer defines what TID values
-to send.</div>
-<div class="line">When BFM is receiving, the received TID values are presented to the
-test sequencer.</div>
-<div class="line">If axistream_if.tid is wider than 8, increase
-C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-</div>
+<td><p>Indicates different streams of data. Usually used by routing
+infrastructures.</p>
+<p>When BFM is transmitting, the test sequencer defines what TID values
+to send.</p>
+<p>When BFM is receiving, the received TID values are presented to the
+test sequencer.</p>
+<p>If axistream_if.tid is wider than 8, increase
+C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>TDEST</p></td>
 <td><p>Master</p></td>
 <td><p>1:4</p></td>
 <td><p>Yes</p></td>
-<td><div class="line-block">
-<div class="line">Provides routing info for the data stream. Usually used by routing
-infrastructures.</div>
-<div class="line">When BFM is transmitting, the test sequencer defines what TDEST
-values to send.</div>
-<div class="line">When BFM is receiving, the received TDEST values are presented to the
-test sequencer.</div>
-<div class="line">If axistream_if.tdest is wider than 4, increase
-C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-</div>
+<td><p>Provides routing info for the data stream. Usually used by routing
+infrastructures.</p>
+<p>When BFM is transmitting, the test sequencer defines what TDEST
+values to send.</p>
+<p>When BFM is receiving, the received TDEST values are presented to the
+test sequencer.</p>
+<p>If axistream_if.tdest is wider than 4, increase
+C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 </tbody>
@@ -1222,37 +1184,31 @@ this VVC.</p></td>
 <tr class="row-even"><td><p>GC_USER_WIDTH</p></td>
 <td><p>integer</p></td>
 <td><p>1</p></td>
-<td><div class="line-block">
-<div class="line">Width of the AXI4-Stream TUSER signal.</div>
-<div class="line">Note 1: if TUSER is wider than 8, increase the
-value of the constant C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-<div class="line">Note 2: If the TUSER signal is not used, refer
-to <a class="reference internal" href="#signals">Signals</a></div>
-</div>
+<td><p>Width of the AXI4-Stream TUSER signal.</p>
+<p>Note 1: if TUSER is wider than 8, increase the
+value of the constant C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
+<p>Note 2: If the TUSER signal is not used, refer
+to <a class="reference internal" href="#signals">Signals</a></p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>GC_ID_WIDTH</p></td>
 <td><p>integer</p></td>
 <td><p>1</p></td>
-<td><div class="line-block">
-<div class="line">Width of the AXI4-Stream TID signal.</div>
-<div class="line">Note 1: if TID is wider than 8, increase the
-value of the constant C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-<div class="line">Note 2: If the TID signal is not used, refer
-to <a class="reference internal" href="#signals">Signals</a></div>
-</div>
+<td><p>Width of the AXI4-Stream TID signal.</p>
+<p>Note 1: if TID is wider than 8, increase the
+value of the constant C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
+<p>Note 2: If the TID signal is not used, refer
+to <a class="reference internal" href="#signals">Signals</a></p>
 </td>
 </tr>
 <tr class="row-even"><td><p>GC_DEST_WIDTH</p></td>
 <td><p>integer</p></td>
 <td><p>1</p></td>
-<td><div class="line-block">
-<div class="line">Width of the AXI4-Stream TDEST signal.</div>
-<div class="line">Note 1: if TDEST is wider than 4, increase the
-value of the constant C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-<div class="line">Note 2: If the TDEST signal is not used, refer
-to <a class="reference internal" href="#signals">Signals</a></div>
-</div>
+<td><p>Width of the AXI4-Stream TDEST signal.</p>
+<p>Note 1: if TDEST is wider than 4, increase the
+value of the constant C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
+<p>Note 2: If the TDEST signal is not used, refer
+to <a class="reference internal" href="#signals">Signals</a></p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
@@ -1260,37 +1216,42 @@ to <a class="reference internal" href="#signals">Signals</a></div>
 <td><p>N/A</p></td>
 <td><p>Instance number to assign the VVC</p></td>
 </tr>
-<tr class="row-even"><td><p>GC_AXISTREAM_BFM_CONFIG</p></td>
+<tr class="row-even"><td><p>GC_PACKETINFO_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>DEPRECATED</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_AXISTREAM_BFM_CONFIG</p></td>
 <td><p><a class="reference internal" href="#t-axistream-bfm-config"><span class="std std-ref">t_axistream_bfm_config</span></a></p></td>
 <td><p>C_AXISTREAM_BFM_CONFIG_DEFAULT</p></td>
 <td><p>Configuration for the AXI4-Stream BFM</p></td>
 </tr>
-<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
 <td><p>natural</p></td>
 <td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
 <td><p>Absolute maximum number of commands in the VVC
 command queue</p></td>
 </tr>
-<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
 <td><p>natural</p></td>
 <td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
 <td><p>An alert will be generated when reaching this
 threshold to indicate that the command queue is
 almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
 </tr>
-<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
 <td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
 <td><p>Alert severity which will be used when command
 queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
-<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
 <td><p>natural</p></td>
 <td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
 <td><p>Maximum number of unfetched results before
 result_queue is full</p></td>
 </tr>
-<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 <td><p>natural</p></td>
 <td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 <td><p>An alert will be issued if result queue exceeds
@@ -1298,7 +1259,7 @@ this count. Used for early warning if result
 queue is almost full. Will be ignored if set to
 0.</p></td>
 </tr>
-<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
 <td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
 <td><p>Severity of alert to be initiated if exceeding
@@ -1404,18 +1365,16 @@ GC_VVC_IS_MASTER in the testbench or test-harness. Example instantiations of the
 <tr class="row-even"><td><p>inter_bfm_delay</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
 <td><p>C_AXISTREAM_INTER_BFM_DELAY_DEFAULT</p></td>
-<td><div class="line-block">
-<div class="line">Delay between any requested BFM accesses
-towards the DUT.</div>
-<div class="line">TIME_START2START: Time from a BFM start to the
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
 next BFM start (a TB_WARNING will be issued if
-access takes longer than TIME_START2START).</div>
-<div class="line">TIME_FINISH2START: Time from a BFM end to the
-next BFM start.</div>
-<div class="line">Any insert_delay() command will add to the
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
 above minimum delays, giving for instance the
-ability to skew the BFM starting time.</div>
-</div>
+ability to skew the BFM starting time.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
@@ -1575,68 +1534,60 @@ the data to be sent</p></td>
 <td><p>user_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-user-array">t_user_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TUSER signal.</div>
-<div class="line">The number of entries in user_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">For example, if 16 bytes shall be sent, and there are
+<td><p>Side-band data to be sent via the TUSER signal.</p>
+<p>The number of entries in user_array equals the number
+of data words, i.e. transfers.</p>
+<p>For example, if 16 bytes shall be sent, and there are
 8 bytes transmitted per transfer, the user_array has
-2 entries.</div>
-<div class="line">The number of bits actually used in each user_array
-entry corresponds to the width of axistream_if.tuser.</div>
-<div class="line">Note: If axistream_if.tuser is wider than 32, increase
+2 entries.</p>
+<p>The number of bits actually used in each user_array
+entry corresponds to the width of axistream_if.tuser.</p>
+<p>Note: If axistream_if.tuser is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>strb_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-strb-array">t_strb_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TSTRB signal. The
-BFM transmits the values without affecting TDATA.</div>
-<div class="line">The number of entries in strb_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each strb_array
-entry corresponds to the width of axistream_if.tstrb.</div>
-<div class="line">Note: If axistream_if.tstrb is wider than 32, increase
+<td><p>Side-band data to be sent via the TSTRB signal. The
+BFM transmits the values without affecting TDATA.</p>
+<p>The number of entries in strb_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each strb_array
+entry corresponds to the width of axistream_if.tstrb.</p>
+<p>Note: If axistream_if.tstrb is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>id_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-id-array">t_id_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TID signal.</div>
-<div class="line">The number of entries in id_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each id_array
-entry corresponds to the width of axistream_if.tid.</div>
-<div class="line">Note: If axistream_if.tid is wider than 8, increase
+<td><p>Side-band data to be sent via the TID signal.</p>
+<p>The number of entries in id_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each id_array
+entry corresponds to the width of axistream_if.tid.</p>
+<p>Note: If axistream_if.tid is wider than 8, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>dest_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-dest-array">t_dest_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Side-band data to be sent via the TDEST signal.</div>
-<div class="line">The number of entries in dest_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each dest_array
-entry corresponds to the width of axistream_if.tdest.</div>
-<div class="line">Note: If axistream_if.tdest is wider than 4, increase
+<td><p>Side-band data to be sent via the TDEST signal.</p>
+<p>The number of entries in dest_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each dest_array
+entry corresponds to the width of axistream_if.tdest.</p>
+<p>Note: If axistream_if.tdest is wider than 4, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1777,68 +1728,60 @@ the expected data to be received</p></td>
 <td><p>user_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-user-array">t_user_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TUSER signal.</div>
-<div class="line">The number of entries in user_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">For example, if 16 bytes shall be sent, and there are
+<td><p>Expected side-band data via the TUSER signal.</p>
+<p>The number of entries in user_array equals the number
+of data words, i.e. transfers.</p>
+<p>For example, if 16 bytes shall be sent, and there are
 8 bytes transmitted per transfer, the user_array has
-2 entries.</div>
-<div class="line">The number of bits actually used in each user_array
-entry corresponds to the width of axistream_if.tuser.</div>
-<div class="line">Note: If axistream_if.tuser is wider than 32, increase
+2 entries.</p>
+<p>The number of bits actually used in each user_array
+entry corresponds to the width of axistream_if.tuser.</p>
+<p>Note: If axistream_if.tuser is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>strb_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-strb-array">t_strb_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TSTRB signal. The BFM
-transmits the values without affecting TDATA.</div>
-<div class="line">The number of entries in strb_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each strb_array
-entry corresponds to the width of axistream_if.tstrb.</div>
-<div class="line">Note: If axistream_if.tstrb is wider than 32, increase
+<td><p>Expected side-band data via the TSTRB signal. The BFM
+transmits the values without affecting TDATA.</p>
+<p>The number of entries in strb_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each strb_array
+entry corresponds to the width of axistream_if.tstrb.</p>
+<p>Note: If axistream_if.tstrb is wider than 32, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>id_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-id-array">t_id_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TID signal.</div>
-<div class="line">The number of entries in id_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each id_array
-entry corresponds to the width of axistream_if.tid.</div>
-<div class="line">Note: If axistream_if.tid is wider than 8, increase
+<td><p>Expected side-band data via the TID signal.</p>
+<p>The number of entries in id_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each id_array
+entry corresponds to the width of axistream_if.tid.</p>
+<p>Note: If axistream_if.tid is wider than 8, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>dest_array</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="#t-dest-array">t_dest_array</a></p></td>
-<td><div class="line-block">
-<div class="line">Expected side-band data via the TDEST signal.</div>
-<div class="line">The number of entries in dest_array equals the number
-of data words, i.e. transfers.</div>
-<div class="line">The number of bits actually used in each dest_array
-entry corresponds to the width of axistream_if.tdest.</div>
-<div class="line">Note: If axistream_if.tdest is wider than 4, increase
+<td><p>Expected side-band data via the TDEST signal.</p>
+<p>The number of entries in dest_array equals the number
+of data words, i.e. transfers.</p>
+<p>The number of bits actually used in each dest_array
+entry corresponds to the width of axistream_if.tdest.</p>
+<p>Note: If axistream_if.tdest is wider than 4, increase
 the value of the constant
-C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</div>
-</div>
+C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1967,6 +1910,12 @@ SUCCEEDED during a transaction</p></td>
 </tbody>
 </table>
 <p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC does not have a built in Scoreboard functionality due to the complexity to make it generic for several use cases. However,
+a dedicated Scoreboard can be added by the user if needed.</p>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
@@ -2098,7 +2047,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

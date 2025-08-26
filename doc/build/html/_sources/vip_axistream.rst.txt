@@ -93,30 +93,36 @@ Default value for the record is C_AXISTREAM_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
-|                              |                              | NLY             |   enter on the first falling edge, estimate the |
-|                              |                              |                 |   clock period,                                 |
-|                              |                              |                 | | synchronize the output signals and exit ¼     |
-|                              |                              |                 |   clock period after a succeeding rising edge.  |
-|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
-|                              |                              |                 |   will use the configured setup_time, hold_time |
-|                              |                              |                 |   and                                           |
-|                              |                              |                 | | clock_period to synchronize output signals    |
-|                              |                              |                 |   with clock edges.                             |
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
+|                              |                              | NLY             | enter on the first falling edge, estimate the   |
+|                              |                              |                 | clock period,                                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | synchronize the output signals and exit ¼       |
+|                              |                              |                 | clock period after a succeeding rising edge.    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
+|                              |                              |                 | will use the configured setup_time, hold_time   |
+|                              |                              |                 | and                                             |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | clock_period to synchronize output signals      |
+|                              |                              |                 | with clock edges.                               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| byte_endianness              | :ref:`t_byte_endianness`     | LOWER_BYTE_LEFT | | Little-endian or big-endian endianness byte   |
-|                              |                              |                 |   ordering when using a t_slv_array with        |
-|                              |                              |                 |   multiple-byte width per array element.        |
-|                              |                              |                 | | Possible values are LOWER_BYTE_LEFT or        |
-|                              |                              |                 |   LOWER_BYTE_RIGHT.                             |
+| byte_endianness              | :ref:`t_byte_endianness`     | LOWER_BYTE_LEFT | Little-endian or big-endian endianness byte     |
+|                              |                              |                 | ordering when using a t_slv_array with          |
+|                              |                              |                 | multiple-byte width per array element.          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Possible values are LOWER_BYTE_LEFT or          |
+|                              |                              |                 | LOWER_BYTE_RIGHT.                               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | valid_low_at_word_num        | integer                      | 0               | Word index during which the master BFM shall    |
 |                              |                              |                 | de-assert valid while sending a packet. Can be  |
@@ -205,45 +211,58 @@ chapter 1.2.2 in "AMBA® 4 AXI4-Stream Protocol Specification" (ARM IHI 0051A).
 | constant | data_array         | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the data to be sent                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | user_array         | in     | `t_user_array`_              | | Side-band data to be sent via the TUSER signal.       |
-|          |                    |        |                              | | The number of entries in user_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | For example, if 16 bytes shall be sent, and there are |
-|          |                    |        |                              |   8 bytes transmitted per transfer, the user_array has  |
-|          |                    |        |                              |   2 entries.                                            |
-|          |                    |        |                              | | The number of bits actually used in each user_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tuser. |
-|          |                    |        |                              | | Note: If axistream_if.tuser is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.    |
+| constant | user_array         | in     | `t_user_array`_              | Side-band data to be sent via the TUSER signal.         |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in user_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | For example, if 16 bytes shall be sent, and there are   |
+|          |                    |        |                              | 8 bytes transmitted per transfer, the user_array has    |
+|          |                    |        |                              | 2 entries.                                              |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each user_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tuser.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tuser is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | strb_array         | in     | `t_strb_array`_              | | Side-band data to be sent via the TSTRB signal. The   |
-|          |                    |        |                              |   BFM transmits the values without affecting TDATA.     |
-|          |                    |        |                              | | The number of entries in strb_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each strb_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tstrb. |
-|          |                    |        |                              | | Note: If axistream_if.tstrb is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.    |
+| constant | strb_array         | in     | `t_strb_array`_              | Side-band data to be sent via the TSTRB signal. The     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | BFM transmits the values without affecting TDATA.       |
+|          |                    |        |                              | The number of entries in strb_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each strb_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tstrb.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tstrb is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | id_array           | in     | `t_id_array`_                | | Side-band data to be sent via the TID signal.         |
-|          |                    |        |                              | | The number of entries in id_array equals the number   |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each id_array     |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tid.   |
-|          |                    |        |                              | | Note: If axistream_if.tid is wider than 8, increase   |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.      |
+| constant | id_array           | in     | `t_id_array`_                | Side-band data to be sent via the TID signal.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in id_array equals the number     |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each id_array       |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tid.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tid is wider than 8, increase     |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | dest_array         | in     | `t_dest_array`_              | | Side-band data to be sent via the TDEST signal.       |
-|          |                    |        |                              | | The number of entries in dest_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each dest_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tdest. |
-|          |                    |        |                              | | Note: If axistream_if.tdest is wider than 4, increase |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.    |
+| constant | dest_array         | in     | `t_dest_array`_              | Side-band data to be sent via the TDEST signal.         |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in dest_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each dest_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tdest.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tdest is wider than 4, increase   |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -309,45 +328,58 @@ BFM checks that all TKEEP bits are '1', since the BFM supports only "continuous 
 | variable | data_length        | inout  | natural                      | The number of bytes received, i.e. the number of valid  |
 |          |                    |        |                              | bytes in data_array                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | user_array         | inout  | `t_user_array`_              | | Side-band data to be received via the TUSER signal.   |
-|          |                    |        |                              | | The number of entries in user_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | For example, if 16 bytes shall be received, and there |
-|          |                    |        |                              |   are 8 bytes received per transfer, the user_array has |
-|          |                    |        |                              |   2 entries.                                            |
-|          |                    |        |                              | | The number of bits actually used in each user_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tuser. |
-|          |                    |        |                              | | Note: If axistream_if.tuser is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.    |
+| variable | user_array         | inout  | `t_user_array`_              | Side-band data to be received via the TUSER signal.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in user_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | For example, if 16 bytes shall be received, and there   |
+|          |                    |        |                              | are 8 bytes received per transfer, the user_array has   |
+|          |                    |        |                              | 2 entries.                                              |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each user_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tuser.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tuser is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | strb_array         | inout  | `t_strb_array`_              | | Side-band data to be received via the TSTRB signal.   |
-|          |                    |        |                              |   The BFM receives the values without affecting TDATA.  |
-|          |                    |        |                              | | The number of entries in strb_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each strb_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tstrb. |
-|          |                    |        |                              | | Note: If axistream_if.tstrb is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.    |
+| variable | strb_array         | inout  | `t_strb_array`_              | Side-band data to be received via the TSTRB signal.     |
+|          |                    |        |                              | The BFM receives the values without affecting TDATA.    |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in strb_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each strb_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tstrb.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tstrb is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | id_array           | inout  | `t_id_array`_                | | Side-band data to be received via the TID signal.     |
-|          |                    |        |                              | | The number of entries in id_array equals the number   |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each id_array     |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tid.   |
-|          |                    |        |                              | | Note: If axistream_if.tid is wider than 8, increase   |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.      |
+| variable | id_array           | inout  | `t_id_array`_                | Side-band data to be received via the TID signal.       |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in id_array equals the number     |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each id_array       |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tid.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tid is wider than 8, increase     |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | dest_array         | inout  | `t_dest_array`_              | | Side-band data to be received via the TDEST signal.   |
-|          |                    |        |                              | | The number of entries in dest_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each dest_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tdest. |
-|          |                    |        |                              | | Note: If axistream_if.tdest is wider than 4, increase |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.    |
+| variable | dest_array         | inout  | `t_dest_array`_              | Side-band data to be received via the TDEST signal.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in dest_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each dest_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tdest.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tdest is wider than 4, increase   |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -396,45 +428,58 @@ For example: ``v_dest_array := (others => (others => '-'));``
 | constant | exp_data_array     | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the expected data to be received                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | exp_user_array     | in     | `t_user_array`_              | | Expected side-band data via the TUSER signal.         |
-|          |                    |        |                              | | The number of entries in user_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | For example, if 16 bytes shall be sent, and there are |
-|          |                    |        |                              |   8 bytes transmitted per transfer, the user_array has  |
-|          |                    |        |                              |   2 entries.                                            |
-|          |                    |        |                              | | The number of bits actually used in each user_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tuser. |
-|          |                    |        |                              | | Note: If axistream_if.tuser is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.    |
+| constant | exp_user_array     | in     | `t_user_array`_              | Expected side-band data via the TUSER signal.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in user_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | For example, if 16 bytes shall be sent, and there are   |
+|          |                    |        |                              | 8 bytes transmitted per transfer, the user_array has    |
+|          |                    |        |                              | 2 entries.                                              |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each user_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tuser.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tuser is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | exp_strb_array     | in     | `t_strb_array`_              | | Expected side-band data via the TSTRB signal. The BFM |
-|          |                    |        |                              |   transmits the values without affecting TDATA.         |
-|          |                    |        |                              | | The number of entries in strb_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each strb_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tstrb. |
-|          |                    |        |                              | | Note: If axistream_if.tstrb is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.    |
+| constant | exp_strb_array     | in     | `t_strb_array`_              | Expected side-band data via the TSTRB signal. The BFM   |
+|          |                    |        |                              | transmits the values without affecting TDATA.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in strb_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each strb_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tstrb.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tstrb is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | exp_id_array       | in     | `t_id_array`_                | | Expected side-band data via the TID signal.           |
-|          |                    |        |                              | | The number of entries in id_array equals the number   |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each id_array     |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tid.   |
-|          |                    |        |                              | | Note: If axistream_if.tid is wider than 8, increase   |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.      |
+| constant | exp_id_array       | in     | `t_id_array`_                | Expected side-band data via the TID signal.             |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in id_array equals the number     |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each id_array       |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tid.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tid is wider than 8, increase     |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | exp_dest_array     | in     | `t_dest_array`_              | | Expected side-band data via the TDEST signal.         |
-|          |                    |        |                              | | The number of entries in dest_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each dest_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tdest. |
-|          |                    |        |                              | | Note: If axistream_if.tdest is wider than 4, increase |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.    |
+| constant | exp_dest_array     | in     | `t_dest_array`_              | Expected side-band data via the TDEST signal.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in dest_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each dest_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tdest.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tdest is wider than 4, increase   |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -600,45 +645,58 @@ The following signals from the AXI4-Stream interface are supported:
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
 | TDATA             | Master | n*8    | Yes              | Data word. The width must be a multiple of bytes                       |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| TUSER             | Master | 1:32   | Yes              | | Side-band info transmitted alongside the data stream.                |
-|                   |        |        |                  | | If axistream_if.tuser is wider than 32, increase                     |
-|                   |        |        |                  |   C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.                   |
+| TUSER             | Master | 1:32   | Yes              | Side-band info transmitted alongside the data stream.                  |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | If axistream_if.tuser is wider than 32, increase                       |
+|                   |        |        |                  | C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.                     |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| TSTRB             | Master | 1:32   | Yes              | | The protocol uses this signal for marking TDATA as position byte, but|
-|                   |        |        |                  |   the BFM simply sends/receives/checks the values of TSTRB             |
-|                   |        |        |                  | | as specified by the sequencer without affecting TDATA.               |
-|                   |        |        |                  | | While transmitting, the test sequencer defines what TSTRB values to  |
-|                   |        |        |                  |   send. The BFM transmits TDATA regardless of the TSTRB value.         |
-|                   |        |        |                  | | While receiving, the received TSTRB values are presented to the test |
-|                   |        |        |                  |   sequencer. The BFM presents TDATA regardless of the TSTRB value.     |
-|                   |        |        |                  | | If axistream_if.tstrb is wider than 32, increase                     |
-|                   |        |        |                  |   C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.                   |
+| TSTRB             | Master | 1:32   | Yes              | The protocol uses this signal for marking TDATA as position byte, but  |
+|                   |        |        |                  | the BFM simply sends/receives/checks the values of TSTRB               |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | as specified by the sequencer without affecting TDATA.                 |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | While transmitting, the test sequencer defines what TSTRB values to    |
+|                   |        |        |                  | send. The BFM transmits TDATA regardless of the TSTRB value.           |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | While receiving, the received TSTRB values are presented to the test   |
+|                   |        |        |                  | sequencer. The BFM presents TDATA regardless of the TSTRB value.       |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | If axistream_if.tstrb is wider than 32, increase                       |
+|                   |        |        |                  | C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.                     |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| TKEEP             | Master | TDATA'\| Partly           | | When TKEEP is '0', it indicates a null byte that can be removed from |
-|                   |        | length |                  |   the stream.                                                          |
-|                   |        | / 8    |                  | | Null bytes are only used for signalling the number of valid bytes in |
-|                   |        |        |                  |   the last data word.                                                  |
-|                   |        |        |                  | | Leading or intermediate null bytes are not supported.                |
+| TKEEP             | Master | TDATA'\| Partly           | When TKEEP is '0', it indicates a null byte that can be removed from   |
+|                   |        | length |                  | the stream.                                                            |
+|                   |        | / 8    |                  |                                                                        |
+|                   |        |        |                  | Null bytes are only used for signalling the number of valid bytes in   |
+|                   |        |        |                  | the last data word.                                                    |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | Leading or intermediate null bytes are not supported.                  |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
 | TLAST             | Master | 1      | Yes              | When '1', it indicates that the TDATA is the last word of the packet   |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| TID               | Master | 1:8    | Yes              | | Indicates different streams of data. Usually used by routing         |
-|                   |        |        |                  |   infrastructures.                                                     |
-|                   |        |        |                  | | When BFM is transmitting, the test sequencer defines what TID values |
-|                   |        |        |                  |   to send.                                                             |
-|                   |        |        |                  | | When BFM is receiving, the received TID values are presented to the  |
-|                   |        |        |                  |   test sequencer.                                                      |
-|                   |        |        |                  | | If axistream_if.tid is wider than 8, increase                        |
-|                   |        |        |                  |   C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.                     |
+| TID               | Master | 1:8    | Yes              | Indicates different streams of data. Usually used by routing           |
+|                   |        |        |                  | infrastructures.                                                       |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | When BFM is transmitting, the test sequencer defines what TID values   |
+|                   |        |        |                  | to send.                                                               |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | When BFM is receiving, the received TID values are presented to the    |
+|                   |        |        |                  | test sequencer.                                                        |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | If axistream_if.tid is wider than 8, increase                          |
+|                   |        |        |                  | C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.                       |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| TDEST             | Master | 1:4    | Yes              | | Provides routing info for the data stream. Usually used by routing   |
-|                   |        |        |                  |   infrastructures.                                                     |
-|                   |        |        |                  | | When BFM is transmitting, the test sequencer defines what TDEST      |
-|                   |        |        |                  |   values to send.                                                      |
-|                   |        |        |                  | | When BFM is receiving, the received TDEST values are presented to the|
-|                   |        |        |                  |   test sequencer.                                                      |
-|                   |        |        |                  | | If axistream_if.tdest is wider than 4, increase                      |
-|                   |        |        |                  |   C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.                   |
+| TDEST             | Master | 1:4    | Yes              | Provides routing info for the data stream. Usually used by routing     |
+|                   |        |        |                  | infrastructures.                                                       |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | When BFM is transmitting, the test sequencer defines what TDEST        |
+|                   |        |        |                  | values to send.                                                        |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | When BFM is receiving, the received TDEST values are presented to the  |
+|                   |        |        |                  | test sequencer.                                                        |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | If axistream_if.tdest is wider than 4, increase                        |
+|                   |        |        |                  | C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.                     |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
 
 This BFM only supports the "continuous aligned stream" subset of the AXI4-Stream protocol.
@@ -676,28 +734,36 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_DATA_WIDTH                | integer                      | N/A             | Width of the AXI4-Stream data bus.              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_USER_WIDTH                | integer                      | 1               | | Width of the AXI4-Stream TUSER signal.        |
-|                              |                              |                 | | Note 1: if TUSER is wider than 8, increase the|
-|                              |                              |                 |   value of the constant C_AXISTREAM_BFM_MAX_TUS\|
-|                              |                              |                 |   ER_BITS in adaptations_pkg.                   |
-|                              |                              |                 | | Note 2: If the TUSER signal is not used, refer|
-|                              |                              |                 |   to `Signals`_                                 |
+| GC_USER_WIDTH                | integer                      | 1               | Width of the AXI4-Stream TUSER signal.          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 1: if TUSER is wider than 8, increase the  |
+|                              |                              |                 | value of the constant C_AXISTREAM_BFM_MAX_TUS\  |
+|                              |                              |                 | ER_BITS in adaptations_pkg.                     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 2: If the TUSER signal is not used, refer  |
+|                              |                              |                 | to `Signals`_                                   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_ID_WIDTH                  | integer                      | 1               | | Width of the AXI4-Stream TID signal.          |
-|                              |                              |                 | | Note 1: if TID is wider than 8, increase the  |
-|                              |                              |                 |   value of the constant C_AXISTREAM_BFM_MAX_TID\|
-|                              |                              |                 |   _BITS in adaptations_pkg.                     |
-|                              |                              |                 | | Note 2: If the TID signal is not used, refer  |
-|                              |                              |                 |   to `Signals`_                                 |
+| GC_ID_WIDTH                  | integer                      | 1               | Width of the AXI4-Stream TID signal.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 1: if TID is wider than 8, increase the    |
+|                              |                              |                 | value of the constant C_AXISTREAM_BFM_MAX_TID\  |
+|                              |                              |                 | _BITS in adaptations_pkg.                       |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 2: If the TID signal is not used, refer    |
+|                              |                              |                 | to `Signals`_                                   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_DEST_WIDTH                | integer                      | 1               | | Width of the AXI4-Stream TDEST signal.        |
-|                              |                              |                 | | Note 1: if TDEST is wider than 4, increase the|
-|                              |                              |                 |   value of the constant C_AXISTREAM_BFM_MAX_TDE\|
-|                              |                              |                 |   ST_BITS in adaptations_pkg.                   |
-|                              |                              |                 | | Note 2: If the TDEST signal is not used, refer|
-|                              |                              |                 |   to `Signals`_                                 |
+| GC_DEST_WIDTH                | integer                      | 1               | Width of the AXI4-Stream TDEST signal.          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 1: if TDEST is wider than 4, increase the  |
+|                              |                              |                 | value of the constant C_AXISTREAM_BFM_MAX_TDE\  |
+|                              |                              |                 | ST_BITS in adaptations_pkg.                     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 2: If the TDEST signal is not used, refer  |
+|                              |                              |                 | to `Signals`_                                   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_PACKETINFO_QUEUE_COUNT_MAX| natural                      | 1               | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_AXISTREAM_BFM_CONFIG      | :ref:`t_axistream_bfm_config | C_AXISTREAM_BFM\| Configuration for the AXI4-Stream BFM           |
 |                              | <t_axistream_bfm_config>`    | _CONFIG_DEFAULT |                                                 |
@@ -802,16 +868,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AXISTREAM_INT\| | Delay between any requested BFM accesses      |
-|                              |                              | ER_BFM_DELAY_DE\|   towards the DUT.                              |
-|                              |                              | FAULT           | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AXISTREAM_INT\| Delay between any requested BFM accesses        |
+|                              |                              | ER_BFM_DELAY_DE\| towards the DUT.                                |
+|                              |                              | FAULT           |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -900,45 +969,58 @@ generic constant 'GC_VVC_IS_MASTER' to true.
 | constant | data_array         | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the data to be sent                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | user_array         | in     | `t_user_array`_              | | Side-band data to be sent via the TUSER signal.       |
-|          |                    |        |                              | | The number of entries in user_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | For example, if 16 bytes shall be sent, and there are |
-|          |                    |        |                              |   8 bytes transmitted per transfer, the user_array has  |
-|          |                    |        |                              |   2 entries.                                            |
-|          |                    |        |                              | | The number of bits actually used in each user_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tuser. |
-|          |                    |        |                              | | Note: If axistream_if.tuser is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.    |
+| constant | user_array         | in     | `t_user_array`_              | Side-band data to be sent via the TUSER signal.         |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in user_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | For example, if 16 bytes shall be sent, and there are   |
+|          |                    |        |                              | 8 bytes transmitted per transfer, the user_array has    |
+|          |                    |        |                              | 2 entries.                                              |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each user_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tuser.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tuser is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | strb_array         | in     | `t_strb_array`_              | | Side-band data to be sent via the TSTRB signal. The   |
-|          |                    |        |                              |   BFM transmits the values without affecting TDATA.     |
-|          |                    |        |                              | | The number of entries in strb_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each strb_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tstrb. |
-|          |                    |        |                              | | Note: If axistream_if.tstrb is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.    |
+| constant | strb_array         | in     | `t_strb_array`_              | Side-band data to be sent via the TSTRB signal. The     |
+|          |                    |        |                              | BFM transmits the values without affecting TDATA.       |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in strb_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each strb_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tstrb.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tstrb is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | id_array           | in     | `t_id_array`_                | | Side-band data to be sent via the TID signal.         |
-|          |                    |        |                              | | The number of entries in id_array equals the number   |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each id_array     |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tid.   |
-|          |                    |        |                              | | Note: If axistream_if.tid is wider than 8, increase   |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.      |
+| constant | id_array           | in     | `t_id_array`_                | Side-band data to be sent via the TID signal.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in id_array equals the number     |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each id_array       |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tid.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tid is wider than 8, increase     |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | dest_array         | in     | `t_dest_array`_              | | Side-band data to be sent via the TDEST signal.       |
-|          |                    |        |                              | | The number of entries in dest_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each dest_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tdest. |
-|          |                    |        |                              | | Note: If axistream_if.tdest is wider than 4, increase |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.    |
+| constant | dest_array         | in     | `t_dest_array`_              | Side-band data to be sent via the TDEST signal.         |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in dest_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each dest_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tdest.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tdest is wider than 4, increase   |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1032,45 +1114,58 @@ generic constant 'GC_VVC_IS_MASTER' to false.
 | constant | data_array         | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the expected data to be received                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | user_array         | in     | `t_user_array`_              | | Expected side-band data via the TUSER signal.         |
-|          |                    |        |                              | | The number of entries in user_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | For example, if 16 bytes shall be sent, and there are |
-|          |                    |        |                              |   8 bytes transmitted per transfer, the user_array has  |
-|          |                    |        |                              |   2 entries.                                            |
-|          |                    |        |                              | | The number of bits actually used in each user_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tuser. |
-|          |                    |        |                              | | Note: If axistream_if.tuser is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.    |
+| constant | user_array         | in     | `t_user_array`_              | Expected side-band data via the TUSER signal.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in user_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | For example, if 16 bytes shall be sent, and there are   |
+|          |                    |        |                              | 8 bytes transmitted per transfer, the user_array has    |
+|          |                    |        |                              | 2 entries.                                              |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each user_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tuser.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tuser is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TUSER_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | strb_array         | in     | `t_strb_array`_              | | Expected side-band data via the TSTRB signal. The BFM |
-|          |                    |        |                              |   transmits the values without affecting TDATA.         |
-|          |                    |        |                              | | The number of entries in strb_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each strb_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tstrb. |
-|          |                    |        |                              | | Note: If axistream_if.tstrb is wider than 32, increase|
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.    |
+| constant | strb_array         | in     | `t_strb_array`_              | Expected side-band data via the TSTRB signal. The BFM   |
+|          |                    |        |                              | transmits the values without affecting TDATA.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in strb_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each strb_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tstrb.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tstrb is wider than 32, increase  |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TSTRB_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | id_array           | in     | `t_id_array`_                | | Expected side-band data via the TID signal.           |
-|          |                    |        |                              | | The number of entries in id_array equals the number   |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each id_array     |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tid.   |
-|          |                    |        |                              | | Note: If axistream_if.tid is wider than 8, increase   |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.      |
+| constant | id_array           | in     | `t_id_array`_                | Expected side-band data via the TID signal.             |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in id_array equals the number     |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each id_array       |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tid.     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tid is wider than 8, increase     |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TID_BITS in adaptations_pkg.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | dest_array         | in     | `t_dest_array`_              | | Expected side-band data via the TDEST signal.         |
-|          |                    |        |                              | | The number of entries in dest_array equals the number |
-|          |                    |        |                              |   of data words, i.e. transfers.                        |
-|          |                    |        |                              | | The number of bits actually used in each dest_array   |
-|          |                    |        |                              |   entry corresponds to the width of axistream_if.tdest. |
-|          |                    |        |                              | | Note: If axistream_if.tdest is wider than 4, increase |
-|          |                    |        |                              |   the value of the constant                             |
-|          |                    |        |                              |   C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.    |
+| constant | dest_array         | in     | `t_dest_array`_              | Expected side-band data via the TDEST signal.           |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of entries in dest_array equals the number   |
+|          |                    |        |                              | of data words, i.e. transfers.                          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | The number of bits actually used in each dest_array     |
+|          |                    |        |                              | entry corresponds to the width of axistream_if.tdest.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Note: If axistream_if.tdest is wider than 4, increase   |
+|          |                    |        |                              | the value of the constant                               |
+|          |                    |        |                              | C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1139,6 +1234,14 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 More information can be found in :ref:`Essential Mechanisms - Distribution of Transaction Info <vvc_framework_transaction_info>`.
+
+
+Scoreboard
+==================================================================================================================================
+This VVC does not have a built in Scoreboard functionality due to the complexity to make it generic for several use cases. However, 
+a dedicated Scoreboard can be added by the user if needed.
+
+See the :ref:`vip_scoreboard` for a complete list of available commands and additional information.
 
 
 Unwanted Activity Detection

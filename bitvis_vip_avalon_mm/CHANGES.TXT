@@ -1,6 +1,5 @@
-Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
+Bitvis VIP Avalon MM (Memory Mapped) - Overview on Versions and Changes
 ==============================================================
-----------------------------------------------------------------------
 
 v4.1.0
 ----------

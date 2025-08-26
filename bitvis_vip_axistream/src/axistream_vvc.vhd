@@ -45,7 +45,7 @@ entity axistream_vvc is
     GC_ID_WIDTH                              : integer                := 1;
     GC_DEST_WIDTH                            : integer                := 1;
     GC_INSTANCE_IDX                          : natural;
-    GC_PACKETINFO_QUEUE_COUNT_MAX            : natural                := 1; -- Number of PacketInfo Queues, normally one per source VVC
+    GC_PACKETINFO_QUEUE_COUNT_MAX            : natural                := 1; -- Number of PacketInfo Queues, normally one per source VVC -- DEPRECATE: will be removed
     GC_AXISTREAM_BFM_CONFIG                  : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural                := C_CMD_QUEUE_COUNT_MAX;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := C_CMD_QUEUE_COUNT_THRESHOLD;

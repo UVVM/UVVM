@@ -1,7 +1,6 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
-
 v3.1.0
 ----------
 Released: 2024-09-19

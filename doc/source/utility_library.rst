@@ -1210,11 +1210,14 @@ Returns the character for the ASCII value. ::
 +==========+====================+========+==============================+=========================================================+
 | constant | ascii_pos          | in     | integer                      | ASCII number input                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | ascii_allow        | in     | :ref:`t_ascii_allow`         | | Decide what to do with invisible control characters.  |
-|          |                    |        |                              | | If ALLOW_ALL: return the character for any ascii_pos. |
-|          |                    |        |                              | | If ALLOW_PRINTABLE_ONLY: return the character only if |
-|          |                    |        |                              |   it is printable.                                      |
-|          |                    |        |                              | | Default value is ALLOW_ALL.                           |
+| constant | ascii_allow        | in     | :ref:`t_ascii_allow`         | Decide what to do with invisible control characters.    |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If ALLOW_ALL: return the character for any ascii_pos.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If ALLOW_PRINTABLE_ONLY: return the character only if   |
+|          |                    |        |                              | it is printable.                                        |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Default value is ALLOW_ALL.                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1668,12 +1671,14 @@ falling edge. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | pulse_duration     | in     | time                         | Duration of the pulse in time                           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | blocking_mode      | in     | :ref:`t_blocking_mode`       | | When BLOCKING, the procedure blocks the caller until  |
-|          |                    |        |                              |   the pulse is done.                                    |
-|          |                    |        |                              | | When NON_BLOCKING, the procedure starts the pulse and |
-|          |                    |        |                              |   schedules the end of the pulse so that the caller can |
-|          |                    |        |                              |   continue immediately.                                 |
-|          |                    |        |                              | | Default value is BLOCKING.                            |
+| constant | blocking_mode      | in     | :ref:`t_blocking_mode`       | When BLOCKING, the procedure blocks the caller until    |
+|          |                    |        |                              | the pulse is done.                                      |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | When NON_BLOCKING, the procedure starts the pulse and   |
+|          |                    |        |                              | schedules the end of the pulse so that the caller can   |
+|          |                    |        |                              | continue immediately.                                   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Default value is BLOCKING.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1857,13 +1862,17 @@ Normalize 'value' to the width given by 'target'.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | target             | in     | *see overloads*              | Parameter used to normalize the value                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | mode               | in     | :ref:`t_normalization_mode`  | | Used for sanity checks, it can be one of:             |
-|          |                    |        |                              | | ALLOW_WIDER : Allow only value'length >= target'length|
-|          |                    |        |                              | | ALLOW_NARROWER : Allow only value'length <= target'le\|
-|          |                    |        |                              |   gth                                                   |
-|          |                    |        |                              | | ALLOW_WIDER_NARROWER : Allow both of the above        |
-|          |                    |        |                              | | ALLOW_EXACT_ONLY: Allow only value'length = target'le\|
-|          |                    |        |                              |   gth                                                   |
+| constant | mode               | in     | :ref:`t_normalization_mode`  | Used for sanity checks, it can be one of:               |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_WIDER : Allow only value'length >= target'length  |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_NARROWER : Allow only value'length <= target'le\  |
+|          |                    |        |                              | gth                                                     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_WIDER_NARROWER : Allow both of the above          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_EXACT_ONLY: Allow only value'length = target'le\  |
+|          |                    |        |                              | gth                                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | value_name         | in     | string                       | Name of the value for logging purposes                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1976,10 +1985,11 @@ Synchronizes the start of a BFM procedure depending on the clock and bfm_sync. :
 +==========+====================+========+==============================+=========================================================+
 | signal   | clk                | in     | std_logic                    | Clock signal                                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | | SYNC_ON_CLOCK_ONLY: waits until the falling edge of   |
-|          |                    |        |                              |   the clk signal.                                       |
-|          |                    |        |                              | | SYNC_WITH_SETUP_AND_HOLD: waits until the setup time  |
-|          |                    |        |                              |   before the clock's rising_edge                        |
+| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_ONLY: waits until the falling edge of     |
+|          |                    |        |                              | the clk signal.                                         |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | SYNC_WITH_SETUP_AND_HOLD: waits until the setup time    |
+|          |                    |        |                              | before the clock's rising_edge                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | setup_time         | in     | time                         | Setup time before the rising edge                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -2009,11 +2019,12 @@ consecutive to be able to calculate the correct clock period. ::
 +==========+====================+========+==============================+=========================================================+
 | signal   | clk                | in     | std_logic                    | Clock signal                                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | | SYNC_ON_CLOCK_ONLY: waits until one quarter of the    |
-|          |                    |        |                              |   clock period (measured with the falling and rising    |
-|          |                    |        |                              |   edges) after the clock's rising_edge.                 |
-|          |                    |        |                              | | SYNC_WITH_SETUP_AND_HOLD: waits until the hold time   |
-|          |                    |        |                              |   after the clock's rising_edge.                        |
+| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_ONLY: waits until one quarter of the      |
+|          |                    |        |                              | clock period (measured with the falling and rising      |
+|          |                    |        |                              | edges) after the clock's rising_edge.                   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | SYNC_WITH_SETUP_AND_HOLD: waits until the hold time     |
+|          |                    |        |                              | after the clock's rising_edge.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | hold_time          | in     | time                         | Hold time after the rising edge                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -2584,6 +2595,7 @@ procedure clear_hierarchy(
 constant VOID : t_void
 );
 
+.. _adaptations_pkg:
 
 **********************************************************************************************************************************
 Adaptations package

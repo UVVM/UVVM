@@ -9,9 +9,10 @@
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
---========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
---========================================================================================================================
+
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -26,6 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 use work.wishbone_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
+use work.transaction_pkg.all;
 use work.vvc_sb_pkg.all;
 
 --========================================================================================================================
@@ -164,6 +166,32 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  --==========================================================================================
+  -- Transaction info methods
+  --==========================================================================================
+  procedure set_global_vvc_transaction_info (
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure set_global_vvc_transaction_info (
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure reset_vvc_transaction_info (
+    variable vvc_transaction_info_group  : inout t_transaction_group;
+    constant vvc_cmd                     : in t_vvc_cmd_record
+  );
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -271,5 +299,72 @@ package body vvc_methods_pkg is
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
+
+  --==========================================================================================
+  -- Transaction info methods
+  --==========================================================================================
+  procedure set_global_vvc_transaction_info (
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.addr               := vvc_cmd.addr;
+        vvc_transaction_info_group.bt.data               := vvc_cmd.data;
+        vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation not recognized", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure set_global_vvc_transaction_info (
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    case vvc_cmd.operation is
+      when READ =>
+        vvc_transaction_info_group.bt.data               := vvc_result;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation does not update vvc_result ", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure reset_vvc_transaction_info (
+    variable vvc_transaction_info_group  : inout t_transaction_group;
+    constant vvc_cmd                     : in t_vvc_cmd_record
+  ) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure reset_vvc_transaction_info;
 
 end package body vvc_methods_pkg;

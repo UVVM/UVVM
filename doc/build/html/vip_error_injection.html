@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -147,14 +148,12 @@
 <tr class="row-even"><td><p>GC_START_TIME</p></td>
 <td><p>time</p></td>
 <td><p>0 ns</p></td>
-<td><div class="line-block">
-<div class="line">The error injector will wait the specified
+<td><p>The error injector will wait the specified
 time after initialization before starting to
 monitor signal events, and injecting error if
-configured to.</div>
-<div class="line">Note that default is 0 ns, i.e. not waiting
-after initialization.</div>
-</div>
+configured to.</p>
+<p>Note that default is 0 ns, i.e. not waiting
+after initialization.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
@@ -280,36 +279,32 @@ randomized timing parameter. (2)</p></td>
 <tr class="row-odd"><td><p>interval</p></td>
 <td><p>positive</p></td>
 <td><p>1</p></td>
-<td><div class="line-block">
-<div class="line">Errors will be injected in this interval, e.g.
+<td><p>Errors will be injected in this interval, e.g.
 1 for every signal event, 2 for every second
-signal event, etc. (3,5)</div>
-<div class="line">Interval = 1: SL will experience error
+signal event, etc. (3,5)</p>
+<p>Interval = 1: SL will experience error
 injection on every second signal event, e.g.
-every rising edge.</div>
-<div class="line">SLV will experience error injection on every
-signal event.</div>
-<div class="line">Interval = 2: SL will experience error
+every rising edge.</p>
+<p>SLV will experience error injection on every
+signal event.</p>
+<p>Interval = 2: SL will experience error
 injection on every fourth signal event, e.g.
-every second rising edge.</div>
-<div class="line">SLV will experience error injection on every
-second signal event.</div>
-</div>
+every second rising edge.</p>
+<p>SLV will experience error injection on every
+second signal event.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>base_value</p></td>
 <td><p>std_logic</p></td>
 <td><p>‘0’</p></td>
-<td><div class="line-block">
-<div class="line">The initial edge in an SL error injection will
+<td><p>The initial edge in an SL error injection will
 start on the transition from base_value to
-another value, e.g. from ‘0’ to ‘1’.</div>
-<div class="line">The return edge in an SL error injection will
-be the transition back to base_value. (6)</div>
-<div class="line">Note that setting base_value = ‘-’ will start
+another value, e.g. from ‘0’ to ‘1’.</p>
+<p>The return edge in an SL error injection will
+be the transition back to base_value. (6)</p>
+<p>Note that setting base_value = ‘-’ will start
 SL error injection on first upcoming edge
-after configuration, regardless of input value</div>
-</div>
+after configuration, regardless of input value</p>
 </td>
 </tr>
 </tbody>
@@ -353,68 +348,56 @@ configured interval, e.g. every second for interval = 2.</p></li>
 <td><p>As for std_logic</p></td>
 </tr>
 <tr class="row-odd"><td><p>PULSE</p></td>
-<td><div class="line-block">
-<div class="line">Signal will experience a pulse of width “width”
-after a time of “initial_delay”. (1)</div>
-<div class="line">Note that the pulse value will be the value
-prior to initial event</div>
-</div>
+<td><p>Signal will experience a pulse of width “width”
+after a time of “initial_delay”. (1)</p>
+<p>Note that the pulse value will be the value
+prior to initial event</p>
 </td>
 <td><p>As for std_logic</p></td>
 </tr>
 <tr class="row-even"><td><p>DELAY</p></td>
-<td><div class="line-block">
-<div class="line">Signal will be skewed for a time of “initial_delay” on initial edge and on return edge. (1)</div>
-<div class="line">Any signal activity while error injection is
-active will override the error injection.</div>
-</div>
+<td><p>Signal will be skewed for a time of “initial_delay” on initial edge and on return edge. (1)</p>
+<p>Any signal activity while error injection is
+active will override the error injection.</p>
 </td>
 <td><p>As for std_logic</p></td>
 </tr>
 <tr class="row-odd"><td><p>JITTER</p></td>
-<td><div class="line-block">
-<div class="line">As for DELAY, but with different values on edge
-delays</div>
-<div class="line">Note that only positive jitter is supported, and
+<td><p>As for DELAY, but with different values on edge
+delays</p>
+<p>Note that only positive jitter is supported, and
 that reordering of positive and negative edges
-yield an invalid configuration and will not work</div>
-</div>
+yield an invalid configuration and will not work</p>
 </td>
 <td><p>Not applicable for vector signals</p></td>
 </tr>
 <tr class="row-even"><td><p>INVERT</p></td>
-<td><div class="line-block">
-<div class="line">The signal is inverted as long as the error
-injection configuration is set to INVERT.</div>
-<div class="line">Note that when error injection configuration is
+<td><p>The signal is inverted as long as the error
+injection configuration is set to INVERT.</p>
+<p>Note that when error injection configuration is
 changed from INVERT, a new signal event is
 required for the new configuration to take
-effect</div>
-</div>
+effect</p>
 </td>
 <td><p>As for std_logic</p></td>
 </tr>
 <tr class="row-odd"><td><p>STUCK_AT_OLD</p></td>
-<td><div class="line-block">
-<div class="line">The signal will be stuck at the value it had
+<td><p>The signal will be stuck at the value it had
 prior to initial signal event, and released to
 the current signal value after the specified
-“width_min” time. (1)</div>
-<div class="line">Note that any signal event during STUCK_AT_OLD
-is ignored</div>
-</div>
+“width_min” time. (1)</p>
+<p>Note that any signal event during STUCK_AT_OLD
+is ignored</p>
 </td>
 <td><p>As for std_logic</p></td>
 </tr>
 <tr class="row-even"><td><p>STUCK_AT_NEW</p></td>
-<td><div class="line-block">
-<div class="line">The signal will be stuck at the value it had
+<td><p>The signal will be stuck at the value it had
 prior to initial signal event, and released to
 the current signal value after a specified
-“width_min” time. (1)</div>
-<div class="line">Note that any signal event during STUCK_AT_NEW
-is ignored</div>
-</div>
+“width_min” time. (1)</p>
+<p>Note that any signal event during STUCK_AT_NEW
+is ignored</p>
 </td>
 <td><p>As for std_logic</p></td>
 </tr>
@@ -679,7 +662,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

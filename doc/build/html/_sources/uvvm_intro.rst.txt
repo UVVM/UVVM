@@ -77,7 +77,7 @@ Main Features
 * A logging and alert system that supports full verbosity control of functionality and hierarchy
 * A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through 
   the execution queue - until it is executed and completed towards the DUT
-* Allows 3rd party randomization and functional coverage to be included in the central test sequencer - or even better - inside 
+* Allows randomization and functional coverage to be included in the central test sequencer - or even better - inside 
   the VVCs in the local sequencers for better control and encapsulation
 * Simple integration with regression test tools like Jenkins
 * Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs
@@ -90,15 +90,17 @@ to handle just the AXI4-Lite interface with everything else being your proprieta
 
 * Avalon MM
 * Avalon ST - master and slave
+* AXI4
 * AXI4-Lite
 * AXI-Stream - master and slave
-* SBI (Simple Bus Interface - A single cycle simple parallel bus interface)
-* UART
-* SPI - master and slave
-* I2C - master and slave
-* GPIO
+* Ethernet
 * GMII
+* GPIO
+* I2C - master and slave
 * RGMII
+* SBI (Simple Bus Interface - A single cycle simple parallel bus interface)
+* SPI - master and slave
+* UART
 * More are coming
 
 .. important::
@@ -114,10 +116,10 @@ Prerequisites
 UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 The latest release of UVVM has been tested with the following simulators:
 
-* ModelSim
-* Riviera-PRO
-* Questa
 * GHDL
+* ModelSim/Questa
+* NVC
+* Riviera-PRO
 
 UVVM will work with all VHDL-2008 compatible simulators.
 
@@ -137,7 +139,7 @@ fast access links to some interesting info:
 **********************************************************************************************************************************
 License
 **********************************************************************************************************************************
-| Copyright 2024 UVVM
+| Copyright 2025 UVVM
 | Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. 
   You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 

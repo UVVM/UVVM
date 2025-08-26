@@ -12,7 +12,7 @@ UVVM consists currently of the following elements:
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces for UVVM)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 - Scoreboards to ber used as supplementary functionality at any level
-- Enhanced randomisation - Included under the Utility library, automatically available when compiling Utility Library
+- Enhanced randomization - Included under the Utility library, automatically available when compiling Utility Library
 - Functional Coverage - Included under the Utility library, automatically available when compiling Utility Library
 - Specification Coverage - Aka Requirement Coverage og Requirement tracking - Includes a Requirements Traceability Matrix
 - Error Injector
@@ -22,7 +22,7 @@ UVVM consists currently of the following elements:
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
 Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction. 
 The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
-As a starter you may also want to include Enhanced Randomisation, Functional Coverage or Specification coverage
+As a starter you may also want to include Enhanced Randomization, Functional Coverage or Specification coverage
 
 Note that a dedicated repository (UVVM_Light)](https://github.com/UVVM/UVVM_Light) has been provided to simplify getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
 
@@ -56,7 +56,7 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 *	Allows VVCs to be included anywhere in the test harness - or even inside the design itself
 *	A logging and alert system that supports full verbosity control of functionality and hierarchy
 *	A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through the execution queue - until it is executed and completed towards the DUT
-*	Includes randomisation and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
+*	Includes randomization and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
 *	Simple integration with regression test tools like Jenkins and [HDLRegression](https://github.com/HDLUtils/hdlregression)
 *	Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs/VIP
 *   May insert delay between commands – from sequencer, - and thus the only system to target cycle related corner cases

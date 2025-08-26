@@ -71,8 +71,8 @@ package axilite_bfm_pkg is
     num_r_pipe_stages          : natural; -- Read Data Channel pipeline steps.
     num_b_pipe_stages          : natural; -- Response Channel pipeline steps.
     id_for_bfm                 : t_msg_id; -- The message ID used as a general message ID in the AXI-Lite BFM
-    id_for_bfm_wait            : t_msg_id; -- The message ID used for logging waits in the AXI-Lite BFM
-    id_for_bfm_poll            : t_msg_id; -- The message ID used for logging polling in the AXI-Lite BFM
+    id_for_bfm_wait            : t_msg_id; -- The message ID used for logging waits in the AXI-Lite BFM   -- DEPRECATE: will be removed
+    id_for_bfm_poll            : t_msg_id; -- The message ID used for logging polling in the AXI-Lite BFM -- DEPRECATE: will be removed
   end record;
 
   constant C_AXILITE_BFM_CONFIG_DEFAULT : t_axilite_bfm_config := (

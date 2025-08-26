@@ -9,15 +9,14 @@
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
---========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
---========================================================================================================================
+
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-
-library std;
 use std.textio.all;
 
 library uvvm_util;
@@ -36,7 +35,6 @@ package wishbone_bfm_pkg is
     -- Common for slave and master interfaces
     dat_o : std_logic_vector;           -- to dut
     dat_i : std_logic_vector;           -- from dut
-
     -- Master interface
     adr_o : std_logic_vector;           -- to dut, address
     cyc_o : std_logic;                  -- to dut, valid bus cycle
@@ -56,8 +54,8 @@ package wishbone_bfm_pkg is
     hold_time                : time;    -- Hold time for generated signals, set to clock_period/4
     match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm               : t_msg_id;
-    id_for_bfm_wait          : t_msg_id;
-    id_for_bfm_poll          : t_msg_id;
+    id_for_bfm_wait          : t_msg_id; -- DEPRECATE: will be removed
+    id_for_bfm_poll          : t_msg_id; -- DEPRECATE: will be removed
   end record;
 
   -- Define the default value for the BFM config

@@ -233,8 +233,10 @@ The bin functions may be concatenated to add several bins at once.
 
 .. note::
 
-    The maximum number of bins which can be added at once using a single ``add_bins()`` call is limited by C_FC_MAX_NUM_NEW_BINS 
-    defined in adaptations_pkg.
+    * The maximum number of bins which can be added at once using a single ``add_bins()`` call is limited by C_FC_MAX_NUM_NEW_BINS 
+      defined in adaptations_pkg.
+    * If many bins are added at once using concatenation, there will be a temporary increase in memory usage due to the big array
+      being created to hold all the bins. However, after ``add_bins()`` has finished, the memory will be released.
 
 Ignore bins
 ==================================================================================================================================

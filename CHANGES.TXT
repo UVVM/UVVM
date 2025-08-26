@@ -9,6 +9,26 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2025.08.18
+--------------------
+Released: 2025-08-18
+- Updated unwanted activity detection to ignore signal transitions from 'X' to '0'/'1'.
+- Fixed TB_WARNING when calling clear_rand_cyclic() in enhanced randomization.
+- Updated wait statement in spi_slave_transmit_and_receive() which allows NVC to run without errors.
+- Added transaction_pkg to Wishbone VVC.
+- Converted rest of documentation to RST format.
+- Minor modifications to Siemens test-version of upcoming rand and functional coverage extensions for Questa.
+- Added UVVM assertions and demo testbench to UVVM Utility Library.
+
+
+v2 2025.05.11
+--------------------
+Released: 2025-05-11
+- Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
+- Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
+- Added preliminary test version of upcoming rand and functional coverage extensions for Questa. 
+
+
 v2 2025.03.25
 --------------------
 Released: 2025-03-25

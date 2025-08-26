@@ -26,6 +26,8 @@ use work.string_methods_pkg.all;
 use work.global_signals_and_shared_variables_pkg.all;
 use work.methods_pkg.all;
 use work.rand_pkg.all;
+use work.vendor_func_cov_extension_pkg.all;
+use work.func_cov_ucdb_pkg.all;
 
 package func_cov_pkg is
 
@@ -73,6 +75,7 @@ package func_cov_pkg is
     rand_weight     : integer;
     transition_mask : std_logic_vector(C_FC_MAX_NUM_BIN_VALUES - 1 downto 0);
     name            : string(1 to C_FC_MAX_NAME_LENGTH);
+    ucdb_index      : t_ucdb_bin_index;
   end record;
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
   type t_cov_bin_vector_ptr is access t_cov_bin_vector;
@@ -632,6 +635,15 @@ package func_cov_pkg is
       constant VOID : t_void)
     return t_positive_vector;
 
+    ------------------------------------------------------------
+    -- Vendor Extension
+    ------------------------------------------------------------
+    procedure enable_auto_sampling(
+        constant target : in string;
+        constant trigger : in string;
+        constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+
   end protected t_coverpoint;
 
 end package func_cov_pkg;
@@ -1062,6 +1074,9 @@ package body func_cov_pkg is
     variable priv_bin_overlap_alert_level       : t_alert_level                                   := NO_ALERT;
     variable priv_num_bins_allocated_increment  : positive                                        := C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT;
 
+    variable vendor_coverpoint_id              : integer                                          := -1;
+    variable priv_ucdb_handle                   : t_ucdb_cp_handle                                := 0;
+
     ------------------------------------------------------------
     -- Internal functions and procedures
     ------------------------------------------------------------
@@ -1235,6 +1250,61 @@ package body func_cov_pkg is
       end if;
     end function;
 
+    -- If the bin_name is empty, it returns a default name based on the bin_idx.
+    -- Otherwise it returns the bin_name padded to match the C_FC_MAX_NAME_LENGTH.
+    -- Add bin values
+    impure function get_bin_name_with_values(
+      constant bin_name       : string;
+      constant bin_idx        : string;
+      constant bin            : t_cov_bin;
+      constant with_separator : boolean;
+      constant max_name_length : integer)
+    return string is
+      variable v_new_bin_array   : t_new_bin_array(0 to 0);
+      variable v_values          : line;
+      variable v_name_string     : string(1 to max_name_length);
+      variable v_bin_name_length : integer;
+      variable v_values_length   : integer;
+      constant C_DEFAULT_PREFIX  : string(1 to 4) := "bin_";
+    begin
+        -- Generate values string (as line type)
+        for i in 0 to priv_num_bins_crossed - 1 loop
+            v_new_bin_array(0).bin_vector(i).contains   := bin.cross_bins(i).contains;
+            v_new_bin_array(0).bin_vector(i).values     := bin.cross_bins(i).values;
+            v_new_bin_array(0).bin_vector(i).num_values := bin.cross_bins(i).num_values;
+        end loop;
+        v_new_bin_array(0).num_bins := priv_num_bins_crossed;
+        -- Used in the report, so the bins in each vector are crossed
+        write(v_values, get_bin_array_values(v_new_bin_array, NONE, 'x'));
+
+        -- Set first part of name string
+        v_name_string(1 to C_FC_MAX_NAME_LENGTH) := get_bin_name(bin_name, bin_idx);
+
+        -- Get length of bin name components
+        v_bin_name_length := valid_length(v_name_string);
+        if with_separator then
+            -- Add separator after name
+            v_name_string(v_bin_name_length + 1 to v_bin_name_length + 3) := " : ";
+            -- Get updated length of bin name
+            v_bin_name_length := valid_length(v_name_string);
+        end if;
+        v_values_length := v_values'length;
+
+        -- Check if resulting bin name is too long
+        if v_bin_name_length + v_values_length > max_name_length then
+            -- Name too long. Cut off
+            v_name_string(v_bin_name_length + 1 to max_name_length) := get_bin_array_values(v_new_bin_array, NONE, 'x')(1 to max_name_length - v_bin_name_length);
+            DEALLOCATE(v_values);
+            return v_name_string;
+        else
+            -- Can use name+values. Add values after name.
+            v_name_string(v_bin_name_length + 1 to v_bin_name_length + v_values_length) := v_values.all;
+            DEALLOCATE(v_values);
+            return v_name_string;
+        end if;
+    end function;
+
+
     -- Returns a string with the coverpoint's name. Used as prefix in log messages
     impure function get_name_prefix(
       constant VOID : t_void)
@@ -1303,6 +1373,8 @@ package body func_cov_pkg is
           alert(TB_FAILURE, local_call & "=> Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.", priv_scope);
           return;
         end if;
+        -- Add coverpoint to UCDB model
+        fli_create_ucdb_coverpoint(priv_ucdb_handle, priv_name);
         -- Only set the default name if it hasn't been given
         if priv_name = fill_string(NUL, priv_name'length) then
           set_name(protected_covergroup_status.get_name(priv_id));
@@ -1567,6 +1639,8 @@ package body func_cov_pkg is
       constant C_NUM_CROSS_BINS  : natural := bin_array'length;
       variable v_bin_is_valid    : boolean;
       variable v_num_transitions : integer;
+      variable v_ucdb_bin_index  : t_ucdb_bin_index;
+      variable v_ucdb_bin_name   : string(1 to C_FC_MAX_UCDB_NAME_LENGTH);
     begin
       check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER);
       -- Iterate through the bins in the current array element
@@ -1601,6 +1675,18 @@ package body func_cov_pkg is
             priv_bins(priv_bins_idx).rand_weight     := rand_weight when use_rand_weight else C_USE_ADAPTIVE_WEIGHT;
             priv_bins(priv_bins_idx).transition_mask := (others => '0');
             priv_bins(priv_bins_idx).name            := get_bin_name(bin_name, to_string(priv_bins_idx + priv_invalid_bins_idx));
+            priv_bins(priv_bins_idx).ucdb_index      := v_ucdb_bin_index;
+            -- TODO: Uncomment below. Skipped for now because it causes bin name check in regression to fail. 
+            -- if bin_array(bin_array_idx).num_bins > 1 and bin_name /= "" then -- Multiple bins from bin_range or bin_vector call
+            --     priv_bins(priv_bins_idx).name := get_bin_name_with_values(bin_name, to_string(priv_bins_idx + priv_invalid_bins_idx), priv_bins(priv_bins_idx), false, C_FC_MAX_NAME_LENGTH);
+            -- end if;
+            v_ucdb_bin_name := get_bin_name_with_values(bin_name, to_string(priv_bins_idx + priv_invalid_bins_idx), priv_bins(priv_bins_idx), true, C_FC_MAX_UCDB_NAME_LENGTH);
+
+            -- Add bins to UCDB model
+            -- NOTE: Navn til UCDB: navn : values
+            --v_ucdb_bin_index := fli_add_ucdb_bin(priv_ucdb_handle, C_UCDB_ACTION_COUNT, min_hits, priv_bins(priv_bins_idx).name);
+            fli_add_ucdb_bin(priv_ucdb_handle, C_UCDB_ACTION_COUNT, min_hits, v_ucdb_bin_name, v_ucdb_bin_index);
+
             priv_bins_idx                            := priv_bins_idx + 1;
             -- Update covergroup status register
             protected_covergroup_status.increment_valid_bin_count(priv_id);
@@ -1633,6 +1719,110 @@ package body func_cov_pkg is
       end loop;
     end procedure;
 
+    procedure check_and_initialize_vendor_coverpoint_id(
+      constant VOID : t_void) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          if (vendor_coverpoint_id = -1) then
+              vendor_coverpoint_id := vendor_create_coverpoint_var;
+          end if;
+      end if;
+    end procedure;
+
+    procedure vendor_add_bins(
+      constant idx_from : integer;
+      constant invalid_idx_from : integer) is
+      variable lval: integer;
+      variable rval: integer;
+      variable index: integer := 0;
+      variable isTran: integer := 0;
+      variable isIllegal: integer := 1;
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          if (vendor_coverpoint_id = -1) then
+              vendor_coverpoint_id := vendor_create_coverpoint_var;
+          end if;
+
+          for i in idx_from to priv_bins_idx - 1 loop
+              lval := priv_bins(i).cross_bins(0).values(0);
+              if (priv_bins(i).cross_bins(0).contains = VAL) then
+                  rval := lval;
+              elsif (priv_bins(i).cross_bins(0).contains = RAN) then
+                  rval := priv_bins(i).cross_bins(0).values(1);
+              elsif (priv_bins(i).cross_bins(0).contains = TRN) then
+                  isTran := 1;
+                  rval := lval;
+              else
+                  next;
+              end if;
+              vendor_func_cov_add_bin(vendor_coverpoint_id, priv_bins(i).name, 0, isTran, lval, rval);
+              if (priv_bins(i).cross_bins(0).contains = RAN) then
+                  index := 2;
+                  while (index < priv_bins(i).cross_bins(0).num_values) loop
+                      lval := priv_bins(i).cross_bins(0).values(index);
+                      rval := priv_bins(i).cross_bins(0).values(index+1);
+                      index := index + 2;
+                      vendor_func_cov_bin_add_value(vendor_coverpoint_id, lval, rval);
+                  end loop;
+              else 
+                  -- For VAL and TRN
+                  for j in 1 to priv_bins(i).cross_bins(0).num_values -1 loop
+                      lval := priv_bins(i).cross_bins(0).values(j);
+                      rval := lval;
+                      vendor_func_cov_bin_add_value(vendor_coverpoint_id, lval, rval);
+                  end loop;
+              end if;
+          end loop;
+
+          for i in invalid_idx_from to priv_invalid_bins_idx - 1 loop
+              lval := priv_invalid_bins(i).cross_bins(0).values(0);
+              if (priv_invalid_bins(i).cross_bins(0).contains = VAL_IGNORE or priv_invalid_bins(i).cross_bins(0).contains = VAL_ILLEGAL) then
+                  rval := lval;
+              elsif (priv_invalid_bins(i).cross_bins(0).contains = RAN_IGNORE or priv_invalid_bins(i).cross_bins(0).contains = RAN_ILLEGAL) then
+                  rval := priv_invalid_bins(i).cross_bins(0).values(1);
+              elsif (priv_invalid_bins(i).cross_bins(0).contains = TRN_IGNORE or priv_invalid_bins(i).cross_bins(0).contains = TRN_ILLEGAL) then
+                  isTran := 1;
+                  rval := lval;
+              else
+                  next;
+              end if;
+              if (is_bin_illegal(priv_invalid_bins(i))) then
+                  isIllegal := 2;
+              end if;
+              vendor_func_cov_add_bin(vendor_coverpoint_id, priv_invalid_bins(i).name, isIllegal, isTran, lval, rval);
+              if (priv_invalid_bins(i).cross_bins(0).contains = TRN_IGNORE or priv_invalid_bins(i).cross_bins(0).contains = TRN_ILLEGAL) then
+                  for j in 1 to priv_invalid_bins(i).cross_bins(0).num_values -1 loop
+                      lval := priv_invalid_bins(i).cross_bins(0).values(j);
+                      rval := lval;
+                      vendor_func_cov_bin_add_value(vendor_coverpoint_id, lval, rval);
+                  end loop;
+              end if;
+          end loop;
+      end if;
+    end procedure;
+
+    procedure vendor_get_bin_hits(
+      constant VOID : t_void) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          if (vendor_coverpoint_id = -1) then
+              return;
+          end if;
+
+          for i in 0 to priv_bins_idx - 1 loop
+              if (priv_bins(i).cross_bins(1).num_values = 0) then
+                  priv_bins(i).hits := priv_bins(i).hits + vendor_func_cov_get_bin_hits(vendor_coverpoint_id, priv_bins(i).name);
+              end if;
+          end loop;
+
+          for i in 0 to priv_invalid_bins_idx - 1 loop
+              if (priv_invalid_bins(i).cross_bins(1).num_values = 0) then
+                  priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + vendor_func_cov_get_bin_hits(vendor_coverpoint_id, priv_invalid_bins(i).name);
+              end if;
+          end loop;
+      end if;
+    end procedure;
+
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
@@ -1648,6 +1838,7 @@ package body func_cov_pkg is
       end if;
       initialize_coverpoint(C_LOCAL_CALL);
       protected_covergroup_status.set_name(priv_id, priv_name);
+      fli_set_ucdb_coverpoint_name(priv_ucdb_handle, name); -- Write name to CP in UCDB model
     end procedure;
 
     impure function get_name(
@@ -2083,6 +2274,10 @@ package body func_cov_pkg is
     begin
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
 
+      if (C_VENDOR_EXTENSION_IS_ENABLED and vendor_coverpoint_id >= 0) then
+              vendor_func_cov_clear_coverage(vendor_coverpoint_id);
+      end if;
+
       for i in 0 to priv_bins_idx - 1 loop
         priv_bins(i).hits            := 0;
         priv_bins(i).transition_mask := (others => '0');
@@ -2284,6 +2479,8 @@ package body func_cov_pkg is
       variable v_proc_call       : line;
       variable v_bin_array       : t_new_bin_array(0 to C_NUM_CROSS_BINS - 1);
       variable v_idx_reg         : integer_vector(0 to C_NUM_CROSS_BINS - 1);
+      variable v_cur_priv_bin_idx: integer := priv_bins_idx;
+      variable v_cur_priv_invalid_bin_idx: integer := priv_invalid_bins_idx;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
@@ -2294,6 +2491,7 @@ package body func_cov_pkg is
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_proc_call.all, v_bin_array, bin);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_hits, rand_weight, C_USE_RAND_WEIGHT, bin_name);
+      vendor_add_bins(v_cur_priv_bin_idx, v_cur_priv_invalid_bin_idx);
       DEALLOCATE(v_proc_call);
     end procedure;
 
@@ -2930,6 +3128,8 @@ package body func_cov_pkg is
           if and(v_value_match) = '1' then
             priv_bins(i).transition_mask := (others => '0');
             priv_bins(i).hits            := priv_bins(i).hits + 1;
+            -- Increment bin in UCDB model
+            fli_increment_ucdb_bin(priv_ucdb_handle, i+1);
             v_num_occurrences            := v_num_occurrences + 1;
             -- Update covergroup status register
             protected_covergroup_status.increment_hits_count(priv_id); -- Count the total hits
@@ -3028,6 +3228,8 @@ package body func_cov_pkg is
         alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_FC_MAX_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope);
         v_log_extra_space := 1;
       end if;
+
+      vendor_get_bin_hits(VOID);
 
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
@@ -3379,6 +3581,22 @@ package body func_cov_pkg is
     begin
       return priv_rand_gen.get_rand_seeds(VOID);
     end function;
+
+    -- Requires Questa One 2025.3 or later
+    procedure enable_auto_sampling(
+        constant target : in string;
+        constant trigger : in string;
+        constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_coverpoint_id(void);
+            vendor_func_cov_set_coverpoint_var(vendor_coverpoint_id, target);
+            vendor_func_cov_set_sampling_var(vendor_coverpoint_id, trigger);
+            return;
+        else
+            alert(TB_ERROR, "Procedure enable_auto_sampling() is only supported in Questa One 2025.3 and newer", C_SCOPE);
+        end if;
+    end procedure;
 
   end protected body t_coverpoint;
 

@@ -598,6 +598,7 @@ package body spec_cov_pkg is
 
                 priv_requirements_in_array := priv_requirements_in_array + 1;
               else
+                deallocate(v_sub_requirement);
                 v_req_valid := false;
               end if;
             end loop;

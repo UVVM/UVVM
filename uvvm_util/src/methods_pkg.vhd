@@ -3543,9 +3543,10 @@ package body methods_pkg is
   begin
     write(v_line, my_line.all);
     writeline(file_handle, v_line);
+    deallocate(v_line);
   end procedure;
 
-  -- Open, append/write to and close file. Also deallocates contents of the line
+  -- Open, append/write to and close file. Also empty contents of the line
   procedure write_to_file(
     file_name        : string;
     open_mode        : file_open_kind;
@@ -3584,7 +3585,7 @@ package body methods_pkg is
             write_to_file(log_file_name, open_mode, log_line);
           end if;
         when CONSOLE_ONLY =>
-          writeline(OUTPUT, log_line); -- Write to console and deallocate contents of line
+          writeline(OUTPUT, log_line); -- Write to console and empty contents of line
         when LOG_ONLY =>
           if log_file_name = C_LOG_FILE_NAME then
             -- If the log file is the default file, it is not necessary to open and close it again
@@ -3722,7 +3723,7 @@ package body methods_pkg is
               write_to_file(log_file_name, open_mode, v_info_final);
             end if;
           when CONSOLE_ONLY =>
-            writeline(OUTPUT, v_info_final); -- Write to console and deallocate contents of line
+            writeline(OUTPUT, v_info_final); -- Write to console and empty contents of line
           when LOG_ONLY =>
             if log_file_name = C_LOG_FILE_NAME then
               -- If the log file is the default file, it is not necessary to open and close it again
@@ -3750,7 +3751,7 @@ package body methods_pkg is
     log(C_TB_MSG_ID_DEFAULT, msg, scope, msg_id_panel, log_destination, log_file_name, open_mode);
   end procedure;
 
-  -- Logging for multi line text. Also deallocates the text_block, for consistency.
+  -- Logging for multi line text. Also empty the text_block, for consistency.
   procedure log_text_block(
     msg_id              : t_msg_id;
     variable text_block : inout line;
@@ -3782,16 +3783,16 @@ package body methods_pkg is
           case log_destination is
             when CONSOLE_AND_LOG =>
               tee(OUTPUT, text_block); -- Write to console, but keep text_block
-              -- Write to log and deallocate text_block. Open specified file if not open.
+              -- Write to log and empty text_block. Open specified file if not open.
               if log_file_name = C_LOG_FILE_NAME then
                 writeline(LOG_FILE, text_block);
               else
                 write_to_file(log_file_name, open_mode, text_block);
               end if;
             when CONSOLE_ONLY =>
-              writeline(OUTPUT, text_block); -- Write to console and deallocate text_block
+              writeline(OUTPUT, text_block); -- Write to console and empty text_block
             when LOG_ONLY =>
-              -- Write to log and deallocate text_block. Open specified file if not open.
+              -- Write to log and empty text_block. Open specified file if not open.
               if log_file_name = C_LOG_FILE_NAME then
                 writeline(LOG_FILE, text_block);
               else
@@ -3841,13 +3842,13 @@ package body methods_pkg is
             end if;
 
           when CONSOLE_ONLY =>
-            -- Write to console and deallocate all lines
+            -- Write to console and empty all lines
             writeline(OUTPUT, v_header_line);
             log(msg_id, msg_header, scope, msg_id_panel, CONSOLE_ONLY);
             writeline(OUTPUT, v_log_body);
 
           when LOG_ONLY =>
-            -- Write to log and deallocate text_block. Open specified file if not open.
+            -- Write to log and empty text_block. Open specified file if not open.
             if log_file_name = C_LOG_FILE_NAME then
               writeline(LOG_FILE, v_header_line);
               log(msg_id, msg_header, scope, msg_id_panel, LOG_ONLY);

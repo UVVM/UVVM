@@ -591,10 +591,6 @@ package body hierarchy_linked_list_pkg is
 
       end if;
 
-      if v_info /= null then
-        deallocate(v_info);
-      end if;
-
     end procedure;
 
     procedure increment_expected_alerts(

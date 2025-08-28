@@ -3366,7 +3366,7 @@ package body methods_pkg is
     variable line_to_be_deallocated : inout line
   ) is
   begin
-    deprecate(get_procedure_name_from_instance_name(line_to_be_deallocated'instance_name), "deallocating a null-line shal have no effect according to the LRM. Just use deallocate()");
+    deprecate(get_procedure_name_from_instance_name(deallocate_line_if_exists'instance_name), "deallocating a null-line shall have no effect according to the LRM. Just use deallocate()");
     if line_to_be_deallocated /= null then
       deallocate(line_to_be_deallocated);
     end if;

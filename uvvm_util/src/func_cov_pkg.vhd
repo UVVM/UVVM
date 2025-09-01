@@ -1033,7 +1033,7 @@ package body func_cov_pkg is
     end if;
 
     write_line_to_log_destination(v_line);
-    deallocate_line_if_exists(v_line);
+    deallocate(v_line);
   end procedure;
 
   ------------------------------------------------------------
@@ -3372,7 +3372,7 @@ package body func_cov_pkg is
       end if;
 
       write_line_to_log_destination(v_line);
-      deallocate_line_if_exists(v_line);
+      deallocate(v_line);
     end procedure;
 
     procedure report_config(
@@ -3430,7 +3430,7 @@ package body func_cov_pkg is
       end if;
 
       write_line_to_log_destination(v_line);
-      deallocate_line_if_exists(v_line);
+      deallocate(v_line);
     end procedure;
 
     ------------------------------------------------------------

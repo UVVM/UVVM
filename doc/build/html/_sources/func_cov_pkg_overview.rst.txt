@@ -340,18 +340,44 @@ when the list becomes full. These constants are defined in adaptations_pkg.
 Moreover, the procedures ``set_num_allocated_bins()`` and ``set_num_allocated_bins_increment()`` can be used to reconfigure a 
 coverpoint's respective values.
 
+.. _bin_name:
+
 Bin name
 ==================================================================================================================================
-Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` procedure. If no name is given to the bin, a 
-default name will be automatically given. Having a bin name is useful when reading the reports.
+Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` and ``add_cross()`` procedures. If no name is
+given, a default name with an index appended will be given. The default bin name is *bin_<idx>* and is set by the
+C_FC_DEFAULT_BIN_NAME constant in the adaptations_pkg. If multiple bins are given to ``add_bins()`` (by using ``bin_range()``,
+``bin_vector()``, or concatenation), or if a call to ``add_cross()`` results in multiple cross bins, the bin name will be indexed
+as shown in the examples below. All bin name indices starts from 1.
+
+A warning is issued when duplicate bin names are detected. This warning can be turned off by setting the
+C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg.vhd to ``false``.
+
+Having bin names is useful when reading the reports.
 
 .. code-block::
 
-    add_bins(bin, [bin_name])
+    coverpoint_1.add_bins(bin(0));                        -- bin name: bin_1
+    coverpoint_1.add_bins(bin(255), "bin_max");           -- bin name: bin_max
+    coverpoint_1.add_bins(bin_range(0, 32, 4), "addr");   -- bin names: addr[1], addr[2], addr[3], addr[4]
+    coverpoint_1.add_bins(bin(0) & bin(100), "two_bins"); -- bin names: two_bins[1], two_bins[2]
+    coverpoint_1.add_bins(bin(1000));                     -- bin name: bin_2
+    coverpoint_1.add_bins(bin_range(0, 100, 4));          -- bin names: bin_3[1], bin_3[2], bin_3[3], bin_3[4]
 
-    my_coverpoint.add_bins(bin(255), "bin_max");
+    coverpoint_2.add_cross(bin(0), bin(10));                                    -- bin name: bin_1
+    coverpoint_2.add_cross(bin(0), bin(100), "cross_bin_a");                    -- bin name: cross_bin_a
+    coverpoint_2.add_cross(bin(0), bin(50), bin(100), "cross_bin_b");           -- bin name: cross_bin_b
+    coverpoint_2.add_cross(bin(0) & bin(5) & bin(10), bin(100), "cross_bin_c"); -- bin names: cross_bin_c[1], cross_bin_c[2], cross_bin_c[3]
+    coverpoint_2.add_cross(bin_range(0, 10, 3), bin(100), "cross_bin_d");       -- bin names: cross_bin_d[1], cross_bin_d[2], cross_bin_d[3]
+    coverpoint_2.add_cross(bin(10), bin(10000));                                -- bin name: bin_2
+    coverpoint_2.add_cross(bin(5), bin_range(0, 100, 3));                       -- bin names: bin_3[1], bin_3[2], bin_3[3]
 
-The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
+The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. Longer names will be truncated
+without warning.
+
+.. note::
+
+   It is recommended not to use bin names that may be generated automatically as input to the ``add_bins()`` and ``add_cross()`` procedures.
 
 Minimum coverage
 ==================================================================================================================================

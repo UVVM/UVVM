@@ -52,7 +52,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
 if {[batch_mode]} {
   if { [string equal -nocase $simulator "rivierapro"] } {
     # Special for Riviera-PRO
-    onerror {abort all; quit -code 1 -force}
+    onerror {quit -code 1 -force}
    } else {
     onerror {abort all; exit -f -code 1}
   }

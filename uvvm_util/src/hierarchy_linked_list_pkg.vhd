@@ -434,16 +434,6 @@ package body hierarchy_linked_list_pkg is
       end if;
     end procedure;
 
-    procedure tee(
-      file     file_handle : text;
-      variable my_line     : inout line
-    ) is
-      variable v_line : line;
-    begin
-      write(v_line, my_line.all);
-      writeline(file_handle, v_line);
-    end procedure tee;
-
     procedure alert(
       constant scope       : string;
       constant alert_level : t_alert_level;
@@ -566,10 +556,13 @@ package body hierarchy_linked_list_pkg is
 
         prefix_lines(v_info);
 
-        if v_do_print then              -- Only print if alert level print enabled for this alert level.
-          tee(OUTPUT, v_info);
-          tee(ALERT_FILE, v_info);
-          writeline(LOG_FILE, v_info);
+        if v_do_print then -- Only print if alert level print enabled for this alert level.
+          if shared_log_file_name_is_set and shared_alert_file_name_is_set then
+            tee_and_keep_line(ALERT_FILE, v_info); -- Write to file, while keeping the line contents
+            write_line_to_log_destination(v_info);
+          else
+            bitvis_assert(false, FAILURE, "Attempting to write to an unopened log file. Please use a log procedure before this call.", "hierarchy_linked_list_pkg.alert()");
+          end if;
         end if;
 
         deallocate(v_info);
@@ -893,7 +886,6 @@ package body hierarchy_linked_list_pkg is
     ) is
       variable v_header          : string(1 to 80);
       variable v_line            : line;
-      variable v_line_copy       : line;
       constant prefix            : string  := C_LOG_PREFIX & "     ";
       variable v_status_ok       : boolean := true;
       variable v_minor_status_ok : boolean := true;
@@ -933,15 +925,17 @@ package body hierarchy_linked_list_pkg is
         write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
       end if;
 
+      -- Format the report
       wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
       prefix_lines(v_line, prefix);
 
-      -- Write the info string to the target file
-      write(v_line_copy, v_line.all & lf); -- copy line
-      writeline(OUTPUT, v_line);
-      writeline(LOG_FILE, v_line_copy);
+      -- Write the report to the log destination
+      if shared_log_file_name_is_set then
+        write_line_to_log_destination(v_line);
+      else
+        bitvis_assert(false, FAILURE, "Attempting to write to an unopened log file. Please use a log procedure before this call.", "hierarchy_linked_list_pkg.print_hierarchical_log()");
+      end if;
       deallocate(v_line);
-      deallocate(v_line_copy);
     end procedure;
 
     impure function get_parent_scope(

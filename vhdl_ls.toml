@@ -3,6 +3,10 @@ uvvm_util.files = [
 'uvvm_util/**/*.vhd',
 ]
 
+uvvm_assertions.files = [
+'uvvm_assertions/**/*.vhd',
+]
+
 uvvm_vvc_framework.files = [
 'uvvm_vvc_framework/src/*.vhd',
 ]
@@ -93,10 +97,19 @@ bitvis_vip_uart.files = [
 'bitvis_vip_uart/**/*.vhd',
 ]
 
+bitvis_vip_wishbone.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_wishbone/**/*.vhd',
+]
+
 bitvis_uart.files = [
 'bitvis_uart/**/*.vhd',
 ]
 
 bitvis_irqc.files = [
 'bitvis_irqc/**/*.vhd',
+]
+
+uvvm_context.files = [
+'misc/context/*.vhd',
 ]

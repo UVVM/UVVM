@@ -94,6 +94,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#t-necessary-condition">t_necessary_condition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#t-pos-ack-kind">t_pos_ack_kind</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#t-accept-all-zeros">t_accept_all_zeros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-association-list-status">t_association_list_status</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="utility_library.html#message-ids">Message IDs</a></li>
@@ -108,9 +109,11 @@
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -129,8 +132,9 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -438,15 +442,27 @@ binary radix.</p>
 </section>
 <section id="t-necessary-condition">
 <span id="id40"></span><h1>t_necessary_condition<a class="headerlink" href="#t-necessary-condition" title="Link to this heading"></a></h1>
-<p>ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT_NO_PIPE</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT_NO_PIPE</span>
+</pre></div>
+</div>
 </section>
 <section id="t-pos-ack-kind">
 <span id="id41"></span><h1>t_pos_ack_kind<a class="headerlink" href="#t-pos-ack-kind" title="Link to this heading"></a></h1>
-<p>EVERY, FIRST</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">EVERY</span><span class="p">,</span><span class="w"> </span><span class="n">FIRST</span>
+</pre></div>
+</div>
 </section>
 <section id="t-accept-all-zeros">
 <span id="id42"></span><h1>t_accept_all_zeros<a class="headerlink" href="#t-accept-all-zeros" title="Link to this heading"></a></h1>
-<p>ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALL_ZERO_ALLOWED</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_ZERO_NOT_ALLOWED</span>
+</pre></div>
+</div>
+</section>
+<section id="t-association-list-status">
+<span id="id43"></span><h1>t_association_list_status<a class="headerlink" href="#t-association-list-status" title="Link to this heading"></a></h1>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ASSOCIATION_LIST_SUCCESS</span><span class="p">,</span><span class="w"> </span><span class="n">ASSOCIATION_LIST_FAILURE</span>
+</pre></div>
+</div>
 </section>
 
 

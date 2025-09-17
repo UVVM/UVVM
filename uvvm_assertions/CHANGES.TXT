@@ -1,0 +1,8 @@
+UVVM Assertions Library - Overview on Versions and Changes
+==============================================================
+
+v0.1.0 BETA
+----------
+Released: 2025-09-17
+- Added UVVM assertions and demo testbench.
+- Moved UVVM assertions to its own folder (from uvvm_util).

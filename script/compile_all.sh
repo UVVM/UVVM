@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # compile_all.sh
 # Compiles all UVVM libraries and VIPs.

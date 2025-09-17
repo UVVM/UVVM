@@ -110,9 +110,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -131,8 +133,9 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -900,7 +903,11 @@ automatically be 0.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.
-Default value is “bin_&lt;idx&gt;”.</p></td>
+The default value is “bin_&lt;idx&gt;”, and is determined by
+the C_FC_DEFAULT_BIN_NAME constant in the
+adaptations_pkg. If the call results in multiple bins
+the bin name is indexed as described in
+<a class="reference internal" href="func_cov_pkg_overview.html#bin-name"><span class="std std-ref">bin name</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
@@ -968,7 +975,11 @@ automatically be 0.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.
-Default value is “bin_&lt;idx&gt;”.</p></td>
+The default value is “bin_&lt;idx&gt;”, and is determined by
+the C_FC_DEFAULT_BIN_NAME constant in the
+adaptations_pkg. If the call results in multiple cross
+bins the bin name is indexed as described in
+<a class="reference internal" href="func_cov_pkg_overview.html#bin-name"><span class="std std-ref">bin name</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
@@ -1049,7 +1060,11 @@ automatically be 0.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.
-Default value is “bin_&lt;idx&gt;”.</p></td>
+The default value is “bin_&lt;idx&gt;”, and is determined by
+the C_FC_DEFAULT_BIN_NAME constant in the
+adaptations_pkg. If the call results in multiple cross
+bins the bin name is indexed as described in
+<a class="reference internal" href="func_cov_pkg_overview.html#bin-name"><span class="std std-ref">bin name</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>

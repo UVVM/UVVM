@@ -41,11 +41,9 @@ try:
 
     sim_options = None
     simulator_name = hr.settings.get_simulator_name()
-    # Set simulator name and compile options
-    if simulator_name in ["MODELSIM", "RIVIERA"]:
+    # Set simulator name and options
+    if simulator_name == "MODELSIM":
         sim_options = "-t ns"
-        com_options = ["-suppress", "1346,1246,1236", "-2008"]
-        hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
     script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./")
     C_NUM_TESTCASES = 4

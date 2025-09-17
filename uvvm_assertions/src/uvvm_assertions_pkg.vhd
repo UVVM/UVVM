@@ -5,12 +5,8 @@ library ieee;
   use ieee.numeric_std.all;
   use std.textio.all;
 
-library work;
-  use work.types_pkg.all;
-  use work.adaptations_pkg.all;
-  use work.string_methods_pkg.all;
-  use work.global_signals_and_shared_variables_pkg.all;
-  use work.methods_pkg.all;
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
 
 package uvvm_assertions_pkg is
   -- the " # region pragma is for editor purposes, and serves no purpose in the UVVM/VHDL context"

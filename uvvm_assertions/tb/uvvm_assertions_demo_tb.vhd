@@ -22,6 +22,9 @@ use IEEE.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_assertions;
+use uvvm_assertions.uvvm_assertions_pkg.all;
+
 --hdlregression:tb
 entity uvvm_assertions_demo_tb is
 end entity uvvm_assertions_demo_tb;

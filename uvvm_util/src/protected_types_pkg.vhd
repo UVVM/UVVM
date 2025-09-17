@@ -144,8 +144,75 @@ package body protected_types_pkg is
     procedure to_string(
       order : t_order
     ) is
+      variable v_line                            : line;
+      variable v_more_than_expected_alerts       : boolean := false;
+      variable v_less_than_expected_alerts       : boolean := false;
+      variable v_more_than_expected_minor_alerts : boolean := false;
+      variable v_less_than_expected_minor_alerts : boolean := false;
+      constant C_PREFIX                          : string  := C_LOG_PREFIX & "     ";
     begin
-      to_string(priv_alert_attention_counters, order);
+      if order = INTERMEDIATE then
+        write(v_line,
+              LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+              "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***" & LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+              "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
+      else                                -- order=FINAL
+        write(v_line,
+              LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+              "*** FINAL SUMMARY OF ALL ALERTS ***" & LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+              "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
+      end if;
+
+      for i in NOTE to t_alert_level'right loop
+        write(v_line, "          " & to_upper(to_string(i, 13, LEFT)) & ": "); -- Severity
+        for j in t_attention'left to t_attention'right loop
+          write(v_line, to_string(integer'(priv_alert_attention_counters(i)(j)), 6, RIGHT, KEEP_LEADING_SPACE) & "    ");
+        end loop;
+        if (priv_alert_attention_counters(i)(REGARD) = priv_alert_attention_counters(i)(EXPECT)) then
+          write(v_line, "     ok" & LF);
+        else
+          write(v_line, "     *** " & to_string(i, 0) & " ***" & LF);
+          if (i > MANUAL_CHECK) then
+            if (priv_alert_attention_counters(i)(REGARD) < priv_alert_attention_counters(i)(EXPECT)) then
+              v_less_than_expected_alerts := true;
+            else
+              v_more_than_expected_alerts := true;
+            end if;
+          else
+            if (priv_alert_attention_counters(i)(REGARD) < priv_alert_attention_counters(i)(EXPECT)) then
+              v_less_than_expected_minor_alerts := true;
+            else
+              v_more_than_expected_minor_alerts := true;
+            end if;
+          end if;
+        end if;
+      end loop;
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      -- Print a conclusion when called from the FINAL part of the test sequencer
+      -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
+      if order = FINAL then
+        if v_more_than_expected_alerts then
+          write(v_line, ">> Simulation FAILED, with unexpected serious alert(s)" & LF);
+        elsif v_less_than_expected_alerts then
+          write(v_line, ">> Simulation FAILED: Mismatch between counted and expected serious alerts" & LF);
+        elsif v_more_than_expected_minor_alerts or v_less_than_expected_minor_alerts then
+          write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts" & LF);
+        else
+          write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
+        end if;
+        write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+      end if;
+
+      -- Format the report
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
+
+      -- Write the report to the log destination
+      write_line_to_log_destination(v_line);
+      deallocate(v_line);
     end;
 
   end protected body t_protected_alert_attention_counters;
@@ -257,8 +324,38 @@ package body protected_types_pkg is
     procedure to_string(
       order : t_order
     ) is
+      variable v_line   : line;
+      constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     begin
-      to_string(priv_check_counters, order);
+      if order = INTERMEDIATE then
+        write(v_line,
+              LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+              "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      else                                -- order=FINAL
+        write(v_line,
+              LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+              "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      end if;
+
+      for i in CHECK_VALUE to t_check_type'right loop
+        write(v_line, "          " & to_upper(to_string(i, 22, LEFT)) & ": ");
+        write(v_line, to_string(integer'(priv_check_counters(i)), 10, RIGHT, KEEP_LEADING_SPACE) & "    ");
+        write(v_line, "" & LF);
+      end loop;
+
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+
+      -- Format the report
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
+
+      -- Write the report to the log destination
+      write_line_to_log_destination(v_line);
+      deallocate(v_line);
     end procedure to_string;
 
   end protected body t_protected_check_counters;

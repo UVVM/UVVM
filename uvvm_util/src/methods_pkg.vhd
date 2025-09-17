@@ -30,15 +30,15 @@ use std.env.all;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2025.08.18";
+  constant C_UVVM_VERSION : string := "v2 2025.09.17";
 
-  -- -- ============================================================================
-  -- -- Initialisation and license
-  -- -- ============================================================================
-  --   procedure initialise_util(
-  --     constant dummy  : in t_void
-  --     );
-  --
+  -- ============================================================================
+  -- Initialization
+  -- ============================================================================
+  procedure initialize_util(
+    constant dummy : in t_void
+  );
+
   -- ============================================================================
   -- File handling (that needs to use other utility methods)
   -- ============================================================================
@@ -101,19 +101,6 @@ package methods_pkg is
     log_destination     : t_log_destination    := shared_default_log_destination;
     log_file_name       : string               := C_LOG_FILE_NAME;
     open_mode           : file_open_kind       := append_mode
-  );
-
-  procedure write_to_file(
-    file_name        : string;
-    open_mode        : file_open_kind;
-    variable my_line : inout line
-  );
-
-  procedure write_line_to_log_destination(
-    variable log_line        : inout line;
-    constant log_destination : in t_log_destination := shared_default_log_destination;
-    constant log_file_name   : in string            := C_LOG_FILE_NAME;
-    constant open_mode       : in file_open_kind    := append_mode
   );
 
   procedure enable_log_msg(
@@ -3298,29 +3285,10 @@ package body methods_pkg is
   constant C_BITVIS_LIBRARY_RELEASE_INFO_SHOWN : boolean := show_uvvm_utility_library_release_info(VOID);
 
   -- ============================================================================
-  -- Initialisation and license
+  -- Initialization
   -- ============================================================================
-  --   -- Executed a single time ONLY
-  --   procedure pot_show_license(
-  --     constant dummy  : in t_void
-  --     ) is
-  --   begin
-  --     if not shared_license_shown then
-  --       show_license(v_trial_license);
-  --       shared_license_shown := true;
-  --     end if;
-  --   end;
-  --   -- Executed a single time ONLY
-  --   procedure initialise_util(
-  --     constant dummy  : in t_void
-  --     ) is
-  --   begin
-  --     set_log_file_name(C_LOG_FILE_NAME);
-  --     set_alert_file_name(C_ALERT_FILE_NAME);
-  --     shared_license_shown.set(1);
-  --     shared_initialised_util.set(true);
-  --   end;
-  procedure pot_initialise_util(
+  -- Executed a single time ONLY
+  procedure initialize_util(
     constant dummy : in t_void
   ) is
     variable v_minimum_log_line_width : natural := 0;
@@ -3350,15 +3318,7 @@ package body methods_pkg is
         end if;
       end if;
 
-      bitvis_assert(C_LOG_LINE_WIDTH >= v_minimum_log_line_width, failure, "C_LOG_LINE_WIDTH is too low. Needs to higher than " & to_string(v_minimum_log_line_width) & ". ", C_SCOPE);
-
-      --show_license(VOID);
-      --       if C_SHOW_uvvm_utilITY_LIBRARY_INFO then
-      --         show_uvvm_utility_library_info(VOID);
-      --       end if;
-      --       if C_SHOW_uvvm_utilITY_LIBRARY_RELEASE_INFO then
-      --         show_uvvm_utility_library_release_info(VOID);
-      --       end if;
+      bitvis_assert(C_LOG_LINE_WIDTH >= v_minimum_log_line_width, failure, "C_LOG_LINE_WIDTH is too low. Needs to higher than " & to_string(v_minimum_log_line_width) & ". ", "methods_pkg.initialize_util()");
     end if;
   end procedure;
 
@@ -3533,71 +3493,6 @@ package body methods_pkg is
     return v_result(1 to v_result_width);
   end function;
 
-  -- Writes Line to a file without modifying the contents of the line
-  -- Not yet available in VHDL
-  procedure tee(
-    file file_handle : text;
-    variable my_line : inout line
-  ) is
-    variable v_line : line;
-  begin
-    write(v_line, my_line.all);
-    writeline(file_handle, v_line);
-    deallocate(v_line);
-  end procedure;
-
-  -- Open, append/write to and close file. Also empty contents of the line
-  procedure write_to_file(
-    file_name        : string;
-    open_mode        : file_open_kind;
-    variable my_line : inout line
-  ) is
-    file v_specified_file_pointer : text;
-  begin
-    file_open(v_specified_file_pointer, file_name, open_mode);
-    writeline(v_specified_file_pointer, my_line);
-    file_close(v_specified_file_pointer);
-  end procedure;
-
-  procedure write_line_to_log_destination(
-    variable log_line        : inout line;
-    constant log_destination : in t_log_destination := shared_default_log_destination;
-    constant log_file_name   : in string            := C_LOG_FILE_NAME;
-    constant open_mode       : in file_open_kind    := append_mode) is
-  begin
-    -- Write the info string to the target file
-    if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
-      -- Output file specified, but file name was invalid.
-      alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
-    elsif log_line = null then
-      -- Line specified is null
-      alert(TB_WARNING, "log called with NULL line");
-    else
-      case log_destination is
-        when CONSOLE_AND_LOG =>
-          tee(OUTPUT, log_line); -- write to transcript, while keeping the line contents
-          -- write to file
-          if log_file_name = C_LOG_FILE_NAME then
-            -- If the log file is the default file, it is not necessary to open and close it again
-            writeline(LOG_FILE, log_line);
-          else
-            -- If the log file is a custom file name, the file will have to be opened.
-            write_to_file(log_file_name, open_mode, log_line);
-          end if;
-        when CONSOLE_ONLY =>
-          writeline(OUTPUT, log_line); -- Write to console and empty contents of line
-        when LOG_ONLY =>
-          if log_file_name = C_LOG_FILE_NAME then
-            -- If the log file is the default file, it is not necessary to open and close it again
-            writeline(LOG_FILE, log_line);
-          else
-            -- If the log file is a custom file name, the file will have to be opened.
-            write_to_file(log_file_name, open_mode, log_line);
-          end if;
-      end case;
-    end if;
-  end procedure;
-
   procedure log(
     msg_id          : t_msg_id;
     msg             : string;
@@ -3621,7 +3516,7 @@ package body methods_pkg is
   begin
     -- Check if message ID is enabled
     if (msg_id_panel(msg_id) = ENABLED) then
-      pot_initialise_util(VOID); -- Only executed the first time called
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
       -- Prepare strings for msg_id and scope
       v_log_msg_id := to_upper(justify(to_string(msg_id), left, C_LOG_MSG_ID_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
@@ -3706,35 +3601,9 @@ package body methods_pkg is
       -- Add prefix to all lines
       prefix_lines(v_info_final);
 
-      -- Write the info string to the target file
-      if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
-        -- Output file specified, but file name was invalid.
-        alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
-      else
-        case log_destination is
-          when CONSOLE_AND_LOG =>
-            tee(OUTPUT, v_info_final); -- write to transcript, while keeping the line contents
-            -- write to file
-            if log_file_name = C_LOG_FILE_NAME then
-              -- If the log file is the default file, it is not necessary to open and close it again
-              writeline(LOG_FILE, v_info_final);
-            else
-              -- If the log file is a custom file name, the file will have to be opened.
-              write_to_file(log_file_name, open_mode, v_info_final);
-            end if;
-          when CONSOLE_ONLY =>
-            writeline(OUTPUT, v_info_final); -- Write to console and empty contents of line
-          when LOG_ONLY =>
-            if log_file_name = C_LOG_FILE_NAME then
-              -- If the log file is the default file, it is not necessary to open and close it again
-              writeline(LOG_FILE, v_info_final);
-            else
-              -- If the log file is a custom file name, the file will have to be opened.
-              write_to_file(log_file_name, open_mode, v_info_final);
-            end if;
-        end case;
-        deallocate(v_info_final);
-      end if;
+      -- Write the info string to the log destination
+      write_line_to_log_destination(v_info_final, log_destination, log_file_name, open_mode);
+      deallocate(v_info_final);
     end if;
   end procedure;
 
@@ -3773,33 +3642,14 @@ package body methods_pkg is
       alert(TB_ERROR, "log_text_block called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
       -- Check if message ID is enabled
     elsif (msg_id_panel(msg_id) = ENABLED) then
-      pot_initialise_util(VOID); -- Only executed the first time called
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
       v_text_block_is_empty := (text_block = null);
 
       if (formatting = UNFORMATTED) then
         if (not v_text_block_is_empty) then
           -- Write the info string to the target file without any header, footer or indentation
-          case log_destination is
-            when CONSOLE_AND_LOG =>
-              tee(OUTPUT, text_block); -- Write to console, but keep text_block
-              -- Write to log and empty text_block. Open specified file if not open.
-              if log_file_name = C_LOG_FILE_NAME then
-                writeline(LOG_FILE, text_block);
-              else
-                write_to_file(log_file_name, open_mode, text_block);
-              end if;
-            when CONSOLE_ONLY =>
-              writeline(OUTPUT, text_block); -- Write to console and empty text_block
-            when LOG_ONLY =>
-              -- Write to log and empty text_block. Open specified file if not open.
-              if log_file_name = C_LOG_FILE_NAME then
-                writeline(LOG_FILE, text_block);
-              else
-                write_to_file(log_file_name, open_mode, text_block);
-              end if;
-          end case;
-
+          write_line_to_log_destination(text_block, log_destination, log_file_name, open_mode);
         end if;
       elsif not (v_text_block_is_empty and (log_if_block_empty = SKIP_LOG_IF_BLOCK_EMPTY)) then
 
@@ -3819,46 +3669,10 @@ package body methods_pkg is
         write(v_log_body, LF & fill_string('*', (C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH)) & LF);
         prefix_lines(v_log_body);
 
-        case log_destination is
-
-          when CONSOLE_AND_LOG =>
-            -- Write header to console
-            tee(OUTPUT, v_header_line);
-            -- Write header to file, and open/close if not default log file
-            if log_file_name = C_LOG_FILE_NAME then
-              writeline(LOG_FILE, v_header_line);
-            else
-              write_to_file(log_file_name, open_mode, v_header_line);
-            end if;
-            -- Write header message to specified destination
-            log(msg_id, msg_header, scope, msg_id_panel, CONSOLE_AND_LOG, log_file_name, append_mode);
-            -- Write log body to console
-            tee(OUTPUT, v_log_body);
-            -- Write log body to specified file
-            if log_file_name = C_LOG_FILE_NAME then
-              writeline(LOG_FILE, v_log_body);
-            else
-              write_to_file(log_file_name, append_mode, v_log_body);
-            end if;
-
-          when CONSOLE_ONLY =>
-            -- Write to console and empty all lines
-            writeline(OUTPUT, v_header_line);
-            log(msg_id, msg_header, scope, msg_id_panel, CONSOLE_ONLY);
-            writeline(OUTPUT, v_log_body);
-
-          when LOG_ONLY =>
-            -- Write to log and empty text_block. Open specified file if not open.
-            if log_file_name = C_LOG_FILE_NAME then
-              writeline(LOG_FILE, v_header_line);
-              log(msg_id, msg_header, scope, msg_id_panel, LOG_ONLY);
-              writeline(LOG_FILE, v_log_body);
-            else
-              write_to_file(log_file_name, open_mode, v_header_line);
-              log(msg_id, msg_header, scope, msg_id_panel, LOG_ONLY, log_file_name, append_mode);
-              write_to_file(log_file_name, append_mode, v_log_body);
-            end if;
-        end case;
+        -- Write the info string to the log destination
+        write_line_to_log_destination(v_header_line, log_destination, log_file_name, open_mode);
+        log(msg_id, msg_header, scope, msg_id_panel, log_destination, log_file_name, append_mode);
+        write_line_to_log_destination(v_log_body, log_destination, log_file_name, append_mode);
 
         -- Deallocate text block to give writeline()-like behaviour
         -- for formatted output
@@ -4061,7 +3875,7 @@ package body methods_pkg is
     constant C_ATTENTION : t_attention := get_alert_attention(alert_level);
   begin
     if alert_level /= NO_ALERT then
-      pot_initialise_util(VOID); -- Only executed the first time called
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
       if C_ENABLE_HIERARCHICAL_ALERTS then
         -- Call the hierarchical alert function
@@ -4115,9 +3929,8 @@ package body methods_pkg is
           end if;
 
           prefix_lines(v_info);
-          tee(OUTPUT, v_info);
-          tee(ALERT_FILE, v_info);
-          writeline(LOG_FILE, v_info);
+          tee_and_keep_line(ALERT_FILE, v_info); -- Write to file, while keeping the line contents
+          write_line_to_log_destination(v_info);
           deallocate(v_info);
 
           -- 6. Stop simulation if stop-limit is reached for number of this alert
@@ -4234,7 +4047,7 @@ package body methods_pkg is
     constant order : in t_order
   ) is
   begin
-    pot_initialise_util(VOID); -- Only executed the first time called
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     if not C_ENABLE_HIERARCHICAL_ALERTS then
       protected_alert_attention_counters.to_string(order);
     else
@@ -4257,7 +4070,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
-    pot_initialise_util(VOID); -- Only executed the first time called
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     write(v_line,
     LF &
     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
@@ -4272,12 +4085,12 @@ package body methods_pkg is
     end loop;
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
 
-    -- Write the info string to the target file
-    tee(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line);
+    -- Write the report to the log destination
+    write_line_to_log_destination(v_line);
     deallocate(v_line);
   end procedure;
 
@@ -4287,7 +4100,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
-    pot_initialise_util(VOID); -- Only executed the first time called
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     write(v_line,
     LF &
     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
@@ -4303,12 +4116,12 @@ package body methods_pkg is
     end loop;
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
 
-    -- Write the info string to the target file
-    tee(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line);
+    -- Write the report to the log destination
+    write_line_to_log_destination(v_line);
     deallocate(v_line);
   end procedure;
 
@@ -4457,6 +4270,7 @@ package body methods_pkg is
     constant order : in t_order
   ) is
   begin
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     protected_check_counters.to_string(order);
   end procedure;
 
@@ -4474,6 +4288,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     -- Print report header
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     write(v_line, timestamp_header(now, justify("*** SUMMARY OF SCOREBOARDS***", LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
@@ -4492,9 +4307,11 @@ package body methods_pkg is
     -- Print report bottom line
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
 
-    -- Write the info string to transcript
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
+
+    -- Write the report to the log destination
     write_line_to_log_destination(v_line);
     DEALLOCATE(v_line);
   end procedure;
@@ -4549,7 +4366,7 @@ package body methods_pkg is
     alias a_vector                 : std_logic_vector(vector'length - 1 downto 0) is vector;
     constant C_RESULT_IF_NOT_FOUND : integer := - 1; -- To indicate not found
   begin
-    bitvis_assert(vector'length > 0, error, "idx_leftmost_p1_in_p2()", "String input is empty");
+    bitvis_assert(vector'length > 0, error, "String input is empty", "methods_pkg.idx_leftmost_p1_in_p2()");
     for i in a_vector'left downto a_vector'right loop
       if (a_vector(i) = target) then
         return i;
@@ -7672,7 +7489,7 @@ package body methods_pkg is
     -- The ascending parameter should match the array direction. We could also just remove the ascending
     -- parameter and use the t'ascending attribute.
     bitvis_assert((slv_array'ascending and ascending) or (not (slv_array'ascending) and not (ascending)), ERROR,
-    "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
+      "slv_array direction doesn't match ascending parameter", "methods_pkg.convert_slv_array_to_byte_array()");
 
     v_ascending_vector := slv_array(0)'ascending;
 
@@ -9735,6 +9552,7 @@ package body methods_pkg is
     check_value(timeout > 0 ns, TB_FAILURE, "timeout must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(sb_poll_time > 0 ns, TB_FAILURE, "sb_poll_time must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     if timeout <= 0 ns or sb_poll_time <= 0 ns then
+      deallocate(v_proc_call);
       return;
     end if;
 

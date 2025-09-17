@@ -460,7 +460,7 @@ package body ti_vvc_framework_support_pkg is
   end procedure;
 
   -- Lists all the registered VVCs
-  procedure report_vvcs(
+  procedure report_vvcs_summary(
     constant void : in t_void
   ) is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
@@ -483,9 +483,11 @@ package body ti_vvc_framework_support_pkg is
     -- Print report bottom line
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
 
-    -- Write the info string to transcript
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
+
+    -- Write the report to the log destination
     write_line_to_log_destination(v_line);
     DEALLOCATE(v_line);
   end procedure;
@@ -553,7 +555,7 @@ package body ti_vvc_framework_support_pkg is
         report_scoreboards(void);
       end if;
       if print_vvcs = REPORT_VVCS then
-        report_vvcs(void);
+        report_vvcs_summary(void);
       end if;
       if print_alert_counters = REPORT_ALERT_COUNTERS then
         report_alert_counters(INTERMEDIATE);

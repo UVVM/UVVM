@@ -596,8 +596,32 @@ In order to use a VVC the following libraries need to be included: ::
     library uvvm_vvc_framework;
     use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+Context files
+==================================================================================================================================
+The context files are created to simplify the inclusion of necessary libraries used in UVVM.
+
+* Each VVC has its own context file, which is located in ``<vip>/src/vvc_context.vhd``.
+* The utility library also has its own context file which includes all the packages in the utility library, and is located in 
+  ``uvvm_util/src/uvvm_util_context.vhd``.
+* There are also two "main" context files ``misc/context/uvvm_support_context.vhd`` and ``misc/context/uvvm_all_context.vhd``.
+
+    * The UVVM support context file includes the UVVM functionality except for VVCs and BFMs, i.e. utility library, scoreboard, 
+      spec_cov, and UVVM assertions.
+    * The UVVM all context file includes all inclusive UVVM libraries, i.e. all VIPs, uvvm_vvc_frame_work, and uvvm_support_context.
+
+The usage of these context files are shown below: ::
+
     library bitvis_vip_<name>;
     context bitvis_vip_<name>.vvc_context;
+
+    library uvvm_util;
+    context uvvm_util.uvvm_util_context;
+
+    library uvvm_context;
+    context uvvm_context.uvvm_support_context;
+
+    library uvvm_context;
+    context uvvm_context.uvvm_all_context;
 
 Types
 ==================================================================================================================================    

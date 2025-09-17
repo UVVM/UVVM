@@ -82,6 +82,8 @@ Main Features
 * Simple integration with regression test tools like Jenkins
 * Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs
 
+.. _uvvm_vvcs_and_bfms:
+
 **********************************************************************************************************************************
 Available VVCs and BFMs
 **********************************************************************************************************************************
@@ -94,13 +96,14 @@ to handle just the AXI4-Lite interface with everything else being your proprieta
 * AXI4-Lite
 * AXI-Stream - master and slave
 * Ethernet
-* GMII
+* GMII - transmit and receive
 * GPIO
 * I2C - master and slave
-* RGMII
+* RGMII - transmit and receive
 * SBI (Simple Bus Interface - A single cycle simple parallel bus interface)
 * SPI - master and slave
 * UART
+* Wishbone
 * More are coming
 
 .. important::

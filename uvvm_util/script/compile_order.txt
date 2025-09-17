@@ -16,8 +16,6 @@
 ../src/dummy_rand_extension_pkg.vhd
 ../src/rand_pkg.vhd
 ../src/dummy_func_cov_extension_pkg.vhd
-../src/dummy_func_cov_ucdb_pkg.vhd
+../src/association_list_pkg.vhd
 ../src/func_cov_pkg.vhd
-../src/uvvm_assertions_pkg.vhd
 ../src/uvvm_util_context.vhd
-

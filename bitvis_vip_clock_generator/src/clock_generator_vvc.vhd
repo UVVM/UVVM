@@ -109,7 +109,7 @@ begin
     clock_name(1 to vvc_config.clock_name'length) := (others => NUL);
     clock_name(1 to GC_CLOCK_NAME'length)         := GC_CLOCK_NAME;
     clock_period                                  := GC_CLOCK_PERIOD;
-    clock_high_time                               := GC_CLOCK_HIGH_TIME;
+    shared_clock_generator_vvc_config(GC_INSTANCE_IDX).clock_high_time := GC_CLOCK_HIGH_TIME; -- Use the shared variable directly to avoid an issue with Riviera-PRO 2025.04
     wait;
   end process;
   --========================================================================================================================

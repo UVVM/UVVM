@@ -380,18 +380,33 @@ t_parity
 
 t_necessary_condition
 ----------------------------------------------------------------------------------------------------------------------------------
-ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE
+.. code-block::
+
+    ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE
 
 
 .. _t_pos_ack_kind:
 
 t_pos_ack_kind
 ----------------------------------------------------------------------------------------------------------------------------------
-EVERY, FIRST
+.. code-block::
+
+    EVERY, FIRST
 
 
 .. _t_accept_all_zeros:
 
 t_accept_all_zeros
 ----------------------------------------------------------------------------------------------------------------------------------
-ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED
+.. code-block::
+
+    ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED
+
+
+.. _t_association_list_status:
+
+t_association_list_status
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    ASSOCIATION_LIST_SUCCESS, ASSOCIATION_LIST_FAILURE

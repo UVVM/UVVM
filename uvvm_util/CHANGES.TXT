@@ -1,6 +1,26 @@
 UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
+v2.21.2
+----------
+Released: 2025-09-17
+- Added a generic association list data structure.
+- Made default bin names 1-indexed.
+- Changed bin naming so that each resulting bin from a call to add_bin() or add_cross() gets an index (1 to the
+  number of resulting bins) in square brackets appended to the given name if the call results in more than one bin.
+- Added the constant C_FC_BIN_NAME_DUPLICATE_WARNING to the adaptations_pkg to enable warnings on duplicate bin names.
+- Added the constant C_FC_DEFAULT_BIN_NAME to the adaptations_pkg that sets the default bin name.
+- Moved UVVM assertions to its own folder (any new changes will be tracked there).
+- Fixed functional coverage reports not being written to log/console when written also to a separate file.
+- Fixed some report methods not being written to the correct shared_default_log_destination.
+- Fixed some report methods crashing the simulation when used at the very start of the simulation due to an unopened log file.
+- Moved vendor extensions packages for Questa to the misc directory.
+- Fixed bin_vector() not supporting sizes of 31 bits. Added a note to the documentation that it is the maximum supported size.
+- Fixed bin_range() not handling correctly a range of 0 to 2**31-1.
+- Merged func_cov related vendor extension packages into single package. Other minor modifications to test version of Questa vendor
+  extensions.
+- Updated .sh script to use bash shebang.
+
 v2.21.1
 ----------
 Released: 2025-08-18
@@ -12,13 +32,7 @@ v2.21.0
 ----------
 Released: 2025-05-11
 - Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
-- Added preliminary test version of upcoming rand and functional coverage extensions for Questa. 
-
-v2.21.0
-----------
-Released: 2025-05-11
-- Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
-- Added preliminary test version of upcoming rand and functional coverage extensions for Questa. 
+- Added preliminary test version of upcoming rand and functional coverage extensions for Questa.
 
 v2.20.0
 ----------
@@ -161,7 +175,7 @@ Released: 2021-04-08
 
 v2.15.1
 ----------
-Released: 2020-XX-XX
+Released: 2020-12-08
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.

@@ -65,9 +65,11 @@
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -86,8 +88,9 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -188,7 +191,7 @@ the VVCs in the local sequencers for better control and encapsulation</p></li>
 </ul>
 </section>
 <section id="available-vvcs-and-bfms">
-<h2>Available VVCs and BFMs<a class="headerlink" href="#available-vvcs-and-bfms" title="Link to this heading"></a></h2>
+<span id="uvvm-vvcs-and-bfms"></span><h2>Available VVCs and BFMs<a class="headerlink" href="#available-vvcs-and-bfms" title="Link to this heading"></a></h2>
 <p>These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC
 to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.</p>
 <ul class="simple">
@@ -198,13 +201,14 @@ to handle just the AXI4-Lite interface with everything else being your proprieta
 <li><p>AXI4-Lite</p></li>
 <li><p>AXI-Stream - master and slave</p></li>
 <li><p>Ethernet</p></li>
-<li><p>GMII</p></li>
+<li><p>GMII - transmit and receive</p></li>
 <li><p>GPIO</p></li>
 <li><p>I2C - master and slave</p></li>
-<li><p>RGMII</p></li>
+<li><p>RGMII - transmit and receive</p></li>
 <li><p>SBI (Simple Bus Interface - A single cycle simple parallel bus interface)</p></li>
 <li><p>SPI - master and slave</p></li>
 <li><p>UART</p></li>
+<li><p>Wishbone</p></li>
 <li><p>More are coming</p></li>
 </ul>
 <div class="admonition important">

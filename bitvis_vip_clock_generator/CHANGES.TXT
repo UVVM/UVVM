@@ -1,6 +1,12 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.6.2
+----------
+Released: 2025-09-17
+- Fixed bug where the initial configuration for the clock_name, clock_period and clock_high_time given by the VVC generics is not 
+  assigned when using Riviera-PRO simulator.
+
 v1.6.1
 ----------
 Released: 2025-03-25

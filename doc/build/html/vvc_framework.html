@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="t_vvc_operation" href="ti_vvc_framework_support_pkg.html" />
-    <link rel="prev" title="Optimized Randomization" href="optimized_rand.html" /> 
+    <link rel="prev" title="UVVM Assertions (BETA)" href="uvvm_assertions.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">VVC Framework</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#uvvm-methods">UVVM Methods</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#await-uvvm-completion">await_uvvm_completion()</a></li>
@@ -82,6 +83,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#essential-mechanisms">Essential Mechanisms</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#libraries">Libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#context-files">Context files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#types">Types</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#t-vvc-result">t_vvc_result</a></li>
 </ul>
@@ -236,6 +238,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -254,8 +257,9 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -1215,9 +1219,38 @@ More details on the VVC Framework and the command mechanism can be found in the
 
 <span class="k">library</span><span class="w"> </span><span class="nn">uvvm_vvc_framework</span><span class="p">;</span>
 <span class="k">use</span><span class="w"> </span><span class="nn">uvvm_vvc_framework.ti_vvc_framework_support_pkg.</span><span class="k">all</span><span class="p">;</span>
-
-<span class="k">library</span><span class="w"> </span><span class="nn">bitvis_vip_</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="context-files">
+<h3>Context files<a class="headerlink" href="#context-files" title="Link to this heading"></a></h3>
+<p>The context files are created to simplify the inclusion of necessary libraries used in UVVM.</p>
+<ul>
+<li><p>Each VVC has its own context file, which is located in <code class="docutils literal notranslate"><span class="pre">&lt;vip&gt;/src/vvc_context.vhd</span></code>.</p></li>
+<li><p>The utility library also has its own context file which includes all the packages in the utility library, and is located in
+<code class="docutils literal notranslate"><span class="pre">uvvm_util/src/uvvm_util_context.vhd</span></code>.</p></li>
+<li><p>There are also two “main” context files <code class="docutils literal notranslate"><span class="pre">misc/context/uvvm_support_context.vhd</span></code> and <code class="docutils literal notranslate"><span class="pre">misc/context/uvvm_all_context.vhd</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The UVVM support context file includes the UVVM functionality except for VVCs and BFMs, i.e. utility library, scoreboard,
+spec_cov, and UVVM assertions.</p></li>
+<li><p>The UVVM all context file includes all inclusive UVVM libraries, i.e. all VIPs, uvvm_vvc_frame_work, and uvvm_support_context.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>The usage of these context files are shown below:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">bitvis_vip_</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="n">context</span><span class="w"> </span><span class="n">bitvis_vip_</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="p">.</span><span class="n">vvc_context</span><span class="p">;</span>
+
+<span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
+
+<span class="k">library</span><span class="w"> </span><span class="nn">uvvm_context</span><span class="p">;</span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_context</span><span class="p">.</span><span class="n">uvvm_support_context</span><span class="p">;</span>
+
+<span class="k">library</span><span class="w"> </span><span class="nn">uvvm_context</span><span class="p">;</span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_context</span><span class="p">.</span><span class="n">uvvm_all_context</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>
@@ -3300,7 +3333,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="optimized_rand.html" class="btn btn-neutral float-left" title="Optimized Randomization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="uvvm_assertions.html" class="btn btn-neutral float-left" title="UVVM Assertions (BETA)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="ti_vvc_framework_support_pkg.html" class="btn btn-neutral float-right" title="t_vvc_operation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

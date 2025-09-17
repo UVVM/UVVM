@@ -1,6 +1,12 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.9
+----------
+Released: 2025-09-17
+- Updated .sh scripts to use bash shebang.
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util packages.
+
 v1.1.8
 ----------
 Released: 2025-03-25

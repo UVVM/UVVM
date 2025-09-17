@@ -325,16 +325,6 @@ package string_methods_pkg is
     justified : side := right
   ) return string;
 
-  procedure to_string(
-    val   : t_alert_attention_counters;
-    order : t_order := FINAL
-  );
-
-  procedure to_string(
-    val   : t_check_counters_array;
-    order : t_order := FINAL
-  );
-
   function ascii_to_char(
     ascii_pos   : integer range 0 to 255;
     ascii_allow : t_ascii_allow := ALLOW_ALL
@@ -363,6 +353,17 @@ package string_methods_pkg is
   function get_basename(
     constant path : string
   ) return string;
+
+  procedure tee_and_keep_line(
+    file     file_handle :       text;
+    variable my_line     : inout line
+  );
+
+  procedure write_line_to_log_destination(
+    variable log_line        : inout line;
+    constant log_destination : in t_log_destination := shared_default_log_destination;
+    constant log_file_name   : in string            := C_LOG_FILE_NAME;
+    constant open_mode       : in file_open_kind    := append_mode);
 
 end package string_methods_pkg;
 
@@ -910,8 +911,7 @@ package body string_methods_pkg is
     write(v_text_lines, text_string);
     wrap_lines(v_text_lines, alignment_pos1, alignment_pos2, line_width);
     v_result_width                := v_text_lines'length;
-    bitvis_assert(v_result_width <= v_result'length, FAILURE,
-                  " String is too long after wrapping. Increase v_result string size.", "wrap_lines()");
+    bitvis_assert(v_result_width  <= v_result'length, FAILURE, " String is too long after wrapping. Increase v_result string size.", "wrap_lines()");
     v_result(1 to v_result_width) := v_text_lines.all;
     deallocate(v_text_lines);
     return v_result(1 to v_result_width);
@@ -1636,129 +1636,6 @@ package body string_methods_pkg is
     return to_upper(justify(C_INNER_STRING, justified, width));
   end function;
 
-  procedure to_string(
-    val   : t_alert_attention_counters;
-    order : t_order := FINAL
-  ) is
-    variable v_line                            : line;
-    variable v_line_copy                       : line;
-    variable v_more_than_expected_alerts       : boolean := false;
-    variable v_less_than_expected_alerts       : boolean := false;
-    variable v_more_than_expected_minor_alerts : boolean := false;
-    variable v_less_than_expected_minor_alerts : boolean := false;
-    constant C_PREFIX                          : string  := C_LOG_PREFIX & "     ";
-
-    -- NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK
-  begin
-    if order = INTERMEDIATE then
-      write(v_line,
-            LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-            "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***" & LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-            "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
-    else                                -- order=FINAL
-      write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-            "*** FINAL SUMMARY OF ALL ALERTS ***" & LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-            "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
-    end if;
-
-    for i in NOTE to t_alert_level'right loop
-      write(v_line, "          " & to_upper(to_string(i, 13, LEFT)) & ": "); -- Severity
-      for j in t_attention'left to t_attention'right loop
-        write(v_line, to_string(integer'(val(i)(j)), 6, RIGHT, KEEP_LEADING_SPACE) & "    ");
-      end loop;
-      if (val(i)(REGARD) = val(i)(EXPECT)) then
-        write(v_line, "     ok" & LF);
-      else
-        write(v_line, "     *** " & to_string(i, 0) & " ***" & LF);
-        if (i > MANUAL_CHECK) then
-          if (val(i)(REGARD) < val(i)(EXPECT)) then
-            v_less_than_expected_alerts := true;
-          else
-            v_more_than_expected_alerts := true;
-          end if;
-        else
-          if (val(i)(REGARD) < val(i)(EXPECT)) then
-            v_less_than_expected_minor_alerts := true;
-          else
-            v_more_than_expected_minor_alerts := true;
-          end if;
-        end if;
-      end if;
-    end loop;
-    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-    -- Print a conclusion when called from the FINAL part of the test sequencer
-    -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
-    if order = FINAL then
-      if v_more_than_expected_alerts then
-        write(v_line, ">> Simulation FAILED, with unexpected serious alert(s)" & LF);
-      elsif v_less_than_expected_alerts then
-        write(v_line, ">> Simulation FAILED: Mismatch between counted and expected serious alerts" & LF);
-      elsif v_more_than_expected_minor_alerts or v_less_than_expected_minor_alerts then
-        write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts" & LF);
-      else
-        write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
-      end if;
-      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
-    end if;
-
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
-    prefix_lines(v_line, C_PREFIX);
-
-    -- Write the info string to the target file
-    write(v_line_copy, v_line.all);     -- copy line
-    writeline(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line_copy);
-    deallocate(v_line);
-    deallocate(v_line_copy);
-  end;
-
-  procedure to_string(
-    val   : t_check_counters_array;
-    order : t_order := FINAL
-  ) is
-    variable v_line                      : line;
-    variable v_line_copy                 : line;
-    variable v_more_than_expected_alerts : boolean := false;
-    variable v_less_than_expected_alerts : boolean := false;
-    constant C_PREFIX                    : string  := C_LOG_PREFIX & "     ";
-  begin
-    if order = INTERMEDIATE then
-      write(v_line,
-            LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-            "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-    else                                -- order=FINAL
-      write(v_line,
-            LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-            "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-    end if;
-
-    for i in CHECK_VALUE to t_check_type'right loop
-      write(v_line, "          " & to_upper(to_string(i, 22, LEFT)) & ": ");
-      write(v_line, to_string(integer'(val(i)), 10, RIGHT, KEEP_LEADING_SPACE) & "    ");
-      write(v_line, "" & LF);
-    end loop;
-
-    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
-
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
-    prefix_lines(v_line, C_PREFIX);
-
-    -- Write the info string to the target file
-    write(v_line_copy, v_line.all);     -- copy line
-    writeline(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line_copy);
-    deallocate(v_line);
-    deallocate(v_line_copy);
-  end;
-
   -- Convert from ASCII to character
   -- Inputs:
   -- ascii_pos (integer) : ASCII number input
@@ -1915,5 +1792,64 @@ package body string_methods_pkg is
       end if;
     end if;
   end function get_basename;
+
+  -- Writes a line to a file handle without modifying the contents of the line
+  procedure tee_and_keep_line(
+    file     file_handle :       text;
+    variable my_line     : inout line
+  ) is
+    variable v_line : line;
+  begin
+    write(v_line, my_line.all);
+    writeline(file_handle, v_line);
+    deallocate(v_line);
+  end procedure;
+
+  -- Writes a line to the specified log destination and clears the content of the line
+  procedure write_line_to_log_destination(
+    variable log_line        : inout line;
+    constant log_destination : in t_log_destination := shared_default_log_destination;
+    constant log_file_name   : in string            := C_LOG_FILE_NAME;
+    constant open_mode       : in file_open_kind    := append_mode) is
+    file v_file_handle : text;
+  begin
+    if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
+      -- Output file specified, but file name was invalid.
+      bitvis_assert(false, ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.", "write_line_to_log_destination()");
+    elsif log_line = null then
+      -- Line specified is null
+      bitvis_assert(false, WARNING, "log called with NULL line", "write_line_to_log_destination()");
+    else
+      case log_destination is
+        when CONSOLE_AND_LOG =>
+          -- Write to console while keeping the line contents
+          tee_and_keep_line(OUTPUT, log_line);
+          -- Write to log and empty the line contents
+          if log_file_name = C_LOG_FILE_NAME then
+            -- If the log file is the default file, it is not necessary to open and close it again
+            writeline(LOG_FILE, log_line);
+          else
+            -- If the log file is a custom file name, the file will have to be opened
+            file_open(v_file_handle, log_file_name, open_mode);
+            writeline(v_file_handle, log_line);
+            file_close(v_file_handle);
+          end if;
+        when CONSOLE_ONLY =>
+          -- Write to console and empty the line contents
+          writeline(OUTPUT, log_line);
+        when LOG_ONLY =>
+          -- Write to log and empty the line contents
+          if log_file_name = C_LOG_FILE_NAME then
+            -- If the log file is the default file, it is not necessary to open and close it again
+            writeline(LOG_FILE, log_line);
+          else
+            -- If the log file is a custom file name, the file will have to be opened
+            file_open(v_file_handle, log_file_name, open_mode);
+            writeline(v_file_handle, log_line);
+            file_close(v_file_handle);
+          end if;
+      end case;
+    end if;
+  end procedure;
 
 end package body string_methods_pkg;

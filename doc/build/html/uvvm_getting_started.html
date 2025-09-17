@@ -58,6 +58,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#compilation-order">Compilation Order</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#demo-testbenches">Demo testbenches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-shell-scripts-on-windows">Running Shell Scripts on Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gnu-make-support">GNU Make Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simulator-specific-notes">Simulator Specific Notes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ghdl">GHDL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvc">NVC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modelsim-questa">ModelSim/Questa</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#further-reading">Further Reading</a></li>
 </ul>
 </li>
@@ -66,9 +77,11 @@
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -87,8 +100,9 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -173,7 +187,7 @@ overwrite any local changes to UVVM, e.g. local changes in the adaptations_pkg.v
 </section>
 <section id="compilation">
 <h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
-<p>UVVM can be compiled by calling the <code class="docutils literal notranslate"><span class="pre">UVVM/script/compile_all.do</span></code> file using simulator GUI or from the command line. This will
+<p>UVVM can be compiled by calling the <code class="docutils literal notranslate"><span class="pre">UVVM/script/compile_all.do</span></code> file using simulator GUI or from the command line, this will
 compile all of UVVM. Each of the modules/VIPs in UVVM also have their own compilation scripts in a <code class="docutils literal notranslate"><span class="pre">/script</span></code> folder, e.g. for
 the SBI VIP <code class="docutils literal notranslate"><span class="pre">bitvis_vip_sbi/script/compile_src.do</span></code>. The compile_src.do script can take two arguments, where the first argument
 is the module/VIP installation path and the second is the target path of the compilation, i.e.
@@ -207,6 +221,18 @@ is the module/VIP installation path and the second is the target path of the com
 <li><p><code class="docutils literal notranslate"><span class="pre">./sim</span></code> is the relative path to the compilation target (target path).</p></li>
 </ul>
 </div>
+<p>Another way of compiling all UVVM libraries and VIPs is using the <code class="docutils literal notranslate"><span class="pre">UVVM/script/compile_all.sh</span></code> shell script:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span><span class="w"> </span><span class="n">compile_all</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="o">&lt;</span><span class="n">simulator</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">target_dir</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p><cite>&lt;simulator&gt;</cite> specifies the simulator to be used and should be <cite>ghdl</cite>, <cite>nvc</cite>, <cite>vsim</cite> or ‘xsim’. Note that current UVVM
+support in Xsim is limited.</p></li>
+<li><p><cite>&lt;target_dir&gt;</cite> sets target directory (defaults to current directory if not specified).</p></li>
+</ul>
+</div>
 <section id="compilation-order">
 <h3>Compilation Order<a class="headerlink" href="#compilation-order" title="Link to this heading"></a></h3>
 <p>Most of the modules/VIPs have some dependencies, thus compilation has to be performed in a specific order. The compilation order
@@ -219,6 +245,93 @@ module/VIP, is listed in the quick reference PDF of each module/VIP.</p>
 <li><p>UVVM VVC Framework</p></li>
 <li><p>Bitvis VIP Scoreboard (most of the VVCs have built in scoreboard functionality)</p></li>
 </ol>
+</section>
+</section>
+<section id="demo-testbenches">
+<h2>Demo testbenches<a class="headerlink" href="#demo-testbenches" title="Link to this heading"></a></h2>
+<p>Demo testbenches are provided in the <cite>bitvis_irqc</cite> and <cite>bitvis_uart</cite> directories.</p>
+<p>To compile and simulate a demo, start by navigating to its <cite>script</cite> sub-directory. Users of ModelSim, Questa, Riviera Pro and
+ActiveHDl can run the <code class="docutils literal notranslate"><span class="pre">compile_all_and_simulate.do</span></code> script:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">vsim</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="o">-</span><span class="n">do</span><span class="w"> </span><span class="n">compile_all_and_simulate</span><span class="p">.</span><span class="n">do</span>
+</pre></div>
+</div>
+<p>Alternatively, run the <code class="docutils literal notranslate"><span class="pre">compile_all_and_simulate.sh</span></code> shell script:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span><span class="w"> </span><span class="n">compile_all_and_simulate</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="o">&lt;</span><span class="n">simulator</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">target_dir</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p><cite>&lt;simulator&gt;</cite> specifies the simulator to be used and should be <cite>ghdl</cite>, <cite>nvc</cite>, <cite>vsim</cite> or ‘xsim’. Note that current UVVM
+support in Xsim is limited.</p></li>
+<li><p><cite>&lt;target_dir&gt;</cite> sets target directory (defaults to current directory if not specified).</p></li>
+</ul>
+</div>
+</section>
+<section id="running-shell-scripts-on-windows">
+<h2>Running Shell Scripts on Windows<a class="headerlink" href="#running-shell-scripts-on-windows" title="Link to this heading"></a></h2>
+<p>[MSYS2](<a class="reference external" href="https://www.msys2.org/">https://www.msys2.org/</a>) is recommended for running shell scripts, GNU utilities etc on Windows. It is also recommended for
+the GHDL and NVC simulators. Remember to add the MSYS2 binary directories to the Windows path if you would like to use a Windows
+Terminal or Command Prompt instead of the MSYS2 terminal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">C:\msys64\usr\bin</span>
+<span class="go">C:\msys64\mingw64\bin</span>
+<span class="go">C:\msys64\mingw32\bin</span>
+</pre></div>
+</div>
+</section>
+<section id="gnu-make-support">
+<h2>GNU Make Support<a class="headerlink" href="#gnu-make-support" title="Link to this heading"></a></h2>
+<p>Experimental support for using GNU Make to drive simulation of the <code class="docutils literal notranslate"><span class="pre">bitvis_uart</span></code> and <code class="docutils literal notranslate"><span class="pre">bitvis_irqc</span></code> examples is now included.
+The <code class="docutils literal notranslate"><span class="pre">script</span></code> sub-directory of these examples now includes a Makefile which can be used to compile, simulate and view the
+resulting waveform in <strong>GTKWave</strong>. The supported simulators are <strong>GHDL</strong>, <strong>NVC</strong>, <strong>ModelSim</strong> and <strong>Questa</strong>.</p>
+<p>To try it out, open a terminal, navigate to the <code class="docutils literal notranslate"><span class="pre">script</span></code> sub-directory of the relevant example, then run <code class="docutils literal notranslate"><span class="pre">make</span></code>, specifying
+the simulator as the target. For example, on Windows/MSYS2, in a Windows Command Prompt:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd C:\work\UVVM\bitvis_uart\script</span>
+<span class="go">make ghdl</span>
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">C:\work\UVVM</span></code> with the correct path to your clone of the UVVM repository.</p>
+<p>The heavy lifting is done by a couple of Makefile includes (<code class="docutils literal notranslate"><span class="pre">multisim.mk</span></code> and <code class="docutils literal notranslate"><span class="pre">example.mk</span></code>) and a shell script (<code class="docutils literal notranslate"><span class="pre">vcd2gtkw.sh</span></code>)
+which are located in the main <code class="docutils literal notranslate"><span class="pre">script</span></code> directory, along with <code class="docutils literal notranslate"><span class="pre">Makefile_template</span></code> which can be used as a starting point for
+using Makefiles in your own projects.</p>
+<blockquote id="note">
+<div><ol class="arabic simple">
+<li><p>On Windows, MSYS2 is recommended. Use <code class="docutils literal notranslate"><span class="pre">pacman</span></code> to install <code class="docutils literal notranslate"><span class="pre">make</span></code> (required) and <code class="docutils literal notranslate"><span class="pre">git</span></code> (recommended).</p></li>
+<li><p>At present, precompiled UVVM libraries are required. See the simulator specific notes below for details.</p></li>
+</ol>
+</div></blockquote>
+<section id="simulator-specific-notes">
+<h3>Simulator Specific Notes<a class="headerlink" href="#simulator-specific-notes" title="Link to this heading"></a></h3>
+<section id="ghdl">
+<h4>GHDL<a class="headerlink" href="#ghdl" title="Link to this heading"></a></h4>
+<p>To precompile the UVVM libraries and VIPs, run the <code class="docutils literal notranslate"><span class="pre">compile-uvvm.sh</span></code> script which is located in the <code class="docutils literal notranslate"><span class="pre">vendors</span></code> sub-directory of
+the GHDL libraries directory. On Linux, the default location of this directory is <code class="docutils literal notranslate"><span class="pre">/usr/local/lib/ghdl</span></code>. On Windows/MSYS2, the
+default location is <code class="docutils literal notranslate"><span class="pre">C:\msys64\mingw64\lib\ghdl</span></code>.</p>
+</section>
+<section id="nvc">
+<h4>NVC<a class="headerlink" href="#nvc" title="Link to this heading"></a></h4>
+<p>UVVM support in NVC is partially complete, but sufficient for the examples.</p>
+<p>To precompile the UVVM libraries and VIPs, run the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">nvc --install uvvm</span>
+</pre></div>
+</div>
+</section>
+<section id="modelsim-questa">
+<h4>ModelSim/Questa<a class="headerlink" href="#modelsim-questa" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">compile_all.do</span></code> script located in the main script directory can be used to precompile the UVVM libraries and VIPs. Choose
+(or create) an appropriate directory for user precompiled libraries, and create a <code class="docutils literal notranslate"><span class="pre">uvvm</span></code> sub-directory under it. This sub-directory
+is the 2nd argument to the script. For example, on Windows/MSYS2, enter the following command in a Windows Command Prompt:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vsim -c -do &quot;do C:/work/UVVM/script/compile_all.do C:/work/UVVM/script C:/work/.simlib/uvvm; exit&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">C:/work/UVVM</span></code> with the correct path to your clone of the UVVM repository.</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">C:/work/.simlib</span></code> with the correct path to your precompiled libraries directory.</p></li>
+<li><p>Note the forward slashes!</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">multisim.mk</span></code> Makefile include assumes that precompiled libraries are located in the <code class="docutils literal notranslate"><span class="pre">.simlib</span></code> sub-directory of the
+<strong>home</strong> directory. You can change this by setting the <code class="docutils literal notranslate"><span class="pre">SIM_LIB_PATH</span></code> variable in your Makefile.</p>
+</section>
 </section>
 </section>
 <section id="further-reading">

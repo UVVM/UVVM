@@ -1724,12 +1724,13 @@ package body generic_sb_pkg is
       end if;
 
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
+
+      -- Format the report
       wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
       prefix_lines(v_line, prefix);
 
-      -- Write the info string to transcript
-      tee(OUTPUT, v_line);
-      writeline(LOG_FILE, v_line);
+      -- Write the report to the log destination
+      write_line_to_log_destination(v_line);
       deallocate(v_line);
     end procedure report_counters;
 

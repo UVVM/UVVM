@@ -1,29 +1,34 @@
 Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
-v0.4.2
+v1.0.0
+----------
+Released: 2025-09-17
+- Initial release of Ethernet VIP.
+
+v0.4.2 BETA
 ----------
 Released: 2025-08-18
 - Converted documentation to RST format.
 
-v0.4.1
+v0.4.1 BETA
 ----------
 Released: 2025-03-25
 - Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
 
-v0.4.0
+v0.4.0 BETA
 ----------
 Released: 2024-09-19
 - Removed old await_completion code from VVC.
 - Moved update_vvc_activity_register procedure to a common package for all VVCs.
 
-v0.3.1
+v0.3.1 BETA
 ----------
 Released: 2024-07-03
 - Changed max constants used in VVC to be adjustable from adaptations_pkg.
 - Added an individual constant to configure the VVC max instance number from adaptations_pkg.
 
-v0.3.0
+v0.3.0 BETA
 ----------
 Released: 2024-03-08
 - Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
@@ -36,7 +41,7 @@ Released: 2024-03-08
 - Added an assertion to check that the GC_CHANNEL generic is used correctly.
 - Moved sb_pkg from methods_pkg to new vvc_sb_pkg.
 
-v0.2.3
+v0.2.3 BETA
 ----------
 Released: 2023-09-16
 - Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
@@ -44,27 +49,27 @@ Released: 2023-09-16
 - Replaced the default values in VVC generics related to the cmd/results queues with
   the constants from adaptations_pkg.
 
-v0.2.2
+v0.2.2 BETA
 ----------
 Released: 2022-05-25
 - Fixed issue where Questa Sim coudl fail to read array width.
 
-v0.2.1
+v0.2.1 BETA
 ----------
 Released: 2022-05-05
 - t_vvc_config and t_vvc_status record declaration formatting.
 
-v0.2.0
+v0.2.0 BETA
 ----------
 Released: 2020-10-06
 - Added ETHERNET_VVC_SB scoreboard.
 
-v0.1.1
+v0.1.1 BETA
 ----------
 Released: 2020-06-23
 - Updated GC_PHY_INTERFACE description in QuickRef.
 
-v0.1.0
+v0.1.0 BETA
 ----------
 Released: 2020-05-19
 - Initial version of Ethernet VIP.

@@ -9,6 +9,39 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2025.09.17
+--------------------
+Released: 2025-09-17
+- Added a generic association list data structure.
+- Made default bin names 1-indexed.
+- Changed bin naming so that each resulting bin from a call to add_bin() or add_cross() gets an index (1 to the
+  number of resulting bins) in square brackets appended to the given name if the call results in more than one bin.
+- Added the constant C_FC_BIN_NAME_DUPLICATE_WARNING to the adaptations_pkg to enable warnings on duplicate bin names.
+- Added the constant C_FC_DEFAULT_BIN_NAME to the adaptations_pkg that sets the default bin name.
+- Fixed vvc_generator.py where v_msg_id_panel was not being used correctly in cmd_interpreter.
+- Added range constraints to SPI VVC generics to make sure they are within legal range.
+- Added missing deallocate functions for lines and deprecated deallocate_line_if_exists function. From pull request by user avelure.
+- Added checks to make sure input arrays to axistream VVC procedures have ascending range.
+- Moved UVVM assertions to its own folder (from uvvm_util).
+- Fixed functional coverage reports not being written to log/console when written also to a separate file.
+- Fixed some report methods not being written to the correct shared_default_log_destination.
+- Fixed some report methods crashing the simulation when used at the very start of the simulation due to an unopened log file.
+- Released HVVC to VVC Bridge VIP and Ethernet VIP from BETA.
+- Moved Markdown documentation files to main HTML documentation.
+- Fixed bug in Clock Generator VVC where the initial configuration for the clock_name, clock_period and clock_high_time given by 
+  the VVC generics is not assigned when using Riviera-PRO simulator.
+- Added misc folder to the root directory, and placed the UVVM context files and vendor extensions packages for Questa.
+- Added context section in the Essential Mechanisms documentation.
+- Fixed bin_vector() not supporting sizes of 31 bits. Added a note to the documentation that it is the maximum supported size.
+- Fixed bin_range() not handling correctly a range of 0 to 2**31-1.
+- Updated the examples in the SPI VVC documentation.
+- Added QuestaSim support to all compile scripts. From pull request by user tijmenvn.
+- Merged func_cov related vendor extension packages into single package. Other minor modifications to test version of Questa vendor
+  extensions.
+- Updated .sh scripts to use bash shebang.
+- Added missing files in ghdl_compile_all_and_simulate.sh scripts.
+
+
 v2 2025.08.18
 --------------------
 Released: 2025-08-18
@@ -26,7 +59,7 @@ v2 2025.05.11
 Released: 2025-05-11
 - Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
 - Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
-- Added preliminary test version of upcoming rand and functional coverage extensions for Questa. 
+- Added preliminary test version of upcoming rand and functional coverage extensions for Questa.
 
 
 v2 2025.03.25

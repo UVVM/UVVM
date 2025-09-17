@@ -33,7 +33,7 @@ bin_range()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a bin with a range of values. When num_bins is different than 1, several bins are created 
 instead by dividing the range into num_bins. If the division has a residue, it is spread equally starting from the last bins. If 
-num_bins is 0 or greater than the number of values in the range, then a single bin is created for each value.
+num_bins is 0 or greater than the number of values in the range, then a single bin is created for each value. ::
 
     t_new_bin_array := bin_range(min_value, max_value, [num_bins])
 
@@ -61,7 +61,7 @@ bin_vector()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a bin with a vector's range. When num_bins is different than 1, several bins are created 
 instead by dividing the range into num_bins. If the division has a residue, it is spread equally starting from the last bins. If 
-num_bins is 0 or greater than the number of values in the vector's range, then a single bin is created for each value.
+num_bins is 0 or greater than the number of values in the vector's range, then a single bin is created for each value. ::
 
     t_new_bin_array := bin_vector(vector, [num_bins])
 
@@ -76,9 +76,15 @@ num_bins is 0 or greater than the number of values in the vector's range, then a
 .. code-block::
 
     -- Examples:
-    my_coverpoint.add_bins(bin_vector(address));   -- creates 1 bin
-    my_coverpoint.add_bins(bin_vector(address,4)); -- creates 4 bins
-    my_coverpoint.add_bins(bin_vector(address,0)); -- creates 2^(address'length) bins: address[0], address[1], ...
+    signal address : std_logic_vector(7 downto 0);
+    ...
+    my_coverpoint.add_bins(bin_vector(address));   -- creates 1 bin:    0 to 255
+    my_coverpoint.add_bins(bin_vector(address,4)); -- creates 4 bins:   0 to 63, 64 to 127, 128 to 191, 192 to 255
+    my_coverpoint.add_bins(bin_vector(address,0)); -- creates 256 bins: 0, 1, 2, ..., 254, 255
+
+.. note::
+
+    This function only supports vector sizes up to 31 bits, as an integer cannot represent higher values than 2^31-1.
 
 
 bin_transition()

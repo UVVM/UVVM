@@ -20,6 +20,9 @@ use IEEE.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_assertions;
+use uvvm_assertions.uvvm_assertions_pkg.all;
+
 entity uvvm_assertions_demo_th is
   generic (
     GC_CLK_PERIOD : time := 10 ns

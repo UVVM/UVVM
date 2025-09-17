@@ -207,7 +207,7 @@ the output of a simple counter is always within a certain range (0-250). ::
 Basic concepts:
 **********************************************************************************************************************************
 
-clocked and async
+Clocked and async
 ==================================================================================================================================
 
 Most UVVM assertions are provided in two variants: a clocked version, which checks on the rising edge of a clock, 
@@ -215,7 +215,7 @@ and a non-clocked version, which checks whenever any signal parameter has an `â€
 Note that for the clocked assertions, the `tracked_value` will be checked at the same delta cycle as the rising edge of the clock, 
 meaning that any changes to the tracked signal after this will be checked on the next rising edge of the clock.
 
-configuring the assertion
+Configuring the assertion
 ==================================================================================================================================
 All UVVM assertions have parameters defined as constants that can be used to configure the behavior of the assertion. 
 These configuration parameters will be locked to their set value when the assertion is activated by the enable signal. 
@@ -561,7 +561,7 @@ Example of usage:
     assert_shift_one_from_left(clk, pipeline_active, pipeline_stage_valid, ANY_BIT_ALERT, "Image processing pipeline stage valid signal must shift one-hot from left to right", WARNING);
 
 
-window assertions
+Window assertions
 ==================================================================================================================================
 
 Window assertions are a collection of assertions to check signal properties within a defined window, either set by a number of cycles after a trigger signal or between two trigger signals.

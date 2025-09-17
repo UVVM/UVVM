@@ -1,6 +1,12 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v5.1.2
+----------
+Released: 2025-09-17
+- Added constraints to VVC generics to make sure they cannot be set to a higher value than what is allowed in the adaptations_pkg.
+- Updated the examples in the SPI VVC documentation.
+
 v5.1.1
 ----------
 Released: 2025-08-18

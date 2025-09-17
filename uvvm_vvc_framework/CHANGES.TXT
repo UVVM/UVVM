@@ -1,16 +1,16 @@
 UVVM VVC Framework - Overview on Versions and Changes
 ==============================================================
 
+v2.12.13
+----------
+Released: 2025-09-17
+- Fixed vvc_generator.py where v_msg_id_panel was not being used correctly in cmd_interpreter.
+
 v2.12.12
 ----------
 Released: 2025-08-18
 - Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
 - Updated check_unwanted_activity() procedures to ignore signal transitions from 'X' to '0'/'1'.
-
-v2.12.12
-----------
-Released: 2025-XX-XX
-- Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
 
 v2.12.11
 ----------

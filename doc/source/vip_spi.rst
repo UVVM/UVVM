@@ -1045,10 +1045,14 @@ in master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to
     spi_master_transmit_and_receive(SPI_VVCT, 0, x"AF", TO_SB, "SPI Master Tx and Rx to/from Peripheral 1. Rx data will be sent to the SPI scoreboard for checking.");
 
     -- Example with fetch_result() call: Result is placed in v_result
-    variable v_cmd_idx : natural;                       -- Command index for the last receive
-    variable v_result  : work.vvc_cmd_pkg.t_vvc_result; -- Result from read.
+    variable v_cmd_idx : natural;                              -- Command index for the last receive
+    variable v_data    : t_slv_array(1 downto 0)(7 downto 0);  -- Data array to transmit
+    variable v_result  : work.vvc_cmd_pkg.t_vvc_result;        -- Result from read.
     ...
-    spi_master_transmit_and_receive(SPI_VVCT, 0, (x"AB", x"CD"), "Transmitting two bytes to Peripheral 1 and receiving from Peripheral 1"); 
+    v_data(0) := x"AB";
+    v_data(1) := x"CD";
+
+    spi_master_transmit_and_receive(SPI_VVCT, 0, v_data, "Transmitting two bytes to Peripheral 1 and receiving from Peripheral 1");
     v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 0);
     await_completion(SPI_VVCT, 0, v_cmd_idx, 1 us, "Wait for transmit and receive to finish");
     fetch_result(SPI_VVCT, 0, v_cmd_idx, v_result, "Fetching first byte from transmit and receive operation");
@@ -1103,8 +1107,13 @@ instantiated in master mode, i.e. setting the VVC entity generic constant 'GC_MA
 .. code-block::
 
     -- Examples:
+    variable v_data : t_slv_array(1 downto 0)(7 downto 0);  -- Data array to transmit
+    ...
+    v_data(0) := x"AA";
+    v_data(1) := x"BB";
+
     spi_master_transmit_only(SPI_VVCT, 0, x"0D", "Transmitting carriage return to Peripheral 1");
-    spi_master_transmit_only(SPI_VVCT, 0, (x"AA", x"BB"), "Transmitting carriage return to Peripheral 1", 
+    spi_master_transmit_only(SPI_VVCT, 0, v_data, "Transmitting two bytes to Peripheral 1",
                              RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_BETWEEN_WORDS, C_SCOPE);
 
 
@@ -1329,10 +1338,14 @@ in slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 
                                    START_TRANSFER_ON_NEXT_SS, C_SCOPE);
 
     -- Example with fetch_result() call: Result is placed in v_result
-    variable v_cmd_idx : natural;                       -- Command index for the last receive
-    variable v_result  : work.vvc_cmd_pkg.t_vvc_result; -- Result from read.
+    variable v_cmd_idx : natural;                              -- Command index for the last receive
+    variable v_data    : t_slv_array(1 downto 0)(7 downto 0);  -- Data array to transmit
+    variable v_result  : work.vvc_cmd_pkg.t_vvc_result;        -- Result from read
     ...
-    spi_slave_transmit_and_receive(SPI_VVCT, 0, (x"AB", x"CD"), "Transmitting two bytes to Peripheral 1 and receiving from Peripheral 1"); 
+    v_data(0) := x"AB";
+    v_data(1) := x"CD";
+
+    spi_slave_transmit_and_receive(SPI_VVCT, 0, v_data, "Transmitting and receiving two bytes");
     v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 0);
     await_completion(SPI_VVCT, 0, v_cmd_idx, 1 us, "Wait for transmit and receive to finish");
     fetch_result(SPI_VVCT, 0, v_cmd_idx, v_result, "Fetching first byte from transmit and receive operation");
@@ -1493,8 +1506,16 @@ This procedure can only be called when the SPI VVC is instantiated in slave mode
 .. code-block::
 
     -- Examples:
+    variable v_data_tx  : t_slv_array(1 downto 0)(7 downto 0);  -- Data array to transmit
+    variable v_data_exp : t_slv_array(1 downto 0)(7 downto 0);  -- Expected data received
+    ...
+    v_data_tx(0)  := x"AA";
+    v_data_tx(1)  := x"BB";
+    v_data_exp(0) := x"3A";
+    v_data_exp(1) := x"3B";
+
     spi_slave_transmit_and_check(SPI_VVCT, 0, x"0D", x"5F", "Transmitting carriage return to Peripheral 1 and expecting data back");
-    spi_slave_transmit_and_check(SPI_VVCT, 0, (x"AA", x"BB"), (x"3A", x"3B"), "Transmitting carriage return to Peripheral 1 and expecting data back", 
+    spi_slave_transmit_and_check(SPI_VVCT, 0, v_data_tx, v_data_exp, "Transmitting two bytes to Peripheral 1 and expecting two bytes back",
                                  ERROR, START_TRANSFER_IMMEDIATE, C_SCOPE);
 
 
@@ -1540,8 +1561,13 @@ This procedure can only be called when the SPI VVC is instantiated in slave mode
 .. code-block::
 
     -- Examples:
+    variable v_data_exp : t_slv_array(1 downto 0)(7 downto 0);  -- Expected data received
+    ...
+    v_data_exp(0) := x"3A";
+    v_data_exp(1) := x"3B";
+
     spi_slave_check_only(SPI_VVCT, 0, x"0D", "Expecting carriage return from Peripheral 1");
-    spi_slave_check_only(SPI_VVCT, 0, (x"3A", x"3B"), "Expecting carriage return from Peripheral 1", ERROR, START_TRANSFER_IMMEDIATE, C_SCOPE);
+    spi_slave_check_only(SPI_VVCT, 0, v_data_exp, "Receive and check data from Peripheral 1", ERROR, START_TRANSFER_IMMEDIATE, C_SCOPE);
 
 
 Activity Watchdog

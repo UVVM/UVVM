@@ -115,9 +115,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -136,8 +138,9 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -197,10 +200,10 @@ a range of values or a given transition between values.</p>
 <p>In Figure 1, we can see a coverpoint named <em>memory_address</em> which contains six different bins: four bins with a single value each,
 one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting
 how many times the coverpoint has been sampled with the corresponding values of the bins.</p>
-<figure class="align-center" id="id2">
+<figure class="align-center" id="id3">
 <a class="reference internal image-reference" href="_images/func_cov_coverpoint.png"><img alt="Coverpoint representation" src="_images/func_cov_coverpoint.png" style="width: 400pt;" /></a>
 <figcaption>
-<p><span class="caption-text">Figure 1</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 1</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>Sometimes we want to monitor the values of multiple points of our design at the same time. In this case, we can create a coverpoint
@@ -208,10 +211,10 @@ containing a <em>cross</em>. A cross is a type of container that can hold a comb
 combination of the values covered by the crossed bins or coverpoints must have been sampled during testing for the cross to be covered.</p>
 <p>In Figure 2, we can see a cross named <em>src_addr_x_dst_addr</em> which contains eight different bins. Each bin contains different
 combinations of values for <em>src_addr</em> and <em>dst_addr</em>.</p>
-<figure class="align-center" id="id3">
+<figure class="align-center" id="id4">
 <a class="reference internal image-reference" href="_images/func_cov_cross.png"><img alt="Cross representation" src="_images/func_cov_cross.png" style="width: 400pt;" /></a>
 <figcaption>
-<p><span class="caption-text">Figure 2</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 2</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>Once we have defined all our coverpoints with bins or crosses for the required scenarios, we can begin running tests on our
@@ -222,10 +225,10 @@ Each value received through the input is sampled using the <code class="docutils
 the value 255. This will increment the hit counter of the bin associated with that value by one. Since this bin has a
 min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
 hit coverage, the coverpoint will have full coverage.</p>
-<figure class="align-center" id="id4">
+<figure class="align-center" id="id5">
 <a class="reference internal image-reference" href="_images/func_cov_sampling.png"><img alt="Sampling coverage" src="_images/func_cov_sampling.png" style="width: 400pt;" /></a>
 <figcaption>
-<p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <div class="admonition note">
@@ -460,15 +463,37 @@ when the list becomes full. These constants are defined in adaptations_pkg.</p>
 coverpoint’s respective values.</p>
 </section>
 <section id="bin-name">
-<h3>Bin name<a class="headerlink" href="#bin-name" title="Link to this heading"></a></h3>
-<p>Bins can be named by using the optional parameter <em>bin_name</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure. If no name is given to the bin, a
-default name will be automatically given. Having a bin name is useful when reading the reports.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
+<span id="id1"></span><h3>Bin name<a class="headerlink" href="#bin-name" title="Link to this heading"></a></h3>
+<p>Bins can be named by using the optional parameter <em>bin_name</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedures. If no name is
+given, a default name with an index appended will be given. The default bin name is <em>bin_&lt;idx&gt;</em> and is set by the
+C_FC_DEFAULT_BIN_NAME constant in the adaptations_pkg. If multiple bins are given to <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> (by using <code class="docutils literal notranslate"><span class="pre">bin_range()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bin_vector()</span></code>, or concatenation), or if a call to <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> results in multiple cross bins, the bin name will be indexed
+as shown in the examples below. All bin name indices starts from 1.</p>
+<p>A warning is issued when duplicate bin names are detected. This warning can be turned off by setting the
+C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg.vhd to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+<p>Having bin names is useful when reading the reports.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w">                        </span><span class="c1">-- bin name: bin_1</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">-- bin name: bin_max</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;addr&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">-- bin names: addr[1], addr[2], addr[3], addr[4]</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;two_bins&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- bin names: two_bins[1], two_bins[2]</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">));</span><span class="w">                     </span><span class="c1">-- bin name: bin_2</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span><span class="w">          </span><span class="c1">-- bin names: bin_3[1], bin_3[2], bin_3[3], bin_3[4]</span>
 
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span><span class="w">                                    </span><span class="c1">-- bin name: bin_1</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_a&quot;</span><span class="p">);</span><span class="w">                    </span><span class="c1">-- bin name: cross_bin_a</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_b&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">-- bin name: cross_bin_b</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_c&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- bin names: cross_bin_c[1], cross_bin_c[2], cross_bin_c[3]</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_d&quot;</span><span class="p">);</span><span class="w">       </span><span class="c1">-- bin names: cross_bin_d[1], cross_bin_d[2], cross_bin_d[3]</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">10000</span><span class="p">));</span><span class="w">                                </span><span class="c1">-- bin name: bin_2</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span><span class="w">                       </span><span class="c1">-- bin names: bin_3[1], bin_3[2], bin_3[3]</span>
 </pre></div>
 </div>
-<p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
+<p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. Longer names will be truncated
+without warning.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended not to use bin names that may be generated automatically as input to the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedures.</p>
+</div>
 </section>
 <section id="minimum-coverage">
 <h3>Minimum coverage<a class="headerlink" href="#minimum-coverage" title="Link to this heading"></a></h3>
@@ -1308,7 +1333,7 @@ functionality in SystemVerilog and OSVVM.</p>
 </div>
 </section>
 <section id="func-cov-pkg">
-<span id="id1"></span><h2>func_cov_pkg<a class="headerlink" href="#func-cov-pkg" title="Link to this heading"></a></h2>
+<span id="id2"></span><h2>func_cov_pkg<a class="headerlink" href="#func-cov-pkg" title="Link to this heading"></a></h2>
 <p>The following links contain information regarding the API of the protected type <em>t_coverpoint</em>, the API for the general methods and
 all the type definitions inside <em>func_cov_pkg</em>.</p>
 <div class="toctree-wrapper compound">

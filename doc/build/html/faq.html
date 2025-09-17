@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frequently Asked Questions &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tool Compatibility" href="tool_compatibility.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frequently Asked Questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-questions">General questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uvvm-questions">UVVM Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc-questions">VVC Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulator-questions">Simulator Questions</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Frequently Asked Questions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/faq.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="frequently-asked-questions">
+<span id="faq"></span><h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading"></a></h1>
+<section id="general-questions">
+<h2>General questions<a class="headerlink" href="#general-questions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>My compiler reports that some of the VHDL source files do not exist. What is the problem?</dt><dd><p>There is a 250 character limit on file paths in the Windows operating system. Please make sure that this product is placed so
+that the paths of the files do not exceed 250 characters.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="uvvm-questions">
+<h2>UVVM Questions<a class="headerlink" href="#uvvm-questions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Why do I get an error message saying “UVVM will not work without intitalize_uvvm instantiated as a concurrent procedure in the test harness”?</dt><dd><p>You need to instantiate <code class="docutils literal notranslate"><span class="pre">uvvm_vvc_framework.ti_uvvm_engine</span></code> in your testbench, and you should include <code class="docutils literal notranslate"><span class="pre">await_uvvm_initialization(VOID)</span></code>
+as your first statement in your test case sequencer. See “bitvis_uart/tb/uart_vvc_th|tb.vhd” for examples.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="vvc-questions">
+<h2>VVC Questions<a class="headerlink" href="#vvc-questions" title="Link to this heading"></a></h2>
+<ul>
+<li><dl>
+<dt>Can the <code class="docutils literal notranslate"><span class="pre">*_VVCT</span></code> signal be accessed from a procedure or function?</dt><dd><p>Yes, you can access VVC commands from procedures in your TB, and making overloading procedures in the TB can be smart, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">axilite_write</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data</span><span class="w">             </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">GC_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">addr</span><span class="w">             </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">unsigned</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">              </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">C_VVC_IDX_MASTER</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><dl class="simple">
+<dt>How do I access the read data after calling <code class="docutils literal notranslate"><span class="pre">*_read()</span></code> or <code class="docutils literal notranslate"><span class="pre">*_receive()</span></code> procedure from the VVC?</dt><dd><p>Use <code class="docutils literal notranslate"><span class="pre">fetch_result()</span></code> as described in the corresponding VVC documentation.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<hr class="docutils" />
+<ul>
+<li><dl>
+<dt>When implementing a testbench using bitvis_vip_axilite, how do I declare and constrain the <code class="docutils literal notranslate"><span class="pre">t_axilite_if</span></code> signal that connect to the VVC in the test harness?</dt><dd><p>If you have a look <a class="reference internal" href="vip_axilite.html#t-axilite-if"><span class="std std-ref">here</span></a>, you will see the <code class="docutils literal notranslate"><span class="pre">axilite_if</span></code> record type.
+Then you could try to change your code to something like:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">axi_ctrl</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_axilite_if</span><span class="p">(</span><span class="n">write_address_channel</span><span class="p">(</span><span class="n">awaddr</span><span class="p">(</span><span class="n">GC_ADDR_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                               </span><span class="n">write_data_channel</span><span class="p">(</span><span class="n">wdata</span><span class="p">(</span><span class="n">GC_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">wstrb</span><span class="p">((</span><span class="n">GC_DATA_WIDTH</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                               </span><span class="n">read_address_channel</span><span class="p">(</span><span class="n">araddr</span><span class="p">(</span><span class="n">GC_ADDR_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                               </span><span class="n">read_data_channel</span><span class="p">(</span><span class="n">rdata</span><span class="p">(</span><span class="n">GC_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_axilite_if_signals</span><span class="p">(</span><span class="n">GC_ADDR_WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">GC_DATA_WIDTH</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="simulator-questions">
+<h2>Simulator Questions<a class="headerlink" href="#simulator-questions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Which simulators support UVVM?</dt><dd><p>For a list of supported simulators see <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> and for an overview of known issues see <a class="reference internal" href="tool_compatibility.html#tool-compatibility"><span class="std std-ref">Tool Compatibility</span></a>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tool_compatibility.html" class="btn btn-neutral float-left" title="Tool Compatibility" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

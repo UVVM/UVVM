@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UVVM Association List &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bitvis VIP Avalon-MM" href="vip_avalon_mm.html" />
+    <link rel="prev" title="UVVM Generic Queue" href="generic_queue.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Association List</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types">Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#t-association-list-status">t_association_list_status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-association-list">t_association_list</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#declaration">Declaration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#append">append()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-in-list">key_in_list()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete">delete()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#length">length()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get">get()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set">set()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clear">clear()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">UVVM Association List</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/association_list.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="uvvm-association-list">
+<h1>UVVM Association List<a class="headerlink" href="#uvvm-association-list" title="Link to this heading"></a></h1>
+<p>An association list maps values to keys, and is a simple implementation of the <em>associative array</em> data structure (also known as
+<em>dictionary</em> in some programming languages). By adding a key and a value to the list, you create an association (mapping) between
+the value and the key. One of the advantages this has over using a regular array is that values can be retrieved by using
+meaningful keys instead of arbitrary indices. However, this means that the keys must be unique. Another advantage of the
+association list is that it is dynamic. The list size is automatically incremented when a new key-value pair is added, and it is
+automatically decremented when the <em>delete</em> function is called with a valid key.</p>
+<p>Common use cases for the association list (associative array) are to represent structured data, or when working with sparse data.
+An example useful for verification is to model memories. If there is no need to model the entire address space of a memory, an
+association list (associative array) can be used to store data only for the addresses used. This will save computer memory compared
+to modelling the entire memory using a regular array. However, It should be noted that the association list is implemented as a linked
+list, which means that the time needed to search the list for a given key increases with the list size. For this reason it is
+recommended to keep the key space is small.</p>
+<p>The association list is generic and both key and value can be of any type. However, keys are recommended to be simple types like
+integers and strings. The list is implemented as a linked list, and functions that operate on the list will generally do a linear
+search for the key to find the correct list item. For efficiency, the list maintains a reference to the last list item searched for,
+appended, or updated. This means that multiple consecutive operations on the same list item will not result in
+new searches for the key.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because of performance limitations it is recommended to keep the key space small.</p>
+</div>
+<section id="generics">
+<h2>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_SCOPE</p></td>
+<td><p>string</p></td>
+<td><p>“association_list_pkg”</p></td>
+<td><p>Scope used in reporting</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_KEY_TYPE</p></td>
+<td><p>type</p></td>
+<td><p>&lt;none&gt;</p></td>
+<td><p>The type of the key</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_VALUE_TYPE</p></td>
+<td><p>type</p></td>
+<td><p>&lt;none&gt;</p></td>
+<td><p>The type of the value</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="types">
+<h2>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h2>
+<section id="t-association-list-status">
+<h3>t_association_list_status<a class="headerlink" href="#t-association-list-status" title="Link to this heading"></a></h3>
+<p>Enumeration type used as return value to indicate success or failure. Please see
+<a class="reference internal" href="types_pkg.html#t-association-list-status"><span class="std std-ref">types_pkg.t_association_list_status</span></a>.</p>
+<p>This is an enumeration type that is intended to be used as return value from some of the functions in the association list data
+structure. Possible values are ASSOCIATION_LIST_SUCCESS and ASSOCIATION_LIST_FAILURE.</p>
+</section>
+<section id="t-association-list">
+<h3>t_association_list<a class="headerlink" href="#t-association-list" title="Link to this heading"></a></h3>
+<p>This is a generic association list data structure implemented using a protected type.</p>
+</section>
+</section>
+<section id="declaration">
+<h2>Declaration<a class="headerlink" href="#declaration" title="Link to this heading"></a></h2>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Package declaration example</span>
+<span class="k">package</span><span class="w"> </span><span class="n">string_association_list_pkg</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">association_list_pkg</span>
+<span class="w">   </span><span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;string_association_list_pkg&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">GC_KEY_TYPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="w">                </span><span class="n">GC_VALUE_TYPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kt">integer</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- association list declaration example</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">work.string_association_list_pkg.</span><span class="k">all</span><span class="p">;</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_association_list</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_association_list</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h2>
+<section id="append">
+<h3>append()<a class="headerlink" href="#append" title="Link to this heading"></a></h3>
+<p>This function appends the given key-value pair to the end of the list if the key does not already exist.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_association_list_status</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="key-in-list">
+<h3>key_in_list()<a class="headerlink" href="#key-in-list" title="Link to this heading"></a></h3>
+<p>This function checks if the given key is in the list.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">key_in_list</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">key_in_list</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="delete">
+<h3>delete()<a class="headerlink" href="#delete" title="Link to this heading"></a></h3>
+<p>This function deletes the list item with the given key.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_association_list_status</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">delete</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="length">
+<h3>length()<a class="headerlink" href="#length" title="Link to this heading"></a></h3>
+<p>This function returns the length of the list.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_length</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">length</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get">
+<h3>get()<a class="headerlink" href="#get" title="Link to this heading"></a></h3>
+<p>This function gets the value associated with the given key.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">GC_VALUE_TYPE</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function assumes that the given key is in the list. Calling this function with a key that is not in the list will result
+in a failure.</p>
+</div>
+</section>
+<section id="set">
+<h3>set()<a class="headerlink" href="#set" title="Link to this heading"></a></h3>
+<p>This function updates the value associated with the given key.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_association_list_status</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="clear">
+<h3>clear()<a class="headerlink" href="#clear" title="Link to this heading"></a></h3>
+<p>This function will delete all list items.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_association_list_status</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">clear</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">clear</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
+not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
+otherwise, arising from, out of or in connection with this IP.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generic_queue.html" class="btn btn-neutral float-left" title="UVVM Generic Queue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vip_avalon_mm.html" class="btn btn-neutral float-right" title="Bitvis VIP Avalon-MM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

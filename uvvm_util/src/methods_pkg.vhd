@@ -3534,20 +3534,18 @@ package body methods_pkg is
       " " & align_log_time(now) & "  " & return_string_if_true(v_log_scope, C_SHOW_LOG_SCOPE) & " "); -- Optional
       v_log_pre_msg_width := v_info'length; -- Width of string preceeding the actual message
       -- Handle \r as potential initial open line
-      if msg'length > 1 then
-        if C_USE_BACKSLASH_R_AS_LF then
-          loop
-            if (C_MSG_NORMALISED(v_idx to v_idx + 1) = "\r") then
-              write(v_info_final, LF); -- Start transcript with an empty line
-              v_idx := v_idx + 2;
-            else
-              write(v_msg, remove_initial_chars(msg, v_idx - 1));
-              exit;
-            end if;
-          end loop;
-        else
-          write(v_msg, msg);
-        end if;
+      if C_USE_BACKSLASH_R_AS_LF and msg'length > 1 then
+        loop
+          if (C_MSG_NORMALISED(v_idx to v_idx + 1) = "\r") then
+            write(v_info_final, LF); -- Start transcript with an empty line
+            v_idx := v_idx + 2;
+          else
+            write(v_msg, remove_initial_chars(msg, v_idx - 1));
+            exit;
+          end if;
+        end loop;
+      else
+        write(v_msg, msg);
       end if;
 
       -- Handle dedicated ID indentation.
@@ -3556,10 +3554,8 @@ package body methods_pkg is
       write(v_info, v_msg_indent.all);
       deallocate(v_msg_indent);
 
-      -- Then add the message it self (after replacing \n with LF
-      if msg'length > 1 then
-        write(v_info, to_string(replace_backslash_n_with_lf(v_msg.all)));
-      end if;
+      -- Then add the message itself (after replacing \n with LF)
+      write(v_info, to_string(replace_backslash_n_with_lf(v_msg.all)));
       deallocate(v_msg);
 
       if not C_SINGLE_LINE_LOG then

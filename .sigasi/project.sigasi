@@ -1,0 +1,8 @@
+{
+    "name": "UVVM",
+    "targets": {
+        "UVVM-ALL": {
+            "command": "cd script && vsim -c -do compile_all.do"
+        }
+    }
+}

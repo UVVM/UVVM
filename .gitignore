@@ -14,6 +14,7 @@ vhdl_ls.toml
 .pydevproject
 .library_mapping.xml
 .settings
+.sigasi/generated
 
 # Emacs
 *.*~

@@ -136,8 +136,8 @@ echo "\nCompiling $lib_name source\n"
 quietly set idx 0
 foreach item $file_data {
   if {$idx > 2} {
-    echo "eval vcom  $compdirectives  $source_path/script/$item"
-    eval vcom  $compdirectives  $source_path/script/$item
+    echo "eval vcom $compdirectives $source_path/script/$item"
+    eval vcom $compdirectives [list "$source_path/script/$item"]
   }
   incr idx 1
 }

@@ -17,6 +17,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;    -- for uniform & trunc functions
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -38,6 +39,7 @@ entity clock_generator_vvc is
     GC_CLOCK_NAME                            : string        := "clk";
     GC_CLOCK_PERIOD                          : time          := 10 ns;
     GC_CLOCK_HIGH_TIME                       : time          := 5 ns;
+    GC_CLOCK_MAX_JITTER                      : time          := 0 ns;
     GC_CMD_QUEUE_COUNT_MAX                   : natural       := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := 950;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := WARNING;
@@ -65,7 +67,7 @@ architecture behave of clock_generator_vvc is
   signal terminate_current_cmd  : t_flag_record;
   signal clock_ena              : boolean        := false;
   -- VVC Activity 
-  signal entry_num_in_vvc_activity_register : integer; 
+  signal entry_num_in_vvc_activity_register : integer;
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -75,9 +77,10 @@ architecture behave of clock_generator_vvc is
   alias vvc_status : t_vvc_status is shared_clock_generator_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_clock_generator_transaction_info(GC_INSTANCE_IDX);
 
-  alias clock_name      : string is vvc_config.clock_name;
-  alias clock_period    : time   is vvc_config.clock_period;
-  alias clock_high_time : time   is vvc_config.clock_high_time;
+  alias clock_name        : string is vvc_config.clock_name;
+  alias clock_period      : time   is vvc_config.clock_period;
+  alias clock_high_time   : time   is vvc_config.clock_high_time;
+  alias clock_max_jitter  : time   is vvc_config.clock_max_jitter;
 
   impure function get_clock_name
   return string is
@@ -107,10 +110,11 @@ begin
       wait for 0 ns;
       exit when shared_uvvm_state = PHASE_B;
     end loop;
-    clock_name      := (others => NUL);
+    clock_name        := (others => NUL);
     clock_name(1 to GC_CLOCK_NAME'length) := GC_CLOCK_NAME;
-    clock_period    := GC_CLOCK_PERIOD;
-    clock_high_time := GC_CLOCK_HIGH_TIME;
+    clock_period      := GC_CLOCK_PERIOD;
+    clock_high_time   := GC_CLOCK_HIGH_TIME;
+    clock_max_jitter  := GC_CLOCK_MAX_JITTER;
     wait;
   end process;
 --========================================================================================================================
@@ -263,6 +267,9 @@ begin
           clock_high_time := v_cmd.clock_high_time;
           log(ID_CLOCK_GEN, "Clock '" & clock_name & "' high time set to " & to_string(clock_high_time), C_SCOPE);
 
+        when SET_CLOCK_MAX_JITTER =>
+          clock_max_jitter := v_cmd.clock_max_jitter;
+          log(ID_CLOCK_GEN, "Clock '" & clock_name & "' max jitter time set to " & to_string(clock_max_jitter), C_SCOPE);
 
         -- UVVM common operations
         --===================================
@@ -310,8 +317,15 @@ begin
 -- - Process that generates the clock signal
 --========================================================================================================================
   clock_generator : process
-    variable v_clock_period    : time;
-    variable v_clock_high_time : time;
+    variable v_clock_period     : time;
+    variable v_clock_high_time  : time;
+    variable v_clock_max_jitter : time;
+
+    variable v_seed1, v_seed2 : positive;
+    variable v_rand           : real       := 0.0;
+
+    variable v_clock_rising_edge  : time;
+    variable v_clock_falling_edge : time;
   begin
     wait for 0 ns; -- wait for clock_ena to be set
     loop
@@ -323,17 +337,29 @@ begin
 
       -- Clock period is sampled so it won't change during a clock cycle and potentialy introduce negative time in
       -- last wait statement
-      v_clock_period    := clock_period;
-      v_clock_high_time := clock_high_time;
+      v_clock_period     := clock_period;
+      v_clock_high_time  := clock_high_time;
+      v_clock_max_jitter := clock_max_jitter;
 
       if v_clock_high_time >= v_clock_period then
-        tb_error(clock_name & ": clock period must be larger than clock high time; clock period: " & to_string(v_clock_period) & ", clock high time: " & to_string(clock_high_time), C_SCOPE);
+        tb_error(clock_name & ": clock period must be larger than clock high time; clock period: " & to_string(v_clock_period) & ", clock high time: " & to_string(v_clock_high_time), C_SCOPE);
       end if;
+ 
+      if v_clock_max_jitter > v_clock_high_time then
+        tb_error(clock_name & ": max jitter can't be larger than the clock high time ; clock high time: " & to_string(v_clock_high_time) & ", clock max jitter: " & to_string(v_clock_max_jitter), C_SCOPE);
+      end if;
+ 
+      uniform(v_seed1, v_seed2, v_rand);
+      v_clock_rising_edge  := (((v_clock_period - v_clock_high_time) - v_clock_max_jitter) / 2) + (v_rand * v_clock_max_jitter);
 
+      uniform(v_seed1, v_seed2, v_rand);
+      v_clock_falling_edge := ((v_clock_high_time - v_clock_max_jitter) / 2) + (v_rand * v_clock_max_jitter);
+
+      wait for v_clock_rising_edge;
       clk <= '1';
-      wait for v_clock_high_time;
+      wait for ((v_clock_period / 2) - v_clock_rising_edge) + v_clock_falling_edge;
       clk <= '0';
-      wait for (v_clock_period - v_clock_high_time);
+      wait for (v_clock_period / 2) - v_clock_falling_edge;
     end loop;
   end process;
 --========================================================================================================================

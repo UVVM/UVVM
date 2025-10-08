@@ -47,7 +47,8 @@ package vvc_cmd_pkg is
     START_CLOCK,
     STOP_CLOCK,
     SET_CLOCK_PERIOD,
-    SET_CLOCK_HIGH_TIME
+    SET_CLOCK_HIGH_TIME,
+    SET_CLOCK_MAX_JITTER
   );
 
 
@@ -83,6 +84,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     clock_period              : time;
     clock_high_time           : time;
+    clock_max_jitter          : time;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -102,7 +104,8 @@ package vvc_cmd_pkg is
     parent_msg_id_panel       => C_UNUSED_MSG_ID_PANEL,
     -- VVC dedicated fields
     clock_period              => 10 ns,
-    clock_high_time           => 5 ns
+    clock_high_time           => 5 ns,
+    clock_max_jitter          => 0 ns
   );
 
   --========================================================================================================================

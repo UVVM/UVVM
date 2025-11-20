@@ -8358,7 +8358,7 @@ package body methods_pkg is
     variable v_match             : boolean := false;
   begin
     while (now - C_START_TIME) < min_time loop
-      wait on target for min_time;
+      wait on target for min_time - (now - C_START_TIME);
       v_match             := check_value(target, exp_value, match_strictness, NO_ALERT, "check_value within: " & C_NAME, scope);
       v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
       exit when (target'event and (target = exp_value));

@@ -34,10 +34,12 @@ package adaptations_pkg is
   constant C_LOG_FILE_NAME                            : string := "UVVM_Log.txt";
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
 
-  shared variable shared_default_log_destination : t_log_destination := CONSOLE_AND_LOG;
+  constant C_DEFAULT_LOG_DESTINATION : t_log_destination := CONSOLE_AND_LOG; -- This parameter can also be modified per testbench by
+                                                                             -- updating the shared variable shared_default_log_destination
 
-  constant C_SHOW_UVVM_UTILITY_LIBRARY_INFO         : boolean := true; -- Set this to false when you no longer need the initial info
-  constant C_SHOW_UVVM_UTILITY_LIBRARY_RELEASE_INFO : boolean := true; -- Set this to false when you no longer need the release info
+  constant C_SHOW_UVVM_UTILITY_LIBRARY_INFO : boolean := true; -- Set this to false when you no longer need the initial info
+
+  constant C_DEPRECATE_SETTING : t_deprecate_setting := DEPRECATE_ONCE; -- Set to NO_DEPRECATE to remove the TB_NOTE deprecate messages
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Log format
@@ -46,29 +48,30 @@ package adaptations_pkg is
   --PPPPPPPPIIIIII TTTTTTTT  SSSSSSSSSSSSSS MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   constant C_LOG_PREFIX        : string := "UVVM: "; -- Note: ': ' is recommended as final characters
   constant C_LOG_PREFIX_WIDTH  : natural := C_LOG_PREFIX'length;
-  constant C_LOG_MSG_ID_WIDTH  : natural := 24;
+  constant C_LOG_MSG_ID_WIDTH  : natural := 24;      -- Maximum msg_id length
   constant C_LOG_TIME_WIDTH    : natural := 16;      -- 3 chars used for unit eg. " ns"
   constant C_LOG_TIME_BASE     : time    := ns;      -- Unit in which time is shown in log (ns | ps)
   constant C_LOG_TIME_DECIMALS : natural := 1;       -- Decimals to show for given C_LOG_TIME_BASE
   constant C_LOG_SCOPE_WIDTH   : natural := 30;      -- Maximum scope length
-  constant C_LOG_LINE_WIDTH    : natural := 175;
+  constant C_LOG_LINE_WIDTH    : natural := 175;     -- Maximum log line length
   constant C_LOG_INFO_WIDTH    : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
   constant C_USE_BACKSLASH_N_AS_LF : boolean := true; -- If true interprets '\n' as Line feed
-  constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r'
-                                                      -- is the first character of the string.
+  constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r' is the first character of the string.
                                                       -- All others '\r' will be printed as is.
 
   constant C_SINGLE_LINE_ALERT : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG   : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_TB_SCOPE_DEFAULT      : string := "TB seq."; -- Default scope in test sequencer
-  constant C_SCOPE                 : string := C_TB_SCOPE_DEFAULT & "(uvvm)";
+  constant C_TB_SCOPE_DEFAULT      : string := "TB seq.";                     -- Default scope in test sequencer
+  constant C_SCOPE                 : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in some UVVM procedures
   constant C_VVC_CMD_SCOPE_DEFAULT : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
   constant C_SHOW_LOG_SCOPE         : boolean := true; -- This constant has replaced the global_show_log_scope
+
+  constant C_MSG_DELIMITER : character   := '''; -- Delimiter of the msg parameter in UVVM commands
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Verbosity control
@@ -78,7 +81,7 @@ package adaptations_pkg is
   --       Feel free to suggest new ID for future versions of UVVM Utility Library (info@uvvm.org)
   --------------------------------------------------------------------------------------------------------------------------------
   type t_msg_id is (
-    -- Bitvis utility methods
+    -- UVVM utility methods
     NO_ID,                              -- Used as default prior to setting actual ID when transferring ID as a field in a record
     ID_UTIL_BURIED,                     -- Used for buried log messages where msg and scope cannot be modified from outside
     ID_BITVIS_DEBUG,                    -- Bitvis internal ID used for UVVM debugging
@@ -135,7 +138,7 @@ package adaptations_pkg is
     ID_FRAME_COMPLETE,                  -- Notify that a frame has been transmitted or received
     ID_FRAME_HDR,                       -- Notify that a frame header has been transmitted or received. It also writes header info
     ID_FRAME_DATA,                      -- Notify that a frame data has been transmitted or received. It also writes frame data
-    -- Coverage Ids
+    -- Coverage Ids - DEPRECATED: will be removed in v3
     ID_COVERAGE_MAKEBIN,                -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
     ID_COVERAGE_ADDBIN,                 -- Log messages from AddBin/AddCross
     ID_COVERAGE_ICOVER,                 -- ICover logging, NB: Very low level debugging. Can result in large amount of data.
@@ -180,17 +183,19 @@ package adaptations_pkg is
     ID_SPEC_COV_REQS,                   -- Used for logging the specification requirement list
     ID_SPEC_COV,                        -- Used for logging general specification requirement coverage methods
     -- File handling
-    ID_FILE_OPEN_CLOSE,                 -- Id used when opening / closing file
-    ID_FILE_PARSER,                     -- Id used in file parsers
+    ID_FILE_OPEN_CLOSE,                 -- ID used when opening / closing file
+    ID_FILE_PARSER,                     -- ID used in file parsers
     -- Special purpose - Not really IDs
     ALL_MESSAGES                        -- Applies to ALL message ID apart from ID_NEVER
   );
+
+  constant C_TB_MSG_ID_DEFAULT : t_msg_id := ID_SEQUENCER; -- Message ID used when calling the log method without any message ID switch.
+
   type t_msg_id_panel is array (t_msg_id'left to t_msg_id'right) of t_enabled;
 
-  constant C_TB_MSG_ID_DEFAULT : t_msg_id := ID_SEQUENCER; -- msg ID used when calling the log method without any msg ID switch.
-
-  -- Default message Id panel to be used for all message Id panels, except:
-  --  - VVC message Id panels, see constant C_VVC_MSG_ID_PANEL_DEFAULT
+  -- Default message ID panel to be used for all message ID panels, except:
+  --  - Scoreboard message ID panel, see constant C_SB_MSG_ID_PANEL_DEFAULT
+  --  - VVC message ID panels, see constant C_VVC_MSG_ID_PANEL_DEFAULT
   constant C_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_NEVER              => DISABLED,
     ID_UTIL_BURIED        => DISABLED,
@@ -208,6 +213,7 @@ package adaptations_pkg is
     others                => ENABLED
   );
 
+  -- Indentation of the msg in the log for each message ID
   type t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
   constant C_MSG_ID_INDENT : t_msg_id_indent := (
     ID_IMMEDIATE_CMD_WAIT    => "  ..",
@@ -224,21 +230,13 @@ package adaptations_pkg is
     others                   => "" & NUL & NUL & NUL & NUL
   );
 
-  constant C_MSG_DELIMITER : character := ''';
-
-  -- Switch for setting the extent of error reports in mismatched stream data. Options are EXTENDED and BRIEF,
-  -- where EXTENDED prints all received data with error, and BRIEF exclusively prints first mismatched word.
-  -- Applies to RGMII, GMII, Avalon-ST and AXI-Stream
-  constant C_ERROR_REPORT_EXTENT : t_error_report_extent := EXTENDED;
-
   --------------------------------------------------------------------------------------------------------------------------------
   -- Alert handling
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true;  -- true: break using std.env.stop, false: break using failure
-  constant C_ENABLE_CHECK_COUNTER             : boolean := false; -- enable/disable check_counter to count number of check calls.
+  constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true;  -- True: break using std.env.stop(1). False: break using failure.
+  constant C_ENABLE_CHECK_COUNTER             : boolean := false; -- Enable/disable check_counter to count number of check calls.
 
-  -- Default values. These can be overwritten in each sequencer by using
-  -- set_alert_attention or set_alert_stop_limit (see quick ref).
+  -- Default values. These can be overwritten in each sequencer by using set_alert_attention or set_alert_stop_limit (see quick ref).
   constant C_DEFAULT_ALERT_ATTENTION : t_alert_attention := (others => REGARD);
 
   -- 0 = Never stop
@@ -248,20 +246,16 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical alerts
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_ENABLE_HIERARCHICAL_ALERTS : boolean          := false;
-  constant C_BASE_HIERARCHY_LEVEL       : string(1 to 5)   := "Total";
-  constant C_HIERARCHY_NODE_NAME_LENGTH : natural          := C_LOG_SCOPE_WIDTH;
-  constant C_EMPTY_NODE                 : t_hierarchy_node := ((1 to C_HIERARCHY_NODE_NAME_LENGTH => ' '),
-                                                               (others => (others => 0)),
-                                                               (others => 0),
-                                                               (others => true));
+  constant C_ENABLE_HIERARCHICAL_ALERTS : boolean         := false;             -- Enable hierarchical alert reporting
+  constant C_BASE_HIERARCHY_LEVEL       : string(1 to 5)  := "Total";           -- Scope for the base level of the hierarchy
+  constant C_HIERARCHY_NODE_NAME_LENGTH : natural         := C_LOG_SCOPE_WIDTH; -- Maximum length of the scopes in the hierarchy
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Buffers and queues
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER : positive := 2048;
-  constant C_NUMBER_OF_DATA_BUFFERS              : positive := 10;
-  constant C_MAX_QUEUE_INSTANCE_NUM              : positive := 100; -- Maximum number of generic queue instances
+  constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER : positive := 2048; -- Maximum buffer size for the UVVM Data FIFO and UVVM Data Stack
+  constant C_NUMBER_OF_DATA_BUFFERS              : positive := 10;   -- Number of buffers in the UVVM Data FIFO and UVVM Data Stack
+  constant C_MAX_QUEUE_INSTANCE_NUM              : positive := 100;  -- Maximum number of generic queue instances
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Synchronization
@@ -269,7 +263,7 @@ package adaptations_pkg is
   constant C_NUM_SYNC_FLAGS : positive := 100; -- Maximum number of sync flags
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Randomization
+  -- Enhanced Randomization
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_RAND_MAX_NAME_LENGTH                : positive := 20;  -- Maximum length used for random generator names
   constant C_RAND_INIT_SEED_1                    : positive := 10;  -- Initial randomization seed 1
@@ -303,16 +297,27 @@ package adaptations_pkg is
   constant C_FC_DEFAULT_BIN_NAME                     : string   := "bin_"; -- This string will get an index appended when bins are added to a coverpoint, e.g. bin_1
 
   --------------------------------------------------------------------------------------------------------------------------------
+  -- Specification Coverage
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_CSV_FILE_MAX_LINE_LENGTH      : positive      := 256;        -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
+  constant C_CSV_DELIMITER                 : character     := ',';        -- Delimiter when reading and writing CSV files.
+  constant C_MAX_REQUIREMENT_LINES         : positive      := 1000;       -- Maximum number of requirements in the req_map file used in initialize_req_cov().
+  constant C_MAX_TESTCASES_PER_REQ         : positive      := 20;         -- Max number of testcases allowed per requirement.
+  constant C_MISSING_REQ_LABEL_SEVERITY    : t_alert_level := TB_WARNING; -- Alert level used when the tick_off_req_cov() procedure does not find the specified
+                                                                          -- requirement label in the requirement list.
+  constant C_COMPOUND_REQ_TICKOFF_SEVERITY : t_alert_level := TB_WARNING; -- Alert level used when tickoff is performed on a requirement that has sub requirements.
+
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Scoreboard
   --------------------------------------------------------------------------------------------------------------------------------
-  alias C_MAX_SB_INSTANCE_IDX is C_MAX_QUEUE_INSTANCE_NUM; -- Maximum number of SB instances
-  constant C_MAX_TB_SB_NUM   : positive := 20;             -- Maximum number of scoreboard data types in testbench
+  alias C_MAX_SB_INSTANCE_IDX is C_MAX_QUEUE_INSTANCE_NUM; -- Maximum number of SB instances in a single data type
+  constant C_MAX_TB_SB_NUM   : positive := 20;             -- Maximum number of scoreboard data types in a testbench
   constant C_MAX_SB_INDEX    : positive := C_MAX_TB_SB_NUM * C_MAX_SB_INSTANCE_IDX;
-  constant C_SB_TAG_WIDTH    : positive := 128; -- Number of characters in SB tag
-  constant C_SB_SOURCE_WIDTH : positive := 128; -- Number of characters in SB source element
-  constant C_SB_SLV_WIDTH    : positive := 128; -- Width of the SLV in the predefined SLV SB
+  constant C_SB_TAG_WIDTH    : positive := 128;            -- Number of characters in SB tag
+  constant C_SB_SOURCE_WIDTH : positive := 128;            -- Number of characters in SB source element
+  constant C_SB_SLV_WIDTH    : positive := 128;            -- DEPRECATED: will be removed in v3
 
-  -- Default message Id panel intended for use in SB
+  -- Default message ID panel intended for use in SB
   constant C_SB_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_CTRL => ENABLED,
     ID_DATA => DISABLED,
@@ -323,6 +328,11 @@ package adaptations_pkg is
   -- BFMs
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_UVVM_TIMEOUT : time := 100 us; -- General timeout for UVVM wait statements
+
+  -- Switch for setting the extent of error reports in mismatched stream data. Options are EXTENDED and BRIEF,
+  -- where EXTENDED prints all received data with error, and BRIEF exclusively prints first mismatched word.
+  -- Applies to Avalon-ST, AXI-Stream, GMII and RGMII
+  constant C_ERROR_REPORT_EXTENT : t_error_report_extent := EXTENDED;
 
   -- Avalon-ST
   -- Constants for the maximum sizes to use in the BFM.
@@ -336,13 +346,11 @@ package adaptations_pkg is
   constant C_AXISTREAM_BFM_MAX_TID_BITS   : positive := 8;  -- Recommended maximum in protocol specification (ARM IHI0051A)
   constant C_AXISTREAM_BFM_MAX_TDEST_BITS : positive := 4;  -- Recommended maximum in protocol specification (ARM IHI0051A)
 
-
   -------------------------------------------------------------------------------------------------------------------
   -- UVVM Assertions
   -------------------------------------------------------------------------------------------------------------------
   -- Maximum number of cycles to wait for an assertion to complete
-  constant C_MAX_CYCLES            : positive := 1000; -- NOTE: is only used in trigger->trigger window assertions as the array keeping track requires a size.
-
+  constant C_WINDOW_ASSERTIONS_MAX_CYCLES : positive := 1000; -- NOTE: is only used in trigger->trigger window assertions as the array keeping track requires a size.
 
   -- =============================================================================================================================
   -- *****************************************************************************************************************************
@@ -351,7 +359,7 @@ package adaptations_pkg is
   -- =============================================================================================================================
   signal global_show_msg_for_uvvm_cmd : boolean := true; -- If true, the msg parameter for the commands using the msg_id ID_UVVM_SEND_CMD will be shown
 
-  constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
+  constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500; -- Number of delta cycles trying to lock the semaphore in await_semaphore_in_delta_cycles()
 
   constant C_CMD_QUEUE_COUNT_MAX                   : natural       := 1000; -- (VVC Command queue)  May be overwritten for dedicated VVC
   constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := WARNING;
@@ -360,7 +368,7 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := WARNING;
   constant C_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := 950;
   constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10; -- May be overwritten for dedicated VVCs using constants below
-  constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- Max number of sequencers
+  constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- DEPRECATED: will be removed in v3
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)
 
   -- Default severity for the unwanted activity detection.
@@ -376,7 +384,7 @@ package adaptations_pkg is
   constant C_MINIMUM_CHANNEL_SCOPE_WIDTH  : natural := 10;
   constant C_MINIMUM_VVC_NAME_SCOPE_WIDTH : natural := 10;
 
-  -- Default message Id panel intended for use in the VVCs
+  -- Default message ID panel intended for use in the VVCs
   constant C_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_NEVER                 => DISABLED,
     ID_UTIL_BURIED           => DISABLED,
@@ -386,7 +394,7 @@ package adaptations_pkg is
     others                   => ENABLED
   );
 
-  -- Deprecated, will be removed.
+  -- DEPRECATED: will be removed in v3
   type t_data_source is (
     NA,
     FROM_BUFFER,
@@ -394,7 +402,7 @@ package adaptations_pkg is
     RANDOM_TO_BUFFER
   );
 
-  -- Deprecated, will be removed.
+  -- DEPRECATED: will be removed in v3
   type t_error_injection is (
     NA,
     RANDOM_BIT_ERROR,
@@ -463,7 +471,6 @@ package adaptations_pkg is
 
   -- Clock Generator
   -- Constants for the maximum sizes to use in the VVC.
-  constant C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH   : natural := 8;
   constant C_CLOCK_GEN_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
   constant C_CLOCK_GEN_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
@@ -508,14 +515,6 @@ package adaptations_pkg is
   constant C_SBI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
   constant C_SBI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
-  -- Specification Coverage
-  constant C_CSV_FILE_MAX_LINE_LENGTH      : positive      := 256;  -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
-  constant C_CSV_DELIMITER                 : character     := ',';  -- Delimiter when reading and writing CSV files.
-  constant C_MAX_REQUIREMENT_LINES         : positive      := 1000; -- Maximum number of requirements in the req_map file used in initialize_req_cov().
-  constant C_MAX_TESTCASES_PER_REQ         : positive      := 20;   -- Max number of testcases allowed per requirement.
-  constant C_MISSING_REQ_LABEL_SEVERITY    : t_alert_level := TB_WARNING;
-  constant C_COMPOUND_REQ_TICKOFF_SEVERITY : t_alert_level := TB_WARNING;
-
   -- SPI
   -- Constants for the maximum sizes to use in the VVC.
   constant C_SPI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
@@ -548,7 +547,7 @@ package adaptations_pkg is
     CHECKSUM
   );
 
-  -- Message Id panel with all IDs as NA
+  -- Message ID panel with all IDs as NA
   constant C_UNUSED_MSG_ID_PANEL : t_msg_id_panel := (
     others => NA
   );
@@ -562,6 +561,3 @@ package adaptations_pkg is
   constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B"; -- using left shifting CRC
 
 end package adaptations_pkg;
-
-package body adaptations_pkg is
-end package body adaptations_pkg;

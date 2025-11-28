@@ -949,13 +949,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if tracked_value /= exp_value then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1044,13 +1044,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if (tracked_value /= exp_value) then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1141,13 +1141,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if (tracked_value /= exp_value) then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1248,18 +1248,18 @@ package body uvvm_assertions_pkg is
         v_index_failed     := i;
       end if;
       if v_any_index_failed then
-        alert(alert_level, procedure_name & " => Failed, tracked_value "& to_string(tracked_value) &" was not " & to_string(exp_value) & " (first mismatch at index: " & to_string(v_index_failed) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, tracked_value "& to_string(tracked_value) &" was not " & to_string(exp_value) & " (first mismatch at index: " & to_string(v_index_failed) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
         exit; -- exit the loop early.
       end if;
     end loop;
     if not v_any_index_failed then
       if pos_ack_kind = FIRST and v_first_ack then
         -- here we omit the full exp_value as it could be very long
-        log(msg_id, procedure_name & " => OK (first), tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
         -- here we omit the full exp_value as it could be very long
-        log(msg_id, procedure_name & " => OK, tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1358,18 +1358,18 @@ package body uvvm_assertions_pkg is
         v_index_failed     := i;
       end if;
       if v_any_index_failed then
-        alert(alert_level, procedure_name & " => Failed, tracked_value "& to_string(tracked_value) &" was not " & to_string(exp_value) & " (first mismatch at index: " & to_string(v_index_failed) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, tracked_value "& to_string(tracked_value) &" was not " & to_string(exp_value) & " (first mismatch at index: " & to_string(v_index_failed) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
         exit; -- exit the loop early.
       end if;
     end loop;
     if not v_any_index_failed then
       if pos_ack_kind = FIRST and v_first_ack then
         -- here we omit the full exp_value as it could be very long
-        log(msg_id, procedure_name & " => OK (first), tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
         -- here we omit the full exp_value as it could be very long
-        log(msg_id, procedure_name & " => OK, tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1468,18 +1468,18 @@ package body uvvm_assertions_pkg is
         v_index_failed     := i;
       end if;
       if v_any_index_failed then
-        alert(alert_level, procedure_name & " => Failed, tracked_value "& to_string(tracked_value) &" was not " & to_string(exp_value) & " (first mismatch at index: " & to_string(v_index_failed) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, tracked_value "& to_string(tracked_value) &" was not " & to_string(exp_value) & " (first mismatch at index: " & to_string(v_index_failed) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
         exit; -- exit the loop early.
       end if;
     end loop;
     if not v_any_index_failed then
       if pos_ack_kind = FIRST and v_first_ack then
         -- here we omit the full exp_value as it could be very long
-        log(msg_id, procedure_name & " => OK (first), tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
         -- here we omit the full exp_value as it could be very long
-        log(msg_id, procedure_name & " => OK, tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was equal to exp_value. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1571,13 +1571,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if tracked_value /= exp_value then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1669,13 +1669,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if tracked_value /= exp_value then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1767,13 +1767,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if tracked_value /= exp_value then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1865,13 +1865,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if tracked_value /= exp_value then
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not " & to_string(exp_value) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -1963,13 +1963,13 @@ package body uvvm_assertions_pkg is
     variable v_first_ack     : boolean := first_ack;
   begin
     if tracked_value /= exp_value then
-      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value, C_LOG_TIME_BASE) & ") was not " & to_string(exp_value, C_LOG_TIME_BASE) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value, C_LOG_TIME_BASE) & ") was not " & to_string(exp_value, C_LOG_TIME_BASE) & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(exp_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(exp_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2086,14 +2086,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2207,14 +2207,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2328,14 +2328,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2449,14 +2449,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2569,14 +2569,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2689,14 +2689,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value ("& to_string(tracked_value) &") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2809,14 +2809,14 @@ package body uvvm_assertions_pkg is
           write(v_print_line, "'" & to_string(allowed_values(i), C_LOG_TIME_BASE) & "'");
         end if;
       end loop;
-      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value, C_LOG_TIME_BASE) & ") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value, C_LOG_TIME_BASE) & ") was not one of " & v_print_line.all & ". Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       DEALLOCATE(v_print_line);
     else
       if pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value was " & to_string(tracked_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value was " & to_string(tracked_value, C_LOG_TIME_BASE) & ". Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -2939,12 +2939,12 @@ package body uvvm_assertions_pkg is
   begin
     v_all_zeros_check := (accept_all_zero = ALL_ZERO_ALLOWED and f_is_all_zeros(tracked_value));
     if not (v_all_zeros_check or f_is_one_hot(tracked_value)) then
-      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not one-hot. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not one-hot. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
     elsif pos_ack_kind = FIRST and v_first_ack then
-      log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was one-hot. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was one-hot. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       v_first_ack := false;
     elsif pos_ack_kind = EVERY then
-      log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was one-hot. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was one-hot. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
     return v_first_ack;
   end function f_assert_one_hot_core;
@@ -3041,16 +3041,16 @@ package body uvvm_assertions_pkg is
 
       -- sanity check
       if (upper_limit < lower_limit) then
-        alert(alert_level, procedure_name & " => Failed, upper limit (" & to_string(upper_limit) & ") is less than lower limit (" & to_string(lower_limit) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, upper limit (" & to_string(upper_limit) & ") is less than lower limit (" & to_string(lower_limit) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       end if;
 
       if not (tracked_value >= lower_limit and tracked_value <= upper_limit) then
-        alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       elsif pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -3307,16 +3307,16 @@ package body uvvm_assertions_pkg is
 
       -- sanity check
       if (upper_limit < lower_limit) then
-        alert(alert_level, procedure_name & " => Failed, upper limit (" & to_string(upper_limit) & ") is less than lower limit (" & to_string(lower_limit) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, upper limit (" & to_string(upper_limit) & ") is less than lower limit (" & to_string(lower_limit) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       end if;
 
       if not (tracked_value >= lower_limit and tracked_value <= upper_limit) then
-        alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       elsif pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -3411,16 +3411,16 @@ package body uvvm_assertions_pkg is
 
       -- sanity check
       if (upper_limit < lower_limit) then
-        alert(alert_level, procedure_name & " => Failed, upper limit (" & to_string(upper_limit) & ") is less than lower limit (" & to_string(lower_limit) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, upper limit (" & to_string(upper_limit) & ") is less than lower limit (" & to_string(lower_limit) & "). Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       end if;
 
       if not (tracked_value >= lower_limit and tracked_value <= upper_limit) then
-        alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, procedure_name & " => Failed, tracked_value (" & to_string(tracked_value) & ") was not in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       elsif pos_ack_kind = FIRST and v_first_ack then
-        log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK (first), tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         v_first_ack := false;
       elsif pos_ack_kind = EVERY then
-        log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, procedure_name & " => OK, tracked_value (" & to_string(tracked_value) & ") was in range [" & to_string(lower_limit) & ".." & to_string(upper_limit) & "]. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     end if;
     return v_first_ack;
@@ -3582,10 +3582,10 @@ package body uvvm_assertions_pkg is
 
             -- pos ack
             if pos_ack_kind = FIRST and v_first_alert then
-              log(msg_id, C_NAME & " => OK (first). tracked_value '" & to_string(tracked_value) & "' had a full ripple from left to right. " & add_msg_delimiter(msg), scope, msg_id_panel);
+              log(msg_id, C_NAME & " => OK (first). tracked_value '" & to_string(tracked_value) & "' had a full ripple from left to right." & add_msg_delimiter(msg), scope, msg_id_panel);
               v_first_alert := false;
             elsif pos_ack_kind = EVERY then
-              log(msg_id, C_NAME & " => OK. tracked_value '" & to_string(tracked_value) & "' had a full ripple from left to right. " & add_msg_delimiter(msg), scope, msg_id_panel);
+              log(msg_id, C_NAME & " => OK. tracked_value '" & to_string(tracked_value) & "' had a full ripple from left to right." & add_msg_delimiter(msg), scope, msg_id_panel);
             end if;
 
             v_cycle_count_arr(i) := tracked_value'high;
@@ -3676,7 +3676,11 @@ package body uvvm_assertions_pkg is
               case window_type is
                 when VALUE =>
                   if tracked_value /= exp_value then
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to "& to_string(exp_value) &" after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to "& to_string(exp_value) &" after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to "& to_string(exp_value) &" after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                    end if;                    
                     v_active_pipe_arr(i) := false; -- can stop checking this pipe
                   end if;
                 when CHANGE =>
@@ -3699,7 +3703,11 @@ package body uvvm_assertions_pkg is
                     v_pipe_check_ok(i) := true;
                   end if;
                   if v_prev_tracked_value_arr(i) /= tracked_value then
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & " (" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & " (" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & " (" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                    end if;
                     v_active_pipe_arr(i) := false; -- can stop checking this pipe
                   end if;
               end case;
@@ -3709,61 +3717,64 @@ package body uvvm_assertions_pkg is
                 when VALUE =>
                   -- we have already checked the pipe, so we can log the OK
                   if pos_ack_kind = FIRST and v_first_alert then
-                    log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                    log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
                     if i > 0 then
-                      log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                     else
-                        -- for pipe 0 we do not log the pipe number
-                      log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                     end if;
                   end if;
                 when CHANGE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window. " & add_msg_delimiter(msg), scope);
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
                   end if;
                 when CHANGE_TO_VALUE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
+                    end if;
                   end if;
                 when STABLE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   end if;
@@ -3882,21 +3893,19 @@ package body uvvm_assertions_pkg is
     constant window_type    : t_min_to_max_cycles_after_trigger
   ) is
     constant C_MIN_CYCLES : integer := 0; -- used to ignore the v_prev_tracked_value_arr on the first cycle
-    constant C_MAX_CYCLES : integer := 1000; -- used to set the max pipelines. NOTE: hardcoded
-
     variable v_first_alert  : boolean := true;
     variable v_elapsed_time : time;
 
     type     t_time_array is array(natural range <>) of time;
-    variable v_cycle_count_arr  : t_integer_array(0 to C_MAX_CYCLES) := (others => 0);
-    variable v_trigger_time_arr : t_time_array(0 to C_MAX_CYCLES)    := (others => now);
-    variable v_active_pipe_arr  : t_boolean_array(0 to C_MAX_CYCLES) := (others => false);
-    variable v_pipe_check_ok    : t_boolean_array(0 to C_MAX_CYCLES) := (others => false);
+    variable v_cycle_count_arr  : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => 0);
+    variable v_trigger_time_arr : t_time_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)    := (others => now);
+    variable v_active_pipe_arr  : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
+    variable v_pipe_check_ok    : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
 
-    variable v_prev_tracked_value_arr : std_logic_vector(0 to C_MAX_CYCLES) := (others => tracked_value);
-    variable v_when_changed_cycle     : t_integer_array(0 to C_MAX_CYCLES)  := (others => 0);
+    variable v_prev_tracked_value_arr : std_logic_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => tracked_value);
+    variable v_when_changed_cycle     : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => 0);
 
-    variable v_pipe_index : integer range -1 to C_MAX_CYCLES := -1; -- default to -1 to start at 0
+    variable v_pipe_index : integer range -1 to C_WINDOW_ASSERTIONS_MAX_CYCLES := -1; -- default to -1 to start at 0
 
   begin
 
@@ -3906,14 +3915,14 @@ package body uvvm_assertions_pkg is
         exit; -- to exit the loop
       elsif rising_edge(clk) then
         if start_trigger = '1' then
-          v_pipe_index                           := v_pipe_index + 1 when v_pipe_index < C_MAX_CYCLES else 0;
+          v_pipe_index                           := v_pipe_index + 1 when v_pipe_index < C_WINDOW_ASSERTIONS_MAX_CYCLES else 0;
           v_trigger_time_arr(v_pipe_index)       := now;
           v_cycle_count_arr(v_pipe_index)        := 0;
           v_active_pipe_arr(v_pipe_index)        := true;
           v_prev_tracked_value_arr(v_pipe_index) := tracked_value;
         end if;
 
-        for i in 0 to C_MAX_CYCLES loop
+        for i in 0 to C_WINDOW_ASSERTIONS_MAX_CYCLES loop
           if v_active_pipe_arr(i) then
             v_elapsed_time := now - v_trigger_time_arr(i);
             -- main logic:
@@ -3921,7 +3930,11 @@ package body uvvm_assertions_pkg is
             case window_type is
               when VALUE =>
                 if tracked_value /= exp_value then
-                  alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                  if i > 0 then
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                  else
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                  end if;
                   v_active_pipe_arr(i) := false; -- can stop checking this pipe
                 end if;
               when CHANGE =>
@@ -3940,7 +3953,11 @@ package body uvvm_assertions_pkg is
                 end if;
               when STABLE =>
                 if v_prev_tracked_value_arr(i) /= tracked_value then
-                  alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                  if i > 0 then
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                  else
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                  end if;
                   v_active_pipe_arr(i) := false; -- can stop checking this pipe
                 end if;
             end case;
@@ -3951,14 +3968,14 @@ package body uvvm_assertions_pkg is
                   if v_active_pipe_arr(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
                         -- for pipe 0 we do not log the pipe number
-                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   end if;
@@ -3966,48 +3983,56 @@ package body uvvm_assertions_pkg is
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window. " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window. pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
+                    end if;
                   end if;
                 when CHANGE_TO_VALUE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
+                    end if;
                   end if;
                 when STABLE =>
                   -- if active pipe was not set to 0, then the window finished OK
                   if v_active_pipe_arr(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   end if;
@@ -4017,7 +4042,31 @@ package body uvvm_assertions_pkg is
 
             -- update the previous value and cycle count for next clk-cycle
             v_prev_tracked_value_arr(i) := tracked_value;
-            v_cycle_count_arr(i)        := v_cycle_count_arr(i) + 1;
+
+            -- if we reached the max cycles, we can log an error (this is a niche case, as the window should end with an end_trigger normally)
+            if v_cycle_count_arr(i) = C_WINDOW_ASSERTIONS_MAX_CYCLES then
+              case window_type is
+                when VALUE =>
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never equal to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
+                when CHANGE =>
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
+                when CHANGE_TO_VALUE =>
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
+                when STABLE =>
+                  -- we have already checked the pipe, so we can log the OK
+                  if pos_ack_kind = FIRST and v_first_alert then
+                    log(msg_id, procedure_name & " => OK (first+timeout). tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+                    v_first_alert := false;
+                  elsif pos_ack_kind = EVERY then
+                    log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+                  end if;  
+              end case;
+              alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
+              v_active_pipe_arr(i) := false; -- can stop checking this pipe
+              v_cycle_count_arr(i) := 0; -- reset the cycle count for this pipe
+            else
+              v_cycle_count_arr(i)        := v_cycle_count_arr(i) + 1;
+            end if;
           end if;
         end loop;
       end if;
@@ -4163,7 +4212,11 @@ package body uvvm_assertions_pkg is
               case window_type is
                 when VALUE =>
                   if tracked_value /= exp_value then
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                    end if;
                     v_active_pipe_arr(i) := false; -- can stop checking this pipe
                   end if;
                 when CHANGE =>
@@ -4184,7 +4237,11 @@ package body uvvm_assertions_pkg is
                   -- in the case of min_cycles = max_cycles, we just flag the pipe as OK, since there cannot be any change
                   v_pipe_check_ok(i) := (v_prev_tracked_value_arr(i) = tracked_value) and (min_cycles = max_cycles);
                   if v_prev_tracked_value_arr(i) /= tracked_value then
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                    end if;
                     v_active_pipe_arr(i) := false; -- can stop checking this pipe
                   end if;
               end case;
@@ -4194,60 +4251,64 @@ package body uvvm_assertions_pkg is
                 when VALUE =>
                   -- we have already checked the pipe, so we can log the OK
                   if pos_ack_kind = FIRST and v_first_alert then
-                    log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                    log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
                     if i > 0 then
                       log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                     else
-                      log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                     end if;
                   end if;
                 when CHANGE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
                         log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window. " & add_msg_delimiter(msg), scope);
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
                   end if;
                 when CHANGE_TO_VALUE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
                         log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
+                    end if;
                   end if;
                 when STABLE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
                         log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   end if;
@@ -4259,24 +4320,24 @@ package body uvvm_assertions_pkg is
             v_prev_tracked_value_arr(i) := tracked_value;
             
             -- if we reached the max cycles, we can log an error (this is a niche case, as the window should end with an end_trigger normally)
-            if v_cycle_count_arr(i) = C_MAX_CYCLES then
+            if v_cycle_count_arr(i) = C_WINDOW_ASSERTIONS_MAX_CYCLES then
               case window_type is
                 when VALUE =>
-                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never equal to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never equal to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
                 when CHANGE =>
-                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed in window. " & add_msg_delimiter(msg), scope);
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
                 when CHANGE_TO_VALUE =>
-                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
                 when STABLE =>
                   -- we have already checked the pipe, so we can log the OK
                   if pos_ack_kind = FIRST and v_first_alert then
-                    log(msg_id, procedure_name & " => OK (first+timeout). tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                    log(msg_id, procedure_name & " => OK (first+timeout). tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
-                    log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                    log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                   end if;  
               end case;
-              alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
+              alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
               v_active_pipe_arr(i) := false; -- can stop checking this pipe
               v_cycle_count_arr(i) := 0; -- reset the cycle count for this pipe
             else
@@ -4394,15 +4455,15 @@ package body uvvm_assertions_pkg is
     variable v_elapsed_time : time;
 
     type     t_time_array is array(natural range <>) of time;
-    variable v_cycle_count_arr  : t_integer_array(0 to C_MAX_CYCLES) := (others => 0);
-    variable v_trigger_time_arr : t_time_array(0 to C_MAX_CYCLES)    := (others => now);
-    variable v_active_pipe_arr  : t_boolean_array(0 to C_MAX_CYCLES) := (others => false);
-    variable v_pipe_check_ok    : t_boolean_array(0 to C_MAX_CYCLES) := (others => false);
+    variable v_cycle_count_arr  : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => 0);
+    variable v_trigger_time_arr : t_time_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)    := (others => now);
+    variable v_active_pipe_arr  : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
+    variable v_pipe_check_ok    : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
 
-    variable v_prev_tracked_value_arr : t_slv_array(0 to C_MAX_CYCLES)(tracked_value'range) := (others => tracked_value);
-    variable v_when_changed_cycle     : t_integer_array(0 to C_MAX_CYCLES)  := (others => 0);
+    variable v_prev_tracked_value_arr : t_slv_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)(tracked_value'range) := (others => tracked_value);
+    variable v_when_changed_cycle     : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => 0);
 
-    variable v_pipe_index : integer range -1 to C_MAX_CYCLES := -1; -- default to -1 to start at 0
+    variable v_pipe_index : integer range -1 to C_WINDOW_ASSERTIONS_MAX_CYCLES := -1; -- default to -1 to start at 0
 
   begin
 
@@ -4412,14 +4473,14 @@ package body uvvm_assertions_pkg is
         exit; -- to exit the loop
       elsif rising_edge(clk) then
         if start_trigger = '1' then
-          v_pipe_index                           := v_pipe_index + 1 when v_pipe_index < C_MAX_CYCLES else 0;
+          v_pipe_index                           := v_pipe_index + 1 when v_pipe_index < C_WINDOW_ASSERTIONS_MAX_CYCLES else 0;
           v_trigger_time_arr(v_pipe_index)       := now;
           v_cycle_count_arr(v_pipe_index)        := 0;
           v_active_pipe_arr(v_pipe_index)        := true;
           v_prev_tracked_value_arr(v_pipe_index) := tracked_value;
         end if;
 
-        for i in 0 to C_MAX_CYCLES loop
+        for i in 0 to C_WINDOW_ASSERTIONS_MAX_CYCLES loop
           if v_active_pipe_arr(i) then
             v_elapsed_time := now - v_trigger_time_arr(i);
             -- main logic:
@@ -4427,7 +4488,11 @@ package body uvvm_assertions_pkg is
             case window_type is
               when VALUE =>
                 if tracked_value /= exp_value then
-                  alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                  if i > 0 then
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                  else
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to " & to_string(exp_value) & " after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                  end if;
                   v_active_pipe_arr(i) := false; -- can stop checking this pipe
                 end if;
               when CHANGE =>
@@ -4446,7 +4511,11 @@ package body uvvm_assertions_pkg is
                 end if;
               when STABLE =>
                 if v_prev_tracked_value_arr(i) /= tracked_value then
-                  alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). " & add_msg_delimiter(msg), scope);
+                  if i > 0 then
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                  else
+                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not stable after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
+                  end if;
                   v_active_pipe_arr(i) := false; -- can stop checking this pipe
                 end if;
             end case;
@@ -4457,13 +4526,13 @@ package body uvvm_assertions_pkg is
                   if v_active_pipe_arr(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was equal to expected value in entire window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   end if;
@@ -4471,48 +4540,56 @@ package body uvvm_assertions_pkg is
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window. " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window. pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
+                    end if;
                   end if;
                 when CHANGE_TO_VALUE =>
                   if v_pipe_check_ok(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value had a change to " & to_string(exp_value) & " in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". First change event happened in cycle-" & to_string(v_when_changed_cycle(i)) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   else
                     -- if there was never any change we log an error
-                    alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                    if i > 0 then
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
+                    else
+                      alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
+                    end if;
                   end if;
                 when STABLE =>
                   -- if active pipe was not set to 0, then the window finished OK
                   if v_active_pipe_arr(i) then
                     -- we have already checked the pipe, so we can log the OK
                     if pos_ack_kind = FIRST and v_first_alert then
-                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                      log(msg_id, procedure_name & " => OK (first). tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       v_first_alert := false;
                     elsif pos_ack_kind = EVERY then
                       if i > 0 then
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
                       else
-                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                        log(msg_id, procedure_name & " => OK. tracked_value was stable in window. OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                       end if;
                     end if;
                   end if;
@@ -4524,24 +4601,24 @@ package body uvvm_assertions_pkg is
             v_prev_tracked_value_arr(i) := tracked_value;
             
             -- if we reached the max cycles, we can log an error (this is a niche case, as the window should end with an end_trigger normally)
-            if v_cycle_count_arr(i) = C_MAX_CYCLES then
+            if v_cycle_count_arr(i) = C_WINDOW_ASSERTIONS_MAX_CYCLES then
               case window_type is
                 when VALUE =>
-                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never equal to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never equal to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
                 when CHANGE =>
-                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed in window. " & add_msg_delimiter(msg), scope);
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed in window." & add_msg_delimiter(msg), scope);
                 when change_to_value =>
-                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window. " & add_msg_delimiter(msg), scope);
+                  alert(alert_level, procedure_name & " => Failed. (timeout) tracked_value ("& to_string(tracked_value) &") never changed to " & to_string(exp_value) & " in window." & add_msg_delimiter(msg), scope);
                 when STABLE =>
                   -- we have already checked the pipe, so we can log the OK
                   if pos_ack_kind = FIRST and v_first_alert then
-                    log(msg_id, procedure_name & " => OK (first+timeout). tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                    log(msg_id, procedure_name & " => OK (first+timeout). tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
-                    log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+                    log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
                   end if;  
               end case;
-              alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
+              alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
               v_active_pipe_arr(i) := false; -- can stop checking this pipe
               v_cycle_count_arr(i) := 0; -- reset the cycle count for this pipe
             else

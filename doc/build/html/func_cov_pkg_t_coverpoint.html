@@ -9,12 +9,13 @@
   <title>t_coverpoint (protected) &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,7 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#introduction">Introduction</a></li>
@@ -110,9 +111,6 @@
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -131,7 +129,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -213,7 +211,7 @@
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -272,7 +270,7 @@ in adaptations_pkg.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -310,7 +308,8 @@ from the overall coverage calculation. Default value is 1.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -340,7 +339,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -378,7 +377,8 @@ the coverpoint. Default value is 100.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -406,7 +406,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -444,7 +444,8 @@ bin in the coverpoint. Default value is 100.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -473,7 +474,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -510,7 +511,8 @@ value is shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -538,7 +540,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -575,7 +577,8 @@ value is shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -603,7 +606,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -640,7 +643,8 @@ value is shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -699,7 +703,8 @@ coverpoint is loaded. Default value is HOLES_ONLY.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -730,7 +735,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -738,7 +743,8 @@ value is shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -776,7 +782,8 @@ bins. Default value is C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED defined in adapta
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -835,7 +842,7 @@ C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -843,7 +850,8 @@ C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -912,7 +920,8 @@ the bin name is indexed as described in
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -984,7 +993,8 @@ bins the bin name is indexed as described in
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1069,7 +1079,8 @@ bins the bin name is indexed as described in
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1115,7 +1126,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -1162,7 +1173,8 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1249,8 +1261,9 @@ HITS or BINS_AND_HITS</p></td>
 <section id="report-coverage">
 <h2>report_coverage()<a class="headerlink" href="#report-coverage" title="Link to this heading"></a></h2>
 <p>Prints the coverpoint coverage summary containing all the bins. The printing destination can be log and/or console and is defined
-by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using the file_name
-parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
+by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.
+The report can also be printed to a separate file by using the file_name parameter. To see an example of the generated report
+click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 <span class="n">report_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">rand_weight_col</span><span class="p">]]])</span>
 </pre></div>
@@ -1268,7 +1281,7 @@ parameter. To see an example of the generated report click <a class="reference i
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1312,8 +1325,10 @@ Default value is HIDE_RAND_WEIGHT.</p></td>
 </section>
 <section id="report-config">
 <h2>report_config()<a class="headerlink" href="#report-config" title="Link to this heading"></a></h2>
-<p>Prints a report containing the coverpoint’s configuration parameters. The report can also be printed to a separate file by using
-the file_name parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-config-report"><span class="std std-ref">here</span></a>.</p>
+<p>Prints a report containing the coverpoint’s configuration parameters. The printing destination can be log and/or console and is
+defined by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION in
+adaptations_pkg. The report can also be printed to a separate file by using the file_name parameter. To see an example of the
+generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-config-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 <span class="n">report_config</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">])</span>
 </pre></div>
@@ -1331,7 +1346,7 @@ the file_name parameter. To see an example of the generated report click <a clas
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1389,7 +1404,8 @@ random value.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1475,7 +1491,7 @@ adding the first configuration or bin).</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>

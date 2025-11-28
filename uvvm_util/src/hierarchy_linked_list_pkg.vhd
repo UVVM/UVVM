@@ -132,7 +132,6 @@ package body hierarchy_linked_list_pkg is
 
     -- Initialization variables
     variable priv_has_been_initialized : boolean := false;
-    variable priv_base_scope           : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);
 
     procedure initialize_hierarchy(
       base_scope : string := "";
@@ -368,7 +367,6 @@ package body hierarchy_linked_list_pkg is
     end procedure;
 
     procedure clear is
-      variable v_to_be_deallocated_ptr : t_element_ptr;
     begin
 
       -- Deallocate all nodes in the tree
@@ -443,11 +441,9 @@ package body hierarchy_linked_list_pkg is
       variable v_starting_node_ptr : t_element_ptr;
       variable v_current_ptr       : t_element_ptr;
       variable v_found             : boolean := false;
-      variable v_is_in_tree        : boolean := false;
       variable v_msg               : line; -- msg after pot. replacement of \n
       variable v_info              : line;
       variable v_hierarchy         : line; -- stores the hierarchy propagation
-      variable v_parent_node       : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
       variable v_do_print          : boolean := false; -- Enable/disable print of alert message
     begin
       if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
@@ -818,7 +814,6 @@ package body hierarchy_linked_list_pkg is
       variable v_minor_mismatch  : inout boolean;
       variable v_line            : inout line
     ) is
-      variable v_current_ptr : t_element_ptr;
     begin
 
       -- Write indentation according to hierarchy level

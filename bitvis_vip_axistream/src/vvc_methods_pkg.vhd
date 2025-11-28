@@ -184,8 +184,8 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+
+  -- DEPRECATED: will be removed in v3
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -198,8 +198,8 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+
+  -- DEPRECATED: will be removed in v3
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -209,8 +209,8 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+
+  -- DEPRECATED: will be removed in v3
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -225,7 +225,7 @@ package vvc_methods_pkg is
   -- AXIStream Receive
   --
   --------------------------------------------------------
-
+  -- DEPRECATED: will be removed in v3
   procedure axistream_receive_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -235,6 +235,7 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  -- DEPRECATED: will be removed in v3
   procedure axistream_receive_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -333,8 +334,8 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+
+  -- DEPRECATED: will be removed in v3
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -348,8 +349,8 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+
+  -- DEPRECATED: will be removed in v3
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -360,8 +361,8 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+
+  -- DEPRECATED: will be removed in v3
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -567,7 +568,6 @@ package body vvc_methods_pkg is
   end procedure;  
 
   
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -582,7 +582,6 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
   begin
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
     deprecate(C_PROC_NAME, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
     
     -- Call t_slv_array overloaded procedure
@@ -591,7 +590,6 @@ package body vvc_methods_pkg is
 
   
   -- Overload, without the strb_array, id_array, dest_array  arguments
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -611,7 +609,6 @@ package body vvc_methods_pkg is
 
 
   -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -667,7 +664,7 @@ package body vvc_methods_pkg is
   ) is
   begin
     -- Call overloaded procedure
-    axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
+    axistream_receive(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
   end procedure axistream_receive;
   
   -- Overload with data_routing
@@ -679,7 +676,10 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
   begin
+    deprecate(C_PROC_NAME, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+
     -- Call overloaded procedure
     axistream_receive(VVCT, vvc_instance_idx, data_routing, msg, scope, parent_msg_id_panel);
   end procedure axistream_receive_bytes;
@@ -865,7 +865,6 @@ package body vvc_methods_pkg is
   end procedure;
 
   
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -885,7 +884,6 @@ package body vvc_methods_pkg is
     
     variable v_check_ok     : boolean := false;
   begin
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
     deprecate(C_PROC_NAME, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
     
     -- t_byte_array sanity check
@@ -899,7 +897,6 @@ package body vvc_methods_pkg is
 
   -- Overload for calling axiStreamExpect() without a value for strb_array, id_array, dest_array
   -- (will be set to don't care)
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -922,7 +919,6 @@ package body vvc_methods_pkg is
 
 
   -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;

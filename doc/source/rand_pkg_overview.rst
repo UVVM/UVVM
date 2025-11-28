@@ -14,7 +14,7 @@ For a more balanced randomization between small and large ranges/sets, the :ref:
 may be used.
 
 To generate a random value using Enhanced Randomization it is necessary to import the utility library, create a variable with the 
-protected type *t_rand* and call either the ``rand()`` or the ``randm()`` function from the variable depending on which approach 
+protected type **t_rand** and call either the ``rand()`` or the ``randm()`` function from the variable depending on which approach 
 is being used:
 
 **1. Single-method approach:** The ``rand()`` function is constrained by the parameters it receives plus additional configuration 
@@ -155,7 +155,7 @@ is not recommended to mix them.
 Constraints
 ==================================================================================================================================
 By using the following procedures, different combinations of constraints can be added for the ``randm()`` function. Note that when 
-reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must be called to remove any previous constraints.
+reusing the same ``my_rand`` variable, the ``clear_constraints()`` procedure must be called to remove any previous constraints.
 
 .. code-block::
 
@@ -248,7 +248,7 @@ The ``randm()`` function can return the following types:
     * :ref:`signed <randm_sig>`
     * :ref:`std_logic_vector <randm_slv>`
 
-For *std_logic* and *boolean* types use the ``rand(VOID)`` function, since they do not require any constraints.
+For **std_logic** and **boolean** types use the ``rand(VOID)`` function, since they do not require any constraints.
 
 .. code-block::
 
@@ -404,7 +404,8 @@ constraints have been generated. Once this happens, the process starts over.
 
 .. caution::
     When using the dynamic queue implementation, the simulation might slow down after a few thousand iterations due to the 
-    parsing of the growing queue.
+    parsing of the growing queue. This warning can be configured by C_RAND_CYCLIC_QUEUE_MAX_ALERT and 
+    C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE in adaptations_pkg.
 
 .. important::
     It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to de-allocate the
@@ -434,7 +435,7 @@ Gaussian (Normal)
 ==================================================================================================================================
 * The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
   signed and std_logic_vector lengths bigger than 32 bits are not supported however.
-* The types *time* and *time_vector* are not supported, use instead *integer* and multiply by the time unit.
+* The types **time** and **time_vector** are not supported, use instead **integer** and multiply by the time unit.
 * Only single range (min/max) constraints are supported, i.e. no multiple ranges or set of values are supported.
 * Cannot be combined with CYCLIC or UNIQUE configurations.
 * Cannot be combined with weighted randomization methods.
@@ -662,7 +663,7 @@ The number of decimal digits displayed in the real values logs can be adjusted w
 **********************************************************************************************************************************
 rand_pkg
 **********************************************************************************************************************************
-The following links contain information regarding the API of the protected type *t_rand* and all the type definitions inside 
+The following links contain information regarding the API of the protected type **t_rand** and all the type definitions inside 
 *rand_pkg*.
 
 .. toctree::

@@ -1,6 +1,15 @@
 Bitvis VIP Wishbone - Overview on Versions and Changes
 ==============================================================
 
+v1.0.0
+----------
+Released: 2025-11-28
+- Initial release of Wishbone VIP.
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Increased max_wait_cycles default value to 1000.
+- Added bfm_sync and removed id_for_bfm_wait and id_for_bfm_poll in BFM config.
+
 v0.2.1 BETA
 ----------
 Released: 2025-08-18

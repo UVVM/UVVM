@@ -172,10 +172,10 @@ package body support_pkg is
                LF & "    payload length:  " & to_string(ethernet_frame.payload_length);
 
       when PAYLOAD =>
-        write(v_line, string'("[" & to_string(0) & "]:" & to_string(ethernet_frame.payload(0), HEX, AS_IS, INCL_RADIX)));
+        write(v_line, string'("[" & to_string(0) & "]:" & to_string(ethernet_frame.payload(0), HEX, KEEP_LEADING_0, INCL_RADIX)));
         if ethernet_frame.payload_length > 1 then
           for i in 1 to ethernet_frame.payload_length - 1 loop
-            write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX)));
+            write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, KEEP_LEADING_0, INCL_RADIX)));
           end loop;
         end if;
         v_line_width                      := v_line'length;
@@ -184,10 +184,8 @@ package body support_pkg is
         return LF & payload_string(1 to v_line_width);
 
       when CHECKSUM =>
-        return LF & "    FCS: " & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
+        return LF & "    FCS: " & to_string(ethernet_frame.fcs, HEX, KEEP_LEADING_0, INCL_RADIX);
 
-      when others =>
-        return "";
     end case;
   end function to_string;
 
@@ -196,8 +194,8 @@ package body support_pkg is
     constant ethernet_frame : in t_ethernet_frame
   ) return string is
   begin
-    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
+    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) &
+           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) &
            ", payload length: " & to_string(ethernet_frame.payload_length);
   end function to_string;
 
@@ -223,9 +221,9 @@ package body support_pkg is
     v_check_ok := v_check_ok and check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
     if v_check_ok then
-      log(msg_id, proc_call & ". " & add_msg_delimiter(msg) & " => OK");
+      log(msg_id, proc_call & "." & add_msg_delimiter(msg) & " => OK");
     else
-      log(msg_id, proc_call & ". " & add_msg_delimiter(msg) & " => FAILED");
+      log(msg_id, proc_call & "." & add_msg_delimiter(msg) & " => FAILED");
     end if;
   end procedure compare_ethernet_frames;
 

@@ -30,8 +30,8 @@ package uart_pkg is
   return std_logic;
 
   function transient_error(
-    vector : std_logic_vector;
-    limit  : integer)
+    vector    : std_logic_vector;
+    err_limit : integer)
   return boolean;
 
   function f_log2(x : positive)
@@ -71,11 +71,11 @@ package body uart_pkg is
   end function;
 
   function transient_error(
-    vector : std_logic_vector;
-    limit  : integer)
+    vector    : std_logic_vector;
+    err_limit : integer)
   return boolean is
   begin
-    if ((find_num_hits(vector, '1') < limit) and (find_num_hits(vector, '0') < limit)) then
+    if ((find_num_hits(vector, '1') < err_limit) and (find_num_hits(vector, '0') < err_limit)) then
       return true;
     else
       return false;

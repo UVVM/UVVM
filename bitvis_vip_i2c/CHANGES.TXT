@@ -1,6 +1,12 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v4.1.2
+----------
+Released: 2025-11-28
+- Added more detail to await_value error messages in the BFM.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+
 v4.1.1
 ----------
 Released: 2025-08-18

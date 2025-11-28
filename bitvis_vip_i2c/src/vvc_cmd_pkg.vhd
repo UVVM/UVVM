@@ -130,18 +130,3 @@ package vvc_cmd_pkg is
   shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => -1));
 
 end package vvc_cmd_pkg;
-
---=================================================================================================
---=================================================================================================
-
-package body vvc_cmd_pkg is
-
-  function to_string(
-    value : t_operation
-  ) return string is
-  begin
-    return t_operation'image(value);
-  end;
-
-end package body vvc_cmd_pkg;
-

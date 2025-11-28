@@ -33,6 +33,3 @@ package ethernet_mac_pkg is
   constant C_SBI_DATA_WIDTH : integer := 8;
 
 end package ethernet_mac_pkg;
-
-package body ethernet_mac_pkg is
-end package body ethernet_mac_pkg;

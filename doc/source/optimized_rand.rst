@@ -23,7 +23,7 @@ reduces simulation time as only the necessary values to achieve coverage are ran
 
 |opt_rand_restart|
 
-To use optimized randomization, the function ``rand()`` from the protected type *t_coverpoint* is called with a single parameter 
+To use optimized randomization, the function ``rand()`` from the protected type **t_coverpoint** is called with a single parameter 
 which defines whether or not to also sample coverage using the randomly generated value. Since the randomization is based in the 
 bins, no additional constraints need to be given to the function.
 

@@ -19,8 +19,6 @@ Bitvis VIP UART
 * `Monitor`_
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 .. _vip_uart_bfm:
 
 **********************************************************************************************************************************
@@ -39,7 +37,7 @@ Default value for the record is C_UART_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| bit_time                     | time                         | -1 ns           | The time it takes to transfer one bit. Will     |
+| bit_time                     | time                         | C_UNDEFINED_TIME| The time it takes to transfer one bit. Will     |
 |                              |                              |                 | raise an error if not set.                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | num_data_bits                | natural range 7 to 8         | 8               | Number of data bits to send per transmission    |
@@ -50,8 +48,17 @@ Default value for the record is C_UART_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | parity                       | :ref:`t_parity`              | PARITY_ODD      | Transmission parity bit                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| timeout                      | time                         | 0 ns            | The maximum time to wait for the UART start bit |
-|                              |                              |                 | on the RX line before timeout                   |
+| timeout                      | time                         | C_UNDEFINED_TIME| The maximum time to pass before the expected    |
+|                              |                              |                 | data must be received. A value of 0 means it    |
+|                              |                              |                 | will never time out.                            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The default value is undefined since it depends |
+|                              |                              |                 | on the bit_time, therefore a value is calculated|
+|                              |                              |                 | in the uart_receive/uart_expect procedures using|
+|                              |                              |                 | the configured bit_time.                        |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | This value can be overridden by the timeout     |
+|                              |                              |                 | parameter in the procedure call.                |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | timeout_severity             | :ref:`t_alert_level`         | ERROR           | The above timeout will have this severity       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -69,14 +76,14 @@ Default value for the record is C_UART_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
 |                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | DEPRECATED                                      |
+| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll_summary      | t_msg_id                     | ID_BFM_POLL_SUM\| Message ID used for logging polling summary in  |
+| id_for_bfm_poll_summary      | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL_SUM\| Message ID used for logging polling summary in  |
 |                              |                              | MARY            | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | error_injection              | t_bfm_error_injection        | C_BFM_ERROR_INJ\| Record to set up error injection in the BFM     |
@@ -145,7 +152,8 @@ Transmits data to the DUT using the UART protocol. For protocol details, see the
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("UART BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -164,19 +172,19 @@ uart_receive()
 ----------------------------------------------------------------------------------------------------------------------------------
 Receives data from the DUT using the UART protocol. For protocol details, see the UART specification. 
 
-When called, the procedure will wait for the start bit to be present on the rx line. The initial wait for the start bit will be 
+When called, the procedure will wait for the start bit to be present on the RX line. The initial wait for the start bit will be 
 terminated if one of the following occurs:
 
-    #. The start bit is present on the rx line.
+    #. The start bit is present on the RX line.
     #. The terminate_loop flag is set to '1'.
-    #. The number of clock cycles waited for the start bit exceeds 'config.max_wait_cycles' clock cycles.
+    #. The time waited for the start bit exceeds 'config.timeout'.
 
 Once all the bits have been received according to the UART specification, the parity and stop bit are checked. If correct, the 
 read data is placed on the output 'data_value' and the procedure returns.
 
 The procedure reports an alert if:
 
-    * Timeout occurs, i.e. start bit does not occur within 'config.max_wait_cycles' clock cycles (alert level: 'config.max_wait_cycles_severity')
+    * Timeout occurs, i.e. start bit does not occur within 'config.timeout' (alert level: 'config.timeout_severity')
     * terminate_loop is set to '1' (alert level: WARNING)
     * Expected stop_bit does not match received stop bit(s) (alert level: ERROR)
     * Calculated parity 'config.parity' does not match received parity (alert level: ERROR)
@@ -205,7 +213,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("UART BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -267,9 +276,10 @@ procedure will be initiated. This process will repeat until one of the following
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
 |          |                    |        |                              | be received. Exceeding this limit results in an alert   |
-|          |                    |        |                              | with severity 'alert_level'. Setting this value to 0    |
-|          |                    |        |                              | will be interpreted as no timeout. Default value is the |
-|          |                    |        |                              | BFM config timeout.                                     |
+|          |                    |        |                              | with severity 'config.timeout_severity'. Setting this   |
+|          |                    |        |                              | value to 0 will be interpreted as no timeout. Default   |
+|          |                    |        |                              | value is C_UNDEFINED_TIME which leads to using the      |
+|          |                    |        |                              | timeout from the BFM config parameter.                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -280,7 +290,8 @@ procedure will be initiated. This process will repeat until one of the following
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("UART BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -330,8 +341,8 @@ Using a local overload like this also allows the following – if wanted:
 Local BFM configuration
 ==================================================================================================================================
 The UART BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM 
-configuration is defined with a clock period of -1 ns so that the BFM can detect and alert the user that the configuration has not 
-been set.
+configuration is defined with a clock period of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the 
+configuration has not been set.
 
 Defining a local UART BFM configuration:::
 
@@ -374,15 +385,13 @@ For additional documentation on the UART protocol, please see the UART specifica
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 .. _vip_uart_vvc:
 
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in uart_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -398,7 +407,9 @@ Generics
 |                              |                              |                 | configuration and override the setting in       |
 |                              |                              |                 | GC_UART_CONFIG.                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC Maximum value |
+|                              |                              |                 | is defined by C_UART_VVC_MAX_INSTANCE_NUM       |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_UART_CONFIG               | :ref:`t_uart_bfm_config      | C_UART_BFM_CONF\| Configuration for the UART BFM                  |
 |                              | <t_uart_bfm_config>`         | IG_DEFAULT      |                                                 |
@@ -427,6 +438,10 @@ Generics
 | OLD_SEVERITY                 |                              | _COUNT_THRESHOL\| GC_RESULT_QUEUE_COUNT_THRESHOLD                 |
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
 
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -570,6 +585,14 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_UART_VVC_CMD_STRING_MAX_LENGTH           | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _uart_transmit_vvc:
 
@@ -597,19 +620,20 @@ uart_transmit()
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | num_words          | in     | natural                      | Number of times the procedure is called to send new     |
 |          |                    |        |                              | random data words                                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | randomisation      | in     | t_randomisation              | Randomization profile                                   |
+| constant | randomisation      | in     | :ref:`t_randomisation`       | Randomization profile                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -644,7 +668,7 @@ checked against the expected value (provided by the testbench).
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the read data                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -653,7 +677,8 @@ checked against the expected value (provided by the testbench).
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Unused. DEPRECATED                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -698,7 +723,7 @@ stored in this procedure. This procedure can only be called using the UART RX ch
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The expected data value to be received                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -711,14 +736,16 @@ stored in this procedure. This procedure can only be called using the UART RX ch
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
 |          |                    |        |                              | be received. Exceeding this limit results in an alert   |
-|          |                    |        |                              | with severity 'alert_level'. Setting this value to 0    |
-|          |                    |        |                              | will be interpreted as no timeout. Default value is the |
-|          |                    |        |                              | BFM config timeout.                                     |
+|          |                    |        |                              | with severity 'config.timeout_severity'. Setting this   |
+|          |                    |        |                              | value to 0 will be interpreted as no timeout. Default   |
+|          |                    |        |                              | value is C_UNDEFINED_TIME which leads to using the      |
+|          |                    |        |                              | timeout from the BFM config parameter.                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -756,7 +783,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | error_info                   | t_error_info                 | C_ERROR_INFO_DE\| Error injection status                          |
@@ -774,13 +801,13 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. uart_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable UART_VVC_SB, located in the 
-vvc_methods_pkg.vhd, e.g. ::
+TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable ``UART_VVC_SB``, located in 
+the vvc_methods_pkg.vhd, e.g. ::
 
     UART_VVC_SB.add_expected(C_UART_VVC_IDX, v_expected, "Adding expected");
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the UART VVC scoreboard using the UART_VVC_SB.
+Scoreboard commands are available for the UART VVC scoreboard using the ``UART_VVC_SB``.
 
 
 Unwanted Activity Detection
@@ -872,8 +899,6 @@ For additional documentation on the UART protocol, please see the UART specifica
     * This VIP is not a UART protocol checker.
     * For a more advanced VIP please contact UVVM support at info@uvvm.org
 
-
-.. include:: rst_snippets/subtitle_1_division.rst
 
 **********************************************************************************************************************************
 Monitor

@@ -1,23 +1,22 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Functional Coverage &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,7 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
@@ -117,9 +116,6 @@
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -138,7 +134,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -188,7 +184,7 @@ compliance with requirements.</p>
 <h3>Coverpoints and bins<a class="headerlink" href="#coverpoints-and-bins" title="Link to this heading"></a></h3>
 <p>Each point of the design that we wish to test is referred to as a <em>coverpoint</em>. A coverpoint can for instance be an input port,
 output port or an internal register.</p>
-<p>A coverpoint is added by creating a shared variable of the protected type t_coverpoint.</p>
+<p>A coverpoint is added by creating a shared variable of the protected type <strong>t_coverpoint</strong>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span>
 </pre></div>
 </div>
@@ -201,7 +197,8 @@ a range of values or a given transition between values.</p>
 one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting
 how many times the coverpoint has been sampled with the corresponding values of the bins.</p>
 <figure class="align-center" id="id3">
-<a class="reference internal image-reference" href="_images/func_cov_coverpoint.png"><img alt="Coverpoint representation" src="_images/func_cov_coverpoint.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/func_cov_coverpoint.png"><img alt="Coverpoint representation" src="_images/func_cov_coverpoint.png" style="width: 400pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Figure 1</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
 </figcaption>
@@ -212,7 +209,8 @@ combination of the values covered by the crossed bins or coverpoints must have b
 <p>In Figure 2, we can see a cross named <em>src_addr_x_dst_addr</em> which contains eight different bins. Each bin contains different
 combinations of values for <em>src_addr</em> and <em>dst_addr</em>.</p>
 <figure class="align-center" id="id4">
-<a class="reference internal image-reference" href="_images/func_cov_cross.png"><img alt="Cross representation" src="_images/func_cov_cross.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/func_cov_cross.png"><img alt="Cross representation" src="_images/func_cov_cross.png" style="width: 400pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Figure 2</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
 </figcaption>
@@ -226,7 +224,8 @@ the value 255. This will increment the hit counter of the bin associated with th
 min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
 hit coverage, the coverpoint will have full coverage.</p>
 <figure class="align-center" id="id5">
-<a class="reference internal image-reference" href="_images/func_cov_sampling.png"><img alt="Sampling coverage" src="_images/func_cov_sampling.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/func_cov_sampling.png"><img alt="Sampling coverage" src="_images/func_cov_sampling.png" style="width: 400pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
 </figcaption>
@@ -257,7 +256,7 @@ unsigned, enumerated, etc., they must be converted to integer values first.</p>
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
 <p>All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pkg.vhd</em>.</p>
 <p>To start using functional coverage it is necessary to import the utility library, create one or more shared variables with the protected
-type <em>t_coverpoint</em> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
+type <strong>t_coverpoint</strong> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span>
 <span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
 <span class="p">...</span>
@@ -300,7 +299,7 @@ supporting adding multiple types of bins in a single line.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 </pre></div>
 </div>
-<p>Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.</p>
+<p>Bins are implemented as record elements inside the protected type <strong>t_coverpoint</strong>, which represents both coverpoints and crosses.</p>
 <p>Bins can be created using the following <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Create a single bin for a single value</span>
 <span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -413,7 +412,7 @@ sampled. The default severity of the alert is ERROR and can be configured using 
 <section id="using-predefined-bins">
 <h3>Using predefined bins<a class="headerlink" href="#using-predefined-bins" title="Link to this heading"></a></h3>
 <p>Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable
-can be created using the type <em>t_new_bin_array(0 to 0)</em> which is returned by any of the bin functions.</p>
+can be created using the type <strong>t_new_bin_array(0 to 0)</strong> which is returned by any of the bin functions.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_BIN_IDLE</span><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 <span class="k">constant</span><span class="w"> </span><span class="n">C_BIN_RUNNING</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 <span class="k">constant</span><span class="w"> </span><span class="n">C_BIN_ILLEGAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
@@ -470,7 +469,7 @@ C_FC_DEFAULT_BIN_NAME constant in the adaptations_pkg. If multiple bins are give
 <code class="docutils literal notranslate"><span class="pre">bin_vector()</span></code>, or concatenation), or if a call to <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> results in multiple cross bins, the bin name will be indexed
 as shown in the examples below. All bin name indices starts from 1.</p>
 <p>A warning is issued when duplicate bin names are detected. This warning can be turned off by setting the
-C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg.vhd to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
 <p>Having bin names is useful when reading the reports.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w">                        </span><span class="c1">-- bin name: bin_1</span>
 <span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">-- bin name: bin_max</span>
@@ -1334,7 +1333,7 @@ functionality in SystemVerilog and OSVVM.</p>
 </section>
 <section id="func-cov-pkg">
 <span id="id2"></span><h2>func_cov_pkg<a class="headerlink" href="#func-cov-pkg" title="Link to this heading"></a></h2>
-<p>The following links contain information regarding the API of the protected type <em>t_coverpoint</em>, the API for the general methods and
+<p>The following links contain information regarding the API of the protected type <strong>t_coverpoint</strong>, the API for the general methods and
 all the type definitions inside <em>func_cov_pkg</em>.</p>
 <div class="toctree-wrapper compound">
 <ul>

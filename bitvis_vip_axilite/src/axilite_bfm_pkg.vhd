@@ -53,36 +53,36 @@ package axilite_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_axilite_bfm_config is record
-    max_wait_cycles            : natural; -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready and valid signals from the DUT.
-    max_wait_cycles_severity   : t_alert_level; -- The above timeout will have this severity
-    clock_period               : time;  -- Period of the clock signal.
-    clock_period_margin        : time;  -- Input clock period margin to specified clock_period
-    clock_margin_severity      : t_alert_level; -- The above margin will have this severity
-    setup_time                 : time;  -- Setup time for generated signals, set to clock_period/4
-    hold_time                  : time;  -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                   : t_bfm_sync; -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    max_wait_cycles            : natural;            -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready and valid signals from the DUT.
+    max_wait_cycles_severity   : t_alert_level;      -- The above timeout will have this severity
+    clock_period               : time;               -- Period of the clock signal.
+    clock_period_margin        : time;               -- Input clock period margin to specified clock_period
+    clock_margin_severity      : t_alert_level;      -- The above margin will have this severity
+    setup_time                 : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                  : time;               -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                   : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
     match_strictness           : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    expected_response          : t_xresp; -- Sets the expected response for both read and write transactions.
-    expected_response_severity : t_alert_level; -- A response mismatch will have this severity.
-    protection_setting         : t_axprot; -- Sets the AXI access permissions (e.g. write to data/instruction, privileged and secure access).
-    num_aw_pipe_stages         : natural; -- Write Address Channel pipeline steps.
-    num_w_pipe_stages          : natural; -- Write Data Channel pipeline steps.
-    num_ar_pipe_stages         : natural; -- Read Address Channel pipeline steps.
-    num_r_pipe_stages          : natural; -- Read Data Channel pipeline steps.
-    num_b_pipe_stages          : natural; -- Response Channel pipeline steps.
-    id_for_bfm                 : t_msg_id; -- The message ID used as a general message ID in the AXI-Lite BFM
-    id_for_bfm_wait            : t_msg_id; -- The message ID used for logging waits in the AXI-Lite BFM   -- DEPRECATE: will be removed
-    id_for_bfm_poll            : t_msg_id; -- The message ID used for logging polling in the AXI-Lite BFM -- DEPRECATE: will be removed
+    expected_response          : t_xresp;            -- Sets the expected response for both read and write transactions.
+    expected_response_severity : t_alert_level;      -- A response mismatch will have this severity.
+    protection_setting         : t_axprot;           -- Sets the AXI access permissions (e.g. write to data/instruction, privileged and secure access).
+    num_aw_pipe_stages         : natural;            -- Write Address Channel pipeline steps.
+    num_w_pipe_stages          : natural;            -- Write Data Channel pipeline steps.
+    num_ar_pipe_stages         : natural;            -- Read Address Channel pipeline steps.
+    num_r_pipe_stages          : natural;            -- Read Data Channel pipeline steps.
+    num_b_pipe_stages          : natural;            -- Response Channel pipeline steps.
+    id_for_bfm                 : t_msg_id;           -- The message ID used as a general message ID in the AXI-Lite BFM
+    id_for_bfm_wait            : t_msg_id;           -- DEPRECATED: will be removed in v3
+    id_for_bfm_poll            : t_msg_id;           -- DEPRECATED: will be removed in v3
   end record;
 
   constant C_AXILITE_BFM_CONFIG_DEFAULT : t_axilite_bfm_config := (
-    max_wait_cycles            => 10,
+    max_wait_cycles            => 1000,
     max_wait_cycles_severity   => TB_FAILURE,
-    clock_period               => -1 ns,
+    clock_period               => C_UNDEFINED_TIME,
     clock_period_margin        => 0 ns,
     clock_margin_severity      => TB_ERROR,
-    setup_time                 => -1 ns,
-    hold_time                  => -1 ns,
+    setup_time                 => C_UNDEFINED_TIME,
+    hold_time                  => C_UNDEFINED_TIME,
     bfm_sync                   => SYNC_ON_CLOCK_ONLY,
     match_strictness           => MATCH_EXACT,
     expected_response          => OKAY,
@@ -375,7 +375,7 @@ package body axilite_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel       := shared_msg_id_panel;
     constant config       : in t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call : string := "axilite_write(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call : string := "axilite_write(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     constant max_pipe_stages : integer := maximum(maximum(config.num_w_pipe_stages, config.num_aw_pipe_stages), config.num_b_pipe_stages);
     variable v_await_awready : boolean := true;
@@ -386,14 +386,14 @@ package body axilite_bfm_pkg is
     variable v_normalized_addr      : std_logic_vector(axilite_if.write_address_channel.awaddr'length - 1 downto 0) := normalize_and_check(std_logic_vector(addr_value), axilite_if.write_address_channel.awaddr, ALLOW_NARROWER, "addr", "axilite_if.write_address_channel.awaddr", msg);
     variable v_normalized_data      : std_logic_vector(axilite_if.write_data_channel.wdata'length - 1 downto 0)     := normalize_and_check(data_value, axilite_if.write_data_channel.wdata, ALLOW_NARROWER, "data", "axilite_if.write_data_channel.wdata", msg);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                                                          := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                                                          := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                                                          := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                                                          := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_wready               : std_logic;
     variable v_awready              : std_logic;
   begin
     check_value(v_normalized_data'length = 32 or v_normalized_data'length = 64, TB_ERROR, "AXI-lite data width must be either 32 or 64!", scope, ID_NEVER, msg_id_panel);
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
       check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
       check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     end if;
@@ -416,12 +416,10 @@ package body axilite_bfm_pkg is
       end if;
 
       wait until rising_edge(clk);
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
-      end if;
 
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      end if;
 
       -- Sample ready signals
       v_wready  := axilite_if.write_data_channel.wready;
@@ -447,8 +445,8 @@ package body axilite_bfm_pkg is
       end if;
     end loop;
 
-    check_value(not v_await_wready, config.max_wait_cycles_severity, ": Timeout waiting for WREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
 
     for cycle in 0 to config.max_wait_cycles loop
 
@@ -461,9 +459,6 @@ package body axilite_bfm_pkg is
       end if;
 
       wait until rising_edge(clk);
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
-      end if;
 
       if axilite_if.write_response_channel.bvalid = '1' and cycle >= config.num_b_pipe_stages then
         check_value(axilite_if.write_response_channel.bresp, xresp_to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
@@ -479,9 +474,9 @@ package body axilite_bfm_pkg is
       end if;
     end loop;
 
-    check_value(not v_await_bvalid, config.max_wait_cycles_severity, ": Timeout waiting for BVALID", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
 
-    log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure axilite_write;
 
   procedure axilite_read(
@@ -496,7 +491,7 @@ package body axilite_bfm_pkg is
     constant ext_proc_call : in string               := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     constant local_proc_name : string := "axilite_read"; -- Local proc_name; used if called from sequncer or VVC
-    constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
+    constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
 
     -- Normalize to the DUT addr/data widths
     variable v_normalized_addr      : std_logic_vector(axilite_if.read_address_channel.araddr'length - 1 downto 0) := normalize_and_check(std_logic_vector(addr_value), axilite_if.read_address_channel.araddr, ALLOW_NARROWER, "addr", "axilite_if.read_address_channel.araddr", msg);
@@ -505,12 +500,12 @@ package body axilite_bfm_pkg is
     variable v_await_arready        : boolean                                                                      := true;
     variable v_await_rvalid         : boolean                                                                      := true;
     variable v_data_value           : std_logic_vector(axilite_if.read_data_channel.rdata'length - 1 downto 0);
-    variable v_time_of_rising_edge  : time                                                                         := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                                                         := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
 
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, local_proc_call);
       check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
       check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
     end if;
@@ -538,12 +533,10 @@ package body axilite_bfm_pkg is
       end if;
 
       wait until rising_edge(clk);
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
-      end if;
 
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      end if;
 
       if axilite_if.read_address_channel.arready = '1' and cycle >= config.num_ar_pipe_stages then
         -- Wait according to config.bfm_sync setup
@@ -559,7 +552,7 @@ package body axilite_bfm_pkg is
       end if;
     end loop;
 
-    check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles. ", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     for cycle in 0 to config.max_wait_cycles loop
 
@@ -572,9 +565,6 @@ package body axilite_bfm_pkg is
       end if;
 
       wait until rising_edge(clk);
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
-      end if;
 
       if axilite_if.read_data_channel.rvalid = '1' and cycle >= config.num_r_pipe_stages then
         v_await_rvalid                      := false;
@@ -590,12 +580,12 @@ package body axilite_bfm_pkg is
       end if;
     end loop;
 
-    check_value(not v_await_rvalid, config.max_wait_cycles_severity, ": Timeout waiting for RVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles. ", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     data_value := v_data_value;
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. axilite_check)
     end if;
@@ -614,7 +604,7 @@ package body axilite_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel       := shared_msg_id_panel;
     constant config       : in t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call     : string                                                                    := "axilite_check(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call     : string                                                                    := "axilite_check(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_data_value  : std_logic_vector(axilite_if.write_data_channel.wdata'length - 1 downto 0) := (others => '0');
     variable v_check_ok    : boolean                                                                   := true;
     variable v_alert_radix : t_radix;
@@ -637,9 +627,9 @@ package body axilite_bfm_pkg is
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure axilite_check;

@@ -12,7 +12,8 @@ All Scoreboard functions and procedures commonly referred to as methods are defi
 The scoreboard can be used with a single instance or with multiple instances. An instance is a separate queue with its own statistics. 
 When multiple instances are used, the methods are called with the instance parameter. When only using a single scoreboard instance, 
 the instance parameter may be omitted if that instance index is 1. Multiple instances are typically used when multiple scoreboards 
-with the same data types are needed. Note that scoreboard instance numbering is in the range of 0 to N, with 1 as default.
+with the same data types are needed. Note that scoreboard instance numbering is in the range of 0 to C_MAX_SB_INSTANCE_IDX (defined 
+in adaptations_pkg), with instance 1 as default.
 
 All parameters in brackets are optional. No optional parameter can be used without using the preceding optional parameter, with the 
 exception of the instance parameter.
@@ -21,6 +22,10 @@ Each entry in the scoreboard instance consists of an expected element, source el
 which is specific for each entry. The entry number is used as an identifier for a specific entry in some of the advanced methods.
 
 A message parameter can be used for print to transcript for all methods that affect the data or the functionality of the scoreboard.
+
+.. note::
+
+    The maximum number of scoreboard instances in a testbench is given by C_MAX_TB_SB_NUM * C_MAX_SB_INSTANCE_IDX in adaptations_pkg.
 
 
 **********************************************************************************************************************************
@@ -200,7 +205,7 @@ This method uses the ID_CTRL message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -239,7 +244,7 @@ This method uses the ID_CTRL message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -291,15 +296,18 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_element   | in     | t_element                    | The element that shall be pushed to the queue           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | source             | in     | string                       | The element that is the raw-input to the DUT, before    |
-|          |                    |        |                              | DUT-processing. For debugging and logging only.         |
+|          |                    |        |                              | DUT-processing. For debugging and logging only. Maximum |
+|          |                    |        |                              | string size is C_SB_SOURCE_WIDTH defined in             |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -342,10 +350,11 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | received_element   | in     | t_element                    | The element that shall be checked in scoreboard         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -372,7 +381,7 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -411,7 +420,7 @@ This method uses the ID_CTRL message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -448,7 +457,7 @@ Returns true if the scoreboard instance is empty. If there is no instance parame
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -482,7 +491,7 @@ instance 1 is used.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -515,7 +524,7 @@ Returns the number of remaining entries in scoreboard. If there is no instance p
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -548,7 +557,7 @@ Returns the number of checks with match in scoreboard. If there is no instance p
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -581,7 +590,7 @@ Returns the number of checks without match in scoreboard. If there is no instanc
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -615,7 +624,7 @@ instance 1 is used.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -649,7 +658,7 @@ parameter, instance 1 is used.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -682,7 +691,7 @@ Returns the number of explicitly deleted items by delete and flush methods. If t
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -735,7 +744,7 @@ Returns the scope of the scoreboard.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -767,7 +776,7 @@ Enables the message id for the specified instance. If there is no instance param
 |          |                    |        |                              | be specified in all method calls, and that instance     |
 |          |                    |        |                              | index 1 is default.                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -801,7 +810,7 @@ Disables the message id for the specified instance. If there is no instance para
 |          |                    |        |                              | be specified in all method calls, and that instance     |
 |          |                    |        |                              | index 1 is default.                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -814,7 +823,9 @@ Disables the message id for the specified instance. If there is no instance para
 
 report_counters()
 ==================================================================================================================================
-Prints the scoreboard results. If there is no instance parameter, instance 1 is reported.
+Prints the scoreboard results. If there is no instance parameter, instance 1 is reported. The printing destination can be log 
+and/or console and is defined by the shared variable ``shared_default_log_destination`` with the default value set by 
+C_DEFAULT_LOG_DESTINATION in adaptations_pkg.
 
 .. code-block::
 
@@ -824,7 +835,7 @@ Prints the scoreboard results. If there is no instance parameter, instance 1 is 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -887,15 +898,18 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_element   | in     | t_element                    | The element that shall be pushed to the queue           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | source             | in     | string                       | The element that is the raw-input to the DUT, before    |
-|          |                    |        |                              | DUT-processing. For debugging and logging only.         |
+|          |                    |        |                              | DUT-processing. For debugging and logging only. Maximum |
+|          |                    |        |                              | string size is C_SB_SOURCE_WIDTH defined in             |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -939,10 +953,11 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_element   | in     | t_element                    | The element that shall be pushed to the queue           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | identifier_option  | in     | t_identifier_option          | Option for type of identifier used. Can only be POSITION|
 |          |                    |        |                              | or ENTRY_NUM.                                           |
@@ -996,10 +1011,11 @@ element or both. If there is no instance parameter, instance 1 is used.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_element   | in     | t_element                    | The element that shall be pushed to the queue           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1038,10 +1054,11 @@ element or both. If there is no instance parameter, instance 1 is used.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_element   | in     | t_element                    | The element that shall be pushed to the queue           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1068,7 +1085,7 @@ expected element in the scoreboard queue if no identifier specified. If the iden
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -1113,7 +1130,7 @@ source element in the scoreboard queue if no identifier specified. If the identi
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -1158,7 +1175,7 @@ tag in the scoreboard queue if no identifier specified. If the identifier is not
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -1204,7 +1221,7 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -1252,7 +1269,7 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -1300,7 +1317,7 @@ This method uses the ID_DATA message ID.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | The instance number of the scoreboard. The scoreboard   |
 |          |                    |        |                              | can have several instances,                             |
@@ -1358,10 +1375,11 @@ parameter, instance 1 is used.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_element   | in     | t_element                    | The element that shall be pushed to the queue           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag_usage          | in     | t_tag_usage                  | Enumerated type used before every tag is entered. Only  |
+| constant | tag_usage          | in     | :ref:`t_tag_usage`           | Enumerated type used before every tag is entered. Only  |
 |          |                    |        |                              | 'TAG' can be used.                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | tag                | in     | string                       | Tag of the scoreboard element                           |
+| constant | tag                | in     | string                       | Tag of the scoreboard element. Maximum string size is   |
+|          |                    |        |                              | C_SB_TAG_WIDTH defined in adaptations_pkg.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::

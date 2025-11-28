@@ -55,7 +55,7 @@ entity avalon_st_vvc is
   );
   port(
     clk              : in    std_logic;
-    avalon_st_vvc_if : inout t_avalon_st_if := init_avalon_st_if_signals(GC_VVC_IS_MASTER, GC_CHANNEL_WIDTH, GC_DATA_WIDTH, GC_DATA_ERROR_WIDTH, GC_EMPTY_WIDTH)
+    avalon_st_vvc_if : inout t_avalon_st_if := init_avalon_st_if_signals(GC_VVC_IS_MASTER, GC_CHANNEL_WIDTH, GC_DATA_WIDTH, GC_DATA_ERROR_WIDTH, GC_EMPTY_WIDTH, GC_AVALON_ST_BFM_CONFIG)
   );
 end entity avalon_st_vvc;
 
@@ -86,16 +86,16 @@ architecture behave of avalon_st_vvc is
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
   ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
     if command.msg(1 to 5) = "HVVC:" then
-      return vvc_config.parent_msg_id_panel;
+      return config.parent_msg_id_panel;
     else
-      return vvc_config.msg_id_panel;
+      return config.msg_id_panel;
     end if;
   end function;
 
@@ -369,7 +369,7 @@ begin
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
-            check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
+            check_value(vvc_config.bfm_config.clock_period /= C_UNDEFINED_TIME, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
                         C_SCOPE, ID_NEVER, v_msg_id_panel);
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;

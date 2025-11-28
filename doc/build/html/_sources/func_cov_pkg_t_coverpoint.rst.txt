@@ -31,7 +31,7 @@ Returns the coverpoint's name. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -68,7 +68,7 @@ Returns the configured scope. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -90,7 +90,8 @@ from the overall coverage calculation. Default value is 1. ::
 | constant | weight             | in     | natural                      | Weight of the coverpoint                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -110,7 +111,7 @@ Returns the coverpoint's coverage weight. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -132,7 +133,8 @@ the coverpoint. Default value is 100. ::
 | constant | percentage         | in     | positive range 1 to 100      | Goal percentage of the coverpoint's bins to cover     |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -150,7 +152,7 @@ Returns the coverpoint's bins coverage goal. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -172,7 +174,8 @@ bin in the coverpoint. Default value is 100. ::
 | constant | percentage         | in     | positive                     | Goal percentage of the coverpoint's min_hits to cover |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -191,7 +194,7 @@ Returns the coverpoint's hits coverage goal. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -212,7 +215,8 @@ Configures the alert level when an illegal bin is sampled. Default value is ERRO
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -230,7 +234,7 @@ Returns the alert level when an illegal bin is sampled. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -251,7 +255,8 @@ Configures the alert level when overlapping bins are sampled (not including igno
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -269,7 +274,7 @@ Returns the alert level when overlapping bins are sampled. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -290,7 +295,8 @@ Writes the coverpoint model, configuration and accumulated counters to a file. :
 | constant | file_name          | in     | string                       | Name of the file where to store the coverpoint data   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -322,7 +328,8 @@ coverpoint. ::
 |          |                          |        |                              | coverpoint is loaded. Default value is HOLES_ONLY.    |
 +----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel             | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                          |        |                              | value is shared_msg_id_panel.                         |
+|          |                          |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                          |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -343,10 +350,11 @@ Resets the coverpoint's coverage by clearing all the bin hit counters. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -369,7 +377,8 @@ bins. Default value is C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED defined in adapta
 | constant | value              | in     | positive                     | New size of the bin list                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -407,10 +416,11 @@ De-allocates the list of bins and resets all configuration settings to their def
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -454,7 +464,8 @@ Bin functions may be concatenated to add several bins at once. ::
 |          |                    |        |                              | :ref:`bin name <bin_name>`.                           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -499,7 +510,8 @@ which return a t_new_bin_array. Bin functions may be concatenated to add several
 |          |                    |        |                              | :ref:`bin name <bin_name>`.                           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -557,7 +569,8 @@ Adds a cross between two coverpoints to the coverpoint. Note that the coverpoint
 |          |                    |        |                              | :ref:`bin name <bin_name>`.                           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -593,7 +606,7 @@ Returns true if the coverpoint contains at least one bin. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -621,7 +634,8 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
 | constant | values             | in     | integer_vector               | Values to be sampled                                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -682,8 +696,9 @@ click :ref:`here <func_cov_pkg_coverage_status>`. ::
 report_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the coverpoint coverage summary containing all the bins. The printing destination can be log and/or console and is defined 
-by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using the file_name 
-parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_coverage_report>`. ::
+by the shared variable ``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg. 
+The report can also be printed to a separate file by using the file_name parameter. To see an example of the generated report 
+click :ref:`here <func_cov_pkg_coverage_report>`. ::
 
     report_coverage(VOID)
     report_coverage(verbosity, [file_name, [open_mode, [rand_weight_col]]])
@@ -691,7 +706,7 @@ parameter. To see an example of the generated report click :ref:`here <func_cov_
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                            | Description                                           |
 +==========+====================+========+=================================+=======================================================+
-| constant | VOID               | in     | t_void                          | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                   | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report. Default  |
 |          |                    |        |                                 | value is NON_VERBOSE.                                 |
@@ -718,8 +733,10 @@ parameter. To see an example of the generated report click :ref:`here <func_cov_
 
 report_config()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints a report containing the coverpoint's configuration parameters. The report can also be printed to a separate file by using 
-the file_name parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_config_report>`. ::
+Prints a report containing the coverpoint's configuration parameters. The printing destination can be log and/or console and is 
+defined by the shared variable ``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION in 
+adaptations_pkg. The report can also be printed to a separate file by using the file_name parameter. To see an example of the 
+generated report click :ref:`here <func_cov_pkg_config_report>`. ::
 
     report_config(VOID)
     report_config(file_name, [open_mode])
@@ -727,7 +744,7 @@ the file_name parameter. To see an example of the generated report click :ref:`h
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | file_name          | in     | string                       | Name of the file where the report will be written.      |
 |          |                    |        |                              | Default value is an empty string, which means do not    |
@@ -761,7 +778,8 @@ click :ref:`here <optimized_randomization>`.::
 |          |                    |        |                              | random value.                                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -810,7 +828,7 @@ Returns the randomization seeds. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | variable | seed2              | out    | positive                     | A positive number representing seed 2                 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::

@@ -69,11 +69,11 @@ begin
     end function get_error_injection_timing;
 
     -- Computes if input interval number is a error inject interval
-    impure function is_valid_interval(counter : natural; error_type : t_error_injection_types) return boolean is
+    impure function is_valid_interval(counter : natural; error_injection_type : t_error_injection_types) return boolean is
     begin
       if (counter mod ei_config.interval) = 0 then
         return true;
-      elsif error_type = BYPASS then
+      elsif error_injection_type = BYPASS then
         return true;
       else
         return false;

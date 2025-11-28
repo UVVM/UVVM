@@ -9,12 +9,13 @@
   <title>Bitvis VIP Specification Coverage &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -155,7 +153,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -335,10 +333,6 @@ For a simple scenario with a single testcase, the Partial Coverage <code class="
 <a class="reference internal image-reference" href="_images/concept.png"><img alt="Simplest possible Specification Coverage (note that Partial Coverage files only show the actual requirement coverage lines)" src="_images/concept.png" style="width: 1300pt;" />
 </a>
 </figure>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="simple-usage">
@@ -348,8 +342,10 @@ For a simple scenario with a single testcase, the Partial Coverage <code class="
 <p>A shortcut is supported to allow all tested requirements to be reported to the Partial Coverage file - without the need for a prior
 listing of the requirements. This shortcut does of course not yield any Specification Coverage, as no specification is given, but could
 be useful for scenarios or early testing where only a list of executed tests is wanted. This shortcut mode is automatically applied
-when no Requirement List is provided as an input to the initialize_req_cov() VHDL command in the test sequencer. If so, the Partial
-Coverage files will be generated, but no Specification Coverage file (the Python script) shall be run.</p>
+when no Requirement List is provided as an input to the initialize_req_cov() VHDL command in the test sequencer. If the run_spec_cov.py
+script is run without a requirement file, or with requirements missing from the requirement file, any requirements that are ticked off
+during simulation but are not listed in the requirement file will be marked as UNLISTED_REQ_PASS/FAIL in the output files from the
+run_spec_cov.py script, i.e. they will not be given a COMPLIANT/NON_COMPLIANT status.</p>
 </section>
 <section id="simple-usage-with-multiple-testcases">
 <h3>Simple usage, with multiple testcases<a class="headerlink" href="#simple-usage-with-multiple-testcases" title="Link to this heading"></a></h3>
@@ -400,10 +396,6 @@ various strictness settings.</p>
 <p>Testcase names and Requirement labels are not case sensitive for any comparison. For any output report the names and labels from the
 Requirement List will be used if available. If not provided via the Requirement List, then testcase name is taken from the
 initialize_req_cov() and the requirement label from the tick_off_req_cov().</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="advanced-usage">
@@ -522,10 +514,6 @@ using the IP (or legacy) testbench. The Python script will check that - For proj
 UART_REQ_2 have passed - For project requirement UART_REQ_B, UART_REQ_3 has passed - Etc…</p>
 <p>The report from run_spec_cov.py will show compliance for the project requirement (e.g.UART_REQ_A), but also for the
 “sub-requirement(s)” (e.g. UART_REQ_1 and UART_REQ_2).</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 </section>
@@ -721,10 +709,6 @@ REQ_1, Description 1, TC_1
 REQ_2, Description 2, TC_2 # This will NOT be interpreted as a comment!
 </pre></div>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="vhdl-package">
@@ -734,7 +718,7 @@ file in the src/ directory of this VIP.</p>
 <section id="configuration-record">
 <h3>Configuration record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
 <p><strong>t_spec_cov_config</strong></p>
-<p>This record is located in the spec_cov_pkg.vhd. The configuration record is applied as a shared_variable ‘shared_spec_cov_config’
+<p>This record is located in the spec_cov_pkg.vhd. The configuration record is applied as a shared_variable <code class="docutils literal notranslate"><span class="pre">shared_spec_cov_config</span></code>
 to allow different configuration for different DUTs. Any test sequencer may then set the complete record as required - or even just
 parts of it like <code class="docutils literal notranslate"><span class="pre">shared_spec_cov_config.csv_delimiter</span> <span class="pre">:=</span> <span class="pre">';';</span></code>. The default values of this record can be modified via the
 adaptations_pkg.</p>
@@ -932,7 +916,7 @@ only once. Default value is LIST_SINGLE_TICKOFF.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_SCOPE (“TB seq.(uvvm)”).</p></td>
+Default value is C_SCOPE defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -973,7 +957,7 @@ If the simulation never reached this command, e.g. if failed, then no summary li
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -1038,7 +1022,7 @@ only once. Default value is LIST_SINGLE_TICKOFF.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_SCOPE (“TB seq.(uvvm)”).</p></td>
+Default value is C_SCOPE defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1161,10 +1145,6 @@ files</p></td>
 <li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
 <li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 </section>
@@ -1193,7 +1173,7 @@ from the command line. The CSV delimiter is fetched by the Python script from th
 <tbody>
 <tr class="row-even"><td><p>–requirement_list (-r)</p></td>
 <td><p>–requirement_list path/requirements.csv</p></td>
-<td><p>Points to the Requirement List. Mandatory. (This script is not used when running spec. cov. without a Requirement List)</p></td>
+<td><p>Points to the Requirement List (Mandatory for compliance checking)</p></td>
 </tr>
 <tr class="row-odd"><td><p>–partial_cov (-p)</p></td>
 <td><p>–partial_cov my_testcase_cov.csv</p>
@@ -1480,6 +1460,12 @@ testcase.</p></td>
 testcase.</p></td>
 <td><p>Not ticked off in any testcase.</p></td>
 </tr>
+<tr class="row-odd"><td><p>UNLISTED_REQ_PASS</p></td>
+<td colspan="3"><p>Ticked off in passing testcase, but not listed in requirement list.</p></td>
+</tr>
+<tr class="row-even"><td><p>UNLISTED_REQ_FAIL</p></td>
+<td colspan="3"><p>Ticked off in failing testcase, but not listed in requirement list.</p></td>
+</tr>
 </tbody>
 </table>
 <table class="docutils align-default">
@@ -1500,10 +1486,6 @@ testcase.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 </section>

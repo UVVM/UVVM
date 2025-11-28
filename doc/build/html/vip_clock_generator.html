@@ -9,12 +9,13 @@
   <title>Bitvis VIP Clock Generator &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -98,7 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -140,15 +138,11 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="vvc">
 <h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in clock_generator_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -166,7 +160,9 @@
 <tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>1</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC. Maximum value
+is defined by C_CLOCK_GEN_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>GC_CLOCK_NAME</p></td>
 <td><p>string</p></td>
@@ -225,6 +221,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -383,6 +383,20 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_CLOCK_GEN_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="start-clock">
 <span id="clock-generator-start-clock"></span><h4>start_clock()<a class="headerlink" href="#start-clock" title="Link to this heading"></a></h4>
 <p>Adds a start_clock command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
@@ -424,7 +438,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -475,7 +490,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -487,8 +503,16 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 <section id="set-clock-period">
 <span id="clock-generator-set-clock-period"></span><h4>set_clock_period()<a class="headerlink" href="#set-clock-period" title="Link to this heading"></a></h4>
 <p>Adds a set_clock_period command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
-completed. When the command is scheduled to run, the executor will change the clock period on the preceding rising clock edge.
-Note: the clock high time will have to be set using the set_clock_high_time() after setting a new clock period.</p>
+completed. When the command is scheduled to run, the executor updates the clock period and the change takes effect on the
+following rising clock edge.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The clock high time will have to be set using the <a class="reference internal" href="#clock-generator-set-clock-high-time"><span class="std std-ref">set_clock_high_time()</span></a> after setting a new clock period.</p></li>
+<li><p>If the period is changed to a smaller value than the current high time, the <a class="reference internal" href="#clock-generator-set-clock-high-time"><span class="std std-ref">set_clock_high_time()</span></a> must
+be called first to avoid a TB_ERROR.</p></li>
+</ul>
+</div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_clock_period</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">clock_period</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -532,7 +556,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -544,8 +569,13 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 <section id="set-clock-high-time">
 <span id="clock-generator-set-clock-high-time"></span><h4>set_clock_high_time()<a class="headerlink" href="#set-clock-high-time" title="Link to this heading"></a></h4>
 <p>Adds a set_clock_high_time command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
-completed. When the command is scheduled to run, the executor changes the clock high time and the change will take effect from the
-next rising edge.</p>
+completed. When the command is scheduled to run, the executor updates the clock high time and the change takes effect on the
+following rising clock edge.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the high time is changed to a bigger value than the current clock period, the <a class="reference internal" href="#clock-generator-set-clock-period"><span class="std std-ref">set_clock_period()</span></a> must
+be called first to avoid a TB_ERROR.</p>
+</div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_clock_high_time</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">clock_high_time</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -590,7 +620,8 @@ than clock_period</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>

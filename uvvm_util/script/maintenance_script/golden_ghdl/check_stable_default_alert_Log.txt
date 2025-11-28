@@ -1,0 +1,104 @@
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Verifying check_stable with default alert level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                     10.0 ns  TB seq.                        incremented expected ERRORs by 7.
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(bool, 9 ns) => OK. Value true was stable for 10 ns. 'Stable boolean OK'
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(slv, 9 ns) => OK. Value x"FF" was stable for 10 ns. 'Stable slv OK'
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(u, 9 ns) => OK. Value x"FF" was stable for 10 ns. 'Stable unsigned OK'
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(s, 9 ns) => OK. Value x"FF" was stable for 10 ns. 'Stable signed OK'
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(int, 9 ns) => OK. Value 14 was stable for 10 ns. 'Stable integer OK'
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(real, 9 ns) => OK. Value 1.33714e3 was stable for 10 ns. 'Stable real OK'
+UVVM: ID_POS_ACK                        10.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 1 was stable for 10 ns. 'Stable std_logic OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(bool, 11 ns) => Failed. Value switched from false to true 10 ns ago. Expected stable for 11 ns. 'Stable boolean Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(slv, 11 ns) => Failed. Value switched from x"00" to x"FF" 10 ns ago. Expected stable for 11 ns. 'Stable slv Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(u, 11 ns) => Failed. Value switched from x"00" to x"FF" 10 ns ago. Expected stable for 11 ns. 'Stable unsigned Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(s, 11 ns) => Failed. Value switched from x"00" to x"FF" 10 ns ago. Expected stable for 11 ns. 'Stable signed Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(int, 11 ns) => Failed. Value switched from 0 to 14 10 ns ago. Expected stable for 11 ns. 'Stable integer Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(real, 11 ns) => Failed. Value switched from 0.0 to 1.33714e3 10 ns ago. Expected stable for 11 ns. 'Stable real Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:            10 ns   TB seq.(uvvm)
+UVVM:                    check_stable(sl, 11 ns) => Failed. Value switched from 0 to 1 10 ns ago. Expected stable for 11 ns. 'Stable std_logic Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        30.0 ns  TB seq.(uvvm)                  check_stable(slv, 20 ns) => OK. Value x"CC" was stable for 20 ns. 'Stable slv OK'
+UVVM: ID_POS_ACK                        50.0 ns  TB seq.(uvvm)                  check_stable(slv, 30 ns) => OK. Value x"CC" was stable for 40 ns. 'Stable slv OK'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                CHECK_VALUE           :          0    
+UVVM:                CHECK_VALUE_IN_RANGE  :          0    
+UVVM:                CHECK_STABLE          :          0    
+UVVM:                CHECK_TIME_WINDOW     :          0    
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      7         7         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1050.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,6 +1,17 @@
 Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.0.1
+----------
+Released: 2025-11-28
+- Set ready default value from config in init_avalon_st_if_signals function.
+- Reorganized if statements for printing C_ERROR_REPORT_EXTENT.
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Increased max_wait_cycles default value to 1000.
+- Updated BFM procedures to only call check_clock_period_margin() once.
+- Removed extra sampling of rising_edge inside BFM procedures.
+
 v4.0.0
 ----------
 Released: 2025-03-25

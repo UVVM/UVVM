@@ -1,0 +1,8 @@
+Requirement,Compliance status,Reason
+REQ_ERROR_BEFORE_TC,NOT_TESTED,No requirement tickoffs
+REQ_ERROR_DURING_TC,NOT_TESTED,No requirement tickoffs
+REQ_LIST_SINGLE_TICKOFF_PF,NON_COMPLIANT,Requirement explicitly failed at tickoff
+REQ_COND_TICKOFF,NOT_TESTED,No requirement tickoffs
+REQ_ALWAYS_TICKOFF,NOT_TESTED,No requirement tickoffs
+
+

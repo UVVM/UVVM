@@ -20,8 +20,6 @@ Bitvis VIP SBI
   * :ref:`sbi_poll_until_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -67,7 +65,7 @@ Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| max_wait_cycles              | integer                      | 10              | The maximum number of clock cycles to wait for  |
+| max_wait_cycles              | natural                      | 1000            | The maximum number of clock cycles to wait for  |
 |                              |                              |                 | the DUT ready signal before reporting a timeout |
 |                              |                              |                 | alert                                           |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -79,7 +77,7 @@ Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 | fixed_wait_cycles_read       | natural                      | 0               | Number of clock cycles to wait after asserting  |
 |                              |                              |                 | rena signal, before sampling rdata              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| clock_period                 | time                         | -1 ns           | Period of the clock signal                      |
+| clock_period                 | time                         | C_UNDEFINED_TIME| Period of the clock signal                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_period_margin          | time                         | 0 ns            | Input clock period margin to specified          |
 |                              |                              |                 | clock_period. Will check 'T/2' if input clock is|
@@ -88,27 +86,44 @@ Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_margin_severity        | :ref:`t_alert_level`         | TB_ERROR        | The above margin will have this severity        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| setup_time                   | time                         | -1 ns           | Generated signals setup time. Suggested value   |
+| setup_time                   | time                         | C_UNDEFINED_TIME| Generated signals setup time. Suggested value   |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | setup_time exceeds clock_period/2.              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| hold_time                    | time                         | -1 ns           | Generated signals hold time. Suggested value    |
+| hold_time                    | time                         | C_UNDEFINED_TIME| Generated signals hold time. Suggested value    |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
-|                              |                              | NLY             | enter on the first falling edge, estimate the   |
-|                              |                              |                 | clock period,                                   |
+|                              |                              | NLY             | always wait for the first falling edge of the   |
+|                              |                              |                 | clock.                                          |
 |                              |                              |                 |                                                 |
-|                              |                              |                 | synchronize the output signals and exit ¼       |
-|                              |                              |                 | clock period after a succeeding rising edge.    |
+|                              |                              |                 | Then the interface output signals will be       |
+|                              |                              |                 | set up immediately. After that, the BFM will    |
+|                              |                              |                 | wait for the rising edge of the clock,          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | sample or set relevant interface signals (if    |
+|                              |                              |                 | any), and estimate the clock period.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit ¼ clock period after a  |
+|                              |                              |                 | succeeding rising edge.                         |
 |                              |                              |                 |                                                 |
 |                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
-|                              |                              |                 | will use the configured setup_time, hold_time   |
-|                              |                              |                 | and                                             |
+|                              |                              |                 | will always wait for the configured setup time  |
+|                              |                              |                 | before the first rising edge of the clock.      |
 |                              |                              |                 |                                                 |
-|                              |                              |                 | clock_period to synchronize output signals      |
-|                              |                              |                 | with clock edges.                               |
+|                              |                              |                 | Then the interface output signals will be set up|
+|                              |                              |                 | immediately. After that, the BFM will wait for  |
+|                              |                              |                 | the rising edge of the clock,                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | and sample or set relevant interface signals (if|
+|                              |                              |                 | any). Note that the clock period needs to be    |
+|                              |                              |                 | configured in this mode.                        |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit after the configured    |
+|                              |                              |                 | hold time after a succeeding rising edge.       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
 |                              |                              |                 | check procedures.                               |
@@ -120,12 +135,12 @@ Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
 |                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
+| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | use_ready_signal             | boolean                      | true            | Whether or not to use the interface 'ready'     |
 |                              |                              |                 | signal                                          |
@@ -186,7 +201,8 @@ The procedure reports an alert if ready signal is not set to '1' within 'config.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SBI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_sbi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_sbi_bfm_config>`          | value is C_SBI_BFM_CONFIG_DEFAULT.                      |
@@ -249,7 +265,8 @@ The procedure reports an alert if ready signal is not set to '1' within 'config.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SBI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_sbi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_sbi_bfm_config>`          | value is C_SBI_BFM_CONFIG_DEFAULT.                      |
@@ -302,7 +319,8 @@ the SBI bus, the read data is compared with the expected data.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SBI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_sbi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_sbi_bfm_config>`          | value is C_SBI_BFM_CONFIG_DEFAULT.                      |
@@ -377,7 +395,8 @@ set to 0 (ns), this constraint will be ignored and interpreted as no limit.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SBI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_sbi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_sbi_bfm_config>`          | value is C_SBI_BFM_CONFIG_DEFAULT.                      |
@@ -510,13 +529,11 @@ the clock after 'ready' active.
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in sbi_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -531,7 +548,9 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_DATA_WIDTH                | integer                      | 32              | Width of the SBI data bus                       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_SBI_VVC_MAX_INSTANCE_NUM        |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_SBI_CONFIG                | :ref:`t_sbi_bfm_config       | C_SBI_BFM_CONFI\| Configuration for the SBI BFM                   |
 |                              | <t_sbi_bfm_config>`          | G_DEFAULT       |                                                 |
@@ -561,6 +580,10 @@ Generics
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
+
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -572,7 +595,7 @@ Signals
 | signal   | sbi_vvc_master_if  | inout  | :ref:`t_sbi_if <t_sbi_if>`   | SBI signal interface record                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-In this VVC, the interface has been encapsulated in a signal record of type t_sbi_if in order to improve readability of the code. 
+In this VVC, the interface has been encapsulated in a signal record of type **t_sbi_if** in order to improve readability of the code. 
 Since the SBI interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained 
 vectors need to be constrained when the interface signals are instantiated. For this interface, it could look like: ::
 
@@ -660,6 +683,18 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_SBI_VVC_CMD_DATA_MAX_LENGTH              | Maximum **data** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_SBI_VVC_CMD_ADDR_MAX_LENGTH              | Maximum **addr** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_SBI_VVC_CMD_STRING_MAX_LENGTH            | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _sbi_write_vvc:
 
@@ -693,12 +728,13 @@ sbi_write()
 | constant | num_words          | in     | natural                      | Number of times the procedure is called to send new     |
 |          |                    |        |                              | random data words                                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | randomisation      | in     | t_randomisation              | Randomization profile                                   |
+| constant | randomisation      | in     | :ref:`t_randomisation`       | Randomization profile                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -743,7 +779,8 @@ checked against the expected value (provided by the testbench).
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -801,7 +838,8 @@ the expected data parameter, an alert with severity 'alert_level' will be issued
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -858,7 +896,8 @@ procedure.
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -899,7 +938,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -915,7 +954,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | data                         | std_logic_vector(31 downto 0)| 0x0             | Data for SBI read or write transaction          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | randomisation                | t_randomisation              | NA              | sbi_write() will generate random data when set  |
+    | randomisation                | :ref:`t_randomisation`       | NA              | sbi_write() will generate random data when set  |
     |                              |                              |                 | to RANDOM                                       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | num_words                    | natural                      | 1               | Use with randomization to write a number of     |
@@ -931,7 +970,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -942,8 +981,8 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. sbi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The SBI scoreboard is accessible from the testbench as a shared variable SBI_VVC_SB, located in the 
-vvc_methods_pkg.vhd, e.g. ::
+TO_SB parameter is applied. The SBI scoreboard is accessible from the testbench as a shared variable ``SBI_VVC_SB``, located in 
+the vvc_methods_pkg.vhd, e.g. ::
 
     SBI_VVC_SB.add_expected(C_SBI_VVC_IDX, pad_sbi_sb(v_expected), "Adding expected");
 
@@ -953,7 +992,7 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
     SBI_VVC_SB.add_expected(<SBI VVC instance number>, pad_sbi_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the SBI VVC scoreboard using the SBI_VVC_SB.
+Scoreboard commands are available for the SBI VVC scoreboard using the ``SBI_VVC_SB``.
 
 
 Unwanted Activity Detection

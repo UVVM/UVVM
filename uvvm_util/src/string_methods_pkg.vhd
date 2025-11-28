@@ -28,6 +28,8 @@ use work.adaptations_pkg.all;
 
 package string_methods_pkg is
 
+  shared variable shared_default_log_destination : t_log_destination := C_DEFAULT_LOG_DESTINATION;
+
   -- Need a low level "alert" in the form of a simple assertion (as string handling may also fail)
   procedure bitvis_assert(
     val        : boolean;
@@ -36,8 +38,7 @@ package string_methods_pkg is
     scope      : string
   );
 
-  -- DEPRECATED.
-  -- Function will be removed in future versions of UVVM-Util
+  -- DEPRECATED: will be removed in v3
   function justify(
     val       : string;
     width     : natural         := 0;
@@ -45,8 +46,6 @@ package string_methods_pkg is
     format    : t_format_string := AS_IS -- No defaults on 4 first param - to avoid ambiguity with std.textio
   ) return string;
 
-  -- DEPRECATED.
-  -- Function will be removed in future versions of UVVM-Util
   function justify(
     val           : string;
     justified     : side;
@@ -209,8 +208,7 @@ package string_methods_pkg is
     format : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
   ) return string;
 
-  -- This function has been deprecated and will be removed in the next major release
-  -- DEPRECATED
+  -- DEPRECATED: will be removed in v3
   function to_string(
     val       : boolean;
     width     : natural;
@@ -218,8 +216,7 @@ package string_methods_pkg is
     format    : t_format_string := AS_IS
   ) return string;
 
-  -- This function has been deprecated and will be removed in the next major release
-  -- DEPRECATED
+  -- DEPRECATED: will be removed in v3
   function to_string(
     val       : integer;
     width     : natural;
@@ -378,7 +375,7 @@ package body string_methods_pkg is
   ) is
   begin
     assert val
-    report LF & C_LOG_PREFIX & " *** " & to_string(severeness) & "*** caused by Bitvis Util > string handling > " & scope & LF & C_LOG_PREFIX & " " & add_msg_delimiter(msg) & LF
+    report LF & C_LOG_PREFIX & " *** " & to_string(severeness) & "*** caused by Bitvis Util > string handling > " & scope & LF & C_LOG_PREFIX & add_msg_delimiter(msg) & LF
     severity severeness;
   end;
 
@@ -436,7 +433,6 @@ package body string_methods_pkg is
     return v_result;
   end pad_string;
 
-  -- This procedure has been deprecated, and will be removed in the near future.
   function justify(
     val       : string;
     width     : natural         := 0;
@@ -463,7 +459,6 @@ package body string_methods_pkg is
     return result;
   end function;
 
-  -- This procedure has been deprecated, and will be removed in the near future.
   function justify(
     val           : string;
     justified     : side;
@@ -630,8 +625,8 @@ package body string_methods_pkg is
     if (val'length = 0) then
       return false;
     else
-      for i in val'left to val'right loop
-        if (val(i) = char) then
+      for i in a_val'left to a_val'right loop
+        if (a_val(i) = char) then
           return true;
         end if;
       end loop;
@@ -1100,7 +1095,6 @@ package body string_methods_pkg is
   ) return string is
     variable v_val_slv      : std_logic_vector(31 downto 0) := std_logic_vector(to_signed(val, 32));
     variable v_line         : line;
-    variable v_width        : natural;
     variable v_use_end_char : boolean                       := false;
     impure function return_and_deallocate return string is
       constant C_RET : string := v_line.all;
@@ -1150,7 +1144,6 @@ package body string_methods_pkg is
     return to_string(val, v_len, LEFT, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE, radix, prefix, format);
   end;
 
-  -- This function has been deprecated and will be removed in the next major release
   function to_string(
     val       : boolean;
     width     : natural;
@@ -1161,7 +1154,6 @@ package body string_methods_pkg is
     return justify(to_string(val), width, justified, format);
   end;
 
-  -- This function has been deprecated and will be removed in the next major release
   function to_string(
     val       : integer;
     width     : natural;
@@ -1195,43 +1187,43 @@ package body string_methods_pkg is
         write(v_line, string'("b"""));
         v_use_end_char := true;
       end if;
-      write(v_line, adjust_leading_0(to_string(val), format));
+      write(v_line, adjust_leading_0(to_string(a_val), format));
     elsif radix = HEX then
       if prefix = INCL_RADIX then
         write(v_line, string'("x"""));
         v_use_end_char := true;
       end if;
-      write(v_line, adjust_leading_0(to_hstring(val), format));
+      write(v_line, adjust_leading_0(to_hstring(a_val), format));
     elsif radix = DEC then
       -- Assuming that val is not signed
-      if (val'length > 31) then
+      if (a_val'length > 31) then
         if prefix = INCL_RADIX then
           write(v_line, string'("x"""));
           v_use_end_char := true;
         end if;
-        write(v_line, to_hstring(val) & " (too wide to be converted to integer)");
+        write(v_line, to_hstring(a_val) & " (too wide to be converted to integer)");
       else
         if prefix = INCL_RADIX then
           write(v_line, string'("d"""));
           v_use_end_char := true;
         end if;
-        write(v_line, adjust_leading_0(to_string(to_integer(unsigned(val))), format));
+        write(v_line, adjust_leading_0(to_string(to_integer(unsigned(a_val))), format));
       end if;
     elsif radix = HEX_BIN_IF_INVALID then
       if prefix = INCL_RADIX then
         write(v_line, string'("x"""));
       end if;
-      if is_x(val) then
-        write(v_line, adjust_leading_0(to_hstring(val), format));
+      if is_x(a_val) then
+        write(v_line, adjust_leading_0(to_hstring(a_val), format));
         if prefix = INCL_RADIX then
           write(v_line, string'("""")); -- terminate hex value
         end if;
         write(v_line, string'(" (b"""));
-        write(v_line, adjust_leading_0(to_string(val), format));
+        write(v_line, adjust_leading_0(to_string(a_val), format));
         write(v_line, string'(""""));
         write(v_line, string'(")"));
       else
-        write(v_line, adjust_leading_0(to_hstring(val), format));
+        write(v_line, adjust_leading_0(to_hstring(a_val), format));
         if prefix = INCL_RADIX then
           write(v_line, string'(""""));
         end if;
@@ -1308,18 +1300,18 @@ package body string_methods_pkg is
   ) return string is
 
     -- helper function to prevent null arrays
-    function get_string_len(val : t_slv_array) return integer is
+    function get_string_len(value : t_slv_array) return integer is
       variable v_parantheses           : integer := 2; -- Parentheses
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
       variable v_line                  : line;
     begin
-      if val'length > 0 then
-        v_commas       := 2 * (val'length - 1);
-        v_radix_prefix := 3 * val'length;
-        for i in val'range loop
-          write(v_line, to_string(val(i), radix));
+      if value'length > 0 then
+        v_commas       := 2 * (value'length - 1);
+        v_radix_prefix := 3 * value'length;
+        for i in value'range loop
+          write(v_line, to_string(value(i), radix));
           v_max_array_element_len := v_max_array_element_len + v_line'length;
           deallocate(v_line);
         end loop;
@@ -1364,18 +1356,18 @@ package body string_methods_pkg is
   ) return string is
 
     -- helper function to prevent null arrays
-    function get_string_len(val : t_signed_array) return integer is
+    function get_string_len(value : t_signed_array) return integer is
       variable v_parantheses           : integer := 2; -- Parentheses
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
       variable v_line                  : line;
     begin
-      if val'length > 0 then
-        v_commas       := 2 * (val'length - 1);
-        v_radix_prefix := 3 * val'length;
-        for i in val'range loop
-          write(v_line, to_string(val(i), radix));
+      if value'length > 0 then
+        v_commas       := 2 * (value'length - 1);
+        v_radix_prefix := 3 * value'length;
+        for i in value'range loop
+          write(v_line, to_string(value(i), radix));
           v_max_array_element_len := v_max_array_element_len + v_line'length;
           deallocate(v_line);
         end loop;
@@ -1420,18 +1412,18 @@ package body string_methods_pkg is
   ) return string is
 
     -- helper function to prevent null arrays
-    function get_string_len(val : t_unsigned_array) return integer is
+    function get_string_len(value : t_unsigned_array) return integer is
       variable v_parantheses           : integer := 2; -- Parentheses
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
       variable v_line                  : line;
     begin
-      if val'length > 0 then
-        v_commas       := 2 * (val'length - 1);
-        v_radix_prefix := 3 * val'length;
-        for i in val'range loop
-          write(v_line, to_string(val(i), radix));
+      if value'length > 0 then
+        v_commas       := 2 * (value'length - 1);
+        v_radix_prefix := 3 * value'length;
+        for i in value'range loop
+          write(v_line, to_string(value(i), radix));
           v_max_array_element_len := v_max_array_element_len + v_line'length;
           deallocate(v_line);
         end loop;
@@ -1705,9 +1697,9 @@ package body string_methods_pkg is
     if msg'length /= 0 then
       if valid_length(msg) /= 1 then
         if msg(1) = C_MSG_DELIMITER then
-          return msg;
+          return " " & msg;
         else
-          return C_MSG_DELIMITER & msg & C_MSG_DELIMITER;
+          return " " & C_MSG_DELIMITER & msg & C_MSG_DELIMITER;
         end if;
       end if;
     end if;

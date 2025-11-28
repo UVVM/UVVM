@@ -14,7 +14,7 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
--- WARNING! This package will be deprecated and no longer receive updates or bug fixes!
+-- WARNING! This package is deprecated and no longer receive updates or bug fixes!
 -- The generic_queue_pkg in uvvm_util/src/generic_queue_pkg.vhd has replaced ti_generic_queue_pkg
 
 library ieee;
@@ -784,7 +784,6 @@ package body ti_generic_queue_pkg is
       constant proc_name               : string := "delete";
       variable v_matched_element_ptr   : t_element_ptr; -- The element being deleted
       variable v_element_to_delete_ptr : t_element_ptr; -- The element being deleted
-      variable v_matched_element_data  : t_generic_element; -- Return value
       variable v_preceding_element_ptr : t_element_ptr;
       variable v_matched_position      : integer;
       variable v_found_match           : boolean;
@@ -1258,9 +1257,7 @@ package body ti_generic_queue_pkg is
       constant instance : in integer
     ) is
       variable v_element_ptr     : t_element_ptr; -- The element currently being processed
-      variable v_new_element_ptr : t_element_ptr; -- Used when creating a new element
       variable v_position_ctr    : natural := 1; -- Keep track of POSITION when traversing the linked list
-      variable v_found_match     : boolean := false;
     begin
       -- Search from front to back element. Initalise pointers/counters to the first entry:
       v_element_ptr := v_first_element(instance);

@@ -30,6 +30,7 @@ package alert_hierarchy_pkg is
 
   shared variable global_hierarchy_tree : t_hierarchy_linked_list;
 
+  -- For internal use only: This procedure is called from initialize_util() when C_ENABLE_HIERARCHICAL_ALERTS is set to true
   procedure initialize_hierarchy(
     constant base_scope : string           := C_BASE_HIERARCHY_LEVEL;
     constant stop_limit : t_alert_counters := (others => 0)
@@ -41,15 +42,18 @@ package alert_hierarchy_pkg is
     constant stop_limit   : t_alert_counters := (others => 0)
   );
 
+  -- For internal use only: This procedure is called from set_alert_stop_limit()
   procedure set_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level;
     constant value       : natural
   );
 
+  -- For internal use only: This function is called from get_alert_stop_limit()
   impure function get_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level
   ) return natural;
 
+  -- For internal use only: This procedure is called from alert()
   procedure hierarchical_alert(
     constant alert_level : t_alert_level;
     constant msg         : string;
@@ -81,6 +85,7 @@ package alert_hierarchy_pkg is
     constant stop_limit  : natural
   );
 
+  -- For internal use only: This procedure is called from report_alert_counters()
   procedure print_hierarchical_log(
     constant order : t_order := FINAL
   );

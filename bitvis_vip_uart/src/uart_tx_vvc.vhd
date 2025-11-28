@@ -76,16 +76,16 @@ architecture behave of uart_tx_vvc is
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
   ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
     if command.msg(1 to 5) = "HVVC:" then
-      return vvc_config.parent_msg_id_panel;
+      return config.parent_msg_id_panel;
     else
-      return vvc_config.msg_id_panel;
+      return config.msg_id_panel;
     end if;
   end function;
 
@@ -205,7 +205,6 @@ begin
   cmd_executor : process
     constant C_EXECUTOR_ID                            : natural                                     := 0;
     variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access  : time                                        := 0 ns;
     variable v_timestamp_start_of_last_bfm_access     : time                                        := 0 ns;
     variable v_timestamp_end_of_last_bfm_access       : time                                        := 0 ns;
@@ -303,7 +302,7 @@ begin
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Normalise address and data
-            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with too wide data. " & add_msg_delimiter(v_cmd.msg));
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with too wide data." & add_msg_delimiter(v_cmd.msg));
 
             transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.

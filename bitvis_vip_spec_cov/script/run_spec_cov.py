@@ -50,6 +50,7 @@ class Requirement():
     """
 
     VALID_REQ_TYPES = {'NONCOMPOUND', 'COMPOUND', 'SUB'}
+    VALID_PC_STATUSES = {'PASS', 'FAIL', 'NONE'}
 
     def __init__(self, req_name = None, req_type = 'NONCOMPOUND'):
         self.__req_name                   = req_name
@@ -64,6 +65,7 @@ class Requirement():
         self.__req_file_idx               = 0
         self.__req_type                   = req_type
         self.__explicitly_failed          = False
+        self.__partial_coverage_status    = 'NONE'
 
 
     @property
@@ -240,6 +242,17 @@ class Requirement():
     def explicitly_failed(self, failed) -> None :
         self.__explicitly_failed = failed
 
+    @property
+    def partial_coverage_status(self) -> str :
+        return self.__partial_coverage_status
+
+    @partial_coverage_status.setter
+    def partial_coverage_status(self, status) -> str :
+        if status not in Requirement.VALID_PC_STATUSES:
+            raise Exception("Invalid partial coverage status. Must be one of: {', '.join(Requirement.VALID_PC_STATUSES)}")
+        self.__partial_coverage_status = status
+
+
 
 class Testcase():
     """
@@ -384,7 +397,6 @@ testcase_not_run_string             = "NOT_EXECUTED"
 compliant_string                    = "COMPLIANT"
 non_compliant_string                = "NON_COMPLIANT"
 not_tested_compliant_string         = "NOT_TESTED"
-tested_ok_compliant_string          = "TESTED_OK"
 parsed_string                       = "Has been parsed by run_spec_cov.py script for total coverage"
 delimiter                           = "," # Default delimiter - will be updated from partial coverage file
 
@@ -489,45 +501,60 @@ def append_to_tc_string(tc_string, tc_name):
 def write_minimal_req_entry(requirement, compound_req_name, run_configuration, csv_writer, req_type):
     strictness = run_configuration.get("strictness")
 
-    if requirement.is_listed() and requirement.requirement_type == req_type:
-        if requirement.compliance == compliant_string:
-            expected_tc_list = requirement.get_expected_testcase_list()
-            actual_tc_list   = requirement.get_actual_testcase_list()
+    if requirement.requirement_type == req_type: # Write all requirements of the given type to output CSV file
 
-            # If strictness 0 and/or no expected testcases, list all actual testcases
-            if strictness == "0" or not expected_tc_list: # No expected testcases
-                    # For strictness 0, or with strictness 1 when no expected TCs, any actual TC is covering.
-                    # Write single testcase, since that is the minimum of covering TCs in this case
-                    testcase_string = actual_tc_list[0].name # Use first entry in list of actual testcases
+        # Requirement listed in req file: List in CSV file according to compliance status
+        if requirement.is_listed():
 
-            # If strictness 1 or 2, list minimum of covering testcases
-            # Minimum means that if several OR-listed testcases are ticked off, only one of them is listed.
-            # Single line per requirement
+            # COMPLIANT requirements: List with testcases
+            if requirement.compliance == compliant_string:
+                expected_tc_list = requirement.get_expected_testcase_list()
+                actual_tc_list   = requirement.get_actual_testcase_list()
+
+                # If strictness 0 and/or no expected testcases, list all actual testcases
+                if strictness == "0" or not expected_tc_list: # No expected testcases
+                        # For strictness 0, or with strictness 1 when no expected TCs, any actual TC is covering.
+                        # Write single testcase, since that is the minimum of covering TCs in this case
+                        testcase_string = actual_tc_list[0].name # Use first entry in list of actual testcases
+
+                # If strictness 1 or 2, list minimum of covering testcases
+                # Minimum means that if several OR-listed testcases are ticked off, only one of them is listed.
+                # Single line per requirement
+                else:
+                    testcase_string = ""
+                    for tc_entry in expected_tc_list:
+                        # Check if the entry is a list of OR-listed testcases or a single, AND-listed testcase
+                        if isinstance(tc_entry, list): # OR-listed testcases
+                            for or_listed_tc in tc_entry:
+                                if or_listed_tc in actual_tc_list:
+                                    testcase_string = append_to_tc_string(testcase_string, or_listed_tc.name)
+                                    break # Write only the first OR-listed TC that was ticked off
+                        else: # AND-listed testcase
+                            if tc_entry in actual_tc_list:
+                                testcase_string = append_to_tc_string(testcase_string, tc_entry.name)
+
+                # Write requirement line to CSV file
+                if req_type == "NONCOMPOUND":
+                    csv_writer.writerow([requirement.name, testcase_string, requirement.compliance]) 
+                elif req_type == "SUB":
+                    csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
+
+            # NON-COMPLIANT or NOT_TESTED requirements: List without testcases, and instead with a reference to non-compliance CSV file
             else:
-                testcase_string = ""
-                for tc_entry in expected_tc_list:
-                    # Check if the entry is a list of OR-listed testcases or a single, AND-listed testcase
-                    if isinstance(tc_entry, list): # OR-listed testcases
-                        for or_listed_tc in tc_entry:
-                            if or_listed_tc in actual_tc_list:
-                                testcase_string = append_to_tc_string(testcase_string, or_listed_tc.name)
-                                break # Write only the first OR-listed TC that was ticked off
-                    else: # AND-listed testcase
-                        if tc_entry in actual_tc_list:
-                            testcase_string = append_to_tc_string(testcase_string, tc_entry.name)
+                if req_type == "NONCOMPOUND":
+                    csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+                elif req_type == "SUB":
+                    csv_writer.writerow([compound_req_name, requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
 
+        # Requirements not listed in req file: List with UNLISTED_REQ_PASS/FAIL status from PC files
+        else: 
             # Write requirement line to CSV file
-            if req_type == "NONCOMPOUND":
-                csv_writer.writerow([requirement.name, testcase_string, requirement.compliance]) 
-            elif req_type == "SUB":
-                csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
-
-        # NON-COMPLIANT or NOT_TESTED reqs. List without testcases    
-        else:
-            if req_type == "NONCOMPOUND":
-                csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
-            elif req_type == "SUB":
-                csv_writer.writerow([compound_req_name, requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+            if requirement.partial_coverage_status == 'PASS':
+                actual_tc_list   = requirement.get_actual_testcase_list()
+                testcase_string = actual_tc_list[0].name # Use first entry in list of actual testcases
+                csv_writer.writerow([requirement.name, testcase_string, "UNLISTED_REQ_PASS"])
+            else:
+                csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_FAIL"])
 
 
 ## Helper function which writes line(s) with extended testcase listing and compliance for a requirement
@@ -535,56 +562,76 @@ def write_minimal_req_entry(requirement, compound_req_name, run_configuration, c
 def write_extended_req_entry(requirement, compound_req_name, run_configuration, csv_writer, req_type):
     strictness = run_configuration.get("strictness")
 
-    if requirement.is_listed() and requirement.requirement_type == req_type:
+    if requirement.requirement_type == req_type:
 
-        # COMPLIANT reqs. List with all covering testcases
-        if requirement.compliance == compliant_string:
-            first_tc_in_list = True
-            expected_tc_list = requirement.get_expected_testcase_list()
-            actual_tc_list = requirement.get_actual_testcase_list()
+        # Requirement listed in req file: List in CSV file according to compliance status
+        #------------------------------------------------------------------------------------
+        if requirement.is_listed():
 
-            # If strictness 0 and/or no expected testcases, list all actual testcases
-            # (In strictness 1, when no expected testcases, any actual testcase is covering)
-            if strictness == "0" or not expected_tc_list: # No expected testcases
+            # COMPLIANT reqs. List with all covering testcases
+            if requirement.compliance == compliant_string:
+                expected_tc_list = requirement.get_expected_testcase_list()
+                actual_tc_list = requirement.get_actual_testcase_list()
+
+                # If strictness 0 and/or no expected testcases, list all actual testcases
+                # (In strictness 1, when no expected testcases, any actual testcase is covering)
+                if strictness == "0" or not expected_tc_list: # No expected testcases
                     testcase_string = tc_list_to_string(actual_tc_list, actual_tc_list)
                     if req_type == "NONCOMPOUND":
-                        csv_writer.writerow([requirement.name, testcase_string, requirement.compliance]) 
+                        csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
                     elif req_type == "SUB":
                         csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
 
-            # If expected testcases and strictness 1/2, list according to AND/OR-listing.
-            # One line per AND-listed testcase, and one line per group of OR-listed testcases
-            # (i.e. one line per entry in expected_tc_list)
+                # If expected testcases and strictness 1/2, list according to AND/OR-listing.
+                # One line per AND-listed testcase, and one line per group of OR-listed testcases
+                # (i.e. one line per entry in expected_tc_list)
+                else:
+                    for tc_entry in expected_tc_list:
+                        if isinstance(tc_entry, list): # OR-listed requirements
+                            # For OR-listed TCs, write all where the req was actually tested
+                            testcase_string = tc_list_to_string(tc_entry, actual_tc_list)
+
+                        else: # AND-listed requirement. Write if found in actual TC list
+                            if tc_entry in actual_tc_list:
+                                testcase_string = tc_entry.name
+
+                        # Check that testcase_string isn't empty. Will only occur if tc_entry was not found in actual_tc_list, which should
+                        # never occur, since all expected_tc_list entries must be covered by actual_tc_list for the req to be compliant.
+                        # If this check fails, it means there is a bug somewhere.
+                        if testcase_string == "":
+                            error_msg = ("Bug alert: Error in write_extended_req_entry. Empty testcase_string. Shouldn't occur for compliant req.")
+                            abort(error_code = 10, msg = error_msg)
+
+                        # Write line to CSV file
+                        if req_type == "NONCOMPOUND":
+                            csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
+                        elif req_type == "SUB":
+                            csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
+
+            # NON-COMPLIANT or NOT_TESTED reqs. List without testcases
             else:
-                for tc_entry in expected_tc_list:
-                    if isinstance(tc_entry, list): # OR-listed requirements
-                        # For OR-listed TCs, write all where the req was actually tested
-                        testcase_string = tc_list_to_string(tc_entry, actual_tc_list)
+                # Write line to CSV file
+                if req_type == "NONCOMPOUND":
+                    if requirement.is_listed():
+                        csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+                    else: # For unlisted requirements, list PASS/FAIL status from partial coverage file
+                        if requirement.partial_coverage_status == 'PASS':
+                            csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_PASS"])
+                        else:
+                            csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_FAIL"])
+                elif req_type == "SUB":
+                    csv_writer.writerow([compound_req_name, requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
 
-                    else: # AND-listed requirement. Write if found in actual TC list
-                        if tc_entry in actual_tc_list:
-                            testcase_string = tc_entry.name
 
-                    # Check that testcase_string isn't empty. Will only occur if tc_entry was not found in actual_tc_list, which should
-                    # never occur, since all expected_tc_list entries must be covered by actual_tc_list for the req to be compliant.
-                    # If this check fails, it means there is a bug somewhere.
-                    if testcase_string == "":
-                        error_msg = ("Bug alert: Error in write_extended_req_entry. Empty testcase_string. Shouldn't occur for compliant req.")
-                        abort(error_code = 10, msg = error_msg)
-
-                    # Write line to CSV file
-                    if req_type == "NONCOMPOUND":
-                        csv_writer.writerow([requirement.name, testcase_string, requirement.compliance]) 
-                    elif req_type == "SUB":
-                        csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance]) 
-
-        # NON-COMPLIANT or NOT_TESTED reqs. List without testcases    
+        # Requirements not listed in req file: List with UNLISTED_REQ_PASS/FAIL status from PC files
+        #------------------------------------------------------------------------------------
         else:
-            if req_type == "NONCOMPOUND":
-                csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
-            elif req_type == "SUB":
-                csv_writer.writerow([compound_req_name, requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
-
+            if requirement.partial_coverage_status == 'PASS':
+                actual_tc_list = requirement.get_actual_testcase_list()
+                testcase_string = tc_list_to_string(actual_tc_list, actual_tc_list)
+                csv_writer.writerow([requirement.name, testcase_string, "UNLISTED_REQ_PASS"])
+            else:
+                csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_FAIL"])
 
 
 def write_req_compliance_files(run_configuration, container, delimiter):
@@ -604,7 +651,6 @@ def write_req_compliance_files(run_configuration, container, delimiter):
         with open(req_compliance_minimal_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Requirement", "Covering testcases(minimum)", "Compliance"])
-            listed_requirement_found = False
 
             # Write one line for each listed main level requirement requirement (not sub-reqs)
             for requirement in container.get_requirement_list():
@@ -613,11 +659,9 @@ def write_req_compliance_files(run_configuration, container, delimiter):
                 elif requirement.is_compound_requirement() and requirement.is_listed():
                     csv_writer.writerow([requirement.name, "tested through sub-requirement(s)", requirement.compliance])
 
-                if requirement.is_listed():
-                    listed_requirement_found = True
 
-            if not listed_requirement_found:
-                csv_writer.writerow(["<Requirement file empty or missing>"])
+            if not container.get_requirement_list():
+                csv_writer.writerow(["<No requirements found>"])
 
             csv_writer.writerow([])
             csv_writer.writerow([])
@@ -648,7 +692,6 @@ def write_req_compliance_files(run_configuration, container, delimiter):
         with open(req_compliance_extended_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Requirement", "Covering testcases(all)", "Compliance"])
-            listed_requirement_found = False
 
             # Write one line for each listed main level requirement requirement (not sub-reqs)
             for requirement in container.get_requirement_list():
@@ -659,11 +702,9 @@ def write_req_compliance_files(run_configuration, container, delimiter):
                 elif requirement.is_listed() and requirement.is_compound_requirement():
                     csv_writer.writerow([requirement.name, "tested through sub-requirement(s)", requirement.compliance])
 
-                if requirement.is_listed():
-                    listed_requirement_found = True
 
-            if not listed_requirement_found:
-                csv_writer.writerow(["<Requirement file empty or missing>"])
+            if not container.get_requirement_list():
+                csv_writer.writerow(["<No requirements found>"])
 
             csv_writer.writerow([])
             csv_writer.writerow([])
@@ -1004,6 +1045,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
         for testcase in requirement.get_actual_testcase_list():
             if testcase.result == testcase_fail_string:
                 requirement.compliance = non_compliant_string
+                requirement.partial_coverage_status = 'FAIL'
 
     #==========================================================================
     # Strictness = 1 : Requirement has to be tested in specified testcase(s).
@@ -1126,7 +1168,9 @@ def build_mapping_req_list(run_configuration, container, delimiter):
 
     # Read the requirement mapping file and create a list
     try:
-        with open(requirement_map_file) as csv_map_file:
+        # When opening the CSV file for reading, use utf-8-sig encoding, to ensure that any BOM character at the beginning of the file
+        # is ignored (BOM will often be present in CSV files created by Excel)
+        with open(requirement_map_file, encoding="utf-8-sig") as csv_map_file:
             csv_reader = csv.reader(csv_map_file, delimiter=delimiter)
 
             for row in csv_reader:
@@ -1232,8 +1276,10 @@ def build_req_list(run_configuration, container, delimiter):
     #==========================================================================
     # Read the requirements and save to requirement_list
     #==========================================================================
-    try:    
-        with open(req_file) as req_file:
+    try:
+        # When opening the CSV file for reading, use utf-8-sig encoding, to ensure that any BOM character at the beginning of the file
+        # is ignored (BOM will often be present in CSV files created by Excel)
+        with open(req_file, encoding="utf-8-sig") as req_file:
             csv_reader = csv.reader(req_file, delimiter=delimiter)
             
             num_req_found = 0
@@ -1334,7 +1380,7 @@ def find_testcase_in_pc_header(partial_coverage_file, container):
                         testcase_name = testcase.strip()
                         # This will create a new testcase object and add to container list
                         testcase_object = container.get_testcase(testcase_name)
-                    return 
+                    return testcase_object
     except:
         error_msg = ("Error %s occurred with file %s while collection testcase names from PC header" %(sys.exc_info()[0], partial_coverage_file))
         abort(error_code = 11, msg = error_msg)
@@ -1517,7 +1563,11 @@ def build_partial_cov_list(run_configuration, container):
             partial_coverage_pass = find_pc_summary(partial_coverage_file, container)
 
             # Create testcase objects of all testcases in PC file header
-            find_testcase_in_pc_header(partial_coverage_file, container)
+            header_testcase = find_testcase_in_pc_header(partial_coverage_file, container)
+            if partial_coverage_pass:
+                header_testcase.result = testcase_pass_string
+            else:
+                header_testcase.result = testcase_fail_string
 
 
             with open(partial_coverage_file) as csv_file:
@@ -1525,7 +1575,7 @@ def build_partial_cov_list(run_configuration, container):
 
                 for idx, row in enumerate(csv_reader):
 
-                    # Skip partial_coveage_file header info on the 4 first lines,
+                    # Skip partial_coverage_file header info on the 4 first lines,
                     # empty line, summary line, and parsed string (if these exist)
                     if (idx > 3) and (row != []) and (row[0].upper() != "SUMMARY") and (row[0] != parsed_string):
 
@@ -1539,17 +1589,15 @@ def build_partial_cov_list(run_configuration, container):
                         # Set the requirement intermediate compliance.
                         if tickoff_result == testcase_pass_string:
                             requirement.compliance = compliant_string
+                            requirement.partial_coverage_status = 'PASS'
                         else:
                             requirement.compliance = non_compliant_string
+                            requirement.partial_coverage_status = 'FAIL'
                             if partial_coverage_pass: # If TC passed, but tickoff_result is FAIL, req must have been explicitly failed at tickoff
                                 requirement.explicitly_failed = True
 
                         # Will get an existing or a new testcase object
                         testcase = container.get_testcase(testcase_name)
-                        if partial_coverage_pass:
-                            testcase.result = testcase_pass_string
-                        else:
-                            testcase.result = testcase_fail_string
                         
                         # Connect: requirement <-> testcase
                         testcase.add_actual_requirement(requirement)

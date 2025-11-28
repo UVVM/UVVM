@@ -1,0 +1,5 @@
+-r ../tb/maintenance_tb/general_req_file.csv 
+-m ../tb/maintenance_tb/general_map_file.csv
+-p ../tb/maintenance_tb/general_pc_list.txt
+-s ../sim/sc_general_strict2.csv
+--strictness 2

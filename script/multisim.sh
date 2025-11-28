@@ -35,7 +35,7 @@ compile () {
     elif [ "$SIM" = "nvc" ]; then
         cmd="nvc --std=2008 -L . --work=${_lib} -a --relaxed ${_sources[@]}"
     elif [ "$SIM" = "vsim" ]; then
-        cmd="vcom -2008 -work ${_lib} -explicit -vopt -stats=none ${_sources[@]}"
+        cmd="vcom -2008 -work ${_lib} -explicit -vopt -stats=none -suppress 1902 ${_sources[@]}"
     elif [ "$SIM" = "xsim" ]; then
         cmd="xvhdl -2008 -work ${_lib} ${_sources[@]}"
     else

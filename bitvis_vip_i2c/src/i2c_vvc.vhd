@@ -83,16 +83,16 @@ architecture behave of i2c_vvc is
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
   ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
     if command.msg(1 to 5) = "HVVC:" then
-      return vvc_config.parent_msg_id_panel;
+      return config.parent_msg_id_panel;
     else
-      return vvc_config.msg_id_panel;
+      return config.msg_id_panel;
     end if;
   end function;
 

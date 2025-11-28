@@ -1,0 +1,9 @@
+Requirement,Compliance status,Reason
+REQ_1,NOT_TESTED,Sub-req REQ_1B not tested
+REQ_3,NOT_TESTED,Missing tickoff in TC_3
+REQ_5,NON_COMPLIANT,Sub-req REQ_5A failed
+
+
+Sub-requirement,Compliance status,Reason
+REQ_1B,NOT_TESTED,Missing tickoff in TC_1B
+REQ_5A,NON_COMPLIANT,Requirement explicitly failed at tickoff

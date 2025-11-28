@@ -1,23 +1,22 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bitvis VIP Wishbone (BETA) &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Bitvis VIP Wishbone &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -77,7 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Wishbone (BETA)</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Wishbone</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#signal-record">Signal Record</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
@@ -141,7 +137,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Bitvis VIP Wishbone (BETA)</li>
+      <li class="breadcrumb-item active">Bitvis VIP Wishbone</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/vip_wishbone.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -151,8 +147,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="bitvis-vip-wishbone-beta">
-<h1>Bitvis VIP Wishbone (BETA)<a class="headerlink" href="#bitvis-vip-wishbone-beta" title="Link to this heading"></a></h1>
+  <section id="bitvis-vip-wishbone">
+<h1>Bitvis VIP Wishbone<a class="headerlink" href="#bitvis-vip-wishbone" title="Link to this heading"></a></h1>
 <p><strong>Quick Access</strong></p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#bfm">BFM</a></p>
@@ -171,10 +167,6 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="bfm">
 <h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
 <p>BFM functionality is implemented in wishbone_bfm_pkg.vhd</p>
@@ -226,8 +218,8 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>max_wait_cycles</p></td>
-<td><p>integer</p></td>
-<td><p>10</p></td>
+<td><p>natural</p></td>
+<td><p>1000</p></td>
 <td><p>The maximum number of clock cycles to wait for
 the DUT ready signal before reporting a timeout
 alert</p></td>
@@ -239,7 +231,7 @@ alert</p></td>
 </tr>
 <tr class="row-even"><td><p>clock_period</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Period of the clock signal</p></td>
 </tr>
 <tr class="row-odd"><td><p>clock_period_margin</p></td>
@@ -257,19 +249,47 @@ high.</p></td>
 </tr>
 <tr class="row-odd"><td><p>setup_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Generated signals setup time. Suggested value
 is clock_period/4. An alert is reported if
 setup_time exceeds clock_period/2.</p></td>
 </tr>
 <tr class="row-even"><td><p>hold_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Generated signals hold time. Suggested value
 is clock_period/4. An alert is reported if
 hold_time exceeds clock_period/2.</p></td>
 </tr>
-<tr class="row-odd"><td><p>match_strictness</p></td>
+<tr class="row-odd"><td><p>bfm_sync</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
+<td><p>SYNC_ON_CLOCK_ONLY</p></td>
+<td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
+always wait for the first falling edge of the
+clock.</p>
+<p>Then the interface output signals will be
+set up immediately. After that, the BFM will
+wait for the rising edge of the clock,</p>
+<p>sample or set relevant interface signals (if
+any), and estimate the clock period.</p>
+<p>The BFM will deactivate potential interface
+output signals and exit ¼ clock period after a
+succeeding rising edge.</p>
+<p>When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+will always wait for the configured setup time
+before the first rising edge of the clock.</p>
+<p>Then the interface output signals will be set up
+immediately. After that, the BFM will wait for
+the rising edge of the clock,</p>
+<p>and sample or set relevant interface signals (if
+any). Note that the clock period needs to be
+configured in this mode.</p>
+<p>The BFM will deactivate potential interface
+output signals and exit after the configured
+hold time after a succeeding rising edge.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>match_strictness</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
 <td><p>MATCH_EXACT</p></td>
 <td><p>Matching strictness for std_logic values in
@@ -281,21 +301,11 @@ the don’t care operator ‘-‘.</p>
 ‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
 </td>
 </tr>
-<tr class="row-even"><td><p>id_for_bfm</p></td>
-<td><p>t_msg_id</p></td>
+<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
-</tr>
-<tr class="row-odd"><td><p>id_for_bfm_wait</p></td>
-<td><p>t_msg_id</p></td>
-<td><p>ID_BFM_WAIT</p></td>
-<td><p>DEPRECATED</p></td>
-</tr>
-<tr class="row-even"><td><p>id_for_bfm_poll</p></td>
-<td><p>t_msg_id</p></td>
-<td><p>ID_BFM_POLL</p></td>
-<td><p>DEPRECATED</p></td>
 </tr>
 </tbody>
 </table>
@@ -365,7 +375,8 @@ Default value is C_BFM_SCOPE (“WISHBONE BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -444,7 +455,8 @@ Default value is C_BFM_SCOPE (“WISHBONE BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -536,7 +548,8 @@ Default value is C_BFM_SCOPE (“WISHBONE BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -654,17 +667,13 @@ compatible with VHDL-2008 or newer.</p></li>
 <li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="vvc">
 <h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in wishbone_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -692,7 +701,9 @@ compatible with VHDL-2008 or newer.</p></li>
 <tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>1</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC Maximum value
+is defined by C_WISHBONE_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>GC_WISHBONE_BFM_CONFIG</p></td>
 <td><p><a class="reference internal" href="#t-wishbone-bfm-config"><span class="std std-ref">t_wishbone_bfm_config</span></a></p></td>
@@ -740,6 +751,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -767,7 +782,7 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
-<p>In this VVC, the interface has been encapsulated in a signal record of type t_wishbone_if in order to improve readability of the code.
+<p>In this VVC, the interface has been encapsulated in a signal record of type <strong>t_wishbone_if</strong> in order to improve readability of the code.
 Since the Wishbone interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained
 vectors need to be constrained when the interface signals are instantiated. For this interface, it could look like:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">wishbone_if</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_wishbone_if</span><span class="p">(</span><span class="n">adr_o</span><span class="p">(</span><span class="n">C_ADDR_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
@@ -912,6 +927,26 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>data</strong> length</p></td>
+</tr>
+<tr class="row-even"><td><p>C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>addr</strong> length</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="wishbone-write-vvc">
 <span id="id3"></span><h4>wishbone_write()<a class="headerlink" href="#wishbone-write-vvc" title="Link to this heading"></a></h4>
 <p>Adds a write command to the Wishbone VVC executor queue, which will run as soon as all preceding commands have completed. When the
@@ -965,7 +1000,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1034,7 +1070,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1123,7 +1160,8 @@ register</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1196,7 +1234,7 @@ POLL_UNTIL, READ, WRITE</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-even"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>
@@ -1209,7 +1247,7 @@ SUCCEEDED during a transaction</p></td>
 <h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
 <p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
 i.e. wishbone_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when
-the TO_SB parameter is applied. The Wishbone scoreboard is accessible from the testbench as a shared variable WISHBONE_VVC_SB,
+the TO_SB parameter is applied. The Wishbone scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">WISHBONE_VVC_SB</span></code>,
 located in the vvc_methods_pkg.vhd, e.g.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">WISHBONE_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_WISHBONE_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_wishbone_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
 </pre></div>
@@ -1221,7 +1259,7 @@ function, e.g.</p>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Wishbone VVC scoreboard using the WISHBONE_VVC_SB.</p>
+Scoreboard commands are available for the Wishbone VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">WISHBONE_VVC_SB</span></code>.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>

@@ -1,6 +1,14 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v5.0.0
+----------
+Released: 2025-11-28
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Replaced assertion with check_value in uart_expect and added missing timeout value check in uart_receive.
+- Changed default timeout in UART BFM config.
+
 v4.1.3
 ----------
 Released: 2025-09-17

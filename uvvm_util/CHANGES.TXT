@@ -1,6 +1,32 @@
 UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
+v2.21.3
+----------
+Released: 2025-11-28
+- Moved spec cov section to a more correct location in adaptations_pkg.
+- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg.
+- Updated comments and reorganized some constants in adaptations_pkg.
+- Removed unused constants C_EMPTY_NODE and C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH from adaptations_pkg.
+- Reorganized types_pkg. Removed unused types t_info_target and t_global_ctrl.
+- Fixed bug where a log message of one character is not displayed. From pull request by user jorkrohn.
+- Removed unused utility library release info function and constant.
+- Added uvvm_stack_is_full() and uvvm_stack_deallocate() methods to data_stack_pkg.
+- Replaced shared buffer between instances of t_data_queue to avoid overwritting data between data fifo and data stack.
+- Moved shared_default_log_destination to string_methods_pkg and added a constant to set the default value in adaptations_pkg.
+- Added missing deprecate() calls to some functions and procedures.
+- Changed deprecate message from log message to tb_note alert.
+- Moved C_DEPRECATE_SETTING to adaptations_pkg.
+- Updated check_clock_period_margin() documentation.
+- Added missing timeouts to BFM common procedures and updated log messages.
+- Updated wait_on_bfm_sync_start to always return time_of_rising_edge.
+- Fixed the error message for check_value() using signed values and radix "DEC".
+- Added comments to alert_hierarchy_pkg procedures which are for internal use. Updated hierarchical alerts documentation.
+- Modified the log messages of most checks/awaits to be consistent.
+- Use normalized value alias in string_contains_char and to_string functions.
+- Fixed bug in await_change_to_value for std_logic_vector. From pull request by user MartinBoberTecmata.
+
+
 v2.21.2
 ----------
 Released: 2025-09-17

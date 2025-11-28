@@ -32,8 +32,6 @@ Bitvis VIP SPI
   * :ref:`spi_slave_check_only_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -83,7 +81,7 @@ Default value for the record is C_SPI_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | is sampled on the second sclk edge and          |
 |                              |                              |                 | transmitted on sclk idle to active state.       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| spi_bit_time                 | time                         | -1 ns           | Used in master for dictating the sclk period.   |
+| spi_bit_time                 | time                         | C_UNDEFINED_TIME| Used in master for dictating the sclk period.   |
 |                              |                              |                 | Will give a TB_ERROR if not set to a different  |
 |                              |                              |                 | value than -1.                                  |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -104,12 +102,12 @@ Default value for the record is C_SPI_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
 |                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | DEPRECATED                                      |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | DEPRECATED                                      |
+| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
@@ -149,11 +147,11 @@ must drive the sclk and ss_n signals and transmit data to the slave DUT.
 +==========+====================+========+==============================+=========================================================+
 | constant | tx_data            | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | rx_data            | out    | std_logic_vector             | The data value received from the DUT, either a single   |
 |          |                    |        |                              | word or a word array.                                   |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -171,7 +169,8 @@ must drive the sclk and ss_n signals and transmit data to the slave DUT.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -211,11 +210,11 @@ Transmits the data in 'tx_data' and receives data from the DUT, using the transm
 +==========+====================+========+==============================+=========================================================+
 | constant | tx_data            | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -235,7 +234,8 @@ Transmits the data in 'tx_data' and receives data from the DUT, using the transm
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -274,7 +274,7 @@ Transmits the data in 'tx_data' using the transmit and receive procedure as desc
 +==========+====================+========+==============================+=========================================================+
 | constant | tx_data            | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -292,7 +292,8 @@ Transmits the data in 'tx_data' using the transmit and receive procedure as desc
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -330,7 +331,7 @@ Receives data from the DUT using the transmit and receive procedure as described
 +==========+====================+========+==============================+=========================================================+
 | variable | rx_data            | out    | std_logic_vector             | The data value received from the DUT, either a single   |
 |          |                    |        |                              | word or a word array.                                   |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -348,7 +349,8 @@ Receives data from the DUT using the transmit and receive procedure as described
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -389,7 +391,7 @@ After receiving data, the data is compared with the expected data.
 +==========+====================+========+==============================+=========================================================+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -409,7 +411,8 @@ After receiving data, the data is compared with the expected data.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -449,11 +452,11 @@ terminated instead.
 +==========+====================+========+==============================+=========================================================+
 | constant | tx_data            | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | rx_data            | out    | std_logic_vector             | The data value received from the DUT, either a single   |
 |          |                    |        |                              | word or a word array.                                   |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | aborted            | out    | boolean                      | Set to true when the procedure is aborted               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -476,7 +479,8 @@ terminated instead.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -514,11 +518,11 @@ Transmits the data in 'tx_data' and receives data from the DUT, using the transm
 +==========+====================+========+==============================+=========================================================+
 | constant | tx_data            | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -538,7 +542,8 @@ Transmits the data in 'tx_data' and receives data from the DUT, using the transm
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -577,7 +582,7 @@ Transmits the data in 'tx_data' using the transmit and receive procedure as desc
 +==========+====================+========+==============================+=========================================================+
 | constant | tx_data            | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | aborted            | out    | boolean                      | Set to true when the procedure is aborted               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -597,7 +602,8 @@ Transmits the data in 'tx_data' using the transmit and receive procedure as desc
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -635,7 +641,7 @@ Receives data from the DUT using the transmit and receive procedure as described
 +==========+====================+========+==============================+=========================================================+
 | variable | rx_data            | out    | std_logic_vector             | The data value received from the DUT, either a single   |
 |          |                    |        |                              | word or a word array.                                   |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | aborted            | out    | boolean                      | Set to true when the procedure is aborted               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -655,7 +661,8 @@ Receives data from the DUT using the transmit and receive procedure as described
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -694,7 +701,7 @@ After receiving data, the data is compared with the expected data.
 +==========+====================+========+==============================+=========================================================+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -714,7 +721,8 @@ After receiving data, the data is compared with the expected data.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("SPI BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_spi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_spi_bfm_config>`          | value is C_SPI_BFM_CONFIG_DEFAULT.                      |
@@ -806,8 +814,8 @@ Using a local overload like this also allows the following – if wanted:
 Local BFM configuration
 ==================================================================================================================================
 The SPI BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM 
-configuration is defined with a bit period of -1 ns so that the BFM can detect and alert the user that the configuration has not
-been set.
+configuration is defined with a bit period of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the 
+configuration has not been set.
 
 Defining a local SPI BFM configuration:::
 
@@ -847,13 +855,11 @@ ID 023176 Rev 2".
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in spi_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -869,7 +875,9 @@ Generics
 | GC_DATA_ARRAY_WIDTH          | natural                      | 32              | Number of SPI data words in a data word array of|
 |                              |                              |                 | type t_slv_array                                |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC Maximum value |
+|                              |                              |                 | is defined by C_SPI_VVC_MAX_INSTANCE_NUM        |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_MASTER_MODE               | boolean                      | true            | Whether the VVC shall act as an SPI master or   |
 |                              |                              |                 | an SPI slave on the bus                         |
@@ -901,6 +909,10 @@ Generics
 | OLD_SEVERITY                 |                              | _COUNT_THRESHOL\| GC_RESULT_QUEUE_COUNT_THRESHOLD                 |
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
 
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -991,6 +1003,18 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_SPI_VVC_CMD_DATA_MAX_LENGTH              | Maximum **data** word length         |
+      +--------------------------------------------+--------------------------------------+
+      | C_SPI_VVC_DATA_ARRAY_WIDTH                 | Maximum **data** words (in array)    |
+      +--------------------------------------------+--------------------------------------+
+      | C_SPI_VVC_CMD_STRING_MAX_LENGTH            | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _spi_master_transmit_and_receive_vvc:
 
@@ -1020,7 +1044,7 @@ in master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the received data            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1035,7 +1059,8 @@ in master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to
 |          |                    |        |                              | Default value is HOLD_LINE_BETWEEN_WORDS.               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1088,7 +1113,7 @@ instantiated in master mode, i.e. setting the VVC entity generic constant 'GC_MA
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1101,7 +1126,8 @@ instantiated in master mode, i.e. setting the VVC entity generic constant 'GC_MA
 |          |                    |        |                              | Default value is HOLD_LINE_BETWEEN_WORDS.               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1160,7 +1186,8 @@ in master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to
 |          |                    |        |                              | Default value is HOLD_LINE_BETWEEN_WORDS.               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1208,11 +1235,11 @@ This procedure can only be called when the SPI VVC is instantiated in master mod
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1227,7 +1254,8 @@ This procedure can only be called when the SPI VVC is instantiated in master mod
 |          |                    |        |                              | Default value is HOLD_LINE_BETWEEN_WORDS.               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1263,7 +1291,7 @@ master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 't
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1278,7 +1306,8 @@ master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 't
 |          |                    |        |                              | Default value is HOLD_LINE_BETWEEN_WORDS.               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1316,7 +1345,7 @@ in slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the received data            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1327,7 +1356,8 @@ in slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 
 |          |                    |        |                              | START_TRANSFER_ON_NEXT_SS.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1380,7 +1410,7 @@ instantiated in slave mode, i.e. setting the VVC entity generic constant 'GC_MAS
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1389,7 +1419,8 @@ instantiated in slave mode, i.e. setting the VVC entity generic constant 'GC_MAS
 |          |                    |        |                              | START_TRANSFER_ON_NEXT_SS.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1438,7 +1469,8 @@ in slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 
 |          |                    |        |                              | START_TRANSFER_ON_NEXT_SS.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1485,11 +1517,11 @@ This procedure can only be called when the SPI VVC is instantiated in slave mode
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single word or a word array.                            |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1500,7 +1532,8 @@ This procedure can only be called when the SPI VVC is instantiated in slave mode
 |          |                    |        |                              | START_TRANSFER_ON_NEXT_SS.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1544,7 +1577,7 @@ This procedure can only be called when the SPI VVC is instantiated in slave mode
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving data from the   |
 |          |                    |        |                              | DUT, either a single word or a word array.              |
-|          |                    |        | t_slv_array                  |                                                         |
+|          |                    |        | :ref:`t_slv_array`           |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1555,7 +1588,8 @@ This procedure can only be called when the SPI VVC is instantiated in slave mode
 |          |                    |        |                              | START_TRANSFER_ON_NEXT_SS.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1587,11 +1621,11 @@ Transaction Info
     | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
     |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data                         | t_slv_array(31 downto 0)(31  | 0x0             | The data to be transmitted                      |
-    |                              | downto 0)                    |                 |                                                 |
+    | data                         | :ref:`t_slv_array(31 downto  | 0x0             | The data to be transmitted                      |
+    |                              | 0)(31 downto 0)<t_slv_array>`|                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data_exp                     | t_slv_array(31 downto 0)(31  | 0x0             | The expected data to be received                |
-    |                              | downto 0)                    |                 |                                                 |
+    | data_exp                     | :ref:`t_slv_array(31 downto  | 0x0             | The expected data to be received                |
+    |                              | 0)(31 downto 0)<t_slv_array>`|                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | num_words                    | natural                      | 0               | Number of words that shall be received          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -1614,7 +1648,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1625,7 +1659,7 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. spi_master_receive_only(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
-when the TO_SB parameter is applied. The SPI scoreboard is accessible from the testbench as a shared variable SPI_VVC_SB, located 
+when the TO_SB parameter is applied. The SPI scoreboard is accessible from the testbench as a shared variable ``SPI_VVC_SB``, located 
 in the vvc_methods_pkg.vhd, e.g. ::
 
     SPI_VVC_SB.add_expected(C_SPI_VVC_IDX, pad_spi_sb(v_expected), "Adding expected");
@@ -1636,7 +1670,7 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
     SPI_VVC_SB.add_expected(<SPI VVC instance number>, pad_spi_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the SPI VVC scoreboard using the SPI_VVC_SB.
+Scoreboard commands are available for the SPI VVC scoreboard using the ``SPI_VVC_SB``.
 
 
 Unwanted Activity Detection

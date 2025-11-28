@@ -92,7 +92,7 @@ begin
 
   end process p_aux;
 
-  p_read_reg : process(cs, addr, rd, c2p, p2c_i)
+  p_read_reg : process(all)
   begin
     -- default values
     rdata_i <= (others => '0');

@@ -9,12 +9,13 @@
   <title>Bitvis VIP Ethernet &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -84,8 +82,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#support-package">Support package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#constants">Constants</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#t-ethernet-protocol-config">t_ethernet_protocol_config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#t-ethernet-frame">t_ethernet_frame</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generate-crc-32">generate_crc_32()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-crc-32">check_crc_32()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
@@ -107,7 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -148,10 +149,6 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="hvvc">
 <h2>HVVC<a class="headerlink" href="#hvvc" title="Link to this heading"></a></h2>
 <ul class="simple">
@@ -160,7 +157,7 @@
 <li><p>HVVCs are different than normal VVCs since they represent a higher protocol level than the physical layer, i.e. they have no
 physical connections. However due to similarities in the core code, the VVC term is used instead.</p></li>
 <li><p>HVVC functionality is implemented in ethernet_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -178,10 +175,12 @@ physical connections. However due to similarities in the core code, the VVC term
 <tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>N/A</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC. Maximum value
+is defined by C_ETHERNET_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>GC_PHY_INTERFACE</p></td>
-<td><p><a class="reference internal" href="utility_library.html#adaptations-pkg"><span class="std std-ref">t_interface</span></a></p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-interface"><span class="std std-ref">t_interface</span></a></p></td>
 <td><p>N/A</p></td>
 <td><p>Physical VVC interface type, e.g. SBI, GMII.
 (see note below)</p></td>
@@ -252,9 +251,13 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </table>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>You can use any of the physical interfaces already implemented just by using the appropriate name in GC_PHY_INTERFACE and
 instantiating the corresponding VVC in the testbench (in addition to the HVVC). For more information see
-<a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.
+<a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.
 If you however want to use an interface type which is not already included, see <a class="reference internal" href="vip_hvvc_to_vvc_bridge.html#vip-hvvc-to-vvc-bridge"><span class="std std-ref">Bitvis VIP HVVC-to-VVC Bridge</span></a> for more info.</p>
 </div>
 </section>
@@ -394,6 +397,20 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_ETHERNET_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="ethernet-transmit">
 <span id="id1"></span><h4>ethernet_transmit()<a class="headerlink" href="#ethernet-transmit" title="Link to this heading"></a></h4>
 <p>Adds a transmit command to the Ethernet VVC executor queue, which will runs as soon as all preceding commands have completed. When
@@ -429,7 +446,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>channel</p></td>
 <td><p>in</p></td>
-<td><p>t_channel</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-channel"><span class="std std-ref">t_channel</span></a></p></td>
 <td><p>The VVC channel of the VVC instance</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -447,7 +464,7 @@ differentiate between VVCs</p></td>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>payload</p></td>
 <td><p>in</p></td>
-<td><p>t_byte_array</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p></td>
 <td><p>The payload of the packet</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
@@ -461,7 +478,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -511,7 +529,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>channel</p></td>
 <td><p>in</p></td>
-<td><p>t_channel</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-channel"><span class="std std-ref">t_channel</span></a></p></td>
 <td><p>The VVC channel of the VVC instance</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -531,7 +549,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -589,7 +608,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>channel</p></td>
 <td><p>in</p></td>
-<td><p>t_channel</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-channel"><span class="std std-ref">t_channel</span></a></p></td>
 <td><p>The VVC channel of the VVC instance</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -607,7 +626,7 @@ differentiate between VVCs</p></td>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>payload</p></td>
 <td><p>in</p></td>
-<td><p>t_byte_array</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p></td>
 <td><p>The payload of the packet</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
@@ -627,7 +646,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -690,7 +710,7 @@ POLL_UNTIL, READ, WRITE</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-odd"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>
@@ -703,13 +723,13 @@ SUCCEEDED during a transaction</p></td>
 <h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
 <p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
 i.e. ethernet_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method
-when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable ETHERNET_VVC_SB,
-located in the vvc_methods_pkg.vhd, e.g.</p>
+when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable
+<code class="docutils literal notranslate"><span class="pre">ETHERNET_VVC_SB</span></code>, located in the vvc_methods_pkg.vhd, e.g.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ETHERNET_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_ETH_GMII_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected_frame</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Ethernet VVC scoreboard using the ETHERNET_VVC_SB.</p>
+Scoreboard commands are available for the Ethernet VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">ETHERNET_VVC_SB</span></code>.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
@@ -726,7 +746,9 @@ to a different value. To disable this feature in the testbench, e.g. for GMII VV
 </section>
 <section id="support-package">
 <h3>Support package<a class="headerlink" href="#support-package" title="Link to this heading"></a></h3>
-<p>Contains constants and types for the Ethernet protocol, defined in support_pkg.vhd</p>
+<p>Contains constants, types, functions and procedures for the Ethernet protocol, defined in support_pkg.vhd</p>
+<section id="constants">
+<h4>Constants<a class="headerlink" href="#constants" title="Link to this heading"></a></h4>
 <p>The table below shows which index in the DUT IF field configuration array (<a class="reference internal" href="ti_vvc_framework_support_pkg.html#t-dut-if-field-config-direction-array"><span class="std std-ref">t_dut_if_field_config_direction_array</span></a>) the
 Ethernet fields are associated with. These configurations are only necessary when the lower level VVC is address-based, e.g. SBI.
 The DUT IF field configuration array is a two-dimensional array (direction and index). If the same configuration is used for all
@@ -768,26 +790,32 @@ see table below.</p>
 </tr>
 </tbody>
 </table>
+</section>
 <section id="t-ethernet-protocol-config">
 <span id="id4"></span><h4>t_ethernet_protocol_config<a class="headerlink" href="#t-ethernet-protocol-config" title="Link to this heading"></a></h4>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
 <th class="head"><p>Type</p></th>
+<th class="head"><p>C_ETHERNET_PROTOCOL_CONFIG_DEFAULT</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>mac_destination</p></td>
 <td><p>unsigned(47 downto 0)</p></td>
+<td><p>(others =&gt; ‘0’)</p></td>
 </tr>
 <tr class="row-odd"><td><p>mac_source</p></td>
 <td><p>unsigned(47 downto 0)</p></td>
+<td><p>(others =&gt; ‘0’)</p></td>
 </tr>
 <tr class="row-even"><td><p>fcs_error_severity</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
 </tr>
 <tr class="row-odd"><td><p>interpacket_gap_time</p></td>
 <td><p>time</p></td>
+<td><p>96 ns</p></td>
 </tr>
 </tbody>
 </table>
@@ -807,26 +835,94 @@ delays in the transmission.</p></li>
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
 <th class="head"><p>Type</p></th>
+<th class="head"><p>C_ETHERNET_FRAME_DEFAULT</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>mac_destination</p></td>
 <td><p>unsigned(47 downto 0)</p></td>
+<td><p>(others =&gt; ‘0’)</p></td>
 </tr>
 <tr class="row-odd"><td><p>mac_source</p></td>
 <td><p>unsigned(47 downto 0)</p></td>
+<td><p>(others =&gt; ‘0’)</p></td>
 </tr>
 <tr class="row-even"><td><p>payload_length</p></td>
 <td><p>integer</p></td>
+<td><p>0</p></td>
 </tr>
 <tr class="row-odd"><td><p>payload</p></td>
-<td><p>t_byte_array(0 to 1499)</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array(0 to 1499)</span></a></p></td>
+<td><p>(others =&gt; (others =&gt; ‘0’))</p></td>
 </tr>
 <tr class="row-even"><td><p>fcs</p></td>
 <td><p>std_logic_vector(31 downto 0)</p></td>
+<td><p>(others =&gt; ‘0’)</p></td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="generate-crc-32">
+<h4>generate_crc_32()<a class="headerlink" href="#generate-crc-32" title="Link to this heading"></a></h4>
+<p>Returns the IEEE 802.3 CRC32 for an ascending byte array input with LSb first. The start value is C_CRC_32_START_VALUE and the
+polynomial is C_CRC_32_POLYNOMIAL, both defined in adaptations_pkg.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">generate_crc_32</span><span class="p">(</span><span class="n">data_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_array</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p></td>
+<td><p>An array of bytes containing the data to be used for CRC</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_crc</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="mi">31</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">v_crc</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">generate_crc_32</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="check-crc-32">
+<h4>check_crc_32()<a class="headerlink" href="#check-crc-32" title="Link to this heading"></a></h4>
+<p>Generates the IEEE 802.3 CRC32 for an ascending byte array containing the frame data and the FCS. Returns true if the result is
+equal to the expected residue defined by C_CRC_32_RESIDUE in adaptations_pkg.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">check_crc_32</span><span class="p">(</span><span class="n">data_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_array</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p></td>
+<td><p>An array of bytes containing the data to be used for CRC</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_crc_ok</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">check_crc_32</span><span class="p">(</span><span class="n">v_data_array</span><span class="p">);</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="compilation">

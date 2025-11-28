@@ -11,6 +11,8 @@ Methods
 * All parameters in brackets are optional.
 * **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
 
+.. _util_checks_and_awaits:
+
 Checks and awaits
 ==================================================================================================================================
 
@@ -66,13 +68,15 @@ a boolean if the method is called as a function. ::
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -112,13 +116,15 @@ is returned as a boolean if the method is called as a function. ::
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | radix              | in     | t_radix                      | Radix used in the log.                                  |
 |          |                    |        |                              | Default is DEC for integer and HEX_BIN_IF_INVALID for   |
@@ -159,13 +165,15 @@ Checks if the target signal has been stable in stable_req time. If not, an alert
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -190,7 +198,7 @@ and the optional reports will be printed in the log.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
 |          |                    |        |                              | TB_ERROR.                                               |
@@ -202,10 +210,12 @@ and the optional reports will be printed in the log.
 |          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -242,13 +252,15 @@ min_time and max_time. *Note* that if the value changes at exactly max_time, the
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -292,7 +304,8 @@ see await_change_to_value() under. ::
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | radix              | in     | :ref:`t_radix`               | Controls how the vector is represented in the log.      |
 |          |                    |        |                              | Default value is HEX_BIN_IF_INVALID.                    |
@@ -300,11 +313,12 @@ see await_change_to_value() under. ::
 | constant | format             | in     | :ref:`t_format_zeros`        | Controls how the vector is formatted in the log. Default|
 |          |                    |        |                              | value is KEEP_LEADING_0.                                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -352,13 +366,14 @@ If the signal changes to the expected value before min_time, or the signal does 
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert                      |
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.              |
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                                  |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in adaptations_pkg.       |
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg.               |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg.               |
 |          |                    |        |                              | Default value is ID_POS_ACK.                                          |
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default                  |
-|          |                    |        |                              | value is shared_msg_id_panel.                                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see                |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                                  |
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 | constant | radix              | in     | t_radix                      | Radix used in the log.                                                |
 |          |                    |        |                              | Default is DEC for integer and HEX_BIN_IF_INVALID for signed and      |
@@ -407,13 +422,15 @@ specified by timeout. *Note* that **stable** refers to that the signal has not h
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -455,10 +472,12 @@ successful completion message and the optional reports will be printed in the lo
 |          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -474,8 +493,45 @@ successful completion message and the optional reports will be printed in the lo
     This procedure is called within :ref:`await_uvvm_completion`, which is recommended to use when there are VVCs in the testbench.
 
 
+.. _util_logging_and_verbosity_control:
+
 Logging and verbosity control
 ==================================================================================================================================
+A very important feature of UVVM is logging and verbosity control. By using detailed log messages for the commands executed, one 
+can debug in a very efficient way without the need for inspecting the waveform.
+
+In order to write a log message, the :ref:`util_log` and :ref:`util_log_text_block` procedures can be used. Below is an example 
+of some log messages:
+
+.. code-block:: none
+
+    <1>     <2>                       <3>     <4>                 <5>                                                           <6>
+    # UVVM: ID_SEQUENCER              0.0 ns  TB seq.             Sending and receiving data via UART
+    # UVVM: ID_UVVM_SEND_CMD          0.0 ns  TB seq.(uvvm)       ->uart_transmit(UART_VVC,0,TX, x"AF"): 'Send data to UART 0'. [1]
+    # UVVM: ID_CMD_INTERPRETER        0.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x"AF"). Command received  [1]
+    # UVVM: ID_CMD_EXECUTOR          10.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x"AF") - Will be executed  [1]
+    # UVVM: ID_UVVM_SEND_CMD         10.0 ns  TB seq.(uvvm)       ->uart_receive(UART_VVC,1,RX): 'Receive data from UART 1'. [2]
+
+#. | **Log prefix:** This prefix string is printed in all log messages and is defined by C_LOG_PREFIX in adaptations_pkg.
+#. | **Message ID:** This identifier specifies what kind of message it is, e.g. if it is a message printing testcase information 
+     we can use ID_SEQUENCER, if it is a message with data being transmitted in a frame we can use ID_FRAME_DATA, etc.
+   | For a complete list of message IDs see :ref:`message_ids`. Note that you can use an existing ID or create new ones if needed. 
+   | Additionally, each message ID can be enabled or disabled via :ref:`util_enable_log_msg` and :ref:`util_disable_log_msg` 
+     to adjust the verbosity of the log.
+   | **Message ID panel:** The configuration of whether a message ID is enabled or disabled is stored in a message ID panel. 
+   | The UVVM methods use as default a shared variable called ``shared_msg_id_panel`` with a default value defined by 
+     C_MSG_ID_PANEL_DEFAULT in adaptations_pkg.
+   | To give more granularity in the verbosity control, each VVC and scoreboard has their own message ID panel. In this way, 
+     one could disable messages with ID_BFM from a UART VVC while keeping the messages with ID_BFM from an SBI VVC. For more 
+     information see :ref:`vvc_framework_verbosity_ctrl`.
+#. | **Simulation time**
+#. | **Scope:** This specifies where the message is originated from. It can be for instance, from the testbench sequencer, the SBI 
+     BFM, the UART TX VVC 0, etc.
+#. | **Log message**
+#. | **Command index**: This is the shared command index used to track the messages in the VVC framework. In the example 
+     above, the uart_transmit has the index 1 while the uart_receive has the index 2. Note that this only applies for commands in 
+     the VVC framework.
+
 
 set_log_file_name()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -489,7 +545,8 @@ adaptations_pkg. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | file_name          | in     | string                       | Name of the log file. Default value is C_LOG_FILE_NAME. |
+| constant | file_name          | in     | string                       | Name of the log file. Default value is C_LOG_FILE_NAME  |
+|          |                    |        |                              | defined in adaptations_pkg.                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -498,15 +555,18 @@ adaptations_pkg. ::
     set_log_file_name("new_log_file_name.txt");
 
 
+.. _util_log:
+
 log()
 ----------------------------------------------------------------------------------------------------------------------------------
-Writes a message to the log. *Note* that if the msg_id is disabled in the msg_id_panel, the message will not be shown. Some general 
-string handling features are:
+Writes a message to the log. *Note* that if the msg_id is disabled in the msg_id_panel, the message will not be shown. The 
+printing destination can be log and/or console and is defined by the shared variable ``shared_default_log_destination`` with the 
+default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg. Some general string handling features are:
 
-* All log messages will be given using the user defined layout in adaptations_pkg.vhd
-* \\n may be used to force line shifts. Line shift will occur after scope column, before message column
+* All log messages will be given using the user defined layout in the **Log format** section in adaptations_pkg.
+* \\n may be used to force line shifts. Line shift will occur after scope column, before message column.
 * \\r may be used to force line shift at start of log message. The result will be a blank line apart from prefix 
-  (message ID, timestamp and scope will be omitted on the first line)
+  (message ID, timestamp and scope will be omitted on the first line).
 
 .. code-block::
 
@@ -515,22 +575,26 @@ string handling features are:
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
-|          |                    |        |                              | Default value is C_TB_MSG_ID_DEFAULT.                   |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log. Default value is            |
+|          |                    |        |                              | C_TB_MSG_ID_DEFAULT defined in adaptations_pkg.         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | log_destination    | in     | :ref:`t_log_destination`     | Defines where the message will be written to. Default   |
-|          |                    |        |                              | value is shared_default_log_destination.                |
+|          |                    |        |                              | value is the shared variable                            |
+|          |                    |        |                              | shared_default_log_destination.                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | log_file_name      | in     | string                       | Defines the log file where message shall be written to. |
-|          |                    |        |                              | Default value is C_LOG_FILE_NAME.                       |
+|          |                    |        |                              | Default value is C_LOG_FILE_NAME defined in             |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | open_mode          | in     | file_open_kind               | Indicates how the log file shall be opened (write_mode, |
 |          |                    |        |                              | append_mode). Default value is append_mode.             |
@@ -543,16 +607,19 @@ string handling features are:
     log(ID_BFM, "Msg", "MyScope", local_msg_id_panel, LOG_ONLY, "new_log.txt", write_mode);
 
 
+.. _util_log_text_block:
+
 log_text_block()
 ----------------------------------------------------------------------------------------------------------------------------------
-Writes a text block from a VHDL line to the log. ::
+Writes a text block from a VHDL line to the log. The printing destination can be log and/or console and is defined by the shared 
+variable ``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg. ::
 
     log_text_block(msg_id, text_block, formatting, [msg_header, [scope, [msg_id_panel, [log_if_block_empty, [log_destination, [log_file_name, [open_mode]]]]]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | text_block         | inout  | line                         | Line where the text block is stored                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -561,19 +628,23 @@ Writes a text block from a VHDL line to the log. ::
 | constant | msg_header         | in     | string                       | Header message for the text_block. Default value is "". |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | log_if_block_empty | in     | :ref:`t_log_if_block_empty`  | Defines how an empty text block is handled. Default     |
 |          |                    |        |                              | value is WRITE_HDR_IF_BLOCK_EMPTY.                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | log_destination    | in     | :ref:`t_log_destination`     | Defines where the text block will be written to. Default|
-|          |                    |        |                              | value is shared_default_log_destination.                |
+|          |                    |        |                              | value is the shared variable                            |
+|          |                    |        |                              | shared_default_log_destination.                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | log_file_name      | in     | string                       | Defines the log file where text block shall be written  |
-|          |                    |        |                              | to. Default value is C_LOG_FILE_NAME.                   |
+|          |                    |        |                              | to. Default value is C_LOG_FILE_NAME defined in         |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | open_mode          | in     | file_open_kind               | Indicates how the log file shall be opened (write_mode, |
 |          |                    |        |                              | append_mode). Default value is append_mode.             |
@@ -599,19 +670,21 @@ Enables logging for the given msg_id. (See :ref:`message_ids` for examples of di
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
 |          |                    |        |                              | quietness=QUIET. Default value is NON_QUIET.            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert.       |
 |          |                    |        |                              | Default value is "".                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | msg_id_panel       | inout  | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -633,19 +706,21 @@ Disables logging for the given msg_id. (See :ref:`message_ids` for examples of d
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
 |          |                    |        |                              | quietness=QUIET. Default value is NON_QUIET.            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert.       |
 |          |                    |        |                              | Default value is "".                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | msg_id_panel       | inout  | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -663,10 +738,11 @@ Returns true if the given message ID is enabled, otherwise false. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -698,17 +774,22 @@ to NON_QUIET.
     set_log_destination(CONSOLE_ONLY);
 
 
+.. _util_alert_handling:
+
 Alert handling
 ==================================================================================================================================
-
-The available alert levels are defined in the type :ref:`t_alert_level`. The behavior for each type of alert can be configured in
-adaptations_pkg.vhd. The simulation will be stopped when the occurences of an alert type reaches the number configured in
-C_DEFAULT_STOP_LIMIT. By default, the simulation will be stopped after one occurence of either ERROR, TB_ERROR, FAILURE or TB_FAILURE.
-Alert levels with the prefix TB\_ are intended to be used in cases where the cause of the alert is known to be a testbench issue.
+The available alert levels are defined in the type :ref:`t_alert_level`. The behavior for each type of alert can be configured by 
+C_DEFAULT_ALERT_ATTENTION in adaptations_pkg. The simulation will be stopped when the occurrences of an alert type reaches the 
+number configured by C_DEFAULT_STOP_LIMIT in adaptations_pkg. By default, the simulation will be stopped after one occurrence of 
+either ERROR, TB_ERROR, FAILURE or TB_FAILURE. Alert levels with the prefix TB\_ are intended to be used in cases where the cause 
+of the alert is known to be a testbench issue.
 
 The MANUAL_CHECK alert type is intended for cases where a manual check, e.g. a waveform inspection, is required. When an alert of this
 type is encountered, the simulation will be stopped and the user will be prompted to carry out a manual check before resuming the
 simulation.
+
+The simulation will be stopped using ``std.env.stop(1)``, unless C_USE_STD_STOP_ON_ALERT_STOP_LIMIT in adaptations_pkg is set to 
+false, in which case it will be stopped using ``failure``.
 
 set_alert_file_name()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -723,7 +804,7 @@ adaptations_pkg. ::
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | file_name          | in     | string                       | Name of the alert file. Default value is                |
-|          |                    |        |                              | C_ALERT_FILE_NAME.                                      |
+|          |                    |        |                              | C_ALERT_FILE_NAME defined in adaptations_pkg.           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -731,6 +812,8 @@ adaptations_pkg. ::
     -- Examples:
     set_alert_file_name("new_alert_log_file.txt");
 
+
+.. _alert:
 
 alert()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -750,7 +833,8 @@ alert()
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -775,7 +859,8 @@ Overloads for alert(). *Note* that: ``warning(msg, [scope]) = alert(warning, msg
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -784,6 +869,8 @@ Overloads for alert(). *Note* that: ``warning(msg, [scope]) = alert(warning, msg
     note("This is a note");
     tb_failure("This is a TB failure", "tb_scope");
 
+
+.. _increment_expected_alerts:
 
 increment_expected_alerts()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -802,7 +889,8 @@ Increments the expected alert counter for the given alert_level. ::
 |          |                    |        |                              | Default value is "".                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -810,6 +898,8 @@ Increments the expected alert counter for the given alert_level. ::
     -- Examples:
     increment_expected_alerts_and_stop_limit(WARNING, 2, "Expecting two more warnings");
 
+
+.. _set_alert_stop_limit:
 
 set_alert_stop_limit()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -848,7 +938,8 @@ Increments the expected alert counter and stop limit for the given alert_level. 
 |          |                    |        |                              | Default value is "".                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -856,6 +947,8 @@ Increments the expected alert counter and stop limit for the given alert_level. 
     -- Examples:
     increment_expected_alerts_and_stop_limit(WARNING, 2, "Expecting two more warnings");
 
+
+.. _get_alert_stop_limit:
 
 get_alert_stop_limit()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -916,40 +1009,228 @@ Returns current attention (IGNORE or REGARD) for given alert type. ::
     v_attention := get_alert_attention(WARNING)
 
 
+.. _util_hierarchical_alerts:
+
+Hierarchical Alerts
+==================================================================================================================================
+* Methods are defined in alert_hierarchy_pkg.vhd
+* Enable hierarchical alerts via the constant C_ENABLE_HIERARCHICAL_ALERTS in adaptations_pkg.
+* By default, there is only one level in the hierarchy tree, and one scope with name given by C_BASE_HIERARCHY_LEVEL in 
+  adaptations_pkg. This scope has a stop limit of 0 by default.
+* To add a scope to the hierarchy, call ``add_to_alert_hierarchy()``. The maximum length of the scope is determined by 
+  C_HIERARCHY_NODE_NAME_LENGTH in adaptations_pkg.
+* Any scope that is not registered in the hierarchy will be automatically registered if an alert is triggered in that scope. 
+  The parent scope will then be C_BASE_HIERARCHY_LEVEL. Changing the parent is possible by calling ``add_to_alert_hierarchy()`` 
+  with another scope as parent. This is only allowed if the parent is C_BASE_HIERARCHY_LEVEL and may cause an odd-looking 
+  summary (total summary will be correct).
+* To generate an alert use the :ref:`alert` procedure with the corresponding scope. Note that the default scope in the ``alert()`` 
+  procedure is not the same as C_BASE_HIERARCHY_LEVEL.
+* To print the report use the :ref:`report_alert_counters` procedure.
+
+| **Intended use**:
+| In UVVM, the scope is mostly used to describe components, e.g. VVCs. It can also be smaller structures, but it must have its own 
+  sequencer. A good way to set up the hierarchy is to let every scope register themselves with the default parent scope, and then 
+  in addition make every parent register each of its children. This is because the child scope doesn't have to have the same 
+  parent scope in all testbenches/test-harnesses, i.e. the child doesn't know its parent.
+
+* In the child, call ``add_to_alert_hierarchy(<child scope>)``. This will add the scope of the child to the hierarchy with the 
+  default (base) parent.
+* In the parent, first call ``add_to_alert_hierarchy(<parent scope>)``. Then call immediately ``add_to_alert_hierarchy(<child scope>, 
+  <parent scope>)`` for each of the scopes that shall be children of this parent scope. This will re-register the children to the 
+  correct parent.
+
+**Example output of report_alert_counters():**
+
+.. figure:: /images/hierarchical_alerts.png
+   :alt: Example output
+
+To understand how the alerts are counted in this example, when looking at the NOTE alerts:
+
+    * There are 5 alerts for the ``TB seq`` scope, of which:
+
+        * 1 belongs to ``TB seq`` scope and 4 to ``scope_1``
+
+    * From the 4 alerts in ``scope_1``:
+
+        * 1 belongs to ``scope_1``, 1 belongs to ``scope_2`` and 2 belong to ``scope_3``
+
+    * And so on.
+
+
+add_to_alert_hierarchy()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a scope in the alert hierarchy tree. ::
+
+    add_to_alert_hierarchy(scope, [parent_scope, [stop_limit]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | scope              | in     | string                       | Scope to be registered in the alert hierarchy tree      |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | parent_scope       | in     | string                       | Parent of the scope being configured. Default value is  |
+|          |                    |        |                              | C_BASE_HIERARCHY_LEVEL defined in adaptations_pkg.      |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | stop_limit         | in     | :ref:`t_alert_counters`      | Stop limit for the alert counters of the scope. Default |
+|          |                    |        |                              | value is (others => '0').                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    add_to_alert_hierarchy("tier_2", "tier_1");
+
+
+increment_expected_alerts()
+----------------------------------------------------------------------------------------------------------------------------------
+Increments the expected alert counter for a scope.
+
+.. note::
+
+    When using the procedure :ref:`increment_expected_alerts` which doesn't contain the scope hierarchy parameter, the 
+    C_BASE_HIERARCHY_LEVEL scope defined in adaptations_pkg will be used.
+
+.. code-block::
+
+    increment_expected_alerts(scope, alert_level, [amount])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | scope              | in     | string                       | Describes which scope's expected alert counter is       |
+|          |                    |        |                              | updated                                                 |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | amount             | in     | natural                      | Number of expected alerts the counter is incremented.   |
+|          |                    |        |                              | Default value is 1.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    increment_expected_alerts("tier_2", ERROR, 2);
+
+
+set_expected_alerts()
+----------------------------------------------------------------------------------------------------------------------------------
+Sets the expected alert counter for a scope. ::
+
+    set_expected_alerts(scope, alert_level, expected_alerts)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | scope              | in     | string                       | Describes which scope's expected alert counter is       |
+|          |                    |        |                              | updated                                                 |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | expected_alerts    | in     | natural                      | Number to set the expected alert counter                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    set_expected_alerts("tier_2", WARNING, 5);
+
+
+increment_stop_limit()
+----------------------------------------------------------------------------------------------------------------------------------
+Increments the stop limit for a scope. ::
+
+    increment_stop_limit(scope, alert_level, [amount])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | scope              | in     | string                       | Describes which scope's alert stop limit is updated     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | amount             | in     | natural                      | Number of alerts the stop limit counter is incremented. |
+|          |                    |        |                              | Default value is 1.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    increment_stop_limit("tier_1", ERROR);
+
+
+set_stop_limit()
+----------------------------------------------------------------------------------------------------------------------------------
+Sets the stop limit for a scope.
+
+.. note::
+
+    * When using the procedure :ref:`set_alert_stop_limit` which doesn't contain the scope hierarchy parameter, the top-level scope 
+      will be used.
+    * When using the function :ref:`get_alert_stop_limit` which doesn't contain the scope hierarchy parameter, the top-level scope 
+      will be used.
+
+.. code-block::
+
+    increment_stop_limit(scope, alert_level, stop_limit)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | scope              | in     | string                       | Describes which scope's alert stop limit is updated     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | stop_limit         | in     | natural                      | Number to set the alert stop limit                      |
+|          |                    |        |                              |                                                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    set_stop_limit("tier_1", ERROR, 5);
+
+
 Reporting
 ==================================================================================================================================
 
 report_global_ctrl()
 ----------------------------------------------------------------------------------------------------------------------------------
-Logs the values in the global_ctrl signal, which is described in :ref:`util_hierarchical_report`. ::
+Logs the stop limit values for each alert level. When using hierarchical alerts, the top-level scope alert values will be used. 
+The printing destination can be log and/or console and is defined by the shared variable ``shared_default_log_destination`` with 
+the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg. ::
 
     report_global_ctrl(VOID)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 
 report_msg_id_panel()
 ----------------------------------------------------------------------------------------------------------------------------------
-Logs the values in the msg_id_panel, which is described in :ref:`util_hierarchical_report`. ::
+Logs the status of all :ref:`message_ids` in the ``shared_msg_id_panel``. The printing destination can be log and/or console and 
+is defined by the shared variable ``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION in 
+adaptations_pkg. ::
 
     report_msg_id_panel(VOID)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
+
+.. _report_alert_counters:
 
 report_alert_counters()
 ----------------------------------------------------------------------------------------------------------------------------------
 Logs the status of all alert counters, typically at the end of simulation. For each alert_level, the alert counter is compared 
 with the expected counter. If parameter is FINAL, an additional summary concluding success or failure is logged. VOID parameter 
-gives same result as FINAL. ::
+gives same result as FINAL. The printing destination can be log and/or console and is defined by the shared variable 
+``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg. ::
 
     report_alert_counters(order)
     report_alert_counters(VOID)
@@ -960,7 +1241,7 @@ gives same result as FINAL. ::
 | constant | order              | in     | :ref:`t_order`               | Whether the report is to be printed during simulation or|
 |          |                    |        |                              | at the end                                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -975,7 +1256,8 @@ report_check_counters()
 ----------------------------------------------------------------------------------------------------------------------------------
 Logs the number of all check counters in the testbench, typically to be used at the end of simulation. Note that this functionality 
 is disabled by default to avoid possible decreased performance, set C_ENABLE_CHECK_COUNTER to true in adaptations_pkg to enable it. 
-The VOID parameter gives same result as FINAL. ::
+The VOID parameter gives same result as FINAL. The printing destination can be log and/or console and is defined by the shared 
+variable ``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.::
 
     report_check_counters(order)
     report_check_counters(VOID)
@@ -986,7 +1268,7 @@ The VOID parameter gives same result as FINAL. ::
 | constant | order              | in     | :ref:`t_order`               | Whether the report is to be printed during simulation or|
 |          |                    |        |                              | at the end                                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1004,19 +1286,19 @@ Shared variables
 These shared variables are natural, read only types.
 
 * shared_uvvm_status.found_unexpected_simulation_warnings_or_worse
-    | Status is ‘0’ on success and ‘1’ on failure.
+    | Status is '0' on success and '1' on failure.
     | The variable is set when actual > expected for WARNING, ERROR or FAILURE alerts.
 
 * shared_uvvm_status.found_unexpected_simulation_errors_or_worse
-    | Status is ‘0’ on success and ‘1’ on failure.
+    | Status is '0' on success and '1' on failure.
     | The variable is set when actual > expected for ERROR or FAILURE alerts.
 
 * shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse
-    | Status is ‘0’ on success and ‘1’ on failure.
+    | Status is '0' on success and '1' on failure.
     | The variable is set when there is a mismatch between the expected and the actual WARNING, ERROR or FAILURE alerts.
 
 * shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse
-    | Status is ‘0’ on success and ‘1’ on failure.
+    | Status is '0' on success and '1' on failure.
     | The variable is set when there is a mismatch between the expected and the actual ERROR or FAILURE alerts.
 
 
@@ -1024,6 +1306,9 @@ These shared variables are natural, read only types.
 
 Basic Randomization
 ==================================================================================================================================
+These basic randomization methods generate random numbers for the most common types (integer, real, time, std_logic and 
+std_logic_vector). For support of more types see :ref:`rand_pkg_overview`. And for a more advanced randomization without 
+replacement, see :ref:`optimized_randomization`.
 
 random() - function
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1038,7 +1323,7 @@ Returns a random value. The function uses and updates a global seed. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | length             | in     | integer                      | Length of the random vector to return                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1124,7 +1409,8 @@ Sets the global seeds to seed1 and seed2. ::
 |          |                    |        |                              | Default value is "randomizing seeds".                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1196,7 +1482,7 @@ Additions to the IEEE defined to_string functions. Return a string with the valu
 
     -- Examples:
     v_string := to_string(v_u8, DEC);
-    v_string := to_string(v_slv8, HEX, AS_IS, INCL_RADIX);
+    v_string := to_string(v_slv8, HEX, KEEP_LEADING_0, INCL_RADIX);
 
 
 ascii_to_char()
@@ -1683,13 +1969,15 @@ falling edge. ::
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_GEN_PULSE.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1711,8 +1999,9 @@ Synchronization
 
 block_flag()
 ----------------------------------------------------------------------------------------------------------------------------------
-Blocks a flag to allow synchronization between processes. Adds a new blocked flag if it does not already exist. Maximum number of 
-flags can be modified in adaptations_pkg. Generates an alert with already_blocked_severity if the flag is already blocked. ::
+Blocks a flag to allow synchronization between processes. Adds a new blocked flag if it does not already exist. The maximum number 
+of flags can be modified by C_NUM_SYNC_FLAGS in adaptations_pkg. Generates an alert with already_blocked_severity if the flag is 
+already blocked. ::
 
     block_flag(flag_name, msg, [already_blocked_severity, [scope]])
 
@@ -1727,7 +2016,8 @@ flags can be modified in adaptations_pkg. Generates an alert with already_blocke
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1740,7 +2030,7 @@ flags can be modified in adaptations_pkg. Generates an alert with already_blocke
 unblock_flag()
 ----------------------------------------------------------------------------------------------------------------------------------
 Unblocks a flag to allow a process that is waiting on that flag to continue. Adds a new unblocked flag if it does not already 
-exist. ::
+exist. The maximum number of flags can be modified by C_NUM_SYNC_FLAGS in adaptations_pkg. ::
 
     unblock_flag(flag_name, msg, trigger, [scope])
 
@@ -1755,7 +2045,8 @@ exist. ::
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1768,8 +2059,9 @@ exist. ::
 await_unblock_flag()
 ----------------------------------------------------------------------------------------------------------------------------------
 Waits for a flag to be unblocked. Continues immediately if the flag already is unblocked. Adds a new blocked flag if it does not 
-already exist and waits for the flag to be unblocked. Generates an alert with timeout_severity if the flag is not unblocked within 
-the timeout. The flag can be re-blocked when leaving the process by setting flag_returning=RETURN_TO_BLOCK. ::
+already exist and waits for the flag to be unblocked. The maximum number of flags can be modified by C_NUM_SYNC_FLAGS in 
+adaptations_pkg. Generates an alert with timeout_severity if the flag is not unblocked within the timeout. The flag can be 
+re-blocked when leaving the process by setting flag_returning=RETURN_TO_BLOCK. ::
 
     await_unblock_flag(flag_name, timeout, msg, [flag_returning, [timeout_severity, [scope]]])
 
@@ -1790,7 +2082,8 @@ the timeout. The flag can be re-blocked when leaving the process by setting flag
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1826,7 +2119,8 @@ using the same barrier_signal to reach their call of await_barrier(). ::
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1890,7 +2184,8 @@ Normalize 'value' to the width given by 'target'.
 wait_until_given_time_after_rising_edge()
 ----------------------------------------------------------------------------------------------------------------------------------
 Wait until a certain time has passed after the rising edge of the clock. If the time passed since the previous rising_edge is less 
-than wait_time, don't wait until the next rising_edge, just wait_time after the previous rising_edge. ::
+than wait_time, don't wait until the next rising_edge, just wait_time after the previous rising_edge. If the rising edge of the 
+clock doesn't occur within a timeout defined by C_UVVM_TIMEOUT in adaptations_pkg, an alert will be generated. ::
 
     wait_until_given_time_after_rising_edge(clk, wait_time)
 
@@ -1912,7 +2207,8 @@ than wait_time, don't wait until the next rising_edge, just wait_time after the 
 wait_until_given_time_before_rising_edge()
 ----------------------------------------------------------------------------------------------------------------------------------
 Wait until a certain time before the rising edge of the clock. If the time until rising_edge is less than time_to_edge, wait until 
-the next rising_edge and afterwards until time_to_edge before rising_edge. ::
+the next rising_edge and afterwards until time_to_edge before rising_edge. If the falling edge previous to the rising edge of the 
+clock doesn't occur within a timeout defined by C_UVVM_TIMEOUT in adaptations_pkg, an alert will be generated. ::
 
     wait_until_given_time_before_rising_edge(clk, time_to_edge, clk_period)
 
@@ -1976,7 +2272,8 @@ Waits for a number of rising edges of the clk signal, and then waits for a margi
 
 wait_on_bfm_sync_start()
 ----------------------------------------------------------------------------------------------------------------------------------
-Synchronizes the start of a BFM procedure depending on the clock and bfm_sync. ::
+Synchronizes the start of a BFM procedure depending on the clock and bfm_sync. If synchronizing with the clock and the rising edge 
+of the clock doesn't occur within a timeout defined by C_UVVM_TIMEOUT in adaptations_pkg, an alert will be generated. ::
 
     wait_on_bfm_sync_start(clk, bfm_sync, setup_time, config_clock_period, time_of_falling_edge, time_of_rising_edge)
 
@@ -1998,7 +2295,7 @@ Synchronizes the start of a BFM procedure depending on the clock and bfm_sync. :
 | variable |time_of_falling_edge| out    | time                         | Time of last the falling edge                           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | time_of_rising_edge| out    | time                         | Time of last the rising edge. When not found, returns   |
-|          |                    |        |                              | -1 ns.                                                  |
+|          |                    |        |                              | C_UNDEFINED_TIME (-1 ns).                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -2041,8 +2338,15 @@ consecutive to be able to calculate the correct clock period. ::
 
 check_clock_period_margin()
 ----------------------------------------------------------------------------------------------------------------------------------
-Checks that the clock signal behaves according to configured specifications. Only when bfm_sync = SYNC_WITH_SETUP_AND_HOLD. The 
-procedure must be called after the clock's rising_edge. ::
+Checks that the clock signal behaves according to configured specifications.
+
+.. note::
+
+    * Only when bfm_sync = SYNC_WITH_SETUP_AND_HOLD.
+    * The procedure must be called after the clock's rising_edge.
+    * The clock is assumed to have a 50% duty cycle.
+
+.. code-block::
 
     check_clock_period_margin(clock, bfm_sync, time_of_falling_edge, time_of_rising_edge, config_clock_period, config_clock_period_margin, config_clock_margin_severity)
 
@@ -2176,22 +2480,94 @@ This should normally be called at the end of the simulation. ::
 **********************************************************************************************************************************
 Types
 **********************************************************************************************************************************
+UVVM predefined types used in the utility library, VVC framework and different VIPs are found in types_pkg.vhd.
+
 .. toctree::
    :maxdepth: 1
 
-   types_pkg.rst
+   types_pkg.vhd <types_pkg.rst>
+
+
+.. _adaptations_pkg:
+
+**********************************************************************************************************************************
+Adaptations package
+**********************************************************************************************************************************
+The adaptations_pkg is intended for local modifications to library behavior and log layout. This way only one file needs to 
+merge when a new version of the library is released. This package may of course also be used to set up a company or project 
+specific behavior and layout.
+
+The package has constants for customizing functionality such as:
+
+    * setting the alert and log files names
+    * removing UVVM initial and release info printed in simulation
+    * log format, e.g.: log prefix, log widths, scope default value
+    * :ref:`message ids <message_ids>`
+    * verbosity control, e.g.: default log msg ID, default message ID panel, default message ID indentation
+    * alert counters, e.g.: default alert attention, default stop limit
+    * hierarchical alerts, e.g.: enabling hierarchical alerts
+    * buffers and queues, e.g. maximum buffer size
+    * synchronization, e.g.: maximum sync flags
+    * enhanced randomization, e.g.: initial randomization seeds
+    * functional coverage, e.g.: maximum number of coverpoints
+    * specification coverage, e.g. CSV delimiter
+    * scoreboard, e.g.: maximum number of SB instances
+    * BFMs, e.g. AXI-Stream max TID bits
+    * UVVM assertions, e.g. window assertions max cycles
+    * VVC framework, e.g.: maximum number of VVC instances
+    * VVCs, e.g. Avalon-MM max data length
+    * hierarchical VVCs, e.g.: supported interfaces
+    * CRC, e.g. CRC-32 start value
+
+Global signals
+==================================================================================================================================
+
++-----------------------------------+-------------------+-----------------------------------------------------------+
+| Global signal                     | Type              | Description                                               |
++===================================+===================+===========================================================+
+| global_show_msg_for_uvvm_cmd      | boolean           | If true, the msg parameter for the commands using the     |
+|                                   |                   | msg_id ID_UVVM_SEND_CMD will be shown. (Default true)     |
++-----------------------------------+-------------------+-----------------------------------------------------------+
+
+Types
+==================================================================================================================================
+The following types can be extended if needed.
+
+.. _t_randomisation:
+
+t_randomisation
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    NA, RANDOM, RANDOM_FAVOUR_EDGES
+
+.. _t_channel:
+
+t_channel
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    NA, ALL_CHANNELS, RX, TX
+
+.. _t_interface:
+
+t_interface
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    SBI, GMII
+
 
 .. _message_ids:
 
-**********************************************************************************************************************************
 Message IDs
-**********************************************************************************************************************************
-The predefined message IDs are listed in the table below. All the message IDs are defined in adaptations_pkg.vhd
+==================================================================================================================================
+The predefined message IDs are listed in the table below. All the message IDs are defined in adaptations_pkg.
 
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | Message ID               | Description                                                                                         |
 +==========================+=====================================================================================================+
-| -- **Bitvis utility methods**                                                                                                  |
+| -- **UVVM utility methods**                                                                                                    |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | NO_ID                    | Used as default prior to setting actual ID when transferring ID as a field in a record              |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
@@ -2234,6 +2610,10 @@ The predefined message IDs are listed in the table below. All the message IDs ar
 | -- **General**                                                                                                                 |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_POS_ACK               | To write a positive acknowledge on a check                                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **UVVM assertions**                                                                                                         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UVVM_ASSERTION        | Used for logging UVVM assertions                                                                    |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | -- **Directly inside test sequencers**                                                                                         |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
@@ -2344,6 +2724,8 @@ The predefined message IDs are listed in the table below. All the message IDs ar
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_AWAIT_COMPLETION_END  | Used for logging when the procedure has finished waiting for completion                             |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_AWAIT_UVVM_COMPLETION | Used for logging the procedure calls waiting for scoreboards or UVVM completion                     |
++--------------------------+-----------------------------------------------------------------------------------------------------+
 | -- **Distributed data**                                                                                                        |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_UVVM_DATA_QUEUE       | Information about UVVM data FIFO/stack (initialization, put, get, etc)                              |
@@ -2403,247 +2785,6 @@ turn off the positive acknowledge message:
   This will disable positive acknowledge messages for any procedure call that uses this msg_id_panel.
 * Call ``check_value()`` with 'ID_NEVER' instead of 'ID_POS_ACK'. This will disable the positive acknowledge for this particular 
   call of ``check_value()``, but all other calls to ``check_value()`` will report a positive acknowledge.
-
-.. _util_hierarchical_report:
-
-**********************************************************************************************************************************
-Using Hierarchical Alert Reporting
-**********************************************************************************************************************************
-* Methods are defined in alert_hierarchy_pkg.vhd
-* Enable hierarchical alerts via the constant C_ENABLE_HIERARCHICAL_ALERTS in the adaptations package.
-* By default, there is only one level in the hierarchy tree, and one scope with name given by C_BASE_HIERARCHY_LEVEL in 
-  the adaptations package. This scope has a stop limit of 0 by default.
-* To add a scope to the hierarchy, call add_to_alert_hierarchy().
-* Any scope that is not registered in the hierarchy will be automatically registered if an alert is triggered in that scope. 
-  The parent scope will then be C_BASE_HIERARCHY_LEVEL. Changing the parent is possible by calling add_to_alert_hierarchy() 
-  with another scope as parent. This is only allowed if the parent is C_BASE_HIERARCHY_LEVEL and may cause an odd-looking 
-  summary (total summary will be correct).
-
-| **Intended use**:
-| In UVVM mostly use the scope to describe components, e.g. VVCs. It can also be smaller structures, but it has to have its own 
-  sequencer. A good way to set up the hierarchy is to let every scope register themselves with the default parent scope, and then 
-  in addition make every parent register each of its children. This is because the child scope doesn't have to have the same 
-  parent scope in all testbenches/test-harnesses, i.e. the child doesn't know its parent.
-
-* In the child, call add_to_alert_hierarchy(<child scope>). This will add the scope of the child to the hierarchy with the default 
-  (base) parent.
-* In the parent, first call add_to_alert_hierarchy(<parent scope>). Then call immediately add_to_alert_hierarchy(<child scope>, 
-  <parent scope>) for each of the scopes that shall be children of this parent scope. This will re-register the children to the 
-  correct parent.
-
-**Example output**
-
-.. figure:: /images/hierarchical_alerts.png
-   :alt: Example output
-
-Methods
-==================================================================================================================================
-
-TODO:
-procedure initialize_hierarchy(
-constant base_scope : string := C_BASE_HIERARCHY_LEVEL;
-constant stop_limit : t_alert_counters := (others => 0)
-);
-
-
-add_to_alert_hierarchy()
-----------------------------------------------------------------------------------------------------------------------------------
-Add a scope in the alert hierarchy tree. ::
-
-    add_to_alert_hierarchy(scope, [parent_scope, [stop_limit]])
-
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                             |
-+==========+====================+========+==============================+=========================================================+
-| constant | scope              | in     | string                       |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | parent_scope       | in     | string                       | Default value is C_BASE_HIERARCHY_LEVEL.                |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | stop_limit         | in     | :ref:`t_alert_counters`      | Default value is (others => ‘0’).                       |
-|          |                    |        |                              |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-
-.. code-block::
-
-    -- Examples:
-    add_to_alert_hierarchy("tier_2", "tier_1");
-
-
-TODO:
-procedure set_hierarchical_alert_top_level_stop_limit(
-constant alert_level : t_alert_level;
-constant value : natural
-);
-
-TODO:
-impure function get_hierarchical_alert_top_level_stop_limit(
-constant alert_level : t_alert_level
-) return natural;
-
-TODO:
-procedure hierarchical_alert(
-constant alert_level: t_alert_level;
-constant msg : string;
-constant scope : string;
-constant attention : t_attention
-);
-
-
-increment_expected_alerts()
-----------------------------------------------------------------------------------------------------------------------------------
-Increment the expected alert counter for a scope. ::
-
-    increment_expected_alerts(scope, alert_level, [amount])
-
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                             |
-+==========+====================+========+==============================+=========================================================+
-| constant | scope              | in     | string                       |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | amount             | in     | natural                      | Default value is 1.                                     |
-|          |                    |        |                              |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-
-.. code-block::
-
-    -- Examples:
-    increment_expected_alerts("tier_2", ERROR, 2);
-
-+-----------------------+-------------------------------+
-| amount                | 1                             |
-+-----------------------+-------------------------------+
-
-
-set_expected_alerts()
-----------------------------------------------------------------------------------------------------------------------------------
-Set the expected alert counter for a scope. ::
-
-    set_expected_alerts(scope, alert_level, expected_alerts)
-
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                             |
-+==========+====================+========+==============================+=========================================================+
-| constant | scope              | in     | string                       |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | expected_alerts    | in     | natural                      |                                                         |
-|          |                    |        |                              |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-
-.. code-block::
-
-    -- Examples:
-    set_expected_alerts("tier_2", WARNING, 5);
-
-
-increment_stop_limit()
-----------------------------------------------------------------------------------------------------------------------------------
-Increment the stop limit for a scope. ::
-
-    increment_stop_limit(scope, alert_level, [amount])
-
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                             |
-+==========+====================+========+==============================+=========================================================+
-| constant | scope              | in     | string                       |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | amount             | in     | natural                      | Default value is 1.                                     |
-|          |                    |        |                              |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-
-.. code-block::
-
-    -- Examples:
-    increment_stop_limit("tier_1", ERROR);
-
-
-set_stop_limit()
-----------------------------------------------------------------------------------------------------------------------------------
-Set the stop limit for a scope. ::
-
-    increment_stop_limit(scope, alert_level, stop_limit)
-
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                             |
-+==========+====================+========+==============================+=========================================================+
-| constant | scope              | in     | string                       |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | stop_limit         | in     | natural                      |                                                         |
-|          |                    |        |                              |                                                         |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-
-.. code-block::
-
-    -- Examples:
-    set_stop_limit("tier_1", ERROR, 5);
-
-
-TODO:
-procedure print_hierarchical_log(
-constant order : t_order := FINAL
-);
-
-TODO:
-procedure clear_hierarchy(
-constant VOID : t_void
-);
-
-.. _adaptations_pkg:
-
-**********************************************************************************************************************************
-Adaptations package
-**********************************************************************************************************************************
-The adaptations_pkg.vhd is intended for local modifications to library behavior and log layout. This way only one file needs to 
-merge when a new version of the library is released. This package may of course also be used to set up a company or project 
-specific behavior and layout.
-
-The package has constants for customizing functionality such as:
-
-    * setting the alert and log files names
-    * removing UVVM initial and release info printed in simulation
-    * log format, e.g.: log prefix, log widths, scope default value
-    * :ref:`message ids <message_ids>`
-    * verbosity control, e.g.: default log msg ID, default message ID panel, default message ID indentation
-    * alert counters, e.g.: default alert attention, default stop limit
-    * hierarchical alerts, e.g.: enabling hierarchical alerts
-    * synchronization, e.g.: maximum sync flags
-    * enhanced randomization, e.g.: initial randomization seeds
-    * functional coverage, e.g.: maximum number of coverpoints
-    * VVC framework, e.g.: maximum number of VVC instances
-    * scoreboard, e.g.: maximum number of SB instances
-    * hierarchical VVCs, e.g.: supported interfaces
-    * CRC
-
-+-----------------------------------+-------------------+-----------------------------------------------------------+
-| Global signal                     | Type              | Description                                               |
-+===================================+===================+===========================================================+
-| global_show_msg_for_uvvm_cmd      | boolean           | If true, the msg parameter for the commands using the     |
-|                                   |                   | msg_id ID_UVVM_SEND_CMD will be shown                     |
-+-----------------------------------+-------------------+-----------------------------------------------------------+
-
-+-----------------------------------+-------------------+-----------------------------------------------------------+
-| Global variable                   | Type              | Description                                               |
-+===================================+===================+===========================================================+
-| shared_default_log_destination    | t_log_destination | The default destination for the log messages              |
-|                                   |                   | (Default: CONSOLE_AND_LOG)                                |
-+-----------------------------------+-------------------+-----------------------------------------------------------+
-
-**********************************************************************************************************************************
-Additional Documentation
-**********************************************************************************************************************************
-There are two other main documents for the UVVM Utility Library:
-
-    * Making a simple, structured and efficient VHDL testbench – Step-by-step (PPT)
-    * UVVM Utility Library – Concepts and Usage (PPT)
-
-There is also a webinar available on 'Making a simple, structured and efficient VHDL testbench – Step-by-step' (via Aldec [#f2]_)
 
 **********************************************************************************************************************************
 Compilation
@@ -2705,9 +2846,8 @@ use of protected types and interface objects not being globally static. **These 
 
 .. _util_simulator_compatibility:
 
-**********************************************************************************************************************************
 Simulator compatibility and setup
-**********************************************************************************************************************************
+==================================================================================================================================
 * See :ref:`uvvm_prerequisites` for a list of supported simulators.
 
 Required setup:
@@ -2715,6 +2855,16 @@ Required setup:
     * Textio buffering should be removed or reduced. (Modelsim.ini: Set UnbufferedOutput to 1)
     * Simulator transcript (and log file viewer) should be set to a fixed width font type for proper alignment (e.g. Courier New 8)
     * Simulator must be set up to break the simulation on failure (or lower severity)
+
+**********************************************************************************************************************************
+Additional Documentation
+**********************************************************************************************************************************
+There are two other main documents for the UVVM Utility Library:
+
+    * Making a simple, structured and efficient VHDL testbench – Step-by-step (PPT)
+    * UVVM Utility Library – Concepts and Usage (PPT)
+
+There is also a webinar available on 'Making a simple, structured and efficient VHDL testbench – Step-by-step' (via Aldec [#f2]_)
 
 .. include:: rst_snippets/ip_disclaimer.rst
 

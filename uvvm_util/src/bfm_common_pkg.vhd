@@ -30,11 +30,15 @@ package bfm_common_pkg is
   type t_normalization_mode is (ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY);
   alias t_normalisation_mode is t_normalization_mode;
 
+  -- Constants for timeout parameters
+  constant C_UNDEFINED_TIME : time := -1 ns;
+
   -- Constants for random configurations
   constant C_RANDOM          : integer := -1;
   constant C_MULTIPLE_RANDOM : integer := -2;
 
   -- Functions/procedures
+  -- DEPRECATED: will be removed in v3
   impure function normalise(
     constant value       : in std_logic_vector;
     constant target      : in std_logic_vector;
@@ -45,6 +49,7 @@ package bfm_common_pkg is
     constant val_type    : string := "slv"
   ) return std_logic_vector;
 
+  -- DEPRECATED: will be removed in v3
   impure function normalise(
     constant value       : in unsigned;
     constant target      : in unsigned;
@@ -55,6 +60,7 @@ package bfm_common_pkg is
     constant val_type    : string := "unsigned"
   ) return unsigned;
 
+  -- DEPRECATED: will be removed in v3
   impure function normalise(
     constant value       : in signed;
     constant target      : in signed;
@@ -65,6 +71,7 @@ package bfm_common_pkg is
     constant val_type    : string := "signed"
   ) return signed;
 
+  -- DEPRECATED: will be removed in v3
   impure function normalise(
     constant value       : in t_slv_array;
     constant target      : in t_slv_array;
@@ -75,6 +82,7 @@ package bfm_common_pkg is
     constant val_type    : string := "t_slv_array"
   ) return t_slv_array;
 
+  -- DEPRECATED: will be removed in v3
   impure function normalise(
     constant value       : in t_unsigned_array;
     constant target      : in t_unsigned_array;
@@ -85,6 +93,7 @@ package bfm_common_pkg is
     constant val_type    : string := "t_unsigned_array"
   ) return t_unsigned_array;
 
+  -- DEPRECATED: will be removed in v3
   impure function normalise(
     constant value       : in t_signed_array;
     constant target      : in t_signed_array;
@@ -179,8 +188,8 @@ package bfm_common_pkg is
   procedure wait_on_bfm_sync_start(
     signal   clk                  : in std_logic;
     constant bfm_sync             : in t_bfm_sync;
-    constant setup_time           : in time := -1 ns;
-    constant config_clock_period  : in time := -1 ns;
+    constant setup_time           : in time := C_UNDEFINED_TIME;
+    constant config_clock_period  : in time := C_UNDEFINED_TIME;
     variable time_of_falling_edge : out time;
     variable time_of_rising_edge  : out time
   );
@@ -188,9 +197,9 @@ package bfm_common_pkg is
   procedure wait_on_bfm_exit(
     signal   clk                  : in std_logic;
     constant bfm_sync             : in t_bfm_sync;
-    constant hold_time            : in time := -1 ns;
-    constant time_of_falling_edge : in time := -1 ns;
-    constant time_of_rising_edge  : in time := -1 ns
+    constant hold_time            : in time := C_UNDEFINED_TIME;
+    constant time_of_falling_edge : in time := C_UNDEFINED_TIME;
+    constant time_of_rising_edge  : in time := C_UNDEFINED_TIME
   );
 
   procedure check_clock_period_margin(
@@ -219,17 +228,17 @@ package body bfm_common_pkg is
     constant msg         : string;
     constant val_type    : string := "slv"
   ) return std_logic_vector is
-    constant name               : string := "normalize_and_check(" & val_type & ": " & value_name & "=" & to_string(value, HEX, AS_IS) & ", " & target_name & "=" & to_string(target, HEX, AS_IS) & ")";
+    constant name               : string := "normalize_and_check(" & val_type & ": " & value_name & "=" & to_string(value, HEX, KEEP_LEADING_0) & ", " & target_name & "=" & to_string(target, HEX, KEEP_LEADING_0) & ")";
     alias a_value               : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_target              : std_logic_vector(target'length - 1 downto 0) is target;
     variable v_normalized_value : std_logic_vector(target'length - 1 downto 0);
   begin
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     end if;
     -- If value'length > target'length, remove leading zeros from value
@@ -237,10 +246,10 @@ package body bfm_common_pkg is
       v_normalized_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
       if not matching_widths(a_value, a_target) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     -- If value'length = target'length
     elsif (a_value'length = a_target'length) then
@@ -251,7 +260,7 @@ package body bfm_common_pkg is
       v_normalized_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
@@ -287,10 +296,10 @@ package body bfm_common_pkg is
   begin
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     end if;
     -- If value'length > target'length, remove leading zeros/ones from value
@@ -298,17 +307,17 @@ package body bfm_common_pkg is
       v_normalized_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
 
       if a_value(a_value'high) = '0' then -- positive value
         if not matching_widths(a_value, a_target) then
-          tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB. " & add_msg_delimiter(msg), C_SCOPE);
+          tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
         end if;
       elsif a_value(a_value'high) = '1' then -- negative value
         for i in a_value'high downto a_target'length loop
           if a_value(i) = '0' then
-            tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB. " & add_msg_delimiter(msg), C_SCOPE);
+            tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
           end if;
         end loop;
       end if;
@@ -325,7 +334,7 @@ package body bfm_common_pkg is
       v_normalized_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
@@ -451,7 +460,7 @@ package body bfm_common_pkg is
     constant msg         : string;
     constant val_type    : string := "slv"
   ) return std_logic_vector is
-    constant name               : string := "normalise(" & val_type & ": " & value_name & "=" & to_string(value, HEX, AS_IS) & ", " & target_name & "=" & to_string(target, HEX, AS_IS) & ")";
+    constant name               : string := "normalise(" & val_type & ": " & value_name & "=" & to_string(value, HEX, KEEP_LEADING_0) & ", " & target_name & "=" & to_string(target, HEX, KEEP_LEADING_0) & ")";
     alias a_value               : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_target              : std_logic_vector(target'length - 1 downto 0) is target;
     variable v_normalised_value : std_logic_vector(target'length - 1 downto 0);
@@ -459,10 +468,10 @@ package body bfm_common_pkg is
     deprecate(get_procedure_name_from_instance_name(value'instance_name), "Use normalize_and_check().");
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     end if;
     -- If value'length > target'length, remove leading zeros from value
@@ -470,10 +479,10 @@ package body bfm_common_pkg is
       v_normalised_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
       if not matching_widths(a_value, a_target) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     -- If value'length = target'length
     elsif (a_value'length = a_target'length) then
@@ -484,7 +493,7 @@ package body bfm_common_pkg is
       v_normalised_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
@@ -521,10 +530,10 @@ package body bfm_common_pkg is
     deprecate(get_procedure_name_from_instance_name(value'instance_name), "Use normalize_and_check().");
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero! " & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     end if;
     -- If value'length > target'length, remove leading zeros/ones from value
@@ -532,17 +541,17 @@ package body bfm_common_pkg is
       v_normalised_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
 
       if a_value(a_value'high) = '0' then -- positive value
         if not matching_widths(a_value, a_target) then
-          tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB. " & add_msg_delimiter(msg), C_SCOPE);
+          tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
         end if;
       elsif a_value(a_value'high) = '1' then -- negative value
         for i in a_value'high downto a_target'length loop
           if a_value(i) = '0' then
-            tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB. " & add_msg_delimiter(msg), C_SCOPE);
+            tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
           end if;
         end loop;
       end if;
@@ -559,7 +568,7 @@ package body bfm_common_pkg is
       v_normalised_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode. " & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
@@ -643,7 +652,7 @@ package body bfm_common_pkg is
     signal   clk       : in std_logic;
     constant wait_time : in time
   ) is
-    constant proc_name             : string := "wait_until_given_time_after_rising_edge";
+    constant C_PROC_NAME           : string := "wait_until_given_time_after_rising_edge";
     variable v_remaining_wait_time : time;
   begin
     -- If the time since the previous rising_edge is less than wait_time,
@@ -656,7 +665,7 @@ package body bfm_common_pkg is
     else
       wait until rising_edge(clk) for C_UVVM_TIMEOUT;
       if clk /= '1' then
-        alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+        alert(TB_ERROR, C_PROC_NAME & " => timeout while waiting for clk rising edge.");
       end if;
       v_remaining_wait_time := wait_time; -- Wait until wait_time after rising_edge
     end if;
@@ -669,7 +678,7 @@ package body bfm_common_pkg is
     constant time_to_edge : in time;
     constant clk_period   : in time
   ) is
-    constant proc_name             : string := "wait_until_given_time_before_rising_edge";
+    constant C_PROC_NAME           : string := "wait_until_given_time_before_rising_edge";
     variable v_remaining_wait_time : time;
   begin
     check_value(clk_period > 2 * time_to_edge, TB_ERROR, "Checking time_to_edge is less than half clk_period", C_SCOPE, ID_NEVER);
@@ -682,7 +691,7 @@ package body bfm_common_pkg is
     else
       wait until falling_edge(clk) for C_UVVM_TIMEOUT;
       if clk /= '0' then
-        alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+        alert(TB_ERROR, C_PROC_NAME & " => timeout while waiting for clk falling edge.");
       end if;
       v_remaining_wait_time := (clk_period / 2 - time_to_edge); -- Wait until time_to_edge before rising_edge
     end if;
@@ -706,11 +715,15 @@ package body bfm_common_pkg is
     constant num_rising_edge : in natural;
     constant margin          : in time
   ) is
+    constant C_PROC_NAME : string := "wait_num_rising_edge_plus_margin";
   begin
     -- Wait for number of rising edges
     if num_rising_edge /= 0 then
       for i in 1 to num_rising_edge loop
-        wait until rising_edge(clk);
+        wait until rising_edge(clk) for C_UVVM_TIMEOUT;
+        if clk /= '1' then
+          alert(TB_ERROR, C_PROC_NAME & " => timeout while waiting for clk rising edge.");
+        end if;
       end loop;
     end if;
     -- Wait for remaining margin, if any
@@ -720,38 +733,39 @@ package body bfm_common_pkg is
   procedure wait_on_bfm_sync_start(
     signal   clk                  : in std_logic;
     constant bfm_sync             : in t_bfm_sync;
-    constant setup_time           : in time := -1 ns;
-    constant config_clock_period  : in time := -1 ns;
+    constant setup_time           : in time := C_UNDEFINED_TIME;
+    constant config_clock_period  : in time := C_UNDEFINED_TIME;
     variable time_of_falling_edge : out time;
     variable time_of_rising_edge  : out time
   ) is
-    constant proc_name : string := "wait_on_bfm_sync_start";
+    constant C_PROC_NAME : string := "wait_on_bfm_sync_start";
   begin
-    time_of_rising_edge := -1 ns;
+    time_of_rising_edge := C_UNDEFINED_TIME;
 
     case bfm_sync is
       when SYNC_ON_CLOCK_ONLY =>
-        -- sample rising_egde
+        -- Sample rising_egde
         if clk /= '1' then
           wait until rising_edge(clk) for C_UVVM_TIMEOUT;
           if clk /= '1' then
-            alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+            alert(TB_ERROR, C_PROC_NAME & " => timeout while waiting for clk rising edge.");
           end if;
         end if;
         time_of_rising_edge  := now - clk'last_event;
-        -- exit on clock falling edge
-        wait until falling_edge(clk);
+        -- Exit on clock falling edge
+        wait until falling_edge(clk) for C_UVVM_TIMEOUT;
+        if clk /= '0' then
+          alert(TB_ERROR, C_PROC_NAME & " => timeout while waiting for clk falling edge.");
+        end if;
         time_of_falling_edge := now;
 
       when SYNC_WITH_SETUP_AND_HOLD =>
-        check_value(setup_time > -1 ns, TB_ERROR, proc_name & " => check: setup_time is set.", C_SCOPE, ID_NEVER);
-        check_value(config_clock_period > -1 ns, TB_ERROR, proc_name & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
-
+        check_value(setup_time /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: setup_time is set.", C_SCOPE, ID_NEVER);
+        check_value(config_clock_period /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
+        -- Synchronisation
         wait_until_given_time_before_rising_edge(clk, setup_time, config_clock_period);
         time_of_falling_edge := now - clk'last_event;
-
-      when others =>
-        alert(TB_WARNING, proc_name & " => invalid bfm_sync parameter.");
+        time_of_rising_edge  := now + setup_time;
     end case;
   end procedure wait_on_bfm_sync_start;
 
@@ -761,43 +775,40 @@ package body bfm_common_pkg is
   procedure wait_on_bfm_exit(
     signal   clk                  : in std_logic;
     constant bfm_sync             : in t_bfm_sync;
-    constant hold_time            : in time := -1 ns;
-    constant time_of_falling_edge : in time := -1 ns;
-    constant time_of_rising_edge  : in time := -1 ns
+    constant hold_time            : in time := C_UNDEFINED_TIME;
+    constant time_of_falling_edge : in time := C_UNDEFINED_TIME;
+    constant time_of_rising_edge  : in time := C_UNDEFINED_TIME
   ) is
-    constant proc_name               : string := "wait_on_bfm_exit";
+    constant C_PROC_NAME             : string := "wait_on_bfm_exit";
     variable v_measured_clock_period : time;
   begin
 
     case bfm_sync is
       when SYNC_ON_CLOCK_ONLY =>
-        check_value(clk, '1', TB_WARNING, proc_name & " => check: BFM exit syncronisation called when clk is high.", C_SCOPE, ID_NEVER);
-        check_value(time_of_falling_edge > -1 ns, TB_ERROR, proc_name & " => check: time_of_falling_edge is set.", C_SCOPE, ID_NEVER);
-        check_value(time_of_rising_edge > -1 ns, TB_ERROR, proc_name & " => check: time_of_rising_edge is set.", C_SCOPE, ID_NEVER);
-
+        check_value(clk, '1', TB_WARNING, C_PROC_NAME & " => check: BFM exit syncronisation called when clk is high.", C_SCOPE, ID_NEVER);
+        check_value(time_of_falling_edge /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: time_of_falling_edge is set.", C_SCOPE, ID_NEVER);
+        check_value(time_of_rising_edge /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: time_of_rising_edge is set.", C_SCOPE, ID_NEVER);
+        -- Calculate clock period
         if time_of_falling_edge > time_of_rising_edge then
           v_measured_clock_period := (time_of_falling_edge - time_of_rising_edge) * 2;
         else
           v_measured_clock_period := (time_of_rising_edge - time_of_falling_edge) * 2;
         end if;
-        -- synchronisation
+        -- Synchronisation
         wait_until_given_time_after_rising_edge(clk, v_measured_clock_period / 4);
 
       when SYNC_WITH_SETUP_AND_HOLD =>
-        -- sanity checking
-        check_value(clk, '1', TB_WARNING, proc_name & " => check: BFM exit syncronisation called when clk is high.", C_SCOPE, ID_NEVER);
-        check_value(hold_time > -1 ns, TB_ERROR, proc_name & " => check: hold_time is set.", C_SCOPE, ID_NEVER);
-        -- synchronisation
+        check_value(clk, '1', TB_WARNING, C_PROC_NAME & " => check: BFM exit syncronisation called when clk is high.", C_SCOPE, ID_NEVER);
+        check_value(hold_time /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: hold_time is set.", C_SCOPE, ID_NEVER);
+        -- Synchronisation
         wait_until_given_time_after_rising_edge(clk, hold_time);
-
-      when others =>
-        alert(TB_WARNING, proc_name & " => invalid bfm_sync parameter.");
     end case;
   end procedure wait_on_bfm_exit;
 
   -- Check that the clock signal is within configured specifications.
   -- Note! bfm_sync must be set to SYNC_WITH_SETUP_AND_HOLD and
   --       the procedure called after clock rising edge.
+  --       Also, the clock is assumed to have a 50% duty cycle.
   procedure check_clock_period_margin(
     signal   clock                        : in std_logic;
     constant bfm_sync                     : in t_bfm_sync;
@@ -807,30 +818,23 @@ package body bfm_common_pkg is
     constant config_clock_period_margin   : in time;
     constant config_clock_margin_severity : in t_alert_level := TB_ERROR
   ) is
-    constant proc_name          : string := "check_clock_period_margin";
+    constant C_PROC_NAME        : string := "check_clock_period_margin";
     variable v_min_time         : time;
     variable v_max_time         : time;
     variable v_measured_period  : time;
-    variable v_rising_edge_time : time;
   begin
 
     if bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(time_of_falling_edge /= time_of_rising_edge, TB_ERROR, proc_name & " => check: time_of_falling_edge not equal to time_of_rising_edge.", C_SCOPE, ID_NEVER);
-      check_value(config_clock_period > -1 ns, TB_ERROR, proc_name & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
-      check_value(clock = '1', TB_ERROR, proc_name & " => check: clock is high", C_SCOPE, ID_NEVER);
+      check_value(clock, '1', TB_ERROR, C_PROC_NAME & " => check: clock is high", C_SCOPE, ID_NEVER);
+      check_value(time_of_falling_edge /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: time_of_falling_edge is set.", C_SCOPE, ID_NEVER);
+      check_value(time_of_rising_edge /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: time_of_falling_edge is set.", C_SCOPE, ID_NEVER);
+      check_value(config_clock_period /= C_UNDEFINED_TIME, TB_ERROR, C_PROC_NAME & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
 
-      if time_of_rising_edge > -1 ns then
-        v_measured_period := abs (time_of_rising_edge - time_of_falling_edge) * 2;
-      else
-        v_rising_edge_time := (now - clock'last_event);
-        v_measured_period  := abs (v_rising_edge_time - time_of_falling_edge) * 2;
-      end if;
+      v_measured_period := abs (time_of_rising_edge - time_of_falling_edge) * 2;
+      v_min_time        := v_measured_period - config_clock_period_margin;
+      v_max_time        := v_measured_period + config_clock_period_margin;
 
-      v_min_time := v_measured_period - config_clock_period_margin;
-      v_max_time := v_measured_period + config_clock_period_margin;
-
-      check_value_in_range(config_clock_period, v_min_time, v_max_time, config_clock_margin_severity,
-                           proc_name & " => check: clk period within requirement.", C_SCOPE, ID_NEVER);
+      check_value_in_range(config_clock_period, v_min_time, v_max_time, config_clock_margin_severity, C_PROC_NAME & " => check: clk period within requirement.", C_SCOPE, ID_NEVER);
     end if;
   end procedure check_clock_period_margin;
 

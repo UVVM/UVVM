@@ -9,12 +9,13 @@
   <title>Bitvis VIP SPI &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -135,7 +133,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -198,10 +196,6 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="bfm">
 <h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
 <p>BFM functionality is implemented in spi_bfm_pkg.vhd</p>
@@ -266,7 +260,7 @@ transmitted on sclk idle to active state.</p></td>
 </tr>
 <tr class="row-even"><td><p>spi_bit_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Used in master for dictating the sclk period.
 Will give a TB_ERROR if not set to a different
 value than -1.</p></td>
@@ -300,18 +294,18 @@ the don’t care operator ‘-‘.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm_wait</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_WAIT</p></td>
 <td><p>DEPRECATED</p></td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm_poll</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_POLL</p></td>
 <td><p>DEPRECATED</p></td>
 </tr>
@@ -360,7 +354,7 @@ must drive the sclk and ss_n signals and transmit data to the slave DUT.</p>
 <td><p>tx_data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -369,7 +363,7 @@ single word or a word array.</p></td>
 <td><p>rx_data</p></td>
 <td><p>out</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value received from the DUT, either a single
 word or a word array.</p></td>
@@ -414,7 +408,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -464,7 +459,7 @@ value is C_SPI_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>tx_data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -473,7 +468,7 @@ single word or a word array.</p></td>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -524,7 +519,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -573,7 +569,7 @@ value is C_SPI_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>tx_data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -618,7 +614,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -666,7 +663,7 @@ value is C_SPI_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>rx_data</p></td>
 <td><p>out</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value received from the DUT, either a single
 word or a word array.</p></td>
@@ -711,7 +708,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -762,7 +760,7 @@ After receiving data, the data is compared with the expected data.</p>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -813,7 +811,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -862,7 +861,7 @@ terminated instead.</p>
 <td><p>tx_data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -871,7 +870,7 @@ single word or a word array.</p></td>
 <td><p>rx_data</p></td>
 <td><p>out</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value received from the DUT, either a single
 word or a word array.</p></td>
@@ -929,7 +928,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -977,7 +977,7 @@ value is C_SPI_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>tx_data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -986,7 +986,7 @@ single word or a word array.</p></td>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -1037,7 +1037,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -1086,7 +1087,7 @@ value is C_SPI_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>tx_data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -1137,7 +1138,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -1185,7 +1187,7 @@ value is C_SPI_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>rx_data</p></td>
 <td><p>out</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value received from the DUT, either a single
 word or a word array.</p></td>
@@ -1236,7 +1238,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -1285,7 +1288,7 @@ After receiving data, the data is compared with the expected data.</p>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -1336,7 +1339,8 @@ Default value is C_BFM_SCOPE (“SPI BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -1445,8 +1449,8 @@ process. This allows calling the BFM procedures with the key parameters only, e.
 <section id="local-bfm-configuration">
 <span id="spi-local-bfm-config"></span><h3>Local BFM configuration<a class="headerlink" href="#local-bfm-configuration" title="Link to this heading"></a></h3>
 <p>The SPI BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM
-configuration is defined with a bit period of -1 ns so that the BFM can detect and alert the user that the configuration has not
-been set.</p>
+configuration is defined with a bit period of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the
+configuration has not been set.</p>
 <p>Defining a local SPI BFM configuration::</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_SPI_CONFIG_LOCAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_spi_bfm_config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">CPOL</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">,</span>
@@ -1492,17 +1496,13 @@ ID 023176 Rev 2”.</p>
 <li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="vvc">
 <h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in spi_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -1531,7 +1531,9 @@ type t_slv_array</p></td>
 <tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>1</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC Maximum value
+is defined by C_SPI_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>GC_MASTER_MODE</p></td>
 <td><p>boolean</p></td>
@@ -1585,6 +1587,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -1743,6 +1749,26 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_SPI_VVC_CMD_DATA_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>data</strong> word length</p></td>
+</tr>
+<tr class="row-even"><td><p>C_SPI_VVC_DATA_ARRAY_WIDTH</p></td>
+<td><p>Maximum <strong>data</strong> words (in array)</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_SPI_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="spi-master-transmit-and-receive-vvc">
 <span id="id3"></span><h4>spi_master_transmit_and_receive()<a class="headerlink" href="#spi-master-transmit-and-receive-vvc" title="Link to this heading"></a></h4>
 <p>Adds a master transmit and receive command to the SPI VVC executor queue, which will run as soon as all preceding commands have
@@ -1783,7 +1809,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -1821,7 +1847,8 @@ Default value is HOLD_LINE_BETWEEN_WORDS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1886,7 +1913,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -1918,7 +1945,8 @@ Default value is HOLD_LINE_BETWEEN_WORDS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2011,7 +2039,8 @@ Default value is HOLD_LINE_BETWEEN_WORDS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2071,7 +2100,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -2080,7 +2109,7 @@ single word or a word array.</p></td>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -2118,7 +2147,8 @@ Default value is HOLD_LINE_BETWEEN_WORDS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2166,7 +2196,7 @@ differentiate between VVCs</p></td>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -2204,7 +2234,8 @@ Default value is HOLD_LINE_BETWEEN_WORDS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2254,7 +2285,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -2284,7 +2315,8 @@ START_TRANSFER_ON_NEXT_SS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2349,7 +2381,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -2373,7 +2405,8 @@ START_TRANSFER_ON_NEXT_SS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2452,7 +2485,8 @@ START_TRANSFER_ON_NEXT_SS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2511,7 +2545,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single word or a word array.</p></td>
@@ -2520,7 +2554,7 @@ single word or a word array.</p></td>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -2550,7 +2584,8 @@ START_TRANSFER_ON_NEXT_SS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2606,7 +2641,7 @@ differentiate between VVCs</p></td>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_slv_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving data from the
 DUT, either a single word or a word array.</p></td>
@@ -2636,7 +2671,8 @@ START_TRANSFER_ON_NEXT_SS.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2685,14 +2721,14 @@ information directly from the VVC to a DUT model.</p>
 POLL_UNTIL, READ, WRITE</p></td>
 </tr>
 <tr class="row-odd"><td><p>data</p></td>
-<td><p>t_slv_array(31 downto 0)(31
-downto 0)</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array(31 downto
+0)(31 downto 0)</span></a></p></td>
 <td><p>0x0</p></td>
 <td><p>The data to be transmitted</p></td>
 </tr>
 <tr class="row-even"><td><p>data_exp</p></td>
-<td><p>t_slv_array(31 downto 0)(31
-downto 0)</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array(31 downto
+0)(31 downto 0)</span></a></p></td>
 <td><p>0x0</p></td>
 <td><p>The expected data to be received</p></td>
 </tr>
@@ -2741,7 +2777,7 @@ array</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-odd"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>
@@ -2754,7 +2790,7 @@ SUCCEEDED during a transaction</p></td>
 <h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
 <p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
 i.e. spi_master_receive_only(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method
-when the TO_SB parameter is applied. The SPI scoreboard is accessible from the testbench as a shared variable SPI_VVC_SB, located
+when the TO_SB parameter is applied. The SPI scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">SPI_VVC_SB</span></code>, located
 in the vvc_methods_pkg.vhd, e.g.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SPI_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_SPI_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_spi_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
 </pre></div>
@@ -2765,7 +2801,7 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the SPI VVC scoreboard using the SPI_VVC_SB.</p>
+Scoreboard commands are available for the SPI VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">SPI_VVC_SB</span></code>.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>

@@ -18,8 +18,6 @@ Bitvis VIP AXI4-Stream
   * :ref:`axistream_expect_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -70,13 +68,13 @@ Default value for the record is C_AXISTREAM_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| max_wait_cycles              | integer                      | 100             | The maximum number of clock cycles to wait for  |
+| max_wait_cycles              | natural                      | 1000            | The maximum number of clock cycles to wait for  |
 |                              |                              |                 | the DUT ready or valid signal before reporting  |
 |                              |                              |                 | a timeout alert                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | max_wait_cycles_severity     | :ref:`t_alert_level`         | ERROR           | The above timeout will have this severity       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| clock_period                 | time                         | -1 ns           | Period of the clock signal                      |
+| clock_period                 | time                         | C_UNDEFINED_TIME| Period of the clock signal                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_period_margin          | time                         | 0 ns            | Input clock period margin to specified          |
 |                              |                              |                 | clock_period. Will check 'T/2' if input clock is|
@@ -85,27 +83,44 @@ Default value for the record is C_AXISTREAM_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_margin_severity        | :ref:`t_alert_level`         | TB_ERROR        | The above margin will have this severity        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| setup_time                   | time                         | -1 ns           | Generated signals setup time. Suggested value   |
+| setup_time                   | time                         | C_UNDEFINED_TIME| Generated signals setup time. Suggested value   |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | setup_time exceeds clock_period/2.              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| hold_time                    | time                         | -1 ns           | Generated signals hold time. Suggested value    |
+| hold_time                    | time                         | C_UNDEFINED_TIME| Generated signals hold time. Suggested value    |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
-|                              |                              | NLY             | enter on the first falling edge, estimate the   |
-|                              |                              |                 | clock period,                                   |
+|                              |                              | NLY             | always wait for the first falling edge of the   |
+|                              |                              |                 | clock.                                          |
 |                              |                              |                 |                                                 |
-|                              |                              |                 | synchronize the output signals and exit ¼       |
-|                              |                              |                 | clock period after a succeeding rising edge.    |
+|                              |                              |                 | Then the interface output signals will be       |
+|                              |                              |                 | set up immediately. After that, the BFM will    |
+|                              |                              |                 | wait for the rising edge of the clock,          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | sample or set relevant interface signals (if    |
+|                              |                              |                 | any), and estimate the clock period.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit ¼ clock period after a  |
+|                              |                              |                 | succeeding rising edge.                         |
 |                              |                              |                 |                                                 |
 |                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
-|                              |                              |                 | will use the configured setup_time, hold_time   |
-|                              |                              |                 | and                                             |
+|                              |                              |                 | will always wait for the configured setup time  |
+|                              |                              |                 | before the first rising edge of the clock.      |
 |                              |                              |                 |                                                 |
-|                              |                              |                 | clock_period to synchronize output signals      |
-|                              |                              |                 | with clock edges.                               |
+|                              |                              |                 | Then the interface output signals will be set up|
+|                              |                              |                 | immediately. After that, the BFM will wait for  |
+|                              |                              |                 | the rising edge of the clock,                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | and sample or set relevant interface signals (if|
+|                              |                              |                 | any). Note that the clock period needs to be    |
+|                              |                              |                 | configured in this mode.                        |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit after the configured    |
+|                              |                              |                 | hold time after a succeeding rising edge.       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
 |                              |                              |                 | check procedures.                               |
@@ -165,7 +180,7 @@ Default value for the record is C_AXISTREAM_BFM_CONFIG_DEFAULT.
 | ready_default_value          | std_logic                    | '0'             | Determines the ready output value while the     |
 |                              |                              |                 | slave BFM is idle.                              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -208,7 +223,7 @@ chapter 1.2.2 in "AMBA® 4 AXI4-Stream Protocol Specification" (ARM IHI 0051A).
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | data_array         | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
+| constant | data_array         | in     | :ref:`t_slv_array` or        | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the data to be sent                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | user_array         | in     | `t_user_array`_              | Side-band data to be sent via the TUSER signal.         |
@@ -276,7 +291,8 @@ chapter 1.2.2 in "AMBA® 4 AXI4-Stream Protocol Specification" (ARM IHI 0051A).
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AXISTREAM_BFM").         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_axistream_bfm_config | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_axistream_bfm_config>`    | value is C_AXISTREAM_BFM_CONFIG_DEFAULT.                |
@@ -322,7 +338,7 @@ BFM checks that all TKEEP bits are '1', since the BFM supports only "continuous 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| variable | data_array         | inout  | t_slv_array                  | An array of SLVs or a single std_logic_vector containing|
+| variable | data_array         | inout  | :ref:`t_slv_array`           | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        |                              | the data to be received                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | data_length        | inout  | natural                      | The number of bytes received, i.e. the number of valid  |
@@ -393,7 +409,8 @@ BFM checks that all TKEEP bits are '1', since the BFM supports only "continuous 
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AXISTREAM_BFM").         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_axistream_bfm_config | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_axistream_bfm_config>`    | value is C_AXISTREAM_BFM_CONFIG_DEFAULT.                |
@@ -415,7 +432,11 @@ axistream_expect()
 ----------------------------------------------------------------------------------------------------------------------------------
 Calls the :ref:`axistream_receive_bfm` procedure, then compares the received data with 'exp_data_array'. The 'exp_user_array', 
 'exp_strb_array', 'exp_id_array' and 'exp_dest_array' are compared to the received user_array, strb_array, id_array and dest_array 
-respectively. If some signals are unused, the checks can by skipped by filling the corresponding exp_*_array with don't cares. 
+respectively. If the received data and side-band data are not equal to the expected parameters, an alert with severity 
+'alert_level' will be issued. To reduce the verbosity of the alert message, use the C_ERROR_REPORT_EXTENT defined in 
+adaptations_pkg.
+
+If some signals are unused, the checks can by skipped by filling the corresponding exp_*_array with don't cares. 
 For example: ``v_dest_array := (others => (others => '-'));``
 
 .. code-block::
@@ -425,7 +446,7 @@ For example: ``v_dest_array := (others => (others => '-'));``
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | exp_data_array     | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
+| constant | exp_data_array     | in     | :ref:`t_slv_array` or        | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the expected data to be received                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | exp_user_array     | in     | `t_user_array`_              | Expected side-band data via the TUSER signal.           |
@@ -495,7 +516,8 @@ For example: ``v_dest_array := (others => (others => '-'));``
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AXISTREAM_BFM").         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_axistream_bfm_config | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_axistream_bfm_config>`    | value is C_AXISTREAM_BFM_CONFIG_DEFAULT.                |
@@ -521,7 +543,8 @@ For example: ``v_dest_array := (others => (others => '-'));``
 
 init_axistream_if_signals()
 ----------------------------------------------------------------------------------------------------------------------------------
-Initializes the AXI4-Stream interface. All the BFM outputs are set to '0', and BFM inputs are set to 'Z'.
+Initializes the AXI4-Stream interface. All the BFM outputs are set to '0', except for the ready signal which is set from the config. 
+All BFM inputs are set to 'Z'.
 
 .. code-block::
 
@@ -711,13 +734,11 @@ available from ARM.
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in axistream_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -761,7 +782,9 @@ Generics
 |                              |                              |                 | Note 2: If the TDEST signal is not used, refer  |
 |                              |                              |                 | to `Signals`_                                   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_AXISTREAM_VVC_MAX_INSTANCE_NUM  |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_PACKETINFO_QUEUE_COUNT_MAX| natural                      | 1               | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -793,6 +816,10 @@ Generics
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
+
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -805,7 +832,7 @@ Signals
 |          |                    |        | <t_axistream_if>`            |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-In this VVC, the interface has been encapsulated in a signal record of type t_axistream_if in order to improve readability of the code. 
+In this VVC, the interface has been encapsulated in a signal record of type **t_axistream_if** in order to improve readability of the code. 
 Since the AXI4-Stream interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained 
 vectors need to be constrained when the interface signals are instantiated. For this interface, this could look like: ::
 
@@ -944,6 +971,18 @@ Methods
 
     variable v_data_array : t_slv_array(0 to C_MAX_BYTES - 1)(7 downto 0);
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_AXISTREAM_VVC_CMD_DATA_MAX_BYTES         | Maximum **data_array** bytes         |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXISTREAM_VVC_CMD_MAX_WORD_LENGTH        | Maximum **data_array** word length   |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXISTREAM_VVC_CMD_STRING_MAX_LENGTH      | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _axistream_transmit_vvc:
 
@@ -966,7 +1005,7 @@ generic constant 'GC_VVC_IS_MASTER' to true.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_array         | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
+| constant | data_array         | in     | :ref:`t_slv_array` or        | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the data to be sent                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | user_array         | in     | `t_user_array`_              | Side-band data to be sent via the TUSER signal.         |
@@ -1025,7 +1064,8 @@ generic constant 'GC_VVC_IS_MASTER' to true.
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1068,7 +1108,8 @@ the received data and metadata will be stored in the VVC for a potential future 
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1099,6 +1140,9 @@ When the command is scheduled to run, the executor calls the :ref:`axistream_exp
 The axistream_expect() procedure can only be called when the AXI4-Stream VVC is instantiated in slave mode, i.e. setting the 
 generic constant 'GC_VVC_IS_MASTER' to false.
 
+If the received data and side-band data are not equal to the expected parameters, an alert with severity 'alert_level' will be 
+issued. To reduce the verbosity of the alert message, use the C_ERROR_REPORT_EXTENT defined in adaptations_pkg.
+
 .. code-block::
 
     axistream_expect(VVCT, vvc_instance_idx, data_array, [user_array, [strb_array, id_array, dest_array]], msg, [alert_level, [scope]])
@@ -1111,7 +1155,7 @@ generic constant 'GC_VVC_IS_MASTER' to false.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_array         | in     | t_slv_array or               | An array of SLVs or a single std_logic_vector containing|
+| constant | data_array         | in     | :ref:`t_slv_array` or        | An array of SLVs or a single std_logic_vector containing|
 |          |                    |        | std_logic_vector             | the expected data to be received                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | user_array         | in     | `t_user_array`_              | Expected side-band data via the TUSER signal.           |
@@ -1172,7 +1216,8 @@ generic constant 'GC_VVC_IS_MASTER' to false.
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1205,8 +1250,8 @@ Transaction Info
     | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
     |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data_array                   | t_slv_array(0 to 16*1024)(7  | 0x0             | An array of SLVs containing the data to be sent |
-    |                              | downto 0)                    |                 | /received                                       |
+    | data_array                   | :ref:`t_slv_array(0 to 16*10\| 0x0             | An array of SLVs containing the data to be sent |
+    |                              | 24)(7 downto 0)<t_slv_array>`|                 | /received                                       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | data_length                  | integer                      | 0               | The number of valid bytes in data_array         |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -1229,7 +1274,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 

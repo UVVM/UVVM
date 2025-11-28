@@ -29,7 +29,7 @@ Coverpoints and bins
 Each point of the design that we wish to test is referred to as a *coverpoint*. A coverpoint can for instance be an input port, 
 output port or an internal register.
 
-A coverpoint is added by creating a shared variable of the protected type t_coverpoint.
+A coverpoint is added by creating a shared variable of the protected type **t_coverpoint**.
 
 .. code-block::
 
@@ -118,7 +118,7 @@ Getting started
 All the functionality for coverage can be found in *uvvm_util/src/func_cov_pkg.vhd*.
 
 To start using functional coverage it is necessary to import the utility library, create one or more shared variables with the protected 
-type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
+type **t_coverpoint** and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
 
 .. code-block::
 
@@ -167,7 +167,7 @@ The following code adds a bin for the value 1 to the coverpoint named *my_coverp
 
     my_coverpoint.add_bins(bin(1));
 
-Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
+Bins are implemented as record elements inside the protected type **t_coverpoint**, which represents both coverpoints and crosses.
 
 
 Bins can be created using the following :ref:`bin functions <bin_functions>`:
@@ -288,7 +288,7 @@ sampled. The default severity of the alert is ERROR and can be configured using 
 Using predefined bins
 ==================================================================================================================================
 Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable 
-can be created using the type *t_new_bin_array(0 to 0)* which is returned by any of the bin functions. 
+can be created using the type **t_new_bin_array(0 to 0)** which is returned by any of the bin functions. 
 
 .. code-block::
 
@@ -351,7 +351,7 @@ C_FC_DEFAULT_BIN_NAME constant in the adaptations_pkg. If multiple bins are give
 as shown in the examples below. All bin name indices starts from 1.
 
 A warning is issued when duplicate bin names are detected. This warning can be turned off by setting the
-C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg.vhd to ``false``.
+C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg to ``false``.
 
 Having bin names is useful when reading the reports.
 
@@ -1231,7 +1231,7 @@ The maximum number of coverpoints that can be created is determined by C_FC_MAX_
 **********************************************************************************************************************************
 func_cov_pkg
 **********************************************************************************************************************************
-The following links contain information regarding the API of the protected type *t_coverpoint*, the API for the general methods and 
+The following links contain information regarding the API of the protected type **t_coverpoint**, the API for the general methods and 
 all the type definitions inside *func_cov_pkg*.
 
 .. toctree::

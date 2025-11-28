@@ -1,6 +1,14 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
+v3.1.1
+----------
+Released: 2025-11-28
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Updated BFM procedures to only call check_clock_period_margin() once.
+- Removed extra sampling of rising_edge inside BFM procedures.
+
 v3.1.0
 ----------
 Released: 2024-09-19

@@ -1,0 +1,68 @@
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  STARTING SIMULATION
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2000.0 ns  TB seq.(uvvm)                  TESTING ASSERTION assert_value (expecting error)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_ASSERTION               2005.0 ns  TB seq.(uvvm)                  assert_value() => OK (first), tracked_value was false. Condition occurred after 0 ns. 'count
+UVVM:                                                                           should never be 13'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:          2745 ns   TB seq.(uvvm)
+UVVM:                    assert_value() => Failed, tracked_value (true) was not false. Occurred after 740 ns. 'count should never be 13'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     12000.0 ns  TB seq.(uvvm)                  TESTING ASSERTION assert_one_hot & assert_value_in_range (expecting no error)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_ASSERTION              12005.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK (first), tracked_value (00000000000000000000000000010000) was one-hot.
+UVVM:                                                                           Condition occurred after 0 ns. 'DUT 2 signal should always be one-hot'
+UVVM: ID_UVVM_ASSERTION              12005.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (16) was in range [1..17]. Condition
+UVVM:                                                                           occurred after 0 ns. 'DUT 2 signal should be in range 1 to 17'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     22000.0 ns  TB seq.(uvvm)                  TESTING ASSERTION assert_change_to_value_from_min_to_max_cycles_after_trigger (expecting no
+UVVM:                                                                           error)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_ASSERTION              30105.0 ns  TB seq.(uvvm)                  assert_change_to_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had
+UVVM:                                                                           a change to 1 in window. OK after 8090 ns. First change event happened in cycle-809.
+UVVM:                                                                           'bus_end_dut3' did not go high within expected number of cycles after 'packet_start_dut3'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                    222000.0 ns  TB seq.(uvvm)                  TESTING ASSERTION assert_change_to_value_from_start_to_end_trigger (expecting no error)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_ASSERTION             230535.0 ns  TB seq.(uvvm)                  assert_change_to_value_from_start_to_end_trigger() => OK (first). tracked_value had a change to
+UVVM:                                                                           1 in window. OK after 4990 ns. First change event happened in cycle-499. 'packet_end_dut4 did
+UVVM:                                                                           not go high within 'packet_start_dut4' to 'bus_end_dut4' window'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      1         1         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                    422000.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

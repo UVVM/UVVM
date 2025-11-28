@@ -9,17 +9,18 @@
   <title>Utility Library &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="t_alert_level" href="types_pkg.html" />
+    <link rel="next" title="Types" href="types_pkg.html" />
     <link rel="prev" title="Getting Started" href="uvvm_getting_started.html" /> 
 </head>
 
@@ -81,6 +82,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#get-alert-stop-limit">get_alert_stop_limit()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#set-alert-attention">set_alert_attention()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-alert-attention">get_alert_attention()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hierarchical-alerts">Hierarchical Alerts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#add-to-alert-hierarchy">add_to_alert_hierarchy()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">increment_expected_alerts()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-expected-alerts">set_expected_alerts()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#increment-stop-limit">increment_stop_limit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-stop-limit">set_stop_limit()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#reporting">Reporting</a><ul>
@@ -153,81 +162,34 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#types">Types</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html">t_alert_level</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-attention">t_attention</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-match-strictness">t_match_strictness</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-format-spaces">t_format_spaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-truncate-string">t_truncate_string</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-radix">t_radix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-radix-prefix">t_radix_prefix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-ascii-allow">t_ascii_allow</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-blocking-mode">t_blocking_mode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-format-zeros">t_format_zeros</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-from-point-in-time">t_from_point_in_time</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-log-destination">t_log_destination</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-log-format">t_log_format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-log-if-block-empty">t_log_if_block_empty</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-quietness">t_quietness</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-identifier-option">t_identifier_option</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-range-option">t_range_option</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-vvc-select">t_vvc_select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-list-action">t_list_action</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-bfm-sync">t_bfm_sync</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-bfm-delay-type">t_bfm_delay_type</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay">t_inter_bfm_delay</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-order">t_order</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-flag-returning">t_flag_returning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-watchdog-ctrl">t_watchdog_ctrl</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-alert-counters">t_alert_counters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-normalization-mode">t_normalization_mode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-data-routing">t_data_routing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-report-alert-counters">t_report_alert_counters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-report-sb">t_report_sb</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-report-vvc">t_report_vvc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-byte-endianness">t_byte_endianness</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-test-status">t_test_status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-extent-tickoff">t_extent_tickoff</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done">t_action_when_transfer_is_done</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-action-between-words">t_action_between_words</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-when-to-start-transfer">t_when_to_start_transfer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-stop-bits">t_stop_bits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-parity">t_parity</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-necessary-condition">t_necessary_condition</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-pos-ack-kind">t_pos_ack_kind</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-accept-all-zeros">t_accept_all_zeros</a></li>
-<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-association-list-status">t_association_list_status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types_pkg.html">types_pkg.vhd</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#message-ids">Message IDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#using-hierarchical-alert-reporting">Using Hierarchical Alert Reporting</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#add-to-alert-hierarchy">add_to_alert_hierarchy()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9">increment_expected_alerts()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#set-expected-alerts">set_expected_alerts()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#increment-stop-limit">increment_stop_limit()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#set-stop-limit">set_stop_limit()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adaptations-package">Adaptations package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#global-signals">Global signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-randomisation">t_randomisation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-channel">t_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-interface">t_interface</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#message-ids">Message IDs</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#adaptations-package">Adaptations package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#suppressed-warnings">Suppressed warnings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -246,7 +208,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -285,7 +247,7 @@
 <li><p><strong>Legend</strong>: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer</p></li>
 </ul>
 <section id="checks-and-awaits">
-<h3>Checks and awaits<a class="headerlink" href="#checks-and-awaits" title="Link to this heading"></a></h3>
+<span id="util-checks-and-awaits"></span><h3>Checks and awaits<a class="headerlink" href="#checks-and-awaits" title="Link to this heading"></a></h3>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>Although all check and await methods have optional [alert_level], it is best practice to always evaluate and assign the most
@@ -376,12 +338,13 @@ value is KEEP_LEADING_0.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -390,7 +353,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -461,12 +425,13 @@ is returned as a boolean if the method is called as a function.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -475,7 +440,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>radix</p></td>
@@ -551,12 +517,13 @@ signed and unsigned.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -565,7 +532,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -597,7 +565,7 @@ and the optional reports will be printed in the log.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -626,14 +594,16 @@ the testbench. Default value is NO_REPORT.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -701,12 +671,13 @@ min_time and max_time. <em>Note</em> that if the value changes at exactly max_ti
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -715,7 +686,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -798,7 +770,8 @@ see await_change_to_value() under.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>radix</p></td>
@@ -817,7 +790,7 @@ value is KEEP_LEADING_0.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -826,7 +799,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -914,12 +888,12 @@ If the signal changes to the expected value before min_time, or the signal does 
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -928,7 +902,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>radix</p></td>
@@ -1025,12 +1000,13 @@ time</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_POS_ACK.</p></td>
 </tr>
@@ -1039,7 +1015,8 @@ Default value is ID_POS_ACK.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1107,14 +1084,16 @@ the testbench. Default value is NO_REPORT.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1132,7 +1111,58 @@ value is shared_msg_id_panel.</p></td>
 </section>
 </section>
 <section id="logging-and-verbosity-control">
-<h3>Logging and verbosity control<a class="headerlink" href="#logging-and-verbosity-control" title="Link to this heading"></a></h3>
+<span id="util-logging-and-verbosity-control"></span><h3>Logging and verbosity control<a class="headerlink" href="#logging-and-verbosity-control" title="Link to this heading"></a></h3>
+<p>A very important feature of UVVM is logging and verbosity control. By using detailed log messages for the commands executed, one
+can debug in a very efficient way without the need for inspecting the waveform.</p>
+<p>In order to write a log message, the <a class="reference internal" href="#util-log"><span class="std std-ref">log()</span></a> and <a class="reference internal" href="#util-log-text-block"><span class="std std-ref">log_text_block()</span></a> procedures can be used. Below is an example
+of some log messages:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;1&gt;     &lt;2&gt;                       &lt;3&gt;     &lt;4&gt;                 &lt;5&gt;                                                           &lt;6&gt;
+# UVVM: ID_SEQUENCER              0.0 ns  TB seq.             Sending and receiving data via UART
+# UVVM: ID_UVVM_SEND_CMD          0.0 ns  TB seq.(uvvm)       -&gt;uart_transmit(UART_VVC,0,TX, x&quot;AF&quot;): &#39;Send data to UART 0&#39;. [1]
+# UVVM: ID_CMD_INTERPRETER        0.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x&quot;AF&quot;). Command received  [1]
+# UVVM: ID_CMD_EXECUTOR          10.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x&quot;AF&quot;) - Will be executed  [1]
+# UVVM: ID_UVVM_SEND_CMD         10.0 ns  TB seq.(uvvm)       -&gt;uart_receive(UART_VVC,1,RX): &#39;Receive data from UART 1&#39;. [2]
+</pre></div>
+</div>
+<ol class="arabic">
+<li><div class="line-block">
+<div class="line"><strong>Log prefix:</strong> This prefix string is printed in all log messages and is defined by C_LOG_PREFIX in adaptations_pkg.</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line"><strong>Message ID:</strong> This identifier specifies what kind of message it is, e.g. if it is a message printing testcase information
+we can use ID_SEQUENCER, if it is a message with data being transmitted in a frame we can use ID_FRAME_DATA, etc.</div>
+<div class="line">For a complete list of message IDs see <a class="reference internal" href="#message-ids"><span class="std std-ref">Message IDs</span></a>. Note that you can use an existing ID or create new ones if needed.</div>
+<div class="line">Additionally, each message ID can be enabled or disabled via <a class="reference internal" href="#util-enable-log-msg"><span class="std std-ref">enable_log_msg()</span></a> and <a class="reference internal" href="#util-disable-log-msg"><span class="std std-ref">disable_log_msg()</span></a>
+to adjust the verbosity of the log.</div>
+<div class="line"><strong>Message ID panel:</strong> The configuration of whether a message ID is enabled or disabled is stored in a message ID panel.</div>
+<div class="line">The UVVM methods use as default a shared variable called <code class="docutils literal notranslate"><span class="pre">shared_msg_id_panel</span></code> with a default value defined by
+C_MSG_ID_PANEL_DEFAULT in adaptations_pkg.</div>
+<div class="line">To give more granularity in the verbosity control, each VVC and scoreboard has their own message ID panel. In this way,
+one could disable messages with ID_BFM from a UART VVC while keeping the messages with ID_BFM from an SBI VVC. For more
+information see <a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line"><strong>Simulation time</strong></div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line"><strong>Scope:</strong> This specifies where the message is originated from. It can be for instance, from the testbench sequencer, the SBI
+BFM, the UART TX VVC 0, etc.</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line"><strong>Log message</strong></div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line"><strong>Command index</strong>: This is the shared command index used to track the messages in the VVC framework. In the example
+above, the uart_transmit has the index 1 while the uart_receive has the index 2. Note that this only applies for commands in
+the VVC framework.</div>
+</div>
+</li>
+</ol>
 <section id="set-log-file-name">
 <h4>set_log_file_name()<a class="headerlink" href="#set-log-file-name" title="Link to this heading"></a></h4>
 <p>Sets the log file name. To ensure that the entire log transcript is written to a single file, this should be called prior to any
@@ -1156,7 +1186,8 @@ adaptations_pkg.</p>
 <td><p>file_name</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Name of the log file. Default value is C_LOG_FILE_NAME.</p></td>
+<td><p>Name of the log file. Default value is C_LOG_FILE_NAME
+defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1166,14 +1197,15 @@ adaptations_pkg.</p>
 </div>
 </section>
 <section id="log">
-<h4>log()<a class="headerlink" href="#log" title="Link to this heading"></a></h4>
-<p>Writes a message to the log. <em>Note</em> that if the msg_id is disabled in the msg_id_panel, the message will not be shown. Some general
-string handling features are:</p>
+<span id="util-log"></span><h4>log()<a class="headerlink" href="#log" title="Link to this heading"></a></h4>
+<p>Writes a message to the log. <em>Note</em> that if the msg_id is disabled in the msg_id_panel, the message will not be shown. The
+printing destination can be log and/or console and is defined by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the
+default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg. Some general string handling features are:</p>
 <ul class="simple">
-<li><p>All log messages will be given using the user defined layout in adaptations_pkg.vhd</p></li>
-<li><p>\n may be used to force line shifts. Line shift will occur after scope column, before message column</p></li>
+<li><p>All log messages will be given using the user defined layout in the <strong>Log format</strong> section in adaptations_pkg.</p></li>
+<li><p>\n may be used to force line shifts. Line shift will occur after scope column, before message column.</p></li>
 <li><p>\r may be used to force line shift at start of log message. The result will be a blank line apart from prefix
-(message ID, timestamp and scope will be omitted on the first line)</p></li>
+(message ID, timestamp and scope will be omitted on the first line).</p></li>
 </ul>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="p">([</span><span class="n">msg_id</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">log_destination</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">log_file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">]]]]])</span>
 </pre></div>
@@ -1191,9 +1223,9 @@ string handling features are:</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
-<td><p>Message ID used in the log, defined in adaptations_pkg.
-Default value is C_TB_MSG_ID_DEFAULT.</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
+<td><p>Message ID used in the log. Default value is
+C_TB_MSG_ID_DEFAULT defined in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -1206,28 +1238,32 @@ Default value is C_TB_MSG_ID_DEFAULT.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>log_destination</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-log-destination"><span class="std std-ref">t_log_destination</span></a></p></td>
 <td><p>Defines where the message will be written to. Default
-value is shared_default_log_destination.</p></td>
+value is the shared variable
+shared_default_log_destination.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>log_file_name</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Defines the log file where message shall be written to.
-Default value is C_LOG_FILE_NAME.</p></td>
+Default value is C_LOG_FILE_NAME defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>open_mode</p></td>
@@ -1245,8 +1281,9 @@ append_mode). Default value is append_mode.</p></td>
 </div>
 </section>
 <section id="log-text-block">
-<h4>log_text_block()<a class="headerlink" href="#log-text-block" title="Link to this heading"></a></h4>
-<p>Writes a text block from a VHDL line to the log.</p>
+<span id="util-log-text-block"></span><h4>log_text_block()<a class="headerlink" href="#log-text-block" title="Link to this heading"></a></h4>
+<p>Writes a text block from a VHDL line to the log. The printing destination can be log and/or console and is defined by the shared
+variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">log_text_block</span><span class="p">(</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="n">text_block</span><span class="p">,</span><span class="w"> </span><span class="n">formatting</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_header</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">log_if_block_empty</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">log_destination</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">log_file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">]]]]]]])</span>
 </pre></div>
 </div>
@@ -1263,7 +1300,7 @@ append_mode). Default value is append_mode.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg</p></td>
 </tr>
 <tr class="row-odd"><td><p>variable</p></td>
@@ -1289,14 +1326,16 @@ append_mode). Default value is append_mode.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>log_if_block_empty</p></td>
@@ -1310,14 +1349,16 @@ value is WRITE_HDR_IF_BLOCK_EMPTY.</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-log-destination"><span class="std std-ref">t_log_destination</span></a></p></td>
 <td><p>Defines where the text block will be written to. Default
-value is shared_default_log_destination.</p></td>
+value is the shared variable
+shared_default_log_destination.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>log_file_name</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Defines the log file where text block shall be written
-to. Default value is C_LOG_FILE_NAME.</p></td>
+to. Default value is C_LOG_FILE_NAME defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>open_mode</p></td>
@@ -1355,7 +1396,7 @@ append_mode). Default value is append_mode.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1370,7 +1411,8 @@ quietness=QUIET. Default value is NON_QUIET.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -1384,7 +1426,8 @@ Default value is “”.</p></td>
 <td><p>inout</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1414,7 +1457,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1429,7 +1472,8 @@ quietness=QUIET. Default value is NON_QUIET.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -1443,7 +1487,8 @@ Default value is “”.</p></td>
 <td><p>inout</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1471,7 +1516,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1479,7 +1524,8 @@ value is shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1528,14 +1574,17 @@ quietness=QUIET. Default value is NON_QUIET.</p></td>
 </section>
 </section>
 <section id="alert-handling">
-<h3>Alert handling<a class="headerlink" href="#alert-handling" title="Link to this heading"></a></h3>
-<p>The available alert levels are defined in the type <a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a>. The behavior for each type of alert can be configured in
-adaptations_pkg.vhd. The simulation will be stopped when the occurences of an alert type reaches the number configured in
-C_DEFAULT_STOP_LIMIT. By default, the simulation will be stopped after one occurence of either ERROR, TB_ERROR, FAILURE or TB_FAILURE.
-Alert levels with the prefix TB_ are intended to be used in cases where the cause of the alert is known to be a testbench issue.</p>
+<span id="util-alert-handling"></span><h3>Alert handling<a class="headerlink" href="#alert-handling" title="Link to this heading"></a></h3>
+<p>The available alert levels are defined in the type <a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a>. The behavior for each type of alert can be configured by
+C_DEFAULT_ALERT_ATTENTION in adaptations_pkg. The simulation will be stopped when the occurrences of an alert type reaches the
+number configured by C_DEFAULT_STOP_LIMIT in adaptations_pkg. By default, the simulation will be stopped after one occurrence of
+either ERROR, TB_ERROR, FAILURE or TB_FAILURE. Alert levels with the prefix TB_ are intended to be used in cases where the cause
+of the alert is known to be a testbench issue.</p>
 <p>The MANUAL_CHECK alert type is intended for cases where a manual check, e.g. a waveform inspection, is required. When an alert of this
 type is encountered, the simulation will be stopped and the user will be prompted to carry out a manual check before resuming the
 simulation.</p>
+<p>The simulation will be stopped using <code class="docutils literal notranslate"><span class="pre">std.env.stop(1)</span></code>, unless C_USE_STD_STOP_ON_ALERT_STOP_LIMIT in adaptations_pkg is set to
+false, in which case it will be stopped using <code class="docutils literal notranslate"><span class="pre">failure</span></code>.</p>
 <section id="set-alert-file-name">
 <h4>set_alert_file_name()<a class="headerlink" href="#set-alert-file-name" title="Link to this heading"></a></h4>
 <p>Sets the alert file name. To ensure that the entire log transcript is written to a single file, this should be called prior to any
@@ -1560,7 +1609,7 @@ adaptations_pkg.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Name of the alert file. Default value is
-C_ALERT_FILE_NAME.</p></td>
+C_ALERT_FILE_NAME defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1570,7 +1619,7 @@ C_ALERT_FILE_NAME.</p></td>
 </div>
 </section>
 <section id="alert">
-<h4>alert()<a class="headerlink" href="#alert" title="Link to this heading"></a></h4>
+<span id="id3"></span><h4>alert()<a class="headerlink" href="#alert" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p>Asserts an alert with severity given by alert_level.</p></li>
 <li><p>Increment the counters for the given alert_level.</p></li>
@@ -1606,7 +1655,8 @@ C_ALERT_FILE_NAME.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1646,7 +1696,8 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1657,7 +1708,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 </div>
 </section>
 <section id="increment-expected-alerts">
-<h4>increment_expected_alerts()<a class="headerlink" href="#increment-expected-alerts" title="Link to this heading"></a></h4>
+<span id="id4"></span><h4>increment_expected_alerts()<a class="headerlink" href="#increment-expected-alerts" title="Link to this heading"></a></h4>
 <p>Increments the expected alert counter for the given alert_level.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_expected_alerts</span><span class="p">(</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">number</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
 </pre></div>
@@ -1696,7 +1747,8 @@ Default value is “”.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1706,7 +1758,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 </div>
 </section>
 <section id="set-alert-stop-limit">
-<h4>set_alert_stop_limit()<a class="headerlink" href="#set-alert-stop-limit" title="Link to this heading"></a></h4>
+<span id="id5"></span><h4>set_alert_stop_limit()<a class="headerlink" href="#set-alert-stop-limit" title="Link to this heading"></a></h4>
 <p>Simulator will stop when hitting a number of specified alert type (0 means never stop).</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_alert_stop_limit</span><span class="p">(</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
 </pre></div>
@@ -1780,7 +1832,8 @@ Default value is “”.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1790,7 +1843,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 </div>
 </section>
 <section id="get-alert-stop-limit">
-<h4>get_alert_stop_limit()<a class="headerlink" href="#get-alert-stop-limit" title="Link to this heading"></a></h4>
+<span id="id6"></span><h4>get_alert_stop_limit()<a class="headerlink" href="#get-alert-stop-limit" title="Link to this heading"></a></h4>
 <p>Returns current stop limit for given alert type.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_alert_stop_limit</span><span class="p">(</span><span class="n">alert_level</span><span class="p">)</span>
 </pre></div>
@@ -1890,11 +1943,294 @@ Default value is “”.</p></td>
 </div>
 </section>
 </section>
+<section id="hierarchical-alerts">
+<span id="util-hierarchical-alerts"></span><h3>Hierarchical Alerts<a class="headerlink" href="#hierarchical-alerts" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Methods are defined in alert_hierarchy_pkg.vhd</p></li>
+<li><p>Enable hierarchical alerts via the constant C_ENABLE_HIERARCHICAL_ALERTS in adaptations_pkg.</p></li>
+<li><p>By default, there is only one level in the hierarchy tree, and one scope with name given by C_BASE_HIERARCHY_LEVEL in
+adaptations_pkg. This scope has a stop limit of 0 by default.</p></li>
+<li><p>To add a scope to the hierarchy, call <code class="docutils literal notranslate"><span class="pre">add_to_alert_hierarchy()</span></code>. The maximum length of the scope is determined by
+C_HIERARCHY_NODE_NAME_LENGTH in adaptations_pkg.</p></li>
+<li><p>Any scope that is not registered in the hierarchy will be automatically registered if an alert is triggered in that scope.
+The parent scope will then be C_BASE_HIERARCHY_LEVEL. Changing the parent is possible by calling <code class="docutils literal notranslate"><span class="pre">add_to_alert_hierarchy()</span></code>
+with another scope as parent. This is only allowed if the parent is C_BASE_HIERARCHY_LEVEL and may cause an odd-looking
+summary (total summary will be correct).</p></li>
+<li><p>To generate an alert use the <a class="reference internal" href="#alert"><span class="std std-ref">alert()</span></a> procedure with the corresponding scope. Note that the default scope in the <code class="docutils literal notranslate"><span class="pre">alert()</span></code>
+procedure is not the same as C_BASE_HIERARCHY_LEVEL.</p></li>
+<li><p>To print the report use the <a class="reference internal" href="#report-alert-counters"><span class="std std-ref">report_alert_counters()</span></a> procedure.</p></li>
+</ul>
+<div class="line-block">
+<div class="line"><strong>Intended use</strong>:</div>
+<div class="line">In UVVM, the scope is mostly used to describe components, e.g. VVCs. It can also be smaller structures, but it must have its own
+sequencer. A good way to set up the hierarchy is to let every scope register themselves with the default parent scope, and then
+in addition make every parent register each of its children. This is because the child scope doesn’t have to have the same
+parent scope in all testbenches/test-harnesses, i.e. the child doesn’t know its parent.</div>
+</div>
+<ul class="simple">
+<li><p>In the child, call <code class="docutils literal notranslate"><span class="pre">add_to_alert_hierarchy(&lt;child</span> <span class="pre">scope&gt;)</span></code>. This will add the scope of the child to the hierarchy with the
+default (base) parent.</p></li>
+<li><p>In the parent, first call <code class="docutils literal notranslate"><span class="pre">add_to_alert_hierarchy(&lt;parent</span> <span class="pre">scope&gt;)</span></code>. Then call immediately <code class="docutils literal notranslate"><span class="pre">add_to_alert_hierarchy(&lt;child</span> <span class="pre">scope&gt;,</span>
+<span class="pre">&lt;parent</span> <span class="pre">scope&gt;)</span></code> for each of the scopes that shall be children of this parent scope. This will re-register the children to the
+correct parent.</p></li>
+</ul>
+<p><strong>Example output of report_alert_counters():</strong></p>
+<figure class="align-default">
+<img alt="Example output" src="_images/hierarchical_alerts.png" />
+</figure>
+<p>To understand how the alerts are counted in this example, when looking at the NOTE alerts:</p>
+<blockquote>
+<div><ul>
+<li><p>There are 5 alerts for the <code class="docutils literal notranslate"><span class="pre">TB</span> <span class="pre">seq</span></code> scope, of which:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>1 belongs to <code class="docutils literal notranslate"><span class="pre">TB</span> <span class="pre">seq</span></code> scope and 4 to <code class="docutils literal notranslate"><span class="pre">scope_1</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>From the 4 alerts in <code class="docutils literal notranslate"><span class="pre">scope_1</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>1 belongs to <code class="docutils literal notranslate"><span class="pre">scope_1</span></code>, 1 belongs to <code class="docutils literal notranslate"><span class="pre">scope_2</span></code> and 2 belong to <code class="docutils literal notranslate"><span class="pre">scope_3</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>And so on.</p></li>
+</ul>
+</div></blockquote>
+<section id="add-to-alert-hierarchy">
+<h4>add_to_alert_hierarchy()<a class="headerlink" href="#add-to-alert-hierarchy" title="Link to this heading"></a></h4>
+<p>Adds a scope in the alert hierarchy tree.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_to_alert_hierarchy</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">parent_scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">stop_limit</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Scope to be registered in the alert hierarchy tree</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>parent_scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Parent of the scope being configured. Default value is
+C_BASE_HIERARCHY_LEVEL defined in adaptations_pkg.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>stop_limit</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-counters"><span class="std std-ref">t_alert_counters</span></a></p></td>
+<td><p>Stop limit for the alert counters of the scope. Default
+value is (others =&gt; ‘0’).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">add_to_alert_hierarchy</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tier_1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>increment_expected_alerts()<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<p>Increments the expected alert counter for a scope.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using the procedure <a class="reference internal" href="#increment-expected-alerts"><span class="std std-ref">increment_expected_alerts()</span></a> which doesn’t contain the scope hierarchy parameter, the
+C_BASE_HIERARCHY_LEVEL scope defined in adaptations_pkg will be used.</p>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_expected_alerts</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">amount</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes which scope’s expected alert counter is
+updated</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>amount</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number of expected alerts the counter is incremented.
+Default value is 1.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">increment_expected_alerts</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="set-expected-alerts">
+<h4>set_expected_alerts()<a class="headerlink" href="#set-expected-alerts" title="Link to this heading"></a></h4>
+<p>Sets the expected alert counter for a scope.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_expected_alerts</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="n">expected_alerts</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes which scope’s expected alert counter is
+updated</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>expected_alerts</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number to set the expected alert counter</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">set_expected_alerts</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="increment-stop-limit">
+<h4>increment_stop_limit()<a class="headerlink" href="#increment-stop-limit" title="Link to this heading"></a></h4>
+<p>Increments the stop limit for a scope.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_stop_limit</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">amount</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes which scope’s alert stop limit is updated</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>amount</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number of alerts the stop limit counter is incremented.
+Default value is 1.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">increment_stop_limit</span><span class="p">(</span><span class="s">&quot;tier_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="set-stop-limit">
+<h4>set_stop_limit()<a class="headerlink" href="#set-stop-limit" title="Link to this heading"></a></h4>
+<p>Sets the stop limit for a scope.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>When using the procedure <a class="reference internal" href="#set-alert-stop-limit"><span class="std std-ref">set_alert_stop_limit()</span></a> which doesn’t contain the scope hierarchy parameter, the top-level scope
+will be used.</p></li>
+<li><p>When using the function <a class="reference internal" href="#get-alert-stop-limit"><span class="std std-ref">get_alert_stop_limit()</span></a> which doesn’t contain the scope hierarchy parameter, the top-level scope
+will be used.</p></li>
+</ul>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_stop_limit</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="n">stop_limit</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes which scope’s alert stop limit is updated</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>stop_limit</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Number to set the alert stop limit</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">set_stop_limit</span><span class="p">(</span><span class="s">&quot;tier_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="reporting">
 <h3>Reporting<a class="headerlink" href="#reporting" title="Link to this heading"></a></h3>
 <section id="report-global-ctrl">
 <h4>report_global_ctrl()<a class="headerlink" href="#report-global-ctrl" title="Link to this heading"></a></h4>
-<p>Logs the values in the global_ctrl signal, which is described in <a class="reference internal" href="#util-hierarchical-report"><span class="std std-ref">Using Hierarchical Alert Reporting</span></a>.</p>
+<p>Logs the stop limit values for each alert level. When using hierarchical alerts, the top-level scope alert values will be used.
+The printing destination can be log and/or console and is defined by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with
+the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_global_ctrl</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1911,7 +2247,7 @@ Default value is “”.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -1919,7 +2255,9 @@ Default value is “”.</p></td>
 </section>
 <section id="report-msg-id-panel">
 <h4>report_msg_id_panel()<a class="headerlink" href="#report-msg-id-panel" title="Link to this heading"></a></h4>
-<p>Logs the values in the msg_id_panel, which is described in <a class="reference internal" href="#util-hierarchical-report"><span class="std std-ref">Using Hierarchical Alert Reporting</span></a>.</p>
+<p>Logs the status of all <a class="reference internal" href="#message-ids"><span class="std std-ref">Message IDs</span></a> in the <code class="docutils literal notranslate"><span class="pre">shared_msg_id_panel</span></code>. The printing destination can be log and/or console and
+is defined by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION in
+adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_msg_id_panel</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1936,17 +2274,18 @@ Default value is “”.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="report-alert-counters">
-<h4>report_alert_counters()<a class="headerlink" href="#report-alert-counters" title="Link to this heading"></a></h4>
+<span id="id8"></span><h4>report_alert_counters()<a class="headerlink" href="#report-alert-counters" title="Link to this heading"></a></h4>
 <p>Logs the status of all alert counters, typically at the end of simulation. For each alert_level, the alert counter is compared
 with the expected counter. If parameter is FINAL, an additional summary concluding success or failure is logged. VOID parameter
-gives same result as FINAL.</p>
+gives same result as FINAL. The printing destination can be log and/or console and is defined by the shared variable
+<code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_alert_counters</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
 <span class="n">report_alert_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
@@ -1971,7 +2310,7 @@ at the end</p></td>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -1987,7 +2326,8 @@ at the end</p></td>
 <h4>report_check_counters()<a class="headerlink" href="#report-check-counters" title="Link to this heading"></a></h4>
 <p>Logs the number of all check counters in the testbench, typically to be used at the end of simulation. Note that this functionality
 is disabled by default to avoid possible decreased performance, set C_ENABLE_CHECK_COUNTER to true in adaptations_pkg to enable it.
-The VOID parameter gives same result as FINAL.</p>
+The VOID parameter gives same result as FINAL. The printing destination can be log and/or console and is defined by the shared
+variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_check_counters</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
 <span class="n">report_check_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
@@ -2012,7 +2352,7 @@ at the end</p></td>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -2064,7 +2404,10 @@ at the end</p></td>
 </section>
 </section>
 <section id="basic-randomization">
-<span id="id3"></span><h3>Basic Randomization<a class="headerlink" href="#basic-randomization" title="Link to this heading"></a></h3>
+<span id="id9"></span><h3>Basic Randomization<a class="headerlink" href="#basic-randomization" title="Link to this heading"></a></h3>
+<p>These basic randomization methods generate random numbers for the most common types (integer, real, time, std_logic and
+std_logic_vector). For support of more types see <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-overview"><span class="std std-ref">Enhanced Randomization</span></a>. And for a more advanced randomization without
+replacement, see <a class="reference internal" href="optimized_rand.html#optimized-randomization"><span class="std std-ref">Optimized Randomization</span></a>.</p>
 <section id="random-function">
 <h4>random() - function<a class="headerlink" href="#random-function" title="Link to this heading"></a></h4>
 <p>Returns a random value. The function uses and updates a global seed.</p>
@@ -2088,7 +2431,7 @@ at the end</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -2245,7 +2588,8 @@ Default value is “randomizing seeds”.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2259,7 +2603,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <span id="util-string-handling"></span><h3>String handling<a class="headerlink" href="#string-handling" title="Link to this heading"></a></h3>
 <p>Methods are defined in string_methods_pkg.vhd</p>
 <section id="to-string-ieee">
-<h4>to_string() - IEEE <a class="footnote-reference brackets" href="#f1" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#to-string-ieee" title="Link to this heading"></a></h4>
+<h4>to_string() - IEEE <a class="footnote-reference brackets" href="#f1" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#to-string-ieee" title="Link to this heading"></a></h4>
 <p>IEEE defined to_string functions. Return a string with the value of the argument ‘value’.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">(</span><span class="n">ANY_SCALAR_TYPE</span><span class="p">))</span>
 <span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">(</span><span class="n">slv</span><span class="p">))</span>
@@ -2354,7 +2698,7 @@ is different depending on the overload.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_u8</span><span class="p">,</span><span class="w"> </span><span class="n">DEC</span><span class="p">);</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_slv8</span><span class="p">,</span><span class="w"> </span><span class="n">HEX</span><span class="p">,</span><span class="w"> </span><span class="n">AS_IS</span><span class="p">,</span><span class="w"> </span><span class="n">INCL_RADIX</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_slv8</span><span class="p">,</span><span class="w"> </span><span class="n">HEX</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LEADING_0</span><span class="p">,</span><span class="w"> </span><span class="n">INCL_RADIX</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2457,7 +2801,7 @@ it is printable.</p>
 </div>
 </section>
 <section id="justify-ieee">
-<h4>justify() - IEEE <a class="footnote-reference brackets" href="#f1" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#justify-ieee" title="Link to this heading"></a></h4>
+<h4>justify() - IEEE <a class="footnote-reference brackets" href="#f1" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#justify-ieee" title="Link to this heading"></a></h4>
 <p>IEEE implementation of justify. Returns a string where ‘value’ is justified to the side given by ‘justified’.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">justify</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">justified</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">field</span><span class="p">])</span>
 </pre></div>
@@ -3230,12 +3574,13 @@ continue immediately.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.
 Default value is ID_GEN_PULSE.</p></td>
 </tr>
@@ -3244,7 +3589,8 @@ Default value is ID_GEN_PULSE.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3265,8 +3611,9 @@ await_unblock_flag().</p>
 </div>
 <section id="block-flag">
 <h4>block_flag()<a class="headerlink" href="#block-flag" title="Link to this heading"></a></h4>
-<p>Blocks a flag to allow synchronization between processes. Adds a new blocked flag if it does not already exist. Maximum number of
-flags can be modified in adaptations_pkg. Generates an alert with already_blocked_severity if the flag is already blocked.</p>
+<p>Blocks a flag to allow synchronization between processes. Adds a new blocked flag if it does not already exist. The maximum number
+of flags can be modified by C_NUM_SYNC_FLAGS in adaptations_pkg. Generates an alert with already_blocked_severity if the flag is
+already blocked.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">block_flag</span><span class="p">(</span><span class="n">flag_name</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">already_blocked_severity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
 </pre></div>
 </div>
@@ -3304,7 +3651,8 @@ blocked. Default value is WARNING.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3317,7 +3665,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <section id="unblock-flag">
 <h4>unblock_flag()<a class="headerlink" href="#unblock-flag" title="Link to this heading"></a></h4>
 <p>Unblocks a flag to allow a process that is waiting on that flag to continue. Adds a new unblocked flag if it does not already
-exist.</p>
+exist. The maximum number of flags can be modified by C_NUM_SYNC_FLAGS in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">unblock_flag</span><span class="p">(</span><span class="n">flag_name</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">trigger</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -3355,7 +3703,8 @@ allows await_unblock_flag() to detect unblocking</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3368,8 +3717,9 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <section id="await-unblock-flag">
 <h4>await_unblock_flag()<a class="headerlink" href="#await-unblock-flag" title="Link to this heading"></a></h4>
 <p>Waits for a flag to be unblocked. Continues immediately if the flag already is unblocked. Adds a new blocked flag if it does not
-already exist and waits for the flag to be unblocked. Generates an alert with timeout_severity if the flag is not unblocked within
-the timeout. The flag can be re-blocked when leaving the process by setting flag_returning=RETURN_TO_BLOCK.</p>
+already exist and waits for the flag to be unblocked. The maximum number of flags can be modified by C_NUM_SYNC_FLAGS in
+adaptations_pkg. Generates an alert with timeout_severity if the flag is not unblocked within the timeout. The flag can be
+re-blocked when leaving the process by setting flag_returning=RETURN_TO_BLOCK.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_unblock_flag</span><span class="p">(</span><span class="n">flag_name</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">flag_returning</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout_severity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
 </pre></div>
 </div>
@@ -3421,7 +3771,8 @@ value is KEEP_UNBLOCKED.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3433,7 +3784,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 </div>
 </section>
 <section id="await-barrier">
-<span id="id6"></span><h4>await_barrier()<a class="headerlink" href="#await-barrier" title="Link to this heading"></a></h4>
+<span id="id12"></span><h4>await_barrier()<a class="headerlink" href="#await-barrier" title="Link to this heading"></a></h4>
 <p>The procedure can be used to synchronize between several sequencers. When the procedure is called, it waits for all sequencers
 using the same barrier_signal to reach their call of await_barrier().</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_barrier</span><span class="p">(</span><span class="n">barrier_signal</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout_severity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
@@ -3482,7 +3833,8 @@ reached within the timeout. Default value is ERROR.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3571,7 +3923,8 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <section id="wait-until-given-time-after-rising-edge">
 <h4>wait_until_given_time_after_rising_edge()<a class="headerlink" href="#wait-until-given-time-after-rising-edge" title="Link to this heading"></a></h4>
 <p>Wait until a certain time has passed after the rising edge of the clock. If the time passed since the previous rising_edge is less
-than wait_time, don’t wait until the next rising_edge, just wait_time after the previous rising_edge.</p>
+than wait_time, don’t wait until the next rising_edge, just wait_time after the previous rising_edge. If the rising edge of the
+clock doesn’t occur within a timeout defined by C_UVVM_TIMEOUT in adaptations_pkg, an alert will be generated.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">wait_until_given_time_after_rising_edge</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">wait_time</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3607,7 +3960,8 @@ than wait_time, don’t wait until the next rising_edge, just wait_time after th
 <section id="wait-until-given-time-before-rising-edge">
 <h4>wait_until_given_time_before_rising_edge()<a class="headerlink" href="#wait-until-given-time-before-rising-edge" title="Link to this heading"></a></h4>
 <p>Wait until a certain time before the rising edge of the clock. If the time until rising_edge is less than time_to_edge, wait until
-the next rising_edge and afterwards until time_to_edge before rising_edge.</p>
+the next rising_edge and afterwards until time_to_edge before rising_edge. If the falling edge previous to the rising edge of the
+clock doesn’t occur within a timeout defined by C_UVVM_TIMEOUT in adaptations_pkg, an alert will be generated.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">wait_until_given_time_before_rising_edge</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">time_to_edge</span><span class="p">,</span><span class="w"> </span><span class="n">clk_period</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3724,7 +4078,8 @@ the next rising_edge and afterwards until time_to_edge before rising_edge.</p>
 </section>
 <section id="wait-on-bfm-sync-start">
 <h4>wait_on_bfm_sync_start()<a class="headerlink" href="#wait-on-bfm-sync-start" title="Link to this heading"></a></h4>
-<p>Synchronizes the start of a BFM procedure depending on the clock and bfm_sync.</p>
+<p>Synchronizes the start of a BFM procedure depending on the clock and bfm_sync. If synchronizing with the clock and the rising edge
+of the clock doesn’t occur within a timeout defined by C_UVVM_TIMEOUT in adaptations_pkg, an alert will be generated.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">wait_on_bfm_sync_start</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">bfm_sync</span><span class="p">,</span><span class="w"> </span><span class="n">setup_time</span><span class="p">,</span><span class="w"> </span><span class="n">config_clock_period</span><span class="p">,</span><span class="w"> </span><span class="n">time_of_falling_edge</span><span class="p">,</span><span class="w"> </span><span class="n">time_of_rising_edge</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3777,7 +4132,7 @@ before the clock’s rising_edge</p>
 <td><p>out</p></td>
 <td><p>time</p></td>
 <td><p>Time of last the rising edge. When not found, returns
--1 ns.</p></td>
+C_UNDEFINED_TIME (-1 ns).</p></td>
 </tr>
 </tbody>
 </table>
@@ -3847,8 +4202,15 @@ after the clock’s rising_edge.</p>
 </section>
 <section id="check-clock-period-margin">
 <h4>check_clock_period_margin()<a class="headerlink" href="#check-clock-period-margin" title="Link to this heading"></a></h4>
-<p>Checks that the clock signal behaves according to configured specifications. Only when bfm_sync = SYNC_WITH_SETUP_AND_HOLD. The
-procedure must be called after the clock’s rising_edge.</p>
+<p>Checks that the clock signal behaves according to configured specifications.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Only when bfm_sync = SYNC_WITH_SETUP_AND_HOLD.</p></li>
+<li><p>The procedure must be called after the clock’s rising_edge.</p></li>
+<li><p>The clock is assumed to have a 50% duty cycle.</p></li>
+</ul>
+</div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">check_clock_period_margin</span><span class="p">(</span><span class="n">clock</span><span class="p">,</span><span class="w"> </span><span class="n">bfm_sync</span><span class="p">,</span><span class="w"> </span><span class="n">time_of_falling_edge</span><span class="p">,</span><span class="w"> </span><span class="n">time_of_rising_edge</span><span class="p">,</span><span class="w"> </span><span class="n">config_clock_period</span><span class="p">,</span><span class="w"> </span><span class="n">config_clock_period_margin</span><span class="p">,</span><span class="w"> </span><span class="n">config_clock_margin_severity</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -4081,57 +4443,85 @@ This should normally be called at the end of the simulation.</p>
 </section>
 <section id="types">
 <h2>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h2>
+<p>UVVM predefined types used in the utility library, VVC framework and different VIPs are found in types_pkg.vhd.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html">t_alert_level</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-attention">t_attention</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-match-strictness">t_match_strictness</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-format-spaces">t_format_spaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-truncate-string">t_truncate_string</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-radix">t_radix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-radix-prefix">t_radix_prefix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-ascii-allow">t_ascii_allow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-blocking-mode">t_blocking_mode</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-format-zeros">t_format_zeros</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-from-point-in-time">t_from_point_in_time</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-log-destination">t_log_destination</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-log-format">t_log_format</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-log-if-block-empty">t_log_if_block_empty</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-quietness">t_quietness</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-identifier-option">t_identifier_option</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-range-option">t_range_option</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-vvc-select">t_vvc_select</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-list-action">t_list_action</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-bfm-sync">t_bfm_sync</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-bfm-delay-type">t_bfm_delay_type</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay">t_inter_bfm_delay</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-order">t_order</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-flag-returning">t_flag_returning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-watchdog-ctrl">t_watchdog_ctrl</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-alert-counters">t_alert_counters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-normalization-mode">t_normalization_mode</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-data-routing">t_data_routing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-report-alert-counters">t_report_alert_counters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-report-sb">t_report_sb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-report-vvc">t_report_vvc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-byte-endianness">t_byte_endianness</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-test-status">t_test_status</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-extent-tickoff">t_extent_tickoff</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-action-when-transfer-is-done">t_action_when_transfer_is_done</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-action-between-words">t_action_between_words</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-when-to-start-transfer">t_when_to_start_transfer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-stop-bits">t_stop_bits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-parity">t_parity</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-necessary-condition">t_necessary_condition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-pos-ack-kind">t_pos_ack_kind</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-accept-all-zeros">t_accept_all_zeros</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-association-list-status">t_association_list_status</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types_pkg.html">types_pkg.vhd</a></li>
 </ul>
 </div>
 </section>
+<section id="adaptations-package">
+<span id="adaptations-pkg"></span><h2>Adaptations package<a class="headerlink" href="#adaptations-package" title="Link to this heading"></a></h2>
+<p>The adaptations_pkg is intended for local modifications to library behavior and log layout. This way only one file needs to
+merge when a new version of the library is released. This package may of course also be used to set up a company or project
+specific behavior and layout.</p>
+<p>The package has constants for customizing functionality such as:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>setting the alert and log files names</p></li>
+<li><p>removing UVVM initial and release info printed in simulation</p></li>
+<li><p>log format, e.g.: log prefix, log widths, scope default value</p></li>
+<li><p><a class="reference internal" href="#message-ids"><span class="std std-ref">message ids</span></a></p></li>
+<li><p>verbosity control, e.g.: default log msg ID, default message ID panel, default message ID indentation</p></li>
+<li><p>alert counters, e.g.: default alert attention, default stop limit</p></li>
+<li><p>hierarchical alerts, e.g.: enabling hierarchical alerts</p></li>
+<li><p>buffers and queues, e.g. maximum buffer size</p></li>
+<li><p>synchronization, e.g.: maximum sync flags</p></li>
+<li><p>enhanced randomization, e.g.: initial randomization seeds</p></li>
+<li><p>functional coverage, e.g.: maximum number of coverpoints</p></li>
+<li><p>specification coverage, e.g. CSV delimiter</p></li>
+<li><p>scoreboard, e.g.: maximum number of SB instances</p></li>
+<li><p>BFMs, e.g. AXI-Stream max TID bits</p></li>
+<li><p>UVVM assertions, e.g. window assertions max cycles</p></li>
+<li><p>VVC framework, e.g.: maximum number of VVC instances</p></li>
+<li><p>VVCs, e.g. Avalon-MM max data length</p></li>
+<li><p>hierarchical VVCs, e.g.: supported interfaces</p></li>
+<li><p>CRC, e.g. CRC-32 start value</p></li>
+</ul>
+</div></blockquote>
+<section id="global-signals">
+<h3>Global signals<a class="headerlink" href="#global-signals" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Global signal</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>global_show_msg_for_uvvm_cmd</p></td>
+<td><p>boolean</p></td>
+<td><p>If true, the msg parameter for the commands using the
+msg_id ID_UVVM_SEND_CMD will be shown. (Default true)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id13">
+<h3>Types<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p>The following types can be extended if needed.</p>
+<section id="t-randomisation">
+<span id="id14"></span><h4>t_randomisation<a class="headerlink" href="#t-randomisation" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">RANDOM</span><span class="p">,</span><span class="w"> </span><span class="n">RANDOM_FAVOUR_EDGES</span>
+</pre></div>
+</div>
+</section>
+<section id="t-channel">
+<span id="id15"></span><h4>t_channel<a class="headerlink" href="#t-channel" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_CHANNELS</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span>
+</pre></div>
+</div>
+</section>
+<section id="t-interface">
+<span id="id16"></span><h4>t_interface<a class="headerlink" href="#t-interface" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SBI</span><span class="p">,</span><span class="w"> </span><span class="n">GMII</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="message-ids">
-<span id="id7"></span><h2>Message IDs<a class="headerlink" href="#message-ids" title="Link to this heading"></a></h2>
-<p>The predefined message IDs are listed in the table below. All the message IDs are defined in adaptations_pkg.vhd</p>
+<span id="id17"></span><h3>Message IDs<a class="headerlink" href="#message-ids" title="Link to this heading"></a></h3>
+<p>The predefined message IDs are listed in the table below. All the message IDs are defined in adaptations_pkg.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Message ID</p></th>
@@ -4139,7 +4529,7 @@ This should normally be called at the end of the simulation.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td colspan="2"><p>– <strong>Bitvis utility methods</strong></p></td>
+<tr class="row-even"><td colspan="2"><p>– <strong>UVVM utility methods</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p>NO_ID</p></td>
 <td><p>Used as default prior to setting actual ID when transferring ID as a field in a record</p></td>
@@ -4202,6 +4592,11 @@ This should normally be called at the end of the simulation.</p>
 </tr>
 <tr class="row-odd"><td><p>ID_POS_ACK</p></td>
 <td><p>To write a positive acknowledge on a check</p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p>– <strong>UVVM assertions</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_UVVM_ASSERTION</p></td>
+<td><p>Used for logging UVVM assertions</p></td>
 </tr>
 <tr class="row-even"><td colspan="2"><p>– <strong>Directly inside test sequencers</strong></p></td>
 </tr>
@@ -4357,61 +4752,64 @@ generation of random stimuli</p></td>
 <tr class="row-odd"><td><p>ID_AWAIT_COMPLETION_END</p></td>
 <td><p>Used for logging when the procedure has finished waiting for completion</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>Distributed data</strong></p></td>
+<tr class="row-even"><td><p>ID_AWAIT_UVVM_COMPLETION</p></td>
+<td><p>Used for logging the procedure calls waiting for scoreboards or UVVM completion</p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_UVVM_DATA_QUEUE</p></td>
+<tr class="row-odd"><td colspan="2"><p>– <strong>Distributed data</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>ID_UVVM_DATA_QUEUE</p></td>
 <td><p>Information about UVVM data FIFO/stack (initialization, put, get, etc)</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>VVC system</strong></p></td>
+<tr class="row-odd"><td colspan="2"><p>– <strong>VVC system</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_CONSTRUCTOR</p></td>
+<tr class="row-even"><td><p>ID_CONSTRUCTOR</p></td>
 <td><p>Constructor message from VVCs (or other components/process when needed)</p></td>
 </tr>
-<tr class="row-even"><td><p>ID_CONSTRUCTOR_SUB</p></td>
+<tr class="row-odd"><td><p>ID_CONSTRUCTOR_SUB</p></td>
 <td><p>Constructor message for lower level constructor messages (like Queue-information and other
 limitations)</p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_VVC_ACTIVITY</p></td>
+<tr class="row-even"><td><p>ID_VVC_ACTIVITY</p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>Monitors</strong></p></td>
+<tr class="row-odd"><td colspan="2"><p>– <strong>Monitors</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_MONITOR</p></td>
+<tr class="row-even"><td><p>ID_MONITOR</p></td>
 <td><p>General monitor information</p></td>
 </tr>
-<tr class="row-even"><td><p>ID_MONITOR_ERROR</p></td>
+<tr class="row-odd"><td><p>ID_MONITOR_ERROR</p></td>
 <td><p>General monitor errors</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2"><p>– <strong>SB package</strong></p></td>
+<tr class="row-even"><td colspan="2"><p>– <strong>SB package</strong></p></td>
 </tr>
-<tr class="row-even"><td><p>ID_DATA</p></td>
+<tr class="row-odd"><td><p>ID_DATA</p></td>
 <td><p>To write general handling of data</p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_CTRL</p></td>
+<tr class="row-even"><td><p>ID_CTRL</p></td>
 <td><p>To write general control/config information</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>Specification requirement coverage</strong></p></td>
+<tr class="row-odd"><td colspan="2"><p>– <strong>Specification requirement coverage</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_SPEC_COV_INIT</p></td>
+<tr class="row-even"><td><p>ID_SPEC_COV_INIT</p></td>
 <td><p>Used for logging specification requirement coverage initialization</p></td>
 </tr>
-<tr class="row-even"><td><p>ID_SPEC_COV_REQS</p></td>
+<tr class="row-odd"><td><p>ID_SPEC_COV_REQS</p></td>
 <td><p>Used for logging the specification requirement list</p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_SPEC_COV</p></td>
+<tr class="row-even"><td><p>ID_SPEC_COV</p></td>
 <td><p>Used for logging general specification requirement coverage methods</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>File handling</strong></p></td>
+<tr class="row-odd"><td colspan="2"><p>– <strong>File handling</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_FILE_OPEN_CLOSE</p></td>
+<tr class="row-even"><td><p>ID_FILE_OPEN_CLOSE</p></td>
 <td><p>Id used when opening / closing file</p></td>
 </tr>
-<tr class="row-even"><td><p>ID_FILE_PARSER</p></td>
+<tr class="row-odd"><td><p>ID_FILE_PARSER</p></td>
 <td><p>Id used in file parsers</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2"><p>– <strong>Special purpose - Not really IDs</strong></p></td>
+<tr class="row-even"><td colspan="2"><p>– <strong>Special purpose - Not really IDs</strong></p></td>
 </tr>
-<tr class="row-even"><td><p>ALL_MESSAGES</p></td>
+<tr class="row-odd"><td><p>ALL_MESSAGES</p></td>
 <td><p>Not an ID. Applies to all IDs (apart from ID_NEVER).</p></td>
 </tr>
 </tbody>
@@ -4432,353 +4830,12 @@ This will disable positive acknowledge messages for any procedure call that uses
 call of <code class="docutils literal notranslate"><span class="pre">check_value()</span></code>, but all other calls to <code class="docutils literal notranslate"><span class="pre">check_value()</span></code> will report a positive acknowledge.</p></li>
 </ul>
 </section>
-<section id="using-hierarchical-alert-reporting">
-<span id="util-hierarchical-report"></span><h2>Using Hierarchical Alert Reporting<a class="headerlink" href="#using-hierarchical-alert-reporting" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>Methods are defined in alert_hierarchy_pkg.vhd</p></li>
-<li><p>Enable hierarchical alerts via the constant C_ENABLE_HIERARCHICAL_ALERTS in the adaptations package.</p></li>
-<li><p>By default, there is only one level in the hierarchy tree, and one scope with name given by C_BASE_HIERARCHY_LEVEL in
-the adaptations package. This scope has a stop limit of 0 by default.</p></li>
-<li><p>To add a scope to the hierarchy, call add_to_alert_hierarchy().</p></li>
-<li><p>Any scope that is not registered in the hierarchy will be automatically registered if an alert is triggered in that scope.
-The parent scope will then be C_BASE_HIERARCHY_LEVEL. Changing the parent is possible by calling add_to_alert_hierarchy()
-with another scope as parent. This is only allowed if the parent is C_BASE_HIERARCHY_LEVEL and may cause an odd-looking
-summary (total summary will be correct).</p></li>
-</ul>
-<div class="line-block">
-<div class="line"><strong>Intended use</strong>:</div>
-<div class="line">In UVVM mostly use the scope to describe components, e.g. VVCs. It can also be smaller structures, but it has to have its own
-sequencer. A good way to set up the hierarchy is to let every scope register themselves with the default parent scope, and then
-in addition make every parent register each of its children. This is because the child scope doesn’t have to have the same
-parent scope in all testbenches/test-harnesses, i.e. the child doesn’t know its parent.</div>
-</div>
-<ul class="simple">
-<li><p>In the child, call add_to_alert_hierarchy(&lt;child scope&gt;). This will add the scope of the child to the hierarchy with the default
-(base) parent.</p></li>
-<li><p>In the parent, first call add_to_alert_hierarchy(&lt;parent scope&gt;). Then call immediately add_to_alert_hierarchy(&lt;child scope&gt;,
-&lt;parent scope&gt;) for each of the scopes that shall be children of this parent scope. This will re-register the children to the
-correct parent.</p></li>
-</ul>
-<p><strong>Example output</strong></p>
-<figure class="align-default">
-<img alt="Example output" src="_images/hierarchical_alerts.png" />
-</figure>
-<section id="id8">
-<h3>Methods<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
-<p>TODO:
-procedure initialize_hierarchy(
-constant base_scope : string := C_BASE_HIERARCHY_LEVEL;
-constant stop_limit : t_alert_counters := (others =&gt; 0)
-);</p>
-<section id="add-to-alert-hierarchy">
-<h4>add_to_alert_hierarchy()<a class="headerlink" href="#add-to-alert-hierarchy" title="Link to this heading"></a></h4>
-<p>Add a scope in the alert hierarchy tree.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_to_alert_hierarchy</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">parent_scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">stop_limit</span><span class="p">]])</span>
-</pre></div>
-</div>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Object</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Dir.</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>scope</p></td>
-<td><p>in</p></td>
-<td><p>string</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>constant</p></td>
-<td><p>parent_scope</p></td>
-<td><p>in</p></td>
-<td><p>string</p></td>
-<td><p>Default value is C_BASE_HIERARCHY_LEVEL.</p></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>stop_limit</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-counters"><span class="std std-ref">t_alert_counters</span></a></p></td>
-<td><p>Default value is (others =&gt; ‘0’).</p></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">add_to_alert_hierarchy</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tier_1&quot;</span><span class="p">);</span>
-</pre></div>
-</div>
-<p>TODO:
-procedure set_hierarchical_alert_top_level_stop_limit(
-constant alert_level : t_alert_level;
-constant value : natural
-);</p>
-<p>TODO:
-impure function get_hierarchical_alert_top_level_stop_limit(
-constant alert_level : t_alert_level
-) return natural;</p>
-<p>TODO:
-procedure hierarchical_alert(
-constant alert_level: t_alert_level;
-constant msg : string;
-constant scope : string;
-constant attention : t_attention
-);</p>
-</section>
-<section id="id9">
-<h4>increment_expected_alerts()<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
-<p>Increment the expected alert counter for a scope.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_expected_alerts</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">amount</span><span class="p">])</span>
-</pre></div>
-</div>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Object</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Dir.</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>scope</p></td>
-<td><p>in</p></td>
-<td><p>string</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>constant</p></td>
-<td><p>alert_level</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>amount</p></td>
-<td><p>in</p></td>
-<td><p>natural</p></td>
-<td><p>Default value is 1.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">increment_expected_alerts</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
-</pre></div>
-</div>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p>amount</p></td>
-<td><p>1</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="set-expected-alerts">
-<h4>set_expected_alerts()<a class="headerlink" href="#set-expected-alerts" title="Link to this heading"></a></h4>
-<p>Set the expected alert counter for a scope.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_expected_alerts</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="n">expected_alerts</span><span class="p">)</span>
-</pre></div>
-</div>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Object</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Dir.</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>scope</p></td>
-<td><p>in</p></td>
-<td><p>string</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>constant</p></td>
-<td><p>alert_level</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>expected_alerts</p></td>
-<td><p>in</p></td>
-<td><p>natural</p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_expected_alerts</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
-</pre></div>
-</div>
-</section>
-<section id="increment-stop-limit">
-<h4>increment_stop_limit()<a class="headerlink" href="#increment-stop-limit" title="Link to this heading"></a></h4>
-<p>Increment the stop limit for a scope.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_stop_limit</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">amount</span><span class="p">])</span>
-</pre></div>
-</div>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Object</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Dir.</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>scope</p></td>
-<td><p>in</p></td>
-<td><p>string</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>constant</p></td>
-<td><p>alert_level</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>amount</p></td>
-<td><p>in</p></td>
-<td><p>natural</p></td>
-<td><p>Default value is 1.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">increment_stop_limit</span><span class="p">(</span><span class="s">&quot;tier_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">);</span>
-</pre></div>
-</div>
-</section>
-<section id="set-stop-limit">
-<h4>set_stop_limit()<a class="headerlink" href="#set-stop-limit" title="Link to this heading"></a></h4>
-<p>Set the stop limit for a scope.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_stop_limit</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="n">stop_limit</span><span class="p">)</span>
-</pre></div>
-</div>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Object</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Dir.</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>scope</p></td>
-<td><p>in</p></td>
-<td><p>string</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>constant</p></td>
-<td><p>alert_level</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
-<td><p>stop_limit</p></td>
-<td><p>in</p></td>
-<td><p>natural</p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_stop_limit</span><span class="p">(</span><span class="s">&quot;tier_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
-</pre></div>
-</div>
-<p>TODO:
-procedure print_hierarchical_log(
-constant order : t_order := FINAL
-);</p>
-<p>TODO:
-procedure clear_hierarchy(
-constant VOID : t_void
-);</p>
-</section>
-</section>
-</section>
-<section id="adaptations-package">
-<span id="adaptations-pkg"></span><h2>Adaptations package<a class="headerlink" href="#adaptations-package" title="Link to this heading"></a></h2>
-<p>The adaptations_pkg.vhd is intended for local modifications to library behavior and log layout. This way only one file needs to
-merge when a new version of the library is released. This package may of course also be used to set up a company or project
-specific behavior and layout.</p>
-<p>The package has constants for customizing functionality such as:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>setting the alert and log files names</p></li>
-<li><p>removing UVVM initial and release info printed in simulation</p></li>
-<li><p>log format, e.g.: log prefix, log widths, scope default value</p></li>
-<li><p><a class="reference internal" href="#message-ids"><span class="std std-ref">message ids</span></a></p></li>
-<li><p>verbosity control, e.g.: default log msg ID, default message ID panel, default message ID indentation</p></li>
-<li><p>alert counters, e.g.: default alert attention, default stop limit</p></li>
-<li><p>hierarchical alerts, e.g.: enabling hierarchical alerts</p></li>
-<li><p>synchronization, e.g.: maximum sync flags</p></li>
-<li><p>enhanced randomization, e.g.: initial randomization seeds</p></li>
-<li><p>functional coverage, e.g.: maximum number of coverpoints</p></li>
-<li><p>VVC framework, e.g.: maximum number of VVC instances</p></li>
-<li><p>scoreboard, e.g.: maximum number of SB instances</p></li>
-<li><p>hierarchical VVCs, e.g.: supported interfaces</p></li>
-<li><p>CRC</p></li>
-</ul>
-</div></blockquote>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Global signal</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>global_show_msg_for_uvvm_cmd</p></td>
-<td><p>boolean</p></td>
-<td><p>If true, the msg parameter for the commands using the
-msg_id ID_UVVM_SEND_CMD will be shown</p></td>
-</tr>
-</tbody>
-</table>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Global variable</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>shared_default_log_destination</p></td>
-<td><p>t_log_destination</p></td>
-<td><p>The default destination for the log messages
-(Default: CONSOLE_AND_LOG)</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="additional-documentation">
-<h2>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h2>
-<p>There are two other main documents for the UVVM Utility Library:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Making a simple, structured and efficient VHDL testbench – Step-by-step (PPT)</p></li>
-<li><p>UVVM Utility Library – Concepts and Usage (PPT)</p></li>
-</ul>
-</div></blockquote>
-<p>There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’ (via Aldec <a class="footnote-reference brackets" href="#f2" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>)</p>
 </section>
 <section id="compilation">
 <h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
 <p>The UVVM Utility Library must be compiled with VHDL-2008 or newer.</p>
-<table class="docutils align-default" id="id11">
-<caption><span class="caption-text">Compile order for the UVVM Utility Library</span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id19">
+<caption><span class="caption-text">Compile order for the UVVM Utility Library</span><a class="headerlink" href="#id19" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Compile to library</p></th>
 <th class="head"><p>File</p></th>
@@ -4853,9 +4910,8 @@ use of protected types and interface objects not being globally static. <strong>
 </ul>
 </div></blockquote>
 </section>
-</section>
 <section id="simulator-compatibility-and-setup">
-<span id="util-simulator-compatibility"></span><h2>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h2>
+<span id="util-simulator-compatibility"></span><h3>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
 </ul>
@@ -4867,6 +4923,18 @@ use of protected types and interface objects not being globally static. <strong>
 <li><p>Simulator must be set up to break the simulation on failure (or lower severity)</p></li>
 </ul>
 </div></blockquote>
+</section>
+</section>
+<section id="additional-documentation">
+<h2>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h2>
+<p>There are two other main documents for the UVVM Utility Library:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Making a simple, structured and efficient VHDL testbench – Step-by-step (PPT)</p></li>
+<li><p>UVVM Utility Library – Concepts and Usage (PPT)</p></li>
+</ul>
+</div></blockquote>
+<p>There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’ (via Aldec <a class="footnote-reference brackets" href="#f2" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>)</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -4878,11 +4946,11 @@ otherwise, arising from, out of or in connection with this IP.</p>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="f1" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id10">1</a>,<a role="doc-backlink" href="#id11">2</a>)</span>
 <p>IEEE = Method is native for VHDL-2008 (method is listed here for completeness).</p>
 </aside>
 <aside class="footnote brackets" id="f2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id18">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://www.aldec.com/en/support/resources/multimedia/webinars/1673">https://www.aldec.com/en/support/resources/multimedia/webinars/1673</a></p>
 </aside>
 </aside>
@@ -4894,7 +4962,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="uvvm_getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="types_pkg.html" class="btn btn-neutral float-right" title="t_alert_level" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="types_pkg.html" class="btn btn-neutral float-right" title="Types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

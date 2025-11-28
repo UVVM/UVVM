@@ -89,7 +89,7 @@ if {[file exists $target_path/$lib_name]} {
   file delete -force $target_path/$lib_name
 }
 if {![file exists $target_path]} {
-  file mkdir $target_path/$lib_name
+  file mkdir $target_path
 }
 
 quietly vlib $target_path/$lib_name

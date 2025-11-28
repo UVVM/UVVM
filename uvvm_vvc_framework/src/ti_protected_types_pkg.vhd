@@ -45,7 +45,7 @@ package ti_protected_types_pkg is
       constant cmd_completed          : in boolean
     );
 
-    -- DEPRECATE: will be removed in v3
+    -- DEPRECATED: will be removed in v3
     procedure priv_report_vvc_activity(
       constant vvc_idx               : in natural;
       constant activity              : in t_activity;
@@ -146,14 +146,16 @@ package ti_protected_types_pkg is
       constant instance     : in integer;
       constant channel      : in t_channel := NA;
       constant scope        : in string;
-      constant msg_id_panel : in t_msg_id_panel
+      constant msg_id_panel : in t_msg_id_panel;
+      constant msg_id       : in t_msg_id := ID_AWAIT_COMPLETION_LIST
     );
 
     procedure add(
       constant name         : in string;
       constant instance     : in integer;
       constant scope        : in string;
-      constant msg_id_panel : in t_msg_id_panel
+      constant msg_id_panel : in t_msg_id_panel;
+      constant msg_id       : in t_msg_id := ID_AWAIT_COMPLETION_LIST
     );
 
     procedure clear_list(
@@ -296,13 +298,13 @@ package body ti_protected_types_pkg is
       end if;
     end procedure;
 
-    -- DEPRECATE: will be removed in v3
     procedure priv_report_vvc_activity(
       constant vvc_idx               : in natural;
       constant activity              : in t_activity;
       constant last_cmd_idx_executed : in integer
     ) is
     begin
+      deprecate(get_procedure_name_from_instance_name(vvc_idx'instance_name), "Please call this procedure with the additional parameters executor_id and cmd_completed");
       priv_report_vvc_activity(vvc_idx, 0, activity, last_cmd_idx_executed, false);
     end procedure;
 
@@ -552,7 +554,8 @@ package body ti_protected_types_pkg is
       constant instance     : in integer;
       constant channel      : in t_channel := NA;
       constant scope        : in string;
-      constant msg_id_panel : in t_msg_id_panel
+      constant msg_id_panel : in t_msg_id_panel;
+      constant msg_id       : in t_msg_id := ID_AWAIT_COMPLETION_LIST
     ) is
       variable v_duplicate : boolean := false;
     begin
@@ -569,7 +572,7 @@ package body ti_protected_types_pkg is
       end loop;
 
       if v_duplicate then
-        alert(TB_WARNING, to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " was previously added to the list.");
+        alert(TB_WARNING, to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_upper(to_string(channel)) & " was previously added to the list.");
       else
         -- Set VVC index
         priv_last_added_vvc_idx                                       := priv_last_added_vvc_idx + 1;
@@ -579,9 +582,9 @@ package body ti_protected_types_pkg is
         priv_vvc_list(priv_last_added_vvc_idx).channel                := channel;
 
         if channel = NA then
-          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.", scope, msg_id_panel);
+          log(msg_id, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.", scope, msg_id_panel);
         else
-          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.", scope, msg_id_panel);
+          log(msg_id, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_upper(to_string(channel)) & " to the list.", scope, msg_id_panel);
         end if;
       end if;
     end procedure;
@@ -590,10 +593,11 @@ package body ti_protected_types_pkg is
       constant name         : in string;
       constant instance     : in integer;
       constant scope        : in string;
-      constant msg_id_panel : in t_msg_id_panel
+      constant msg_id_panel : in t_msg_id_panel;
+      constant msg_id       : in t_msg_id := ID_AWAIT_COMPLETION_LIST
     ) is
     begin
-      add(name, instance, NA, scope, msg_id_panel);
+      add(name, instance, NA, scope, msg_id_panel, msg_id);
     end procedure;
 
     procedure clear_list(
@@ -651,7 +655,7 @@ package body ti_protected_types_pkg is
       if priv_vvc_list(vvc_idx).channel = NA then
         return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance);
       else
-        return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel);
+        return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_upper(to_string(priv_vvc_list(vvc_idx).channel));
       end if;
     end function;
 

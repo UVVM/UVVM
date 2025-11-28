@@ -14,7 +14,7 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
--- WARNING! This package will be deprecated and no longer receive updates or bug fixes!
+-- WARNING! This package is deprecated and no longer receive updates or bug fixes!
 -- The data_stack_pkg in uvvm_util/src/data_stack_pkg.vhd has replaced ti_data_stack_pkg
 
 library ieee;

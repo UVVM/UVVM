@@ -9,12 +9,13 @@
   <title>Bitvis VIP AXI4-Stream &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -128,7 +126,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -177,10 +175,6 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="bfm">
 <h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
 <p>BFM functionality is implemented in axistream_bfm_pkg.vhd</p>
@@ -246,8 +240,8 @@ available from ARM.</p></li>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>max_wait_cycles</p></td>
-<td><p>integer</p></td>
-<td><p>100</p></td>
+<td><p>natural</p></td>
+<td><p>1000</p></td>
 <td><p>The maximum number of clock cycles to wait for
 the DUT ready or valid signal before reporting
 a timeout alert</p></td>
@@ -259,7 +253,7 @@ a timeout alert</p></td>
 </tr>
 <tr class="row-even"><td><p>clock_period</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Period of the clock signal</p></td>
 </tr>
 <tr class="row-odd"><td><p>clock_period_margin</p></td>
@@ -277,14 +271,14 @@ high.</p></td>
 </tr>
 <tr class="row-odd"><td><p>setup_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Generated signals setup time. Suggested value
 is clock_period/4. An alert is reported if
 setup_time exceeds clock_period/2.</p></td>
 </tr>
 <tr class="row-even"><td><p>hold_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Generated signals hold time. Suggested value
 is clock_period/4. An alert is reported if
 hold_time exceeds clock_period/2.</p></td>
@@ -293,15 +287,28 @@ hold_time exceeds clock_period/2.</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
 <td><p>SYNC_ON_CLOCK_ONLY</p></td>
 <td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
-enter on the first falling edge, estimate the
-clock period,</p>
-<p>synchronize the output signals and exit ¼
-clock period after a succeeding rising edge.</p>
+always wait for the first falling edge of the
+clock.</p>
+<p>Then the interface output signals will be
+set up immediately. After that, the BFM will
+wait for the rising edge of the clock,</p>
+<p>sample or set relevant interface signals (if
+any), and estimate the clock period.</p>
+<p>The BFM will deactivate potential interface
+output signals and exit ¼ clock period after a
+succeeding rising edge.</p>
 <p>When set to SYNC_WITH_SETUP_AND_HOLD the BFM
-will use the configured setup_time, hold_time
-and</p>
-<p>clock_period to synchronize output signals
-with clock edges.</p>
+will always wait for the configured setup time
+before the first rising edge of the clock.</p>
+<p>Then the interface output signals will be set up
+immediately. After that, the BFM will wait for
+the rising edge of the clock,</p>
+<p>and sample or set relevant interface signals (if
+any). Note that the clock period needs to be
+configured in this mode.</p>
+<p>The BFM will deactivate potential interface
+output signals and exit after the configured
+hold time after a succeeding rising edge.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>match_strictness</p></td>
@@ -401,7 +408,7 @@ ready when using C_RANDOM.</p></td>
 slave BFM is idle.</p></td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
@@ -456,7 +463,7 @@ chapter 1.2.2 in “AMBA® 4 AXI4-Stream Protocol Specification” (ARM IHI 0051
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>data_array</p></td>
 <td><p>in</p></td>
-<td><p>t_slv_array or
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a> or
 std_logic_vector</p></td>
 <td><p>An array of SLVs or a single std_logic_vector containing
 the data to be sent</p></td>
@@ -552,7 +559,8 @@ Default value is C_BFM_SCOPE (“AXISTREAM_BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -610,7 +618,7 @@ BFM checks that all TKEEP bits are ‘1’, since the BFM supports only “conti
 <tr class="row-even"><td><p>variable</p></td>
 <td><p>data_array</p></td>
 <td><p>inout</p></td>
-<td><p>t_slv_array</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p></td>
 <td><p>An array of SLVs or a single std_logic_vector containing
 the data to be received</p></td>
 </tr>
@@ -712,7 +720,8 @@ Default value is C_BFM_SCOPE (“AXISTREAM_BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -736,7 +745,10 @@ value is C_AXISTREAM_BFM_CONFIG_DEFAULT.</p></td>
 <span id="axistream-expect-bfm"></span><h4>axistream_expect()<a class="headerlink" href="#axistream-expect" title="Link to this heading"></a></h4>
 <p>Calls the <a class="reference internal" href="#axistream-receive-bfm"><span class="std std-ref">axistream_receive()</span></a> procedure, then compares the received data with ‘exp_data_array’. The ‘exp_user_array’,
 ‘exp_strb_array’, ‘exp_id_array’ and ‘exp_dest_array’ are compared to the received user_array, strb_array, id_array and dest_array
-respectively. If some signals are unused, the checks can by skipped by filling the corresponding exp_*_array with don’t cares.
+respectively. If the received data and side-band data are not equal to the expected parameters, an alert with severity
+‘alert_level’ will be issued. To reduce the verbosity of the alert message, use the C_ERROR_REPORT_EXTENT defined in
+adaptations_pkg.</p>
+<p>If some signals are unused, the checks can by skipped by filling the corresponding exp_*_array with don’t cares.
 For example: <code class="docutils literal notranslate"><span class="pre">v_dest_array</span> <span class="pre">:=</span> <span class="pre">(others</span> <span class="pre">=&gt;</span> <span class="pre">(others</span> <span class="pre">=&gt;</span> <span class="pre">'-'));</span></code></p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axistream_expect</span><span class="p">(</span><span class="n">exp_data_array</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">exp_user_array</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">exp_strb_array</span><span class="p">,</span><span class="w"> </span><span class="n">exp_id_array</span><span class="p">,</span><span class="w"> </span><span class="n">exp_dest_array</span><span class="p">]],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axistream_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
 </pre></div>
@@ -754,7 +766,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">v_dest
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>exp_data_array</p></td>
 <td><p>in</p></td>
-<td><p>t_slv_array or
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a> or
 std_logic_vector</p></td>
 <td><p>An array of SLVs or a single std_logic_vector containing
 the expected data to be received</p></td>
@@ -856,7 +868,8 @@ Default value is C_BFM_SCOPE (“AXISTREAM_BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -884,7 +897,8 @@ value is C_AXISTREAM_BFM_CONFIG_DEFAULT.</p></td>
 </section>
 <section id="init-axistream-if-signals">
 <span id="init-axistream-if-signals-bfm"></span><h4>init_axistream_if_signals()<a class="headerlink" href="#init-axistream-if-signals" title="Link to this heading"></a></h4>
-<p>Initializes the AXI4-Stream interface. All the BFM outputs are set to ‘0’, and BFM inputs are set to ‘Z’.</p>
+<p>Initializes the AXI4-Stream interface. All the BFM outputs are set to ‘0’, except for the ready signal which is set from the config.
+All BFM inputs are set to ‘Z’.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_axistream_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_axistream_if_signals</span><span class="p">(</span><span class="n">is_master</span><span class="p">,</span><span class="w"> </span><span class="n">data_width</span><span class="p">,</span><span class="w"> </span><span class="n">user_width</span><span class="p">,</span><span class="w"> </span><span class="n">id_width</span><span class="p">,</span><span class="w"> </span><span class="n">dest_width</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1147,17 +1161,13 @@ available from ARM.</p>
 <li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="vvc">
 <h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in axistream_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -1217,7 +1227,9 @@ to <a class="reference internal" href="#signals">Signals</a></p>
 <tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>N/A</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC. Maximum value
+is defined by C_AXISTREAM_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>GC_PACKETINFO_QUEUE_COUNT_MAX</p></td>
 <td><p>natural</p></td>
@@ -1270,6 +1282,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -1297,7 +1313,7 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
-<p>In this VVC, the interface has been encapsulated in a signal record of type t_axistream_if in order to improve readability of the code.
+<p>In this VVC, the interface has been encapsulated in a signal record of type <strong>t_axistream_if</strong> in order to improve readability of the code.
 Since the AXI4-Stream interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained
 vectors need to be constrained when the interface signals are instantiated. For this interface, this could look like:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">axistream_if</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_axistream_if</span><span class="p">(</span><span class="n">tdata</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
@@ -1493,6 +1509,26 @@ test sequencer. The record contents can be seen below:</p>
 </div>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_AXISTREAM_VVC_CMD_DATA_MAX_BYTES</p></td>
+<td><p>Maximum <strong>data_array</strong> bytes</p></td>
+</tr>
+<tr class="row-even"><td><p>C_AXISTREAM_VVC_CMD_MAX_WORD_LENGTH</p></td>
+<td><p>Maximum <strong>data_array</strong> word length</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_AXISTREAM_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="axistream-transmit-vvc">
 <span id="id7"></span><h4>axistream_transmit()<a class="headerlink" href="#axistream-transmit-vvc" title="Link to this heading"></a></h4>
 <p>Adds a transmit command to the AXI4-Stream VVC executor queue, which will run as soon as all preceding commands have completed.
@@ -1528,7 +1564,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>data_array</p></td>
 <td><p>in</p></td>
-<td><p>t_slv_array or
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a> or
 std_logic_vector</p></td>
 <td><p>An array of SLVs or a single std_logic_vector containing
 the data to be sent</p></td>
@@ -1604,7 +1640,8 @@ C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1665,7 +1702,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1693,6 +1731,8 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 When the command is scheduled to run, the executor calls the <a class="reference internal" href="#axistream-expect-bfm"><span class="std std-ref">axistream_expect()</span></a> procedure.
 The axistream_expect() procedure can only be called when the AXI4-Stream VVC is instantiated in slave mode, i.e. setting the
 generic constant ‘GC_VVC_IS_MASTER’ to false.</p>
+<p>If the received data and side-band data are not equal to the expected parameters, an alert with severity ‘alert_level’ will be
+issued. To reduce the verbosity of the alert message, use the C_ERROR_REPORT_EXTENT defined in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axistream_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">user_array</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">strb_array</span><span class="p">,</span><span class="w"> </span><span class="n">id_array</span><span class="p">,</span><span class="w"> </span><span class="n">dest_array</span><span class="p">]],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
 </pre></div>
 </div>
@@ -1722,7 +1762,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>data_array</p></td>
 <td><p>in</p></td>
-<td><p>t_slv_array or
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a> or
 std_logic_vector</p></td>
 <td><p>An array of SLVs or a single std_logic_vector containing
 the expected data to be received</p></td>
@@ -1804,7 +1844,8 @@ C_AXISTREAM_BFM_MAX_TDEST_BITS in adaptations_pkg.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1854,8 +1895,7 @@ information directly from the VVC to a DUT model.</p>
 POLL_UNTIL, READ, WRITE</p></td>
 </tr>
 <tr class="row-odd"><td><p>data_array</p></td>
-<td><p>t_slv_array(0 to 16*1024)(7
-downto 0)</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array(0 to 16*1024)(7 downto 0)</span></a></p></td>
 <td><p>0x0</p></td>
 <td><p>An array of SLVs containing the data to be sent
 /received</p></td>
@@ -1905,7 +1945,7 @@ received via the TDEST signal.</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-even"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>

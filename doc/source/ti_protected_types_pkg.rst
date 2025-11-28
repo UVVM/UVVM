@@ -26,7 +26,7 @@ Adds a VVC to the protected VVC list.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | instance           | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -51,7 +51,7 @@ Clear all entries from the protected VVC list.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 

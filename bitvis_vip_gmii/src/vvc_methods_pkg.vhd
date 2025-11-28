@@ -216,9 +216,8 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name      : string         := "gmii_write";
-    constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant proc_name : string := "gmii_write";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
   begin
     gmii_write(VVCT, vvc_instance_idx, channel, data_array, msg, RELEASE_LINE_AFTER_TRANSFER, scope, parent_msg_id_panel);
   end procedure;

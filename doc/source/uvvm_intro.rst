@@ -62,11 +62,14 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 **********************************************************************************************************************************
 Main Features
 **********************************************************************************************************************************
-* Very useful support for checking values, ranges, time aspects, and for waiting for events inside a given window
-* An extremely low user threshold for the basic functionality - like logging, alert handling and checkers
+* Very useful support for checking values, ranges, time aspects, and for waiting for events inside a given window (see 
+  :ref:`Utility Library - Methods - Checks and awaits <util_checks_and_awaits>`)
+* An extremely low user threshold for the basic functionality - like logging, alert handling and checkers (see 
+  :ref:`Utility Library - Methods - Logging and verbosity control <util_logging_and_verbosity_control>` and 
+  :ref:`Utility Library - Methods - Alert handling <util_alert_handling>`)
 * A very structured testbench architecture that allows LEGO-like testbench/harness implementation
 * A very structured VHDL Verification Component (VVC) architecture that allows simultaneous activity (stimuli and checking) on 
-  multiple interfaces in a very easily understandable manner
+  multiple interfaces in a very easily understandable manner (see :ref:`vvc_framework`)
 * An easily understandable command syntax to control a complete testbench with multiple VVCs
 * The structure and overview are easily kept even for a testbench with a large number of VVCs
 * A VVC architecture that is almost exactly the same from one VVC to another - sometimes with only the BFM calls as the 
@@ -74,13 +77,13 @@ Main Features
 * A VVC architecture that easily allows multiple threads for e.g. simultaneous Avalon Command and Response
 * A VVC architecture that allows simple encapsulation for ALL verification functionality for any given interface or protocol
 * Allows VVCs to be included anywhere in the test harness - or even inside the design itself
-* A logging and alert system that supports full verbosity control of functionality and hierarchy
+* A logging and alert system that supports full verbosity control of functionality and hierarchy (see 
+  :ref:`Utility Library - Methods - Hierarchical Alerts <util_hierarchical_alerts>`))
 * A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through 
   the execution queue - until it is executed and completed towards the DUT
 * Allows randomization and functional coverage to be included in the central test sequencer - or even better - inside 
-  the VVCs in the local sequencers for better control and encapsulation
+  the VVCs in the local sequencers for better control and encapsulation (see :ref:`rand_pkg_overview` and :ref:`func_cov_pkg_overview`)
 * Simple integration with regression test tools like Jenkins
-* Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs
 
 .. _uvvm_vvcs_and_bfms:
 

@@ -9,12 +9,13 @@
   <title>Methods &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,7 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#introduction">Introduction</a></li>
@@ -93,9 +94,6 @@
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -114,7 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -524,14 +522,16 @@ Default value is 100.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -559,7 +559,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -620,7 +620,7 @@ the types of coverage click <a class="reference internal" href="func_cov_pkg_ove
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -635,8 +635,9 @@ the types of coverage click <a class="reference internal" href="func_cov_pkg_ove
 <section id="fc-report-overall-coverage">
 <h2>fc_report_overall_coverage()<a class="headerlink" href="#fc-report-overall-coverage" title="Link to this heading"></a></h2>
 <p>Prints the overall coverage summary for all the coverpoints in the testbench. The printing destination can be log and/or console
-and is defined by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using
-the file_name parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
+and is defined by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by C_DEFAULT_LOG_DESTINATION
+in adaptations_pkg. The report can also be printed to a separate file by using the file_name parameter. To see an example of the
+generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 <span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
 </pre></div>
@@ -654,7 +655,7 @@ the file_name parameter. To see an example of the generated report click <a clas
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -684,7 +685,8 @@ append_mode.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates
-Default value is C_TB_SCOPE_DEFAULT.</p></td>
+Default value is C_TB_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>

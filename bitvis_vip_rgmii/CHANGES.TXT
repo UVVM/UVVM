@@ -1,6 +1,14 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v4.1.2
+----------
+Released: 2025-11-28
+- Reorganized if statements for printing C_ERROR_REPORT_EXTENT.
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Increased max_wait_cycles default value to 1000.
+
 v4.1.1
 ----------
 Released: 2025-08-18

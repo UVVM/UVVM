@@ -24,7 +24,9 @@ Generics
 |                              |                              |                 | Note that default is 0 ns, i.e. not waiting     |
 |                              |                              |                 | after initialization.                           |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the error injector    |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the error injector.   |
+|                              |                              |                 | Maximum value is defined by                     |
+|                              |                              |                 | C_EI_VVC_MAX_INSTANCE_NUM in adaptations_pkg.   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Instantiation

@@ -32,26 +32,29 @@ package global_signals_and_shared_variables_pkg is
   shared variable shared_uvvm_status  : t_uvvm_status  := C_UVVM_STATUS_DEFAULT;
   shared variable shared_msg_id_panel : t_msg_id_panel := C_MSG_ID_PANEL_DEFAULT;
 
-  -- Randomization seeds
+  -- BFM shared variables
   shared variable shared_rand_seeds_register : t_seeds;
 
   -- UVVM internal shared variables
-  shared variable shared_initialised_util        : boolean                                         := false;
-  shared variable shared_log_file_name_is_set    : boolean                                         := false;
-  shared variable shared_alert_file_name_is_set  : boolean                                         := false;
-  shared variable shared_warned_time_stamp_trunc : boolean                                         := false;
-  shared variable shared_warned_rand_time_res    : boolean                                         := false;
-  shared variable shared_alert_attention         : t_alert_attention                               := C_DEFAULT_ALERT_ATTENTION;
-  shared variable shared_stop_limit              : t_alert_counters                                := C_DEFAULT_STOP_LIMIT;
-  shared variable shared_log_hdr_for_waveview    : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);
-  shared variable shared_current_log_hdr         : t_current_log_hdr;
-  shared variable shared_seed1                   : positive;
-  shared variable shared_seed2                   : positive;
-  shared variable shared_flag_array              : t_sync_flag_record_array(1 to C_NUM_SYNC_FLAGS) := (others => C_SYNC_FLAG_DEFAULT);
-  shared variable protected_semaphore            : t_protected_semaphore;
-  shared variable protected_broadcast_semaphore  : t_protected_semaphore;
-  shared variable protected_response_semaphore   : t_protected_semaphore;
-  shared variable protected_covergroup_status    : t_protected_covergroup_status;
-  shared variable protected_sb_activity_register : t_sb_activity;
+  shared variable deprecated_subprogram_list         : t_deprecate_list                                := (others => (others => ' '));
+  shared variable shared_initialised_util            : boolean                                         := false;
+  shared variable shared_log_file_name_is_set        : boolean                                         := false;
+  shared variable shared_alert_file_name_is_set      : boolean                                         := false;
+  shared variable shared_warned_time_stamp_trunc     : boolean                                         := false;
+  shared variable shared_warned_rand_time_res        : boolean                                         := false;
+  shared variable shared_alert_attention             : t_alert_attention                               := C_DEFAULT_ALERT_ATTENTION;
+  shared variable shared_stop_limit                  : t_alert_counters                                := C_DEFAULT_STOP_LIMIT;
+  shared variable shared_log_hdr_for_waveview        : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);
+  shared variable shared_current_log_hdr             : t_current_log_hdr;
+  shared variable shared_seed1                       : positive;
+  shared variable shared_seed2                       : positive;
+  shared variable shared_flag_array                  : t_sync_flag_record_array(1 to C_NUM_SYNC_FLAGS) := (others => C_SYNC_FLAG_DEFAULT);
+  shared variable protected_semaphore                : t_protected_semaphore;
+  shared variable protected_broadcast_semaphore      : t_protected_semaphore;
+  shared variable protected_response_semaphore       : t_protected_semaphore;
+  shared variable protected_covergroup_status        : t_protected_covergroup_status;
+  shared variable protected_sb_activity_register     : t_sb_activity;
+  shared variable protected_check_counters           : t_protected_check_counters;
+  shared variable protected_alert_attention_counters : t_protected_alert_attention_counters;
 
 end package global_signals_and_shared_variables_pkg;

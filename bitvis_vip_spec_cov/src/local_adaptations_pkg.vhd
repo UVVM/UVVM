@@ -18,6 +18,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- DEPRECATED: Content moved to adaptations_pkg and spec_cov_pkg.
+-- DEPRECATED: will be removed in v3. The content was moved to adaptations_pkg and spec_cov_pkg.
 package local_adaptations_pkg is
 end package local_adaptations_pkg;

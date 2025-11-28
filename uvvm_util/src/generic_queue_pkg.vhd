@@ -50,10 +50,12 @@ package generic_queue_pkg is
     procedure put(
       constant element : in t_generic_element);
 
+    -- DEPRECATED: will be removed in v3
     impure function get(
       constant instance : in integer)
     return t_generic_element;
 
+    -- DEPRECATED: will be removed in v3
     impure function get(
       constant dummy : in t_void)
     return t_generic_element;
@@ -474,6 +476,7 @@ package body generic_queue_pkg is
       constant instance : in integer
     ) return t_generic_element is
     begin
+      deprecate("get", "Use fetch().");
       return fetch(instance);
     end function;
 
@@ -794,7 +797,6 @@ package body generic_queue_pkg is
       constant proc_name               : string := "delete";
       variable v_matched_element_ptr   : t_element_ptr; -- The element being deleted
       variable v_element_to_delete_ptr : t_element_ptr; -- The element being deleted
-      variable v_matched_element_data  : t_generic_element; -- Return value
       variable v_preceding_element_ptr : t_element_ptr;
       variable v_matched_position      : integer;
       variable v_found_match           : boolean;
@@ -935,9 +937,9 @@ package body generic_queue_pkg is
       constant instance : in integer;
       constant element  : in t_generic_element
     ) is
-      variable priv_entry_num : integer := find_entry_num(element);
+      variable v_entry_num : integer := find_entry_num(element);
     begin
-      delete(instance, ENTRY_NUM, priv_entry_num, priv_entry_num);
+      delete(instance, ENTRY_NUM, v_entry_num, v_entry_num);
     end procedure;
 
     procedure delete(
@@ -1267,10 +1269,8 @@ package body generic_queue_pkg is
     procedure print_queue(
       constant instance : in integer
     ) is
-      variable v_element_ptr     : t_element_ptr; -- The element currently being processed
-      variable v_new_element_ptr : t_element_ptr; -- Used when creating a new element
-      variable v_position_ctr    : natural := 1; -- Keep track of POSITION when traversing the linked list
-      variable v_found_match     : boolean := false;
+      variable v_element_ptr  : t_element_ptr; -- The element currently being processed
+      variable v_position_ctr : natural := 1; -- Keep track of POSITION when traversing the linked list
     begin
       -- Search from front to back element. Initalise pointers/counters to the first entry:
       v_element_ptr := priv_first_element(instance);

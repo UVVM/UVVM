@@ -233,10 +233,12 @@ Default value is 100. ::
 | constant | percentage         | in     | positive range 1 to 100      | Goal percentage of the coverpoints to cover             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -254,7 +256,7 @@ Returns the coverpoints coverage goal. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -293,7 +295,7 @@ Returns true if the coverpoints coverage has reached the goal. Default goal is 1
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -307,8 +309,9 @@ Returns true if the coverpoints coverage has reached the goal. Default goal is 1
 fc_report_overall_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the overall coverage summary for all the coverpoints in the testbench. The printing destination can be log and/or console 
-and is defined by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using 
-the file_name parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_coverage_report>`. ::
+and is defined by the shared variable ``shared_default_log_destination`` with the default value set by C_DEFAULT_LOG_DESTINATION 
+in adaptations_pkg. The report can also be printed to a separate file by using the file_name parameter. To see an example of the 
+generated report click :ref:`here <func_cov_pkg_coverage_report>`. ::
 
     fc_report_overall_coverage(VOID)
     fc_report_overall_coverage(verbosity, [file_name, [open_mode, [scope]]])
@@ -316,7 +319,7 @@ the file_name parameter. To see an example of the generated report click :ref:`h
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | verbosity          | in     | :ref:`t_report_verbosity`    | Controls if the coverpoints are shown in the report.    |
 |          |                    |        |                              | Default value is NON_VERBOSE.                           |
@@ -329,7 +332,8 @@ the file_name parameter. To see an example of the generated report click :ref:`h
 |          |                    |        |                              | append_mode.                                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::

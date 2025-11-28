@@ -1,0 +1,26 @@
+#######################################
+# NONCOMPOUNDS
+#######################################
+REQ_BASIC,                Basic example,                     TC_1
+REQ_NO_TCS,               No testcases
+REQ_NO_TCS_NO_TICKOFFS,,
+REQ_NO_TICKOFF_IN_TC,     TC run without req tickoff,        TC_1
+REQ_3_MISSING_TCS,        Three expected TCs not run,        TC_NOT_RUN, TC_2
+REQ_3_MISSING_TCS,        Three expected TCs not run,        TC_3
+REQ_ANDOR_COMPLIANT,      Description 1,                     TC_1
+REQ_ANDOR_COMPLIANT,      Description 1,                     TC_2, TC_3
+REQ_ANDOR_MISSING_TC,     AndOr req 2,                       TC_1
+REQ_ANDOR_MISSING_TC,     AndOr req 2,                       TC_2, TC_NOT_RUN
+REQ_ANDOR_NONCOMPLIANT,   AndOr req 2,                       TC_1
+REQ_ANDOR_NONCOMPLIANT,   AndOr req 2,                       TC_2, TC_FAIL
+REQ_EXTRA_TICKOFFS,       Req with extra nonspeced tickoffs, TC_1
+REQ_WRONG_TC,             Req with only nonspeced tickoffs,  TC_NOT_RUN
+REQ_TICKOFF_FAIL,         Explicitly failed in passing tc,   TC_1
+#######################################
+# COMPOUNDS
+#######################################
+REQ_COMPOUND_BASIC,        Compound req with two subs, sub-requirement
+REQ_COMPOUND_TICKOFF,      Compound req with tickoff,  sub-requirement
+REQ_COMPOUND_NONCOMPLIANT, Compound req noncompliant,  sub-requirement
+REQ_COMPOUND_NOT_TESTED,   Compound req not tested,    sub-requirement
+REQ_COMPOUND_ANDOR,        AndOr compound req,         sub-requirement

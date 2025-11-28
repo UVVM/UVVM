@@ -175,12 +175,12 @@ package body axilite_channel_handler_pkg is
     constant msg_id_panel : in t_msg_id_panel       := shared_msg_id_panel;
     constant config       : in t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                       := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call              : string                                       := "write_address_channel_write(" & to_string(awaddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_awready        : boolean                                      := true;
     variable v_normalized_awaddr    : std_logic_vector(awaddr'length - 1 downto 0) := normalize_and_check(awaddr_value, awaddr, ALLOW_NARROWER, "AWADDR", "awaddr", msg);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                         := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                         := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     for cycle in 0 to config.max_wait_cycles loop
       -- Wait according to config.bfm_sync setup
@@ -193,11 +193,9 @@ package body axilite_channel_handler_pkg is
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write address channel access is done
       if awready = '1' and cycle >= config.num_aw_pipe_stages then
         -- Wait according to config.bfm_sync setup
@@ -207,8 +205,8 @@ package body axilite_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_address_channel_write;
 
   procedure write_data_channel_write(
@@ -224,13 +222,13 @@ package body axilite_channel_handler_pkg is
     constant msg_id_panel : in t_msg_id_panel       := shared_msg_id_panel;
     constant config       : in t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                      := "write_data_channel_write(" & to_string(wdata_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(wstrb_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call              : string                                      := "write_data_channel_write(" & to_string(wdata_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(wstrb_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_wready         : boolean                                     := true;
     variable v_normalized_wdata     : std_logic_vector(wdata'length - 1 downto 0) := normalize_and_check(wdata_value, wdata, ALLOW_NARROWER, "WDATA", "wdata", msg);
     variable v_normalized_wstrb     : std_logic_vector(wstrb'length - 1 downto 0) := normalize_and_check(wstrb_value, wstrb, ALLOW_EXACT_ONLY, "WSTRB", "wstrb", msg);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                        := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                        := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                        := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                        := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     for cycle in 0 to config.max_wait_cycles loop
       -- Wait according to config.bfm_sync setup
@@ -243,11 +241,9 @@ package body axilite_channel_handler_pkg is
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write data channel access is done
       if wready = '1' and cycle >= config.num_w_pipe_stages then
         -- Wait according to config.bfm_sync setup
@@ -257,8 +253,8 @@ package body axilite_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_wready, config.max_wait_cycles_severity, ": Timeout waiting for WREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_data_channel_write;
 
   procedure write_response_channel_check(
@@ -275,9 +271,8 @@ package body axilite_channel_handler_pkg is
     constant proc_name              : string  := "write_response_channel_check";
     constant proc_call              : string  := proc_name & "()";
     variable v_await_bvalid         : boolean := true;
-    variable v_time_of_rising_edge  : time    := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time    := -1 ns; -- time stamp for clk period checking
-    variable v_alert_radix          : t_radix;
+    variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
 
     for cycle in 0 to config.max_wait_cycles loop
@@ -288,11 +283,9 @@ package body axilite_channel_handler_pkg is
         bready <= '1';
       end if;
       wait until rising_edge(clk);
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write response channel access is done
       if bvalid = '1' and cycle >= config.num_b_pipe_stages then
         -- Checking BRESP value
@@ -307,9 +300,9 @@ package body axilite_channel_handler_pkg is
       end if;
     end loop;
 
-    check_value(not v_await_bvalid, config.max_wait_cycles_severity, ": Timeout waiting for BVALID", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
 
-    log(config.id_for_bfm, proc_call & "=> OK. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & "=> OK." & add_msg_delimiter(msg), scope, msg_id_panel);
 
   end procedure write_response_channel_check;
 
@@ -325,12 +318,12 @@ package body axilite_channel_handler_pkg is
     constant msg_id_panel : in t_msg_id_panel       := shared_msg_id_panel;
     constant config       : in t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                       := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call              : string                                       := "read_address_channel_write(" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_arready        : boolean                                      := true;
     variable v_normalized_araddr    : std_logic_vector(araddr'length - 1 downto 0) := normalize_and_check(araddr_value, araddr, ALLOW_NARROWER, "ARADDR", "araddr", msg);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                         := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                         := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     for cycle in 0 to config.max_wait_cycles loop
       -- Wait according to config.bfm_sync setup
@@ -343,11 +336,9 @@ package body axilite_channel_handler_pkg is
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write address channel access is done
       if arready = '1' and cycle >= config.num_ar_pipe_stages then
         -- Wait according to config.bfm_sync setup
@@ -357,8 +348,8 @@ package body axilite_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure read_address_channel_write;
 
   procedure read_data_channel_receive(
@@ -379,8 +370,8 @@ package body axilite_channel_handler_pkg is
     variable v_proc_call            : line;
     variable v_rdata_value          : std_logic_vector(rdata'length - 1 downto 0);
     variable v_await_rvalid         : boolean := true;
-    variable v_time_of_rising_edge  : time    := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time    := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
 
     if ext_proc_call = "" then
@@ -400,11 +391,9 @@ package body axilite_channel_handler_pkg is
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the read data channel access is done
       if rvalid = '1' and cycle >= config.num_r_pipe_stages then
         v_await_rvalid := false;
@@ -420,12 +409,12 @@ package body axilite_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_rvalid, config.max_wait_cycles_severity, ": Timeout waiting for RVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     -- Assigning output variable
     rdata_value := v_rdata_value;
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_rdata_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_rdata_value, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. read_data_channel_check)
     end if;
@@ -446,7 +435,7 @@ package body axilite_channel_handler_pkg is
     constant config       : in t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
     constant proc_name         : string                                      := "read_data_channel_check";
-    constant proc_call         : string                                      := proc_name & "(" & to_string(rdata_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call         : string                                      := proc_name & "(" & to_string(rdata_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_rdata_value     : std_logic_vector(rdata'length - 1 downto 0) := (others => '0');
     variable v_rdata_ok        : boolean                                     := true;
     variable v_alert_radix     : t_radix;
@@ -470,10 +459,10 @@ package body axilite_channel_handler_pkg is
       -- Use binary representation when mismatch is due to weak signals
       if not v_rdata_ok then
         v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rdata_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, msg_id_panel) else HEX;
-        alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_rdata_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_rdata_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
       end if;
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_rdata_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_rdata_value, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure read_data_channel_check;

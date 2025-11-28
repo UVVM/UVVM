@@ -18,8 +18,6 @@ Bitvis VIP RGMII
   * :ref:`rgmii_expect_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -66,14 +64,14 @@ Default value for the record is C_RGMII_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| max_wait_cycles              | integer                      | 10              | The maximum number of clock cycles to wait for  |
+| max_wait_cycles              | natural                      | 1000            | The maximum number of clock cycles to wait for  |
 |                              |                              |                 | the DUT signals before reporting a timeout alert|
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | max_wait_cycles_severity     | :ref:`t_alert_level`         | ERROR           | The above timeout will have this severity       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| clock_period                 | time                         | -1 ns           | Period of the clock signal                      |
+| clock_period                 | time                         | C_UNDEFINED_TIME| Period of the clock signal                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| rx_clock_skew                | time                         | -1 ns           | Skew of the sampling of the data in connection  |
+| rx_clock_skew                | time                         | C_UNDEFINED_TIME| Skew of the sampling of the data in connection  |
 |                              |                              |                 | to the RX clock edges. Suggested value is       |
 |                              |                              |                 | clock_period/4.                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -87,7 +85,7 @@ Default value for the record is C_RGMII_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
 |                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | data_valid_on_both_clock_edg\| boolean                      | true            | Switch for changing between double data rate and|
@@ -129,7 +127,7 @@ data_array(data_array'high) is written last.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | data_array         | in     | t_byte_array                 | An array of bytes containing the data to be written     |
+| constant | data_array         | in     | :ref:`t_byte_array`          | An array of bytes containing the data to be written     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | action_when_transf\| in     | :ref:`t_action_when_transfer\| Whether to release or hold the TXEN line after the      |
 |          | er_is_done         |        | _is_done`                    | procedure is finished. Useful when transmitting a packet|
@@ -145,7 +143,8 @@ data_array(data_array'high) is written last.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("RGMII BFM").             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_rgmii_bfm_config     | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_rgmii_bfm_config>`        | value is C_RGMII_BFM_CONFIG_DEFAULT.                    |
@@ -180,7 +179,7 @@ stored in data_len. data_array(0) is read first, while data_array(data_array'hig
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| variable | data_array         | out    | t_byte_array                 | An array of bytes containing the data to be read        |
+| variable | data_array         | out    | :ref:`t_byte_array`          | An array of bytes containing the data to be read        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | data_len           | out    | natural                      | The number of valid bytes in the data_array. Note that  |
 |          |                    |        |                              | the data_array can be bigger and that is why the length |
@@ -195,7 +194,8 @@ stored in data_len. data_array(0) is read first, while data_array(data_array'hig
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("RGMII BFM").             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_rgmii_bfm_config     | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_rgmii_bfm_config>`        | value is C_RGMII_BFM_CONFIG_DEFAULT.                    |
@@ -212,7 +212,9 @@ stored in data_len. data_array(0) is read first, while data_array(data_array'hig
 
 rgmii_expect()
 ----------------------------------------------------------------------------------------------------------------------------------
-Calls the :ref:`rgmii_read_bfm` procedure, then compares the received data with data_exp.
+Calls the :ref:`rgmii_read_bfm` procedure, then compares the read data with data_exp. If the read data is not equal to the 
+expected parameter, an alert with severity 'alert_level' will be issued. To reduce the verbosity of the alert message, use the 
+C_ERROR_REPORT_EXTENT defined in adaptations_pkg.
 
 .. code-block::
 
@@ -221,7 +223,7 @@ Calls the :ref:`rgmii_read_bfm` procedure, then compares the received data with 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | data_exp           | in     | t_byte_array                 | An array of bytes containing the data to be expected    |
+| constant | data_exp           | in     | :ref:`t_byte_array`          | An array of bytes containing the data to be expected    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -234,7 +236,8 @@ Calls the :ref:`rgmii_read_bfm` procedure, then compares the received data with 
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("RGMII BFM").             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_rgmii_bfm_config     | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_rgmii_bfm_config>`        | value is C_RGMII_BFM_CONFIG_DEFAULT.                    |
@@ -301,8 +304,8 @@ Using a local overload like this also allows the following – if wanted:
 Local BFM configuration
 ==================================================================================================================================
 The RGMII BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default 
-BFM configuration is defined with a clock period of -1 ns so that the BFM can detect and alert the user that the configuration has 
-not been set.
+BFM configuration is defined with a clock period of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the 
+configuration has not been set.
 
 Defining a local RGMII BFM configuration:::
 
@@ -338,13 +341,11 @@ For more information see the specification "Reduced Gigabit Media Independent In
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in rgmii_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -355,7 +356,9 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Name                         | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_RGMII_VVC_MAX_INSTANCE_NUM      |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_RGMII_BFM_CONFIG          | :ref:`t_rgmii_bfm_config     | C_RGMII_BFM_CON\| Configuration for the RGMII BFM                 |
 |                              | <t_rgmii_bfm_config>`        | FIG_DEFAULT     |                                                 |
@@ -384,6 +387,10 @@ Generics
 | OLD_SEVERITY                 |                              | _COUNT_THRESHOL\| GC_RESULT_QUEUE_COUNT_THRESHOLD                 |
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
 
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -479,6 +486,16 @@ Methods
 
     variable v_data_array : t_byte_array(0 to C_MAX_BYTES - 1);
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_RGMII_VVC_CMD_DATA_MAX_BYTES             | Maximum **data_array** length        |
+      +--------------------------------------------+--------------------------------------+
+      | C_RGMII_VVC_CMD_STRING_MAX_LENGTH          | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _rgmii_write_vvc:
 
@@ -500,9 +517,9 @@ data_array(data_array'high) is written last.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_array         | in     | t_byte_array                 | An array of bytes containing the data to be written     |
+| constant | data_array         | in     | :ref:`t_byte_array`          | An array of bytes containing the data to be written     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | action_when_transf\| in     | :ref:`t_action_when_transfer\| Whether to release or hold the TXEN line after the      |
 |          | er_is_done         |        | _is_done`                    | procedure is finished. Useful when transmitting a packet|
@@ -512,7 +529,8 @@ data_array(data_array'high) is written last.
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -546,14 +564,15 @@ checked against the expected value (provided by the testbench).
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the read data                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -583,7 +602,8 @@ rgmii_expect()
 Adds an expect command to the RGMII VVC executor queue, which will run as soon as all preceding commands have completed. When the 
 command is scheduled to run, the executor calls the BFM :ref:`rgmii_expect_bfm` procedure. The rgmii_expect() procedure will perform a 
 read operation, then check if the read data is equal to the expected data in the data parameter. If the read data is not equal to 
-the expected data parameter, an alert with severity 'alert_level' will be issued. The read data will not be stored in this procedure.
+the expected data parameter, an alert with severity 'alert_level' will be issued. To reduce the verbosity of the alert message, 
+use the C_ERROR_REPORT_EXTENT defined in adaptations_pkg. The read data will not be stored in this procedure.
 
 .. code-block::
 
@@ -597,16 +617,17 @@ the expected data parameter, an alert with severity 'alert_level' will be issued
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_exp           | in     | t_byte_array                 | An array of bytes containing the data to be expected    |
+| constant | data_exp           | in     | :ref:`t_byte_array`          | An array of bytes containing the data to be expected    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -633,7 +654,8 @@ Transaction Info
     | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
     |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data_array                   | t_byte_array(0 to 2047)      | 0x0             | Data for RGMII read or write transaction        |
+    | data_array                   | :ref:`t_byte_array(0 to 2047)| 0x0             | Data for RGMII read or write transaction        |
+    |                              | <t_byte_array>`              |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
     |                              |                              | ULT             |                                                 |
@@ -642,7 +664,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -653,13 +675,13 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. rgmii_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The RGMII scoreboard is accessible from the testbench as a shared variable RGMII_VVC_SB, located in the 
-vvc_methods_pkg.vhd, e.g. ::
+TO_SB parameter is applied. The RGMII scoreboard is accessible from the testbench as a shared variable ``RGMII_VVC_SB``, located 
+in the vvc_methods_pkg.vhd, e.g. ::
 
     RGMII_VVC_SB.add_expected(C_RGMII_VVC_IDX, v_expected, "Adding expected");
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the RGMII VVC scoreboard using the RGMII_VVC_SB.
+Scoreboard commands are available for the RGMII VVC scoreboard using the ``RGMII_VVC_SB``.
 
 
 Unwanted Activity Detection

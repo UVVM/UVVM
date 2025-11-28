@@ -47,7 +47,7 @@ begin
   -- Assigning internally used signals to outputs
   p2c <= p2c_i;
 
-  p_read_reg : process(cs, addr, rd, c2p, p2c_i)
+  p_read_reg : process(all)
   begin
     -- default values
     dout_i <= (others => '0');
@@ -90,7 +90,7 @@ begin
   end process p_write_reg;
 
   -- Writing to registers that are functionally manipulated and/or located outside PIF (or dummy registers)
-  p_aux : process(wr, addr, din)
+  p_aux : process(all)
   begin
     -- Note that arst is not considered here, but must be considered in any clocked process in the core
     -- Default - always to return to these values

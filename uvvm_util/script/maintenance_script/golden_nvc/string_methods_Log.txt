@@ -1,0 +1,398 @@
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Valid hex, no radix
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '17') => OK. Value was '17'. 'to_string x"17", HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '00010111') => OK. Value was '00010111'. 'to_string x"17", BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '17') => OK. Value was '17'. 'to_string x"17", HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '17') => OK. Value was '17'. 'to_string x"17", HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Invalid hex, no radix
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'X7') => OK. Value was 'X7'. 'to_string b"0x010111", HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '0X010111') => OK. Value was '0X010111'. 'to_string b"0x010111", BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'X7 (b"0X010111")') => OK. Value was 'X7 (b"0X010111")'. 'to_string
+UVVM:                                                                           b"0x010111", HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Valid hex, Radix
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"17"') => OK. Value was 'x"17"'. 'to_string b"0x010111", HEX,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"00010111"') => OK. Value was 'b"00010111"'. 'to_string b"00010111", BIN,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"17"') => OK. Value was 'x"17"'. 'to_string b"0x010111",
+UVVM:                                                                           HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Invalid hex, Radix
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"X7"') => OK. Value was 'x"X7"'. 'to_string b"0x010111", HEX,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"0X010111"') => OK. Value was 'b"0X010111"'. 'to_string b"0x010111", BIN,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"X7" (b"0X010111")') => OK. Value was 'x"X7" (b"0X010111")'. 'to_string
+UVVM:                                                                           b"0x010111", HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Signed, positive
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '23') => OK. Value was '23'. 'to_string x"17", DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '17') => OK. Value was '17'. 'to_string x"17", HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '00010111') => OK. Value was '00010111'. 'to_string x"17", BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"17"') => OK. Value was 'x"17"'. 'to_string b"0x010111", HEX,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"00010111"') => OK. Value was 'b"00010111"'. 'to_string b"00010111", BIN,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Signed, negative
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '-105') => OK. Value was '-105'. 'to_string x"97", DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '97') => OK. Value was '97'. 'to_string x"97", HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '10010111') => OK. Value was '10010111'. 'to_string x"97", BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"97"') => OK. Value was 'x"97"'. 'to_string b"0x10010111", HEX,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"10010111"') => OK. Value was 'b"10010111"'. 'to_string b"10010111", BIN,
+UVVM:                                                                           KEEP_LEADING_0, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '-2147286527') => OK. Value was '-2147286527'. 'to_string x"80030201", DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '1FEDCBA98 (too wide to be converted to integer)') => OK. Value was
+UVVM:                                                                           '1FEDCBA98 (too wide to be converted to integer)'. 'to_string x"1FEDCBA98", DEC'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Integer as DEC
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '150') => OK. Value was '150'. 'to_string 150, DEC, EXCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'd"150"') => OK. Value was 'd"150"'. 'to_string d"150", DEC, INCL_RADIX'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Integer as BIN
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '10010110') => OK. Value was '10010110'. 'to_string 10010110, BIN,
+UVVM:                                                                           EXCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"10010110"') => OK. Value was 'b"10010110"'. 'to_string b"10010110", BIN,
+UVVM:                                                                           INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"00000000000000000000000010010110"') => OK. Value was
+UVVM:                                                                           'b"00000000000000000000000010010110"'. 'to_string b"00000000000000000000000010010110", BIN,
+UVVM:                                                                           INCL_RADIX, KEEP_LEADING_0'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Integer as HEX
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '96') => OK. Value was '96'. 'to_string 96, HEX, EXCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"96"') => OK. Value was 'x"96"'. 'to_string x"96", HEX, INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"00000096"') => OK. Value was 'x"00000096"'. 'to_string x"00000096", HEX,
+UVVM:                                                                           INCL_RADIX, KEEP_LEADING_0'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Integer as DEC
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '-150') => OK. Value was '-150'. 'to_string -150, DEC, EXCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'd"-150"') => OK. Value was 'd"-150"'. 'to_string d"-150", DEC, INCL_RADIX'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Integer as BIN
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, '11111111111111111111111101101010') => OK. Value was
+UVVM:                                                                           '11111111111111111111111101101010'. 'to_string 11111111111111111111111101101010, BIN,
+UVVM:                                                                           EXCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"11111111111111111111111101101010"') => OK. Value was
+UVVM:                                                                           'b"11111111111111111111111101101010"'. 'to_string b"11111111111111111111111101101010", BIN,
+UVVM:                                                                           INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'b"11111111111111111111111101101010"') => OK. Value was
+UVVM:                                                                           'b"11111111111111111111111101101010"'. 'to_string b"11111111111111111111111101101010", BIN,
+UVVM:                                                                           INCL_RADIX, KEEP_LEADING_0'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Integer as HEX
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'FFFFFF6A') => OK. Value was 'FFFFFF6A'. 'to_string FFFFFF6A, HEX,
+UVVM:                                                                           EXCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"FFFFFF6A"') => OK. Value was 'x"FFFFFF6A"'. 'to_string x"FFFFFF6A", HEX,
+UVVM:                                                                           INCL_RADIX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(string, 'x"FFFFFF6A"') => OK. Value was 'x"FFFFFF6A"'. 'to_string x"FFFFFF6A", HEX,
+UVVM:                                                                           INCL_RADIX, KEEP_LEADING_0'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        ASCII test
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        log using one backslash-r
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        log using two backslash-r
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check char_to_ascii
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 65) => OK. Value was 65. 'Check ascii value for A'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 97) => OK. Value was 97. 'Check ascii value for a'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check to_string on illegal characters
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'abcdef A z Z 0 9,:;#.End') => OK. Value was 'abcdef A z Z 0 9,:;#.End'.
+UVVM:                                                                           'to_string() for illegal chars'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check function remove_initial_chars()
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'def') => OK. Value was 'def'. 'remove_initial_chars() case 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'bcdef') => OK. Value was 'bcdef'. 'remove_initial_chars() case 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'abcdef') => OK. Value was 'abcdef'. 'remove_initial_chars() case 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '') => OK. Value was ''. 'remove_initial_chars() case 1'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check functions pos_of_*() and get_string_between_delimiters()
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 3) => OK. Value was 3. 'leftmost c in abc'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 4) => OK. Value was 4. 'leftmost c in a bcdcdc'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 6) => OK. Value was 6. 'leftmost c in a bxdcdx, with default 5'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 3) => OK. Value was 3. 'rightmost c in abc'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 8) => OK. Value was 8. 'rightmost c in a bcdcdc'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 6) => OK. Value was 6. 'rightmost c in a bxdcdx, with default 5'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'xdc') => OK. Value was 'xdc'. 'delimeters case 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'xdc') => OK. Value was 'xdc'. 'delimeters case 2'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '') => OK. Value was ''. 'delimeters case 3'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'abc') => OK. Value was 'abc'. 'delimeters case 4'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'def') => OK. Value was 'def'. 'delimeters case 5'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'abc,') => OK. Value was 'abc,'. 'delimeters case 6'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check functions get_*_name_from_instance_name()
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'p_main') => OK. Value was 'p_main'. 'get_process_name....'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'methods_tb') => OK. Value was 'methods_tb'. 'get_entity_name.... 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'methods_tb') => OK. Value was 'methods_tb'. 'get_entity_name.... 2'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Printing with pad_string()
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Fill on right with space                
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                                         Fill on left with space
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Fill on right with XXXXXXXXXXXXXXXXXXXXX
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        YYYYYYYYYYYYYYYYYYYYYFill on left with Y
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check t_slv_array(2 downto 0)(3 downto 0)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(6, A, 9)') => OK. Value was '(6, A, 9)'. 'to_string() for t_slv_array(2
+UVVM:                                                                           downto 0)(3 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(6, 10, 9)') => OK. Value was '(6, 10, 9)'. 'to_string() for t_slv_array(2
+UVVM:                                                                           downto 0)(3 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(0110, 1010, 1001)') => OK. Value was '(0110, 1010, 1001)'. 'to_string()
+UVVM:                                                                           for t_slv_array(2 downto 0)(3 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(6, X (b"UUUU"), 9)') => OK. Value was '(6, X (b"UUUU"), 9)'. 'to_string()
+UVVM:                                                                           for t_slv_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check long t_slv_array(31 downto 0)(7 downto 0)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(1F, 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 0F, 0E,
+UVVM:                                                                           0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, 00)') => OK. Value was '(1F, 1E, 1D, 1C,
+UVVM:                                                                           1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 0F, 0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04,
+UVVM:                                                                           03, 02, 01, 00)'. 'to_string() for t_slv_array(31 downto 0)(7 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14,
+UVVM:                                                                           13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)') => OK. Value was '(31, 30, 29, 28, 27, 26, 25,
+UVVM:                                                                           24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)'.
+UVVM:                                                                           'to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(00011111, 00011110, 00011101, 00011100, 00011011, 00011010, 00011001,
+UVVM:                                                                           00011000, 00010111, 00010110, 00010101, 00010100, 00010011, 00010010, 00010001, 00010000,
+UVVM:                                                                           00001111, 00001110, 00001101, 00001100, 00001011, 00001010, 00001001, 00001000, 00000111,
+UVVM:                                                                           00000110, 00000101, 00000100, 00000011, 00000010, 00000001, 00000000)') => OK. Value was
+UVVM:                                                                           '(00011111, 00011110, 00011101, 00011100, 00011011, 00011010, 00011001, 00011000, 00010111,
+UVVM:                                                                           00010110, 00010101, 00010100, 00010011, 00010010, 00010001, 00010000, 00001111, 00001110,
+UVVM:                                                                           00001101, 00001100, 00001011, 00001010, 00001001, 00001000, 00000111, 00000110, 00000101,
+UVVM:                                                                           00000100, 00000011, 00000010, 00000001, 00000000)'. 'to_string() for t_slv_array(31 downto 0)(7
+UVVM:                                                                           downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(XX (b"UUUUUUUU"), 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11,
+UVVM:                                                                           10, 0F, 0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, XX (b"UUUUUUUU"))') => OK.
+UVVM:                                                                           Value was '(XX (b"UUUUUUUU"), 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 0F,
+UVVM:                                                                           0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, XX (b"UUUUUUUU"))'. 'to_string() for
+UVVM:                                                                           t_slv_array(31 downto 0)(7 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Check 32 bit wide t_slv_array
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(01234567, FEDCBA98)') => OK. Value was '(01234567, FEDCBA98)'. 'to_string
+UVVM:                                                                           for t_slv_array(1 to 2)(31 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"01234567 (too wide to be converted to integer)", x"FEDCBA98 (too wide
+UVVM:                                                                           to be converted to integer)")') => OK. Value was '(x"01234567 (too wide to be converted to
+UVVM:                                                                           integer)", x"FEDCBA98 (too wide to be converted to integer)")'. 'to_string for t_slv_array(1 to
+UVVM:                                                                           2)(31 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(00000001001000110100010101100111, 11111110110111001011101010011000)') =>
+UVVM:                                                                           OK. Value was '(00000001001000110100010101100111, 11111110110111001011101010011000)'.
+UVVM:                                                                           'to_string for t_slv_array(1 to 2)(31 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(01234567, XXXXXXXX (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))') => OK. Value
+UVVM:                                                                           was '(01234567, XXXXXXXX (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))'. 'to_string for t_slv_array(1
+UVVM:                                                                           to 2)(31 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Check 256 bit wide t_slv_array
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210")') => OK. Value was
+UVVM:                                                                           '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210")'. 'to_string for
+UVVM:                                                                           t_slv_array(1 downto 0)(255 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too
+UVVM:                                                                           wide to be converted to integer)",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to
+UVVM:                                                                           integer)")') => OK. Value was
+UVVM:                                                                           '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted
+UVVM:                                                                           to integer)", x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to
+UVVM:                                                                           be converted to integer)")'. 'to_string for t_slv_array(1 downto 0)(255 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string,
+UVVM:                                                                           '(b"0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011
+UVVM:                                                                           00111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111
+UVVM:                                                                           1011110000000100100011010001010110011110001001101010111100110111101111",
+UVVM:                                                                           b"111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011
+UVVM:                                                                           00001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001
+UVVM:                                                                           00001111111011011100101110101001100001110110010101000011001000010000")') => OK. Value was
+UVVM:                                                                           '(b"0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011
+UVVM:                                                                           00111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111
+UVVM:                                                                           1011110000000100100011010001010110011110001001101010111100110111101111",
+UVVM:                                                                           b"111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011
+UVVM:                                                                           00001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001
+UVVM:                                                                           00001111111011011100101110101001100001110110010101000011001000010000")'. 'to_string for
+UVVM:                                                                           t_slv_array(1 downto 0)(255 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"),
+UVVM:                                                                           x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))') => OK. Value was
+UVVM:                                                                           '(x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"),
+UVVM:                                                                           x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))'. 'to_string for
+UVVM:                                                                           t_slv_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check t_signed_array(2 downto 0)(3 downto 0)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(9, 3, D)') => OK. Value was '(9, 3, D)'. 'to_string() for
+UVVM:                                                                           t_signed_array(2 downto 0)(3 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(-7, 3, -3)') => OK. Value was '(-7, 3, -3)'. 'to_string() for
+UVVM:                                                                           t_signed_array(2 downto 0)(3 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(1001, 0011, 1101)') => OK. Value was '(1001, 0011, 1101)'. 'to_string()
+UVVM:                                                                           for t_signed_array(2 downto 0)(3 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(9, X (b"UUUU"), D)') => OK. Value was '(9, X (b"UUUU"), D)'. 'to_string()
+UVVM:                                                                           for t_signed_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Check 33 bit wide t_signed_array
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(001234567, 1FEDCBA98)') => OK. Value was '(001234567, 1FEDCBA98)'.
+UVVM:                                                                           'to_string for t_signed_array(1 to 2)(32 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"001234567" (too wide to be converted to integer), x"1FEDCBA98" (too
+UVVM:                                                                           wide to be converted to integer))') => OK. Value was '(x"001234567" (too wide to be converted
+UVVM:                                                                           to integer), x"1FEDCBA98" (too wide to be converted to integer))'. 'to_string for
+UVVM:                                                                           t_signed_array(1 to 2)(32 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(000000001001000110100010101100111, 111111110110111001011101010011000)')
+UVVM:                                                                           => OK. Value was '(000000001001000110100010101100111, 111111110110111001011101010011000)'.
+UVVM:                                                                           'to_string for t_signed_array(1 to 2)(32 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(001234567, XXXXXXXXX (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))') => OK.
+UVVM:                                                                           Value was '(001234567, XXXXXXXXX (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))'. 'to_string for
+UVVM:                                                                           t_signed_array(1 to 2)(32 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Check 256 bit wide t_signed_array
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210")') => OK. Value was
+UVVM:                                                                           '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210")'. 'to_string for
+UVVM:                                                                           t_signed_array(1 downto 0)(255 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" (too
+UVVM:                                                                           wide to be converted to integer),
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210" (too wide to be converted
+UVVM:                                                                           to integer))') => OK. Value was
+UVVM:                                                                           '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" (too wide to be converted
+UVVM:                                                                           to integer), x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210" (too wide to
+UVVM:                                                                           be converted to integer))'. 'to_string for t_signed_array(1 downto 0)(255 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string,
+UVVM:                                                                           '(b"0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011
+UVVM:                                                                           00111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111
+UVVM:                                                                           1011110000000100100011010001010110011110001001101010111100110111101111",
+UVVM:                                                                           b"111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011
+UVVM:                                                                           00001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001
+UVVM:                                                                           00001111111011011100101110101001100001110110010101000011001000010000")') => OK. Value was
+UVVM:                                                                           '(b"0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011
+UVVM:                                                                           00111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111
+UVVM:                                                                           1011110000000100100011010001010110011110001001101010111100110111101111",
+UVVM:                                                                           b"111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011
+UVVM:                                                                           00001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001
+UVVM:                                                                           00001111111011011100101110101001100001110110010101000011001000010000")'. 'to_string for
+UVVM:                                                                           t_signed_array(1 downto 0)(255 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"),
+UVVM:                                                                           x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))') => OK. Value was
+UVVM:                                                                           '(x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"),
+UVVM:                                                                           x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))'. 'to_string for
+UVVM:                                                                           t_signed_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check t_unsigned_array(2 downto 0)(3 downto 0)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(9, 3, D)') => OK. Value was '(9, 3, D)'. 'to_string() for
+UVVM:                                                                           t_unsigned_array(2 downto 0)(3 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(9, 3, 13)') => OK. Value was '(9, 3, 13)'. 'to_string() for
+UVVM:                                                                           t_unsigned_array(2 downto 0)(3 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(1001, 0011, 1101)') => OK. Value was '(1001, 0011, 1101)'. 'to_string()
+UVVM:                                                                           for t_unsigned_array(2 downto 0)(3 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(9, X (b"UUUU"), D)') => OK. Value was '(9, X (b"UUUU"), D)'. 'to_string()
+UVVM:                                                                           for t_unsigned_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Check 32 bit wide t_unsigned_array
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(01234567, FEDCBA98)') => OK. Value was '(01234567, FEDCBA98)'. 'to_string
+UVVM:                                                                           for t_unsigned_array(1 to 2)(31 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"01234567 (too wide to be converted to integer)", x"FEDCBA98 (too wide
+UVVM:                                                                           to be converted to integer)")') => OK. Value was '(x"01234567 (too wide to be converted to
+UVVM:                                                                           integer)", x"FEDCBA98 (too wide to be converted to integer)")'. 'to_string for
+UVVM:                                                                           t_unsigned_array(1 to 2)(31 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(00000001001000110100010101100111, 11111110110111001011101010011000)') =>
+UVVM:                                                                           OK. Value was '(00000001001000110100010101100111, 11111110110111001011101010011000)'.
+UVVM:                                                                           'to_string for t_unsigned_array(1 to 2)(31 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(01234567, XXXXXXXX (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))') => OK. Value
+UVVM:                                                                           was '(01234567, XXXXXXXX (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))'. 'to_string for
+UVVM:                                                                           t_unsigned_array(1 to 2)(31 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Check 256 bit wide t_unsigned_array
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210")') => OK. Value was
+UVVM:                                                                           '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210")'. 'to_string for
+UVVM:                                                                           t_unsigned_array(1 downto 0)(255 downto 0) as HEX'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too
+UVVM:                                                                           wide to be converted to integer)",
+UVVM:                                                                           x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to
+UVVM:                                                                           integer)")') => OK. Value was
+UVVM:                                                                           '(x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted
+UVVM:                                                                           to integer)", x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to
+UVVM:                                                                           be converted to integer)")'. 'to_string for t_unsigned_array(1 downto 0)(255 downto 0) as DEC'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string,
+UVVM:                                                                           '(b"0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011
+UVVM:                                                                           00111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111
+UVVM:                                                                           1011110000000100100011010001010110011110001001101010111100110111101111",
+UVVM:                                                                           b"111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011
+UVVM:                                                                           00001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001
+UVVM:                                                                           00001111111011011100101110101001100001110110010101000011001000010000")') => OK. Value was
+UVVM:                                                                           '(b"0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011
+UVVM:                                                                           00111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111
+UVVM:                                                                           1011110000000100100011010001010110011110001001101010111100110111101111",
+UVVM:                                                                           b"111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011
+UVVM:                                                                           00001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001
+UVVM:                                                                           00001111111011011100101110101001100001110110010101000011001000010000")'. 'to_string for
+UVVM:                                                                           t_unsigned_array(1 downto 0)(255 downto 0) as BIN'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '(x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"),
+UVVM:                                                                           x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))') => OK. Value was
+UVVM:                                                                           '(x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"),
+UVVM:                                                                           x"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+UVVM:                                                                           (b"UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UVVM:                                                                           UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"))'. 'to_string for
+UVVM:                                                                           t_unsigned_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Verifying justify()
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                            Left                                                                                       
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Left                                                                                           
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                                                                       Center                                          
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                                                                     Center                                            
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                                                                                                                  Right
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                                                                                                                  Right
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Truncate last word
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Truncate last
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Verifying get_basename()
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'file_name.txt') => OK. Value was 'file_name.txt'. 'Verifying
+UVVM:                                                                           get_basename() with a posix path.'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'file_name.txt') => OK. Value was 'file_name.txt'. 'Verifying
+UVVM:                                                                           get_basename() with a windows path.'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'file_name.txt') => OK. Value was 'file_name.txt'. 'Verifying
+UVVM:                                                                           get_basename() with no path.'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

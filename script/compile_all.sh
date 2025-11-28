@@ -6,6 +6,8 @@
 # simulator  : ghdl, nvc, vsim or xsim
 #            : Note that current UVVM support in Xsim is limited.
 # target_dir : path to target directory (optional, defaults to .)
+#            : Note that an additional directory with the name of the simulator is created within the target directory
+#              to avoid mixing libraries compiled by different simulators.
 
 set -o errexit
 SIM=$1

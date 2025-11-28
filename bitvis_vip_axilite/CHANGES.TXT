@@ -1,6 +1,15 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v4.1.1
+----------
+Released: 2025-11-28
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Increased max_wait_cycles default value to 1000.
+- Updated BFM procedures to only call check_clock_period_margin() once.
+- Removed extra sampling of rising_edge inside BFM procedures.
+
 v4.1.0
 ----------
 Released: 2024-09-19

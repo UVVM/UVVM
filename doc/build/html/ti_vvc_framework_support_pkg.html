@@ -9,12 +9,13 @@
   <title>t_vvc_operation &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,14 +49,17 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="vvc_framework.html">VVC Framework</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#uvvm-methods">UVVM Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#testbench-setup">Testbench Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#common-vvc-methods">Common VVC Methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#essential-mechanisms">Essential Mechanisms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#vvc-mechanisms-and-features">VVC Mechanisms and Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#monitors">Monitors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#hierarchical-vvcs">Hierarchical VVCs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#vvc-implementation-guide">VVC Implementation Guide</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vvc_framework.html#ti-vvc-framework-support-package">TI VVC Framework Support Package</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">t_vvc_operation</a></li>
@@ -68,12 +72,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#t-dut-if-field-config-direction-array">t_dut_if_field_config_direction_array</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#ti-protected-types">TI Protected Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vvc_framework.html#ti-protected-types-package">TI Protected Types Package</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -92,7 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -164,7 +165,7 @@
 <td><p>Number of data words transferred</p></td>
 </tr>
 <tr class="row-odd"><td><p>data_words</p></td>
-<td><p>t_slv_array</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p></td>
 <td><p>Data sent to the VVC</p></td>
 </tr>
 <tr class="row-even"><td><p>dut_if_field_idx</p></td>
@@ -199,7 +200,7 @@ control.</p></td>
 <td><p>Trigger signal</p></td>
 </tr>
 <tr class="row-odd"><td><p>data_words</p></td>
-<td><p>t_slv_array</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-slv-array"><span class="std std-ref">t_slv_array</span></a></p></td>
 <td><p>Data received from the VVC</p></td>
 </tr>
 </tbody>

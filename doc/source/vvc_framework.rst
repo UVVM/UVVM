@@ -3,10 +3,93 @@
 ##################################################################################################################################
 VVC Framework
 ##################################################################################################################################
+The VVC Framework allows you to control your complete testbench architecture with any number of verification components. By 
+executing the commands from the test case sequencer, the VVCs can be controlled (via global signals and shared variables 
+transparent to the user) to generate and receive data from the DUT, thus giving a more structured and easier to control testbench.
+
+A structured test environment is important, and we recommend the use of a structured test harness to instantiate VVCs, DUT, clock 
+generator and so forth. The testbench may consist of one or more test sequencers which are used to control the complete testbench 
+architecture with any number of VVCs, although for a better testbench overview we recommend having a single central test sequencer 
+only - for most testbenches.
+
+.. figure:: /images/vvc_framework/vvc_framework_example.png
+   :alt: VVC framework overview
+   :width: 500pt
+   :align: center
+
+   Figure 1 Testbench example using the VVC framework
+
+A more detailed description on the VVC Framework and the command mechanism can be found in the 
+`VVC Framework Manual <https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf>`_.
 
 **********************************************************************************************************************************
-UVVM Methods
+Testbench Setup
 **********************************************************************************************************************************
+The following mechanisms are required for running the VVC Framework:
+
+Libraries
+==================================================================================================================================
+In order to use the VVC framework the following libraries need to be included: ::
+
+    library uvvm_util;
+    context uvvm_util.uvvm_util_context;
+
+    library uvvm_vvc_framework;
+    use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
+Context files
+==================================================================================================================================
+The context files are created to simplify the inclusion of necessary libraries used in UVVM.
+
+* Each VVC has its own context file located in ``<vip>/src/vvc_context.vhd``.
+* The utility library also has its own context file which includes all the packages in the utility library, and is located in 
+  ``uvvm_util/src/uvvm_util_context.vhd``.
+* There are also two "main" context files ``misc/context/uvvm_support_context.vhd`` and ``misc/context/uvvm_all_context.vhd``.
+
+    * The ``uvvm_support_context.vhd`` file includes the UVVM functionality except for VVCs and BFMs, i.e. utility library, 
+      scoreboard, spec_cov, and UVVM assertions.
+    * The ``uvvm_all_context.vhd`` file includes all inclusive UVVM libraries, i.e. all VIPs, uvvm_vvc_frame_work, and 
+      uvvm_support_context.
+
+The usage of these context files are shown below: ::
+
+    library bitvis_vip_<name>;
+    context bitvis_vip_<name>.vvc_context;
+
+    library uvvm_util;
+    context uvvm_util.uvvm_util_context;
+
+    library uvvm_context;
+    context uvvm_context.uvvm_support_context;
+
+    library uvvm_context;
+    context uvvm_context.uvvm_all_context;
+
+UVVM Engine
+==================================================================================================================================
+This entity contains a process that will initialize the UVVM environment, and must be instantiated in the testbench harness, or 
+alternatively in the top-level testbench. ::
+
+    -- Example:
+    i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
+
+.. important::
+
+    If the ``ti_uvvm_engine`` is not instantiated when using the VVC framework, the simulator will be stuck in an infinite loop.
+
+await_uvvm_initialization()
+==================================================================================================================================
+This procedure is a blocking procedure that must be called from the testbench sequencer, prior to any VVC calls, to ensure that 
+the UVVM engine has been initialized and is ready. This procedure will check the shared_uvvm_state on each delta cycle until the 
+UVVM engine has been initialized. Note that this method is depending on the ``ti_uvvm_engine`` mechanism. ::
+
+    -- Example:
+    await_uvvm_initialization(VOID);
+
+
+.. important::
+
+    Not using the ``await_uvvm_initialization()`` can result in a TB_ERROR due to the VVC framework failing to acquire a semaphore.
 
 .. _await_uvvm_completion:
 
@@ -17,6 +100,9 @@ to be empty, i.e. all expected values checked. It is therefore meant to be used 
 
 If any VVC is still active and/or an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert
 will be generated. Otherwise, a successful completion message and the optional reports will be printed in the log.
+
+The printing destination can be log and/or console and is defined by the shared variable ``shared_default_log_destination`` with 
+the default value set by C_DEFAULT_LOG_DESTINATION in adaptations_pkg.
 
 .. code-block::
 
@@ -45,10 +131,12 @@ will be generated. Otherwise, a successful completion message and the optional r
 |          |                    |        |                              | testbench. Default value is NO_REPORT.                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT defined in          |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -57,7 +145,7 @@ will be generated. Otherwise, a successful completion message and the optional r
     await_uvvm_completion(1 ms);
 
     -- Example: Wait for all transactions to finish and report the alert counters, VVCs and scoreboards
-    await_uvvm_completion(1 ms, TB_WARNING, 1 us, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, REPORT_VVCS, C_SCOPE);
+    await_uvvm_completion(1 ms, TB_WARNING, 1 us, REPORT_ALERT_COUNTERS_FINAL, REPORT_SCOREBOARDS, REPORT_VVCS, C_SCOPE);
 
 .. note::
 
@@ -122,12 +210,12 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 | signal   | vvc_target         | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
 |          |                    |        |                              | differentiate between VVCs                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wanted_idx         | in     | natural                      | The VVC command index that has to be finished before    |
-|          |                    |        |                              | the blocking is released.                               |
+| constant | wanted_idx         | in     | natural                      | The VVC command index (or higher) that must be finished |
+|          |                    |        |                              | in the given VVC before the blocking is released.       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_select         | in     | :ref:`t_vvc_select`          | Selects whether to await for any of the VVCs in the     |
 |          |                    |        |                              | list, all of the VVCs in the list or all the registered |
@@ -151,7 +239,8 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -200,7 +289,7 @@ while waiting for the completion of VVC commands. The vvc_list can be cleared us
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method.         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_list           | in     | :ref:`t_prot_vvc_list`       | A protected type list where the VVC IDs (name, instance,|
 |          |                    |        |                              | channel) are stored for use with await_completion() when|
@@ -230,7 +319,7 @@ while waiting for completion. This command still works as previously, but with l
 
 .. warning::
 
-    This procedure will soon be deprecated and removed. For details and examples for using this call see UVVM release v2020.05.12 
+    This procedure is deprecated and will be removed in v3. For details and examples for using this call see UVVM release v2020.05.12 
     or any earlier releases.
 
 
@@ -250,9 +339,9 @@ function. It is also possible to :ref:`broadcast and multicast <vvc_framework_br
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | The ID to enable/disable with enable/disable_log_msg(). |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| The ID to enable/disable with enable/disable_log_msg(). |
 |          |                    |        |                              | For more info, see the UVVM-Util documentation.         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
@@ -262,7 +351,8 @@ function. It is also possible to :ref:`broadcast and multicast <vvc_framework_br
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -291,9 +381,9 @@ function. It is also possible to :ref:`broadcast and multicast <vvc_framework_br
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id             | in     | t_msg_id                     | The ID to enable/disable with enable/disable_log_msg(). |
+| constant | msg_id             | in     | :ref:`t_msg_id <message_ids>`| The ID to enable/disable with enable/disable_log_msg(). |
 |          |                    |        |                              | For more info, see the UVVM-Util documentation.         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
@@ -303,7 +393,8 @@ function. It is also possible to :ref:`broadcast and multicast <vvc_framework_br
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -332,13 +423,14 @@ It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended to the log when the     |
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -368,7 +460,7 @@ successful fetch, a message with log ID ID_UVVM_CMD_RESULT is logged. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | wanted_idx         | in     | natural                      | The index to be fetched or awaited                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -384,7 +476,8 @@ successful fetch, a message with log ID ID_UVVM_CMD_RESULT is logged. ::
 |          |                    |        |                              | Default value is TB_ERROR.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -416,7 +509,7 @@ Inserts a delay of *delay* clock cycles or *delay* seconds in the VVC. It is als
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | delay              | in     | time or natural              | Delay to be inserted as time or number of clock cycles  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -424,7 +517,8 @@ Inserts a delay of *delay* clock cycles or *delay* seconds in the VVC. It is als
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -453,13 +547,14 @@ to :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended to the log when the     |
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -488,13 +583,14 @@ flushes the VVC command queue, removing all pending commands. It is also possibl
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended to the log when the     |
 |          |                    |        |                              | method is executed. Default value is "".                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -521,10 +617,11 @@ fetch_result. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC used in this method          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_channel        | in     | t_channel                    | The VVC channel of the VVC instance used in this method |
+| constant | vvc_channel        | in     | :ref:`t_channel`             | The VVC channel of the VVC instance used in this method |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -576,55 +673,16 @@ See description above. C_VVCT_ALL_INSTANCES = ALL_INSTANCES.
 
     This command parameter might be removed in a future release and we encourage the use of ALL_INSTANCES.
 
-.. _vvc_framework_essential_mechanisms:
+.. _vvc_framework_vvc_mechanisms_and_features:
 
 **********************************************************************************************************************************
-Essential Mechanisms
+VVC Mechanisms and Features
 **********************************************************************************************************************************
-This section explains some of the essential mechanisms necessary for running VVC Framework, in addition to helpful and important 
-VVC status and configuration records which are accessible directly from the testbench.
-More details on the VVC Framework and the command mechanism can be found in the 
-`VVC Framework Manual <https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf>`_.
+This section explains some of the mechanisms necessary for running the VVC Framework and the VVC features which are included in 
+all or certain VVCs.
 
-Libraries
+VVC types
 ==================================================================================================================================
-In order to use a VVC the following libraries need to be included: ::
-
-    library uvvm_util;
-    context uvvm_util.uvvm_util_context;
-
-    library uvvm_vvc_framework;
-    use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
-Context files
-==================================================================================================================================
-The context files are created to simplify the inclusion of necessary libraries used in UVVM.
-
-* Each VVC has its own context file, which is located in ``<vip>/src/vvc_context.vhd``.
-* The utility library also has its own context file which includes all the packages in the utility library, and is located in 
-  ``uvvm_util/src/uvvm_util_context.vhd``.
-* There are also two "main" context files ``misc/context/uvvm_support_context.vhd`` and ``misc/context/uvvm_all_context.vhd``.
-
-    * The UVVM support context file includes the UVVM functionality except for VVCs and BFMs, i.e. utility library, scoreboard, 
-      spec_cov, and UVVM assertions.
-    * The UVVM all context file includes all inclusive UVVM libraries, i.e. all VIPs, uvvm_vvc_frame_work, and uvvm_support_context.
-
-The usage of these context files are shown below: ::
-
-    library bitvis_vip_<name>;
-    context bitvis_vip_<name>.vvc_context;
-
-    library uvvm_util;
-    context uvvm_util.uvvm_util_context;
-
-    library uvvm_context;
-    context uvvm_context.uvvm_support_context;
-
-    library uvvm_context;
-    context uvvm_context.uvvm_all_context;
-
-Types
-==================================================================================================================================    
 Some VVC-related types will need to be hierarchically declared, based on their package name, in order to avoid ambiguity among 
 different VVCs.
 
@@ -656,63 +714,43 @@ And then: ::
     fetch_result(SPI_VVCT, 1, v_cmd_idx, v_data, "Fetching result of SPI receive operation");
     v_data_out := v_data(7 downto 0);
 
-
-UVVM Initialization
+VVC Shared Variables and Global Signals
 ==================================================================================================================================
-The following mechanisms are required for running UVVM VVC Framework:
+VVC shared variables and global signals are defined in the various VVC packages. Each VVC instance and channel can be configured 
+and useful information can be accessed from the testbench via dedicated shared variables.
 
-ti_uvvm_engine
-----------------------------------------------------------------------------------------------------------------------------------
-This entity contains a process that will initialize the UVVM environment, and has to be instantiated in the testbench harness, or 
-alternatively in the top-level testbench. ::
+.. note::
 
-    -- Example:
-    i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
+    shared_uvvm_status.info_on_finishing_await_any_completion is deprecated and will be removed in v3. For details and examples 
+    for using this shared variable see UVVM release v2020.05.12 or any earlier releases.
 
-await_uvvm_initialization()
-----------------------------------------------------------------------------------------------------------------------------------
-This procedure is a blocking procedure that has to be called from the testbench sequencer, prior to any VVC calls, to ensure that 
-the UVVM engine has been initialized and is ready. This procedure will check the shared_uvvm_state on each delta cycle until the 
-UVVM engine has been initialized. Note that this method is depending on the ti_uvvm_engine mechanism. ::
-
-    -- Example:
-    await_uvvm_initialization(VOID);
-
-UVVM and VVC User Accessible Shared Variables and Global Signals
-==================================================================================================================================
-UVVM and VVC shared variables and global signals are defined in global_signals_and_shared_variables_pkg.vhd and the various VVC 
-packages.
-
-shared_uvvm_status
-----------------------------------------------------------------------------------------------------------------------------------
-Shared variable providing access to VVC related information via the info_on_finishing_await_any_completion record element, e.g. ::
-
-    shared_uvvm_status.info_on_finishing_await_any_completion
-
-This record element gives access to the name, command index and the time of completion of the VVC that first fulfilled the
-await_any_completion(). The available record fields are: ::
-
-    vvc_name               : string  -- default "no await_any_completion() yet"
-    vvc_cmd_idx            : natural -- default 0
-    vvc_time_of_completion : time    -- default 0 ns
-
-For more information regarding other fields available in the shared_uvvm_status see :ref:`UVVM Util - Shared Variables
-<util_shared_variables>`.
+.. _vvc_framework_shared_vvc_config:
 
 shared_<vvc_name>_vvc_config
 ----------------------------------------------------------------------------------------------------------------------------------
-Shared variable providing access to configuration parameters for each VVC instance and channel if applicable, e.g. ::
+From the VVC configuration shared variable, one is given the ability to tailor each VVC to one's needs, in addition to access the 
+BFM configuration record via the bfm_config identifier. In addition to BFM configuration possibility, the configuration settings 
+consist of command and result queue settings, BFM access separation delay and a VVC dedicated message ID panel. Note that some 
+BFMs require user configuration, e.g. the bit_time setting in serial interface BFMs. ::
 
     shared_sbi_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
     shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_TIME;
 
 shared_<vvc_name>_vvc_status
 ----------------------------------------------------------------------------------------------------------------------------------
-Shared variable providing access to status parameters for each VVC instance and channel if applicable, e.g. ::
+The VVC status shared variable provides access to the command status parameters for each of the VVCs, such as the current and 
+previous command index, and the number of pending commands in the VVCs command queue. This provides a helpful tool, e.g. when 
+synchronizing VVCs in the test sequencer using the await_completion() method. ::
 
     v_num_pending_cmds := shared_sbi_vvc_status(1).pending_cmd_cnt;
     v_current_cmd_idx  := shared_uart_vvc_status(TX,2).current_cmd_idx;
     v_previous_cmd_idx := shared_uart_vvc_status(TX,2).previous_cmd_idx;
+
+shared_<vvc_name>_transaction_info
+----------------------------------------------------------------------------------------------------------------------------------
+.. note::
+
+    This shared variable is deprecated and will be removed in v3. It has been replaced for ``shared_<vvc_name>_vvc_transaction_info``.
 
 global_<vvc_name>_vvc_transaction_trigger
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -731,42 +769,108 @@ Available information is dependent on VVC type and typical information is: ::
 
 .. note::
 
-    This shared variable is replacing the shared_<vvc_name>_transaction_info, which will soon be deprecated.
+    This shared variable is replacing the ``shared_<vvc_name>_transaction_info``, which is deprecated and will be removed in v3.
 
-.. _vvc_framework_status_config_transaction_info:
-
-VVC Status, Configuration and Transaction Information
+VVC Local Sequencers
 ==================================================================================================================================
-The VVC status, configuration and transaction information records are defined in each individual VVC methods package.
+UVVM testbenches may have one or more central sequencers – also known as test sequencers or test drivers. A single test sequencer 
+is recommended in order to reduce complexity – as synchronization between multiple parallel test sequencer could be really complex.
+UVVM does however also provide support for so called local sequencers. These sequencers will typically run inside the VVCs 
+executor process. The executor will typically run a single transaction via a BFM procedure towards the DUT interface, like an 
+sbi_write() or uart_expect() procedure. For more advanced VVCs it would however make sense to send even higher level commands to a 
+VVC, like requesting it to transmit N random bytes, or setting up a peripheral by writing to multiple configuration registers. In 
+these cases, a single command to the VVC will trigger a complete sequence of accesses towards the DUT. The code inside the VVC 
+executors handling these sequences are called local sequencers as they are local to the VVC and thus also improves re-use. These 
+sequences of transactions may also be defined as Compound Transactions (see :ref:`vvc_framework_transaction_info_definitions`).
 
-Each VVC instance and channel can be configured and useful information can be accessed from the testbench via dedicated shared 
-variables.
+An example of a local sequencer is the randomization sequences in the UART VVC, and poll_until in the SBI VVC.
 
-From the VVC configuration shared variable, one is given the ability to tailor each VVC to one's needs, in addition to access the 
-BFM configuration record via the bfm_config identifier. In addition to BFM configuration possibility, the configuration settings 
-consist of command and result queue settings, BFM access separation delay and a VVC dedicated message ID panel. Note that some 
-BFMs require user configuration, e.g. the bit_time setting in serial interface BFMs.
+Local sequencer requirements
+----------------------------------------------------------------------------------------------------------------------------------
+The following requirements should be followed when making local sequencers (basically any VVC command resulting in more than one 
+base transaction):
 
-The VVC status shared variable provide access to the command status parameters for each of the VVCs, such as the current and 
-previous command index, and the number of pending commands in the VVCs command queue. This provide a helpful tool, e.g. when 
-synchronizing VVCs in the test sequencer using the await_completion() or await_any_completion() methods.
+    #. If Transaction Info is supported, then both the leaf transaction and the compound transaction info should be updated (the 
+       latter is not required).
+    #. The sequence should be handled directly inside the VVC executor - and not inside the BFM (otherwise updating the leaf 
+       transactions for Transaction Info could be difficult).
+    #. It should be possible to terminate the sequence immediately after each leaf (or base) transaction - on request from the 
+       central sequencer issuing a terminate_current_command() or terminate_all_commands().
 
-When using a wave viewer during simulation, the transaction shared variable provides helpful information regarding current VVC 
-operation and transaction information such as address and data. Note that the accessible fields depend on the VVC and its 
-implementation. An example of two SBI VVCs performing FIFO write operations, followed by check operations, is shown in Figure 1.
+.. _vvc_framework_property_checkers:
 
-.. figure:: /images/vvc_framework/transaction_info_wave_view.png
-   :alt: VVC transaction info waveview
-   :width: 800pt
-   :align: center
+Controlling Property Checkers
+==================================================================================================================================
+A major VVC advantage is that lots of very useful additional functionality may be added inside the VVC entity, meaning that all 
+the verification support for a given interface can be encapsulated inside a single VHDL entity. A major advantage of UVVM is that 
+adding additional functionality and controlling it from the test sequencers is really simple.
 
-   Figure 1 VVC Transaction info example
+One very useful additional functionality is property checkers, and some typical examples of this could be to check the minimum 
+allowed bit period, the minimum inter-packet gap, back-to-back restrictions, etc., or in general to check a given requirement 
+continuously - especially when this is easier to do outside the BFM - for instance in a dedicated checker process.
+
+A dedicated checker process would typically just wait for a trigger condition on the interface (like a UART data bit changing its 
+level), then wait again for a next trigger (the next data bit), and then check that the time between the two changes is not less 
+than the minimum allowed bit period. This check could then be repeated forever. It is however recommended that the check could be 
+turned on and off for more flexibility.
+
+Property check configuration
+----------------------------------------------------------------------------------------------------------------------------------
+In UVVM, turning checkers on and off is controlled by the VVC configuration (see :ref:`vvc_framework_shared_vvc_config`), 
+and often additional control of the checker behavior is also required. Thus, it is recommended to include the checker control for 
+each individual check in a dedicated sub-record. An example on this (for the UART VVC) is shown below. See :ref:`UART VVC 
+<vip_uart_vvc>` for implementation. ::
+
+    .bit_rate_checker              -- Sub-record containing all control of the property checker behavior
+        .enable      boolean       -- Enables or disables the complete bit rate checker
+        .min_period  time
+        .alert_level t_alert_level
+
+For this example, the bit rate checker inside the UART_VVC RX will trigger on changes on the DUT TX and execute the check if 
+enable is TRUE.
+
+Setting up the configuration
+----------------------------------------------------------------------------------------------------------------------------------
+The bit rate checker configuration may be changed directly from the sequencer via the shared variable VVC configuration.
+
+.. _vvc_framework_verbosity_ctrl:
+
+Scope of Verbosity Control
+==================================================================================================================================
+| Message IDs are used for verbosity control in many of the procedures and functions in UVVM, as well as log messages and checks 
+  in VVCs, BFMs and Scoreboards. The UVVM procedures and functions use a default global message ID panel called 
+  ``shared_msg_id_panel`` which has a default value of C_MSG_ID_PANEL_DEFAULT configured in adaptations_pkg.
+| Note that VVCs and Scoreboards come with dedicated message ID panels and are not affected by the global message ID panel, but 
+  accessed by addressing the targeting VVC or Scoreboard and, if applicable, instance number or with a broadcast. The default 
+  value for these message ID panels is set by C_VVC_MSG_ID_PANEL_DEFAULT and C_SB_MSG_ID_PANEL_DEFAULT in adaptations_pkg.
+| Also note that when a VVC is executing commands triggered by an HVVC (Hierarchical-VVC), e.g. SBI write due to Ethernet transmit, 
+  the VVC will use the HVVC's message ID panel instead. See :ref:`vvc_frameworks_hierarchical_vvcs` for an example of the HVVC 
+  structure.
+
+.. code-block::
+
+    -- Global message ID panel. Does not apply to VVCs or Scoreboards, as they have their own local message ID panel
+    disable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ID_SEQUENCER);
+
+    -- VVC message ID panel
+    disable_log_msg(VVC_BROADCAST, ALL_MESSAGES);            -- broadcast to all VVCs and instances
+    enable_log_msg(I2C_VVCT, C_VVC_INSTANCE_1, ID_BFM_WAIT); -- I2C VVC instance 1
+    enable_log_msg(I2C_VVTC, C_VVC_INSTANCE_2, ID_BFM_WAIT); -- I2C VVC instance 2
+
+    -- Scoreboard message ID panel
+    shared variable sb_under_test : record_sb_pkg.t_generic_sb;
+    ...
+    sb_under_test.disable_log_msg(ALL_INSTANCES, ID_CTRL);  -- broadcast to all SB instances
+    sb_under_test.enable_log_msg(C_SB_INSTANCE_1, ID_DATA); -- SB instance 1
+
+The predefined message IDs are listed in :ref:`message_ids`.
 
 .. _vvc_framework_activity_watchdog:
 
 Activity Watchdog
 ==================================================================================================================================
-UVVM VVC Framework has an activity watchdog mechanism which all Bitvis VVCs support. All VVCs can be automatically registered in a 
+The VVC Framework has an activity watchdog mechanism which all Bitvis VVCs support. All VVCs can be automatically registered in a 
 centralized VVC activity register at start-up and will, during simulation, update the VVC activity register with their current 
 activity status, i.e. ACTIVE or INACTIVE, which again is monitored by the activity watchdog. A timeout counter in the activity 
 watchdog will start after the last update has occurred in the VVC activity register, and the timeout counter is reset on any VVC 
@@ -778,7 +882,7 @@ The activity watchdog has to be included as a concurrent procedure parallel to t
 order to be activated. Note that the activity watchdog will raise a TB_WARNING if the number of expected VVCs does not match the 
 number of registered VVCs in the VVC activity register, and that leaf VVCs (e.g. channels such as UART RX and TX) are counted 
 individually. This checking can be disabled by setting the number of expected VVCs to 0. Also note that the total number of VVCs 
-registered in the VVC activity register cannot exceed the C_MAX_TB_VVC_NUM count, default set to 20 in the adaptations_pkg.vhd, 
+registered in the VVC activity register cannot exceed the C_MAX_TB_VVC_NUM count, default set to 20 in the adaptations_pkg, 
 and this will result in a TB_ERROR raised by the VVC activity register.
 
 Note that some VVCs should not be monitored by the activity watchdog. This currently applies to the clock generator VVC, as this 
@@ -812,101 +916,98 @@ of expected VVCs registered in the VVC activity register but will not have any e
     p_activity_watchdog:
         activity_watchdog(num_exp_vvc => 3, timeout => C_ACTIVITY_WATCHDOG_TIMEOUT);
 
-.. _vvc_framework_unwanted_activity:
-
-Unwanted Activity Detection
+Built-in randomization
 ==================================================================================================================================
-The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT 
-generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected, 
-e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the 
-DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.
-
-All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted 
-activity. The default value for this configuration is set to ERROR in the adaptations_pkg.vhd, e.g. ::
-
-    constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
-
-The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be 
-changed to a different value. To disable this feature in the testbench, e.g. for UART VVC: ::
-
-    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
-
-If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection 
-will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be 
-initiated from I2C slave VVC 2 and 3.
-
-.. figure:: /images/vvc_framework/multiple_slave_VVCs_example.png
-   :alt: False unwanted activity detection
-   :width: 550pt
-   :align: center
-
-   Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT
-
-In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs 
-as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.
-
-.. code-block::
-
-    -- Example:
-    -- Expect data on I2C slave VVC 1.
-    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
-    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
-    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
-    i2c_slave_check(I2C_VVCT, 1, x"55", "Slave check data");
-    await_completion(I2C_VVCT, 1, 50 ms);
-    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
-    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
-
-    -- Expect data on I2C slave VVC 2
-    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
-    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
-    i2c_slave_check(I2C_VVCT, 2, x"55", "Slave check data");
-    await_completion(I2C_VVCT, 2, 50 ms);
-    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
-
-    -- Expect data on I2C slave VVC 3
-    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
-    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
-    i2c_slave_check(I2C_VVCT, 3, x"55", "Slave check data");
-    await_completion(I2C_VVCT, 3, 50 ms);
-    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
-
-When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
-resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
-to the logic low '0', and vice versa. It is also possible for signal transitions to occur from the unknown state 'X' to the logic low '0' 
-or logic high '1' when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by 
-the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.
-
-+----------------+-----------------------------------+
-| From           | To                                |
-+================+===================================+
-| 'U'            | 'X', '0', '1', 'Z', 'W', 'L', 'H' |
-+----------------+-----------------------------------+
-| 'L'            | '0'                               |
-+----------------+-----------------------------------+
-| '0'            | 'L'                               |
-+----------------+-----------------------------------+
-| 'H'            | '1'                               |
-+----------------+-----------------------------------+
-| '1'            | 'H'                               |
-+----------------+-----------------------------------+
-| 'X'            | '0', '1'                          |
-+----------------+-----------------------------------+
-
-For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
+UVVM provides functions and procedures for simple generation of random numbers (integer, real, time, std_logic and std_logic_vector), 
+described in :ref:`basic_randomization`. It also provides a more complete randomization package using protected types, which is 
+described in :ref:`rand_pkg_overview`. And a more advanced randomization without replacement, described in :ref:`optimized_randomization`.
 
 .. note::
 
-    * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
-      after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
-      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.
-    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
-      VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
-      differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
+    Only some VVCs currently include built-in randomization (e.g. UART TX VVC and SBI VVC.) The principles shown for these VVCs 
+    may be applied directly also for a user defined VIP.
+
+UVVM VIP randomization principles
+----------------------------------------------------------------------------------------------------------------------------------
+Randomization may of course be applied with no limitations in a UVVM based testbench. For UVVM VIP however, we recommend the same 
+general approach as for error injection randomization:
+
+    #. No randomization of data inside BFMs as this would affect the DUT behavior or output (and a monitor would be required to 
+       check the actual DUT stimuli). Hence BFM procedures should only be called with explicit data.
+    #. It is recommended that more advanced VVCs include functionality for randomization of data - in order to distribute this 
+       away from the test sequencer and increase the re-use value of a VVC. Thus, a VVC may be told to apply random data, in which 
+       case the VVC will randomly generate data according to a given profile (e.g. uniform) and provide that data to the interface 
+       via the BFM call. The profile and constraints will depend on the needs and the VVC implementation
+
+Data randomization in BFMs
+----------------------------------------------------------------------------------------------------------------------------------
+There is no data randomization inside a normal BFM, for the reason given above.
+
+Data randomization in VVCs
+----------------------------------------------------------------------------------------------------------------------------------
+A VVC may be commanded to generate constrained random data, where data in this sense could also be addresses, lengths, etc. 
+Typically such commands would allow flexibility for the number of accesses and other important aspects - like scoreboards, common 
+buffers, files, etc. A few randomization profiles have been predefined both as typical use cases and as examples for future 
+extensions, when needed. The profile names are defined in the type **t_randomisation**, which is declared in the adaptations_pkg 
+to allow users to add more profiles.
+
++----------------------------+---------------------------------------------------------------------------------------------------+
+| NA                         | Not applicable (To be used in a record where the field is present, but no randomization wanted)   |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| RANDOM                     | Uniform distribution                                                                              |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| RANDOM_FAVOUR_EDGES        | Significantly more edge cases, where "edge" differs between various interfaces.                   |
+|                            |                                                                                                   |
+|                            | E.g. UART: Cover patterns like 01111111, 00000000, 11111111, 11111110, 01010101, 10101010.        |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| <user-defined>             |                                                                                                   |
++----------------------------+---------------------------------------------------------------------------------------------------+
+
+Note that the randomization seeds are initialized with a unique string assigned to each VVC. These seeds are automatically updated 
+when random data is generated.
+
+Managing randomization seeds in BFMs
+----------------------------------------------------------------------------------------------------------------------------------
+Flow Control signals (e.g. valid and ready) can be configured to be randomly de-asserted in some BFMs (e.g. AXI-Stream and Avalon-ST). 
+The randomization parameters in the BFM configuration determine the low duration and the probability of signal de-assertion. 
+The random() methods described in :ref:`basic_randomization` are used to generate random values for these parameters. To ensure that 
+the tests are repeatable and produce consistent results, the randomization seeds must be controlled. A standard dictionary-like linked 
+list is implemented for this purpose. The seeds are managed using the protected type **t_seeds**, declared in protected_types_pkg.vhd. 
+This type consists of the **t_seeds_item** record type, which holds the seeds, and an access type that points to a dynamically allocated 
+t_seeds_item. The seeds are stored in a record using a unique string (scope and instance_name) assigned to each BFM procedure as keys. 
+To facilitate seed management, two subprograms are declared in the t_seeds protected type:
+
+``set_rand_seeds()``- sets randomization seeds from a string.
+
+``update_and_get_seeds()``- updates and get the seeds from the linked list.
+
+A global shared variable ``shared_rand_seeds_register`` of type **t_seeds** is declared in global_signals_and_shared_variables_pkg.vhd 
+to allow common access to the seeds from different BFM procedure calls, as shown below.
+
+.. code-block::
+
+    shared variable shared_rand_seeds_register : t_seeds;
+
+The randomization steps used to control the seeds in BFMs are as follow:
+
+    #. When a BFM procedure (e.g. axistream_transmit() / axistream_receive()) is invoked for the first time, there is no entry for the 
+       BFM in the list. Generate seeds based on scope and instance_name using the set_rand_seeds() method. Store the generated seeds 
+       in the linked list, with scope and instance_name as keys.
+    #. Generate a random value using the random() procedure defined in the methods package.
+    #. When the same BFM procedure is invoked again, the previously stored seeds can be retrieved with scope and instance_name as keys. 
+       Update the seeds and generate a new random value.
+
+The handling of randomization seeds is hidden from the user and performed automatically. Therefore, the user does not require to change or 
+modify testbenches to control the randomization seeds. If a new BFM requires this functionality, it only needs to invoke the 
+``update_and_get_seeds()`` procedure from the global shared variable with suitable parameters and use the ``random()`` procedure 
+with the generated seeds whenever a randomized method is used, as shown below. Note that the maximum length of the instance_name 
+is defined by C_RAND_MAX_INSTANCE_NAME_LENGTH in adaptations_pkg.
+
+.. code-block::
+
+    -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+    shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+    random(1, config.valid_low_max_random_duration, v_seeds(0), v_seeds(1), v_valid_low_duration);
 
 .. _vvc_framework_transaction_info:
 
@@ -1031,7 +1132,7 @@ with some fields potentially unused.
     |                         |                              | field 2: 'data'; for Ethernet: most Ethernet fields as separate    |
     |                         |                              | fields, or a better solution, include as a complete sub-record.    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | transaction_status      | t_transaction_status         | Handled slightly different from a VVC and a Monitor.               |
+    | transaction_status      | :ref:`t_transaction_status`  | Handled slightly different from a VVC and a Monitor.               |
     |                         |                              |                                                                    |
     |                         |                              | VVC: Will show IN_PROGRESS during the transaction, then COMPLETED  |
     |                         |                              | when the transaction ends (for one delta cycle) and finally        |
@@ -1077,7 +1178,7 @@ with some fields potentially unused.
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | **data**                | **std_logic_vector**         |                                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | transaction_status      | t_transaction_status         |                                                                    |
+    | transaction_status      | :ref:`t_transaction_status`  |                                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | vvc_meta                | t_vvc_meta                   |                                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
@@ -1151,7 +1252,7 @@ Transaction Info record signals
 ----------------------------------------------------------------------------------------------------------------------------------
 The Transaction Info record is provided out of the VVC and Monitor using sets of a global signal and a shared variable. These and 
 all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder (except for the 
-t_transaction_status type, which is defined in types_pkg).
+t_transaction_status type, which is defined in types_pkg.vhd).
 
     * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger
     * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info
@@ -1183,8 +1284,8 @@ t_transaction_status type, which is defined in types_pkg).
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | ---> cmd_idx     | integer                | -1              | VVC command index resulting in this base transaction          |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | -> transaction_s\| t_transaction_status   | INACTIVE        | The current status of transaction. Available statuses are     |
-    | tatus            |                        |                 | INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED [#f2]_ |
+    | -> transaction_s\| :ref:`t_transaction_st\| INACTIVE        | The current status of transaction. Available statuses are     |
+    | tatus            | atus`                  |                 | INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED [#f2]_ |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | -> error_info    | t_error_info           | C_ERROR_INFO_DE\| Record entry of errors that will be injected to the DUT access|
     | [#f3]_           |                        | FAULT           | transaction                                                   |
@@ -1389,32 +1490,6 @@ Figure 8 demonstrates the setup of a VVC Scoreboard Support process that operate
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For complex scoreboard elements, such as records, the 
 scoreboard package declaration, defining the shared variable and scoreboard approaches have to be performed outside the VVC.
 
-VVC Local Sequencers
-==================================================================================================================================
-UVVM testbenches may have one or more central sequencers – also known as test sequencers or test drivers. A single test sequencer 
-is recommended in order to reduce complexity – as synchronization between multiple parallel test sequencer could be really complex.
-UVVM does however also provide support for so called local sequencers. These sequencers will typically run inside the VVCs 
-executor process. The executor will typically run a single transaction via a BFM procedure towards the DUT interface, like an 
-sbi_write() or uart_expect() procedure. For more advanced VVCs it would however make sense to send even higher level commands to a 
-VVC, like requesting it to transmit N random bytes, or setting up a peripheral by writing to multiple configuration registers. In 
-these cases, a single command to the VVC will trigger a complete sequence of accesses towards the DUT. The code inside the VVC 
-executors handling these sequences are called local sequencers as they are local to the VVC and thus also improves re-use. These 
-sequences of transactions may also be defined as Compound Transactions (see :ref:`vvc_framework_transaction_info_definitions`).
-
-An example of a local sequencer is the randomization sequences in the UART VVC, and poll_until in the SBI VVC.
-
-Local sequencer requirements
-----------------------------------------------------------------------------------------------------------------------------------
-The following requirements should be followed when making local sequencers (basically any VVC command resulting in more than one 
-base transaction):
-
-    #. If Transaction Info is supported, then both the leaf transaction and the compound transaction info should be updated (the 
-       latter is not required).
-    #. The sequence should be handled directly inside the VVC executor - and not inside the BFM (otherwise updating the leaf 
-       transactions for Transaction Info could be difficult).
-    #. It should be possible to terminate the sequence immediately after each leaf (or base) transaction - on request from the 
-       central sequencer issuing a terminate_current_command() or terminate_all_commands().
-
 .. _vvc_framework_error_injection:
 
 Protocol Aware Error Injection
@@ -1471,7 +1546,7 @@ sub-record is defined - with fields specifying the error injection details (Deta
         * stop_bit_error_prob (real between 0.0 and 1.0)
 
 In order to initiate error injection, the VVC config record must be assigned the wanted values via the VVC configuration shared 
-variable (see :ref:`vvc_framework_status_config_transaction_info`).
+variable (see :ref:`vvc_framework_shared_vvc_config`).
 
 .. note::
 
@@ -1484,103 +1559,6 @@ The error injection sub-record will be VVC and BFM dedicated, and thus any names
 'error_injection' is required. The VVC and BFM error injection records may differ or be the same. The only requirement is that 
 readability is prioritized. Values should be checked against legal ranges or values.
 
-Built-in randomization
-==================================================================================================================================
-UVVM provides functions and procedures for simple generation of random numbers (real, integer, time) and vectors, described in 
-:ref:`basic_randomization`. It also provides a more complete randomization package using protected types, which is described in 
-:ref:`rand_pkg_overview`. And a more advanced randomization without replacement, described in :ref:`optimized_randomization`.
-
-.. note::
-
-    Only some VVCs currently include built-in randomization (e.g. UART TX VVC and SBI VVC.) The principles shown for these VVCs 
-    may be applied directly also for a user defined VIP.
-
-UVVM VIP randomization principles
-----------------------------------------------------------------------------------------------------------------------------------
-Randomization may of course be applied with no limitations in a UVVM based testbench. For UVVM VIP however, we recommend the same 
-general approach as for error injection randomization:
-
-    #. No randomization of data inside BFMs as this would affect the DUT behavior or output (and a monitor would be required to 
-       check the actual DUT stimuli). Hence BFM procedures should only be called with explicit data.
-    #. It is recommended that more advanced VVCs include functionality for randomization of data - in order to distribute this 
-       away from the test sequencer and increase the re-use value of a VVC. Thus, a VVC may be told to apply random data, in which 
-       case the VVC will randomly generate data according to a given profile (e.g. uniform) and provide that data to the interface 
-       via the BFM call. The profile and constraints will depend on the needs and the VVC implementation
-
-Data randomization in BFMs
-----------------------------------------------------------------------------------------------------------------------------------
-There is no data randomization inside a normal BFM, for the reason given above.
-
-Data randomization in VVCs
-----------------------------------------------------------------------------------------------------------------------------------
-A VVC may be commanded to generate constrained random data, where data in this sense could also be addresses, lengths, etc. 
-Typically such commands would allow flexibility for the number of accesses and other important aspects - like scoreboards, common 
-buffers, files, etc. A few randomization profiles have been predefined both as typical use cases and as examples for future 
-extensions, when needed. The profile names are defined in the type **t_randomisation**, which is declared in the adaptations_pkg.vhd 
-to allow users to add more profiles.
-
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| NA                         | Not applicable (To be used in a record where the field is present, but no randomization wanted)   |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| RANDOM                     | Uniform distribution                                                                              |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| RANDOM_FAVOUR_EDGES        | Significantly more edge cases, where "edge" differs between various interfaces.                   |
-|                            |                                                                                                   |
-|                            | E.g. UART: Cover patterns like 01111111, 00000000, 11111111, 11111110, 01010101, 10101010.        |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| <user-defined>             |                                                                                                   |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-
-Note that the randomization seeds are initialized with a unique string assigned to each VVC. These seeds are automatically updated 
-when random data is generated.
-
-Managing randomization seeds in BFMs
-----------------------------------------------------------------------------------------------------------------------------------
-Flow Control signals (e.g. valid and ready) can be configured to be randomly de-asserted in some BFMs (e.g. AXI-Stream and Avalon-ST). 
-The randomization parameters in the BFM configuration determine the low duration and the probability of signal de-assertion. 
-The random() methods described in :ref:`basic_randomization` are used to generate random values for these parameters. To ensure that 
-the tests are repeatable and produce consistent results, the randomization seeds must be controlled. A standard dictionary-like linked 
-list is implemented for this purpose. The seeds are managed using the protected type **t_seeds**, declared in protected_types_pkg.vhd. 
-This type consists of the **t_seeds_item** record type, which holds the seeds, and an access type that points to a dynamically allocated 
-t_seeds_item. The seeds are stored in a record using a unique string (scope and instance_name) assigned to each BFM procedure as keys. 
-To facilitate seed management, two subprograms are declared in the t_seeds protected type:
-
-``set_rand_seeds()``- sets randomization seeds from a string.
-
-``update_and_get_seeds()``- updates and get the seeds from the linked list.
-
-A global shared variable **shared_rand_seeds_register** of type t_seeds is declared in global_signals_and_shared_variables_pkg.vhd 
-to allow common access to the seeds from different BFM procedure calls, as shown below.
-
-.. code-block::
-
-    shared variable shared_rand_seeds_register : t_seeds;
-
-The randomization steps used to control the seeds in BFMs are as follow:
-
-    #. When a BFM procedure (e.g. axistream_transmit() / axistream_receive()) is invoked for the first time, there is no entry for the 
-       BFM in the list. Generate seeds based on scope and instance_name using the set_rand_seeds() method. Store the generated seeds 
-       in the linked list, with scope and instance_name as keys.
-    #. Generate a random value using the random() procedure defined in the methods package.
-    #. When the same BFM procedure is invoked again, the previously stored seeds can be retrieved with scope and instance_name as keys. 
-       Update the seeds and generate a new random value.
-
-The handling of randomization seeds is hidden from the user and performed automatically. Therefore, the user does not require to change or 
-modify testbenches to control the randomization seeds. If a new BFM requires this functionality, it only needs to invoke the 
-update_and_get_seeds() procedure from the global shared variable with suitable parameters and use the random() procedure with the generated 
-seeds whenever a randomized method is used, as shown below:
-
-.. code-block::
-
-    -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
-    shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
-    random(1, config.valid_low_max_random_duration, v_seeds(0), v_seeds(1), v_valid_low_duration);
-
-
-VVC Command Syntax
-----------------------------------------------------------------------------------------------------------------------------------
-See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and options.
-
 Testbench Data Routing
 ==================================================================================================================================
 Transaction Info is providing a mechanism for passively routing source data (data entered into the DUT) out of the VVCs to other 
@@ -1591,7 +1569,7 @@ actively inside the testbench, where routing means fetching from or sending to p
 To/from Buffer
 ----------------------------------------------------------------------------------------------------------------------------------
 UVVM has a global buffer that is divided into multiple smaller buffers that may be indexed and accessed from anywhere in the 
-testbench. This functionality is described in :ref:`uvvm_fifo_collection`. VVC commands requesting sourcing data from or sending 
+testbench. This functionality is described in :ref:`uvvm_data_fifo`. VVC commands requesting sourcing data from or sending 
 data to these buffers use parameter TO_BUFFER or FROM_BUFFER, followed by the buffer index.
 
 To Scoreboard
@@ -1623,125 +1601,101 @@ The profile names are defined in the type :ref:`t_data_routing`, which is define
 | <user-defined>             |                                                                                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 
-VVC Command Syntax
-----------------------------------------------------------------------------------------------------------------------------------
-See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and options.
+.. _vvc_framework_unwanted_activity:
 
-.. _vvc_framework_property_checkers:
-
-Controlling Property Checkers
+Unwanted Activity Detection
 ==================================================================================================================================
-A major VVC advantage is that lots of very useful additional functionality may be added inside the VVC entity, meaning that all 
-the verification support for a given interface can be encapsulated inside a single VHDL entity. A major advantage of UVVM is that 
-adding additional functionality and controlling it from the test sequencers is really simple.
+The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT 
+generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected, 
+e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the 
+DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.
 
-One very useful additional functionality is property checkers, and some typical examples of this could be to check the minimum 
-allowed bit period, the minimum inter-packet gap, back-to-back restrictions, etc., or in general to check a given requirement 
-continuously - especially when this is easier to do outside the BFM - for instance in a dedicated checker process.
+All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted 
+activity. The default value for this configuration is set to ERROR in the adaptations_pkg, e.g. ::
 
-A dedicated checker process would typically just wait for a trigger condition on the interface (like a UART data bit changing its 
-level), then wait again for a next trigger (the next data bit), and then check that the time between the two changes is not less 
-than the minimum allowed bit period. This check could then be repeated forever. It is however recommended that the check could be 
-turned on and off for more flexibility.
+    constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
 
-Property check configuration
-----------------------------------------------------------------------------------------------------------------------------------
-In UVVM, turning checkers on and off is controlled by the VVC configuration (see :ref:`vvc_framework_status_config_transaction_info`), 
-and often additional control of the checker behavior is also required. Thus, it is recommended to include the checker control for 
-each individual check in a dedicated sub-record. An example on this (for the UART VVC) is shown below. See :ref:`UART VVC 
-<vip_uart_vvc>` for implementation. ::
+The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be 
+changed to a different value. To disable this feature in the testbench, e.g. for UART VVC: ::
 
-    .bit_rate_checker              -- Sub-record containing all control of the property checker behavior
-        .enable      boolean       -- Enables or disables the complete bit rate checker
-        .min_period  time
-        .alert_level t_alert_level
+    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
 
-For this example, the bit rate checker inside the UART_VVC RX will trigger on changes on the DUT TX and execute the check if 
-enable is TRUE.
+If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection 
+will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be 
+initiated from I2C slave VVC 2 and 3.
 
-Setting up the configuration
-----------------------------------------------------------------------------------------------------------------------------------
-The bit rate checker configuration may be changed directly from the sequencer via the shared variable VVC configuration.
+.. figure:: /images/vvc_framework/multiple_slave_VVCs_example.png
+   :alt: False unwanted activity detection
+   :width: 550pt
+   :align: center
 
-.. _vvc_framework_vvc_parameters_and_sequence:
+   Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT
 
-VVC Parameters and Sequence for Randomization, Sources and Destinations
-==================================================================================================================================
-In order to assure a common syntax and understanding for the various VVC commands controlling these features, the sequence and 
-type of parameters have been defined as follows:
+In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs 
+as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.
 
-+--------------------+-------------------------------+---------------+---------------------+-------------------+----------------------+
-| Parameter sequence | Preceding command part        | [Repetitions] | Randomness          | Data routing type | [Data routing index] |
-+====================+===============================+===============+=====================+===================+======================+
-| Example A          | uart_transmit(UART_VVCT,1,TX) | 4             | RANDOM_FAVOUR_EDGES | TO_BUFFER         | 5                    |
-+--------------------+-------------------------------+---------------+---------------------+-------------------+----------------------+
-| Example B          | uart_receive(UART_VVCT,1,RX)  |               |                     | TO_SB             |                      |
-+--------------------+-------------------------------+---------------+---------------------+-------------------+----------------------+
+.. code-block::
 
-Example A means: make 4 transactions with random data (using predefined profile RANDOM_FAVOUR_EDGES) and send the data also to 
-BUFFER 5, e.g. ::
+    -- Example:
+    -- Expect data on I2C slave VVC 1.
+    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 1, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 1, 50 ms);
+    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
 
-    uart_transmit(UART_VVCT,1,TX, 4, RANDOM_FAVOUR_EDGES, TO_BUFFER, C_UART_BUFFER, "my message");
+    -- Expect data on I2C slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 2, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 2, 50 ms);
+    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
 
-Example B means: keep on receiving data and send the received data also to the local Scoreboard, e.g. ::
+    -- Expect data on I2C slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 3, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 3, 50 ms);
+    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
 
-    uart_receive(UART_VVCT,1,RX, 4, TO_SB, "my message");
+When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
+resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
+to the logic low '0', and vice versa. It is also possible for signal transitions to occur from the unknown state 'X' to the logic low '0' 
+or logic high '1' when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by 
+the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.
 
-Exactly what variants will be available for each VVC is up to the VVC designer, but this gives the sequence and the options.
++----------------+-----------------------------------+
+| From           | To                                |
++================+===================================+
+| 'U'            | 'X', '0', '1', 'Z', 'W', 'L', 'H' |
++----------------+-----------------------------------+
+| 'L'            | '0'                               |
++----------------+-----------------------------------+
+| '0'            | 'L'                               |
++----------------+-----------------------------------+
+| 'H'            | '1'                               |
++----------------+-----------------------------------+
+| '1'            | 'H'                               |
++----------------+-----------------------------------+
+| 'X'            | '0', '1'                          |
++----------------+-----------------------------------+
 
-Multiple Central Sequencers
-==================================================================================================================================
-A structured test environment is important, and we recommend the use of a structured test harness to instantiate VVCs, DUT, clock 
-generator and so forth. The testbench may consist of one or more test sequencers which are used to control the complete testbench 
-architecture with any number of VVCs, although for a better testbench overview we recommend having a single central test sequencer 
-only - for most testbenches.
+For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
 
-Monitors
-==================================================================================================================================
-Monitors could be great to check the interface accesses to a DUT - to report the transaction to the testbench - with all relevant 
-info like operation (write, read, transmit, ...), data, address, etc. This information may be critical in order to understand the 
-operation of the DUT and its expected outputs. A monitor is not a protocol checker, but may of course check various properties of 
-an interface/protocol. A typical Monitor will however only provide the relevant basic information and leave more advance 
-interpretation to other parts of a testbench. For simple protocols like the UART, UVVM also includes basic error checking in the 
-Monitor - as this happens at a very low level. For more advanced protocols it would make sense to just pass on the low level info 
-to a higher level checker. The reason for making a dedicated monitor rather than leaving that to the testbench model is to achieve 
-a better testbench structure and more efficient reuse.
+.. note::
 
-It should however be mentioned that implementing Transaction Info (see :ref:`vvc_framework_transaction_info`) inside a VVC 
-significantly reduces the need for a dedicated monitor, as the VVC will then be able to pass the complete transaction information 
-on to, for instance, a model inside the Testbench.
-
-Transfer of Monitor information to the testbench
-----------------------------------------------------------------------------------------------------------------------------------
-The mechanism for passing the monitor deduced transaction out of the monitor is almost exactly the same as for passing transaction 
-info out of a VVC - as described in :ref:`vvc_framework_transaction_info`. The only difference is that the monitor can only 
-provide parts of what the VVC can provide.
-
-    * No monitor can provide info about compound transactions.
-    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analyzed at the 
-      higher level to provide Base transactions).
-    * A monitor cannot provide meta data like command index or command message.
-
-As the monitor does not know what to expect at the beginning of a transaction the following field limitations apply:
-
-    * Operation: Can only be known some time after the start of the transaction. Will be set when the type of the transaction is 
-      known, e.g. TRANSMIT or RECEIVE for UART (otherwise NO_OPERATION).
-    * | Transaction_status: Will be set to FAILED or SUCCEEDED as soon as the result is 100% given. Prior to that - during the 
-        transaction: IN_PROGRESS.
-      | FAILED/SUCCEEDED will remain for the transaction_display_time given inside the monitor configuration record, or until the 
-        next transaction FAILED or SUCCEEDED.
-
-An example of a complete monitor is shown in the UART VIP directory.
-
-Transaction info transfer signals
-----------------------------------------------------------------------------------------------------------------------------------
-The Transaction info provided out of a Monitor uses a set of a global signal and a shared variable. These and all related VHDL 
-types are defined in transaction_pkg.
-
-    * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger(channel, instance number)
-    * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info(channel, instance number)
-
-See :ref:`vvc_framework_transaction_info_record` Table 5 for more details.
+    * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
+      after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
+      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.
+    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
+      VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
+      differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
 
 .. _vvc_framework_compile_scripts:
 
@@ -1772,41 +1726,59 @@ called with two input arguments:
 
     Example: do uvvm/uvvm_vvc_framework/script/compile_src.do uvvm/uvvm_vvc_framework
 
-.. _vvc_framework_verbosity_ctrl:
+**********************************************************************************************************************************
+Monitors
+**********************************************************************************************************************************
+Monitors could be great to check the interface accesses to a DUT - to report the transaction to the testbench - with all relevant 
+info like operation (write, read, transmit, ...), data, address, etc. This information may be critical in order to understand the 
+operation of the DUT and its expected outputs. A monitor is not a protocol checker, but may of course check various properties of 
+an interface/protocol. A typical Monitor will however only provide the relevant basic information and leave more advance 
+interpretation to other parts of a testbench. For simple protocols like the UART, UVVM also includes basic error checking in the 
+Monitor - as this happens at a very low level. For more advanced protocols it would make sense to just pass on the low level info 
+to a higher level checker. The reason for making a dedicated monitor rather than leaving that to the testbench model is to achieve 
+a better testbench structure and more efficient reuse.
 
-Scope of Verbosity Control
+It should however be mentioned that implementing Transaction Info (see :ref:`vvc_framework_transaction_info`) inside a VVC 
+significantly reduces the need for a dedicated monitor, as the VVC will then be able to pass the complete transaction information 
+on to, for instance, a model inside the Testbench.
+
+Transfer of Monitor information to the testbench
 ==================================================================================================================================
-| Message IDs are used for verbosity control in many of the procedures and functions in UVVM, as well as log messages and checks 
-  in VVCs, BFMs and Scoreboards.
-| Note that VVCs and Scoreboards come with dedicated message ID panels and are not affected by the global message ID panel, but 
-  accessed by addressing the targeting VVC or Scoreboard and, if applicable, instance number or with a broadcast.
-| Also note that when a VVC is executing commands triggered by an HVVC (Hierarchical-VVC), e.g. SBI write due to Ethernet transmit, 
-  the VVC will use the HVVC's message ID panel instead. See :ref:`vvc_frameworks_hierarchical_vvcs` for an example of the HVVC 
-  structure.
+The mechanism for passing the monitor deduced transaction out of the monitor is almost exactly the same as for passing transaction 
+info out of a VVC - as described in :ref:`vvc_framework_transaction_info`. The only difference is that the monitor can only 
+provide parts of what the VVC can provide.
 
-.. code-block::
+    * No monitor can provide info about compound transactions.
+    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analyzed at the 
+      higher level to provide Base transactions).
+    * A monitor cannot provide meta data like command index or command message.
 
-    -- Global message ID panel. Does not apply to VVCs or Scoreboards, as they have their own local message ID panel
-    disable_log_msg(ALL_MESSAGES);
-    enable_log_msg(ID_SEQUENCER);
+As the monitor does not know what to expect at the beginning of a transaction the following field limitations apply:
 
-    -- VVC message ID panel
-    disable_log_msg(VVC_BROADCAST, ALL_MESSAGES);            -- broadcast to all VVCs and instances
-    enable_log_msg(I2C_VVCT, C_VVC_INSTANCE_1, ID_BFM_WAIT); -- I2C VVC instance 1
-    enable_log_msg(I2C_VVTC, C_VVC_INSTANCE_2, ID_BFM_WAIT); -- I2C VVC instance 2
+    * Operation: Can only be known some time after the start of the transaction. Will be set when the type of the transaction is 
+      known, e.g. TRANSMIT or RECEIVE for UART (otherwise NO_OPERATION).
+    * | Transaction_status: Will be set to FAILED or SUCCEEDED as soon as the result is 100% given. Prior to that - during the 
+        transaction: IN_PROGRESS.
+      | FAILED/SUCCEEDED will remain for the transaction_display_time given inside the monitor configuration record, or until the 
+        next transaction FAILED or SUCCEEDED.
 
-    -- Scoreboard message ID panel
-    shared variable sb_under_test : record_sb_pkg.t_generic_sb;
-    ...
-    sb_under_test.disable_log_msg(ALL_INSTANCES, ID_CTRL);  -- broadcast to all SB instances
-    sb_under_test.enable_log_msg(C_SB_INSTANCE_1, ID_DATA); -- SB instance 1
+An example of a complete monitor is shown in the UART VIP directory.
 
-The predefined message IDs are listed in :ref:`message_ids`.
+Transaction info transfer signals
+==================================================================================================================================
+The Transaction info provided out of a Monitor uses a set of a global signal and a shared variable. These and all related VHDL 
+types are defined in transaction_pkg.vhd.
+
+    * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger(channel, instance number)
+    * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info(channel, instance number)
+
+See :ref:`vvc_framework_transaction_info_record` Table 5 for more details.
 
 .. _vvc_frameworks_hierarchical_vvcs:
 
+**********************************************************************************************************************************
 Hierarchical VVCs
-==================================================================================================================================
+**********************************************************************************************************************************
 Many protocols and applications consist of several abstraction levels, e.g. physical layer, link layer, transaction layer, etc. 
 When writing a test case for a higher level you most likely want to ignore the underlying levels and only deal with the scope of 
 the relevant level. The test case will be less complex and easier to both write and read. A hierarchical VVC (HVVC) is a VVC of a 
@@ -1827,7 +1799,7 @@ interface of the VVC used. An example of this concept used on Ethernet is seen i
    Figure 9 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC
 
 HVVC usage
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 To simulate an HVVC you only need to do the following:
 
     #. Instantiate the HVVC in the test harness and set the generic GC_PHY_INTERFACE to the physical interface you want to use.
@@ -1886,14 +1858,15 @@ Implementing your new VVC
 ==================================================================================================================================
 
     #. Use the script vvc_generator located in the *uvvm_vvc_framework/script/vvc_generator/* to generate a new VVC. Notice that 
-       the name length is limited by C_LOG_SCOPE_WIDTH (default =20) in *uvvm_util/src/adaptations_pkg.vhd*
-    #. Then see comments in the code for where to make required changes.
+       the name length is limited by C_MAX_VVC_NAME_LENGTH (default 20) in *uvvm_util/src/adaptations_pkg.vhd*. See 
+       :ref:`vvc_generator_script` for a guide on running the script.
+    #. Then see comments in the code marked with <USER_INPUT> for where to make required changes.
     #. If the new VVC uses multiple channels other than TX and RX, modify the t_channel type under *uvvm_util/src/adaptations_pkg.vhd*
     #. See this guide for an explanation to all the various sections you need to evaluate or modify - file by file.
 
 Dependent and independent source
 ==================================================================================================================================
-One of the key concepts of the UVVM VVC Framework is the compilation strategy, and how some packages in the UVVM VVC Framework 
+One of the key concepts of the VVC Framework is the compilation strategy, and how some packages in the VVC Framework 
 directory are compiled into each of the individual VVC libraries. To avoid confusion about this for future VVC designers, the VVC 
 dependent and VVC independent sources have been marked and split into two source directories:
 
@@ -1909,40 +1882,43 @@ For examples of how the compile order should be handled, please see the example 
 <name>_vvc.vhd
 ==================================================================================================================================
 
-For single channel VVCs
-----------------------------------------------------------------------------------------------------------------------------------
-
 Entity
-^^^^^^
-================= ================================================================================================================
-GC_INSTANCE_IDX   Needed in case there are multiple instances of a given VVC. (E.g. DUT with 2 <VVC-NAME>S). Default is 1, but any 
-                  natural type is ok.
-GC_<name>_CONFIG  Recommended. Allows predefined BFM behavior to be set up for every VVC.
-GC_CMD_QUEUE_*    Needed to limit the queue size and to generate a warning if more elements in the queue than ever expected.
-Other generics    Optional and VVC dependent. These generics could for example contain widths of BFM signals.
-================= ================================================================================================================
+----------------------------------------------------------------------------------------------------------------------------------
+===================== ============================================================================================================
+GC_INSTANCE_IDX       Needed in case there are multiple instances of a given VVC. (E.g. DUT with 2 <VVC-NAME>s). Any natural type
+                      is ok.
+GC_<name>_BFM_CONFIG  Recommended. Allows predefined BFM behavior to be set up for every VVC.
+GC_CMD_QUEUE_*        Needed to limit the command queue size and to generate a warning if more elements in the queue than ever 
+                      expected.
+GC_RESULT_QUEUE_*     Needed to limit the result queue size and to generate a warning if more elements in the queue than ever 
+                      expected.
+Other generics        Optional and VVC dependent. These generics could for example contain widths of BFM signals.
+===================== ============================================================================================================
 
 The interface to the DUT and any other needed I/O. The examples show DUT interfaces as single signals, records and records of 
 records. This is optional.
 
 Declarations
-^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 ================= ================================================================================================================
 C_SCOPE           Used for logs and alerts. C_VVC_NAME is defined in the VVC `vvc_methods_pkg.vhd`
 C_VVC_LABELS      A record of constants, e.g. name and channel, used in multiple procedures.
 ================= ================================================================================================================
 
-* Various status signals used as flags between the processes.
-* Command termination record. (Fields: set, reset, is_active). Where set and reset signal fields are used to toggle is_active. 
-  Used as inter process flags.
-* command_queue is the queue of commands to be executed in sequence towards the DUT.
+* Signals ``executor_is_busy`` and ``queue_is_increasing``. Used as flags between the processes.
+* Signal ``last_cmd_idx_executed``. Stores the last command index executed by this VVC, necessary for the await_completion mechanism.
+* Signal ``terminate_current_cmd``. Command termination record (fields: set, reset, is_active). Where set and reset signal fields 
+  are used to toggle is_active. Used as inter process flags.
+* Shared variable ``command_queue``. Queue of commands to be executed in sequence towards the DUT.
+* Shared variable ``result_queue``. Queue of data received from the DUT which can be retrieved via the fetch_result command.
 * The aliases are defined to allow common and simplified names.
+* Signal ``entry_num_in_vvc_activity_register``. ID of the VVC after registering in the VVC activity register.
 
 Constructor
-^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 The constructor is run once only - immediately when starting the simulation. The procedure:
 
-    * Initializes VVC with BFM config and the queue with queue name.
+    * Initializes VVC with BFM config and the queues with queue name.
     * Allows constructor log for VVC info (using ID_CONSTRUCTOR), and VVC Queue info (using ID_CONSTRUCTOR_SUB).
 
 The procedure will report alerts with severity TB_FAILURE if one of the following occurs:
@@ -1952,79 +1928,89 @@ The procedure will report alerts with severity TB_FAILURE if one of the followin
     * UVVM has not been initialized.
 
 Command Interpreter
-^^^^^^^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 Waits for commands from the central test sequencer distributed to this VVC, then puts the command on the queue for execution or 
 immediately performs the required action - depending on command type. Afterwards, it acknowledges the command and waits for the 
 next command from the sequencer.
 
 | Step 0
-| ``initialize_interpreter()``
-|   - Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
+| - ``initialize_interpreter()``. Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
+| - ``priv_register_vvc()``. Registers the VVC in the VVC activity register. This mechanism is used to detect whether a VVC is 
+  active executing a command or inactive waiting for a new command, and is used by the await_completion mechanism.
 
 | Step 1
-| ``await_cmd_from_sequencer()``
+| - ``await_cmd_from_sequencer()``
 |   - Waits for a command from the central sequencer. Continues on matching VVC, instance index, name and channel.
 |   - Log at start using ID_CMD_INTERPRETER_WAIT and at the end using ID_CMD_INTERPRETER.
 |   - Will only accept exact matches of instance index and name, and either the correct address or "ALL_CHANNELS".
 
-| Step 2a (Only if command type is QUEUED)
-| ``put_command_on_queue()``
-|   - Puts the received command on the VVC queue (for later retrieval by the Command Executor).
+| Step 2a (only if command type is QUEUED)
+| - ``put_command_on_queue()``. Puts the received command on the VVC queue (for later retrieval by the Command Executor).
 
-| Step 2b (Only if command type is IMMEDIATE)
-| Execute the requested command/operation.
+| Step 2b (only if command type is IMMEDIATE)
+| - Execute the requested command/operation.
 |   - For the VVC methods these procedures will correspond to the UVVM methods, but prepended with "interpreter\_", e.g. 
-      "interpreter_await_completion()". These UVVM methods are documented in :ref:`vvc_framework_methods`. Other commands are 
+      "interpreter_fetch_result()". These UVVM methods are documented in :ref:`vvc_framework_methods`. Other commands are 
       documented in their respective VIPs.
-|   - format_commmand_idx(): (ti_vvc_framework_support_pkg) Converts the command index to string, enclosed by C_CMD_IDX_PREFIX and 
-      C_CMD_IDX_SUFFIX (found in *uvvm_util/src/adaptations_pkg.vhd*).
+|   - format_commmand_idx(): (ti_vvc_framework_support_pkg.vhd) Converts the command index to string, enclosed by C_CMD_IDX_PREFIX and 
+      C_CMD_IDX_SUFFIX (found in *uvvm_util/src/types_pkg.vhd*).
 
 | Step 3
-| ``acknowledge_cmd()``
-|   - Acknowledges the command from the sequencer by driving the *global_vvc_ack* signal to '1' for 1 delta cycle, then setting it 
-      back to 'Z'. This lets the central sequencer know that it can continue execution.
+| - ``acknowledge_cmd()``. Acknowledges the command from the sequencer by driving the *global_vvc_ack* signal to '1' for 1 delta 
+  cycle, then setting it back to 'Z'. This lets the central sequencer know that it can continue execution.
 
 Command Executor
-^^^^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 Fetches commands from the command queue - if any. Then executes the command and fetches or waits for the next command in the 
 command queue.
 
 | Step 0
-| ``initialize_executor()``
-|   - Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
+| - ``initialize_executor()``. Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
+| - Initializes the internal VVC scoreboard by setting up the scope, configuration and enabling it **(only if the Scoreboard 
+  feature was selected).**
 
 | Step 1
-| ``fetch_command_and_prepare_executor()``
+| - ``update_vvc_activity_register``
+|   - Updates the status of the VVC in the VVC activity register.
+|   - It is set to INACTIVE right after the executor finishes with the current command.
+|   - It is set to ACTIVE right after a new command is fetched from the command queue.
+| - ``fetch_command_and_prepare_executor()``
 |   - Fetches a command from the queue (waits until available if needed).
 |   - Sets relevant flag parameters.
 |   - Log command using ID_CMD_EXECUTOR (or log using ID_CMD_EXECUTOR_WAIT if queue is empty).
-| Set transaction information for wave-view.
-|   - *transaction_info_for_waveview* (from vvc_methods_pkg.vhd) is a shared variable intended for use in a wave-view - to yield a 
-      better overview of transaction info. Setting this information is optional. The pad_string() and to_string() procedures are 
-      documented in :ref:`util_string_handling`.
-| Insert inter-BFM delay if requested.
-|   - ``insert_inter_bfm_delay_if_requested()`` Inserts either start-to-start or finish-to-start delay between BFM accesses if 
+| - Insert inter-BFM delay if requested.
+|   - ``insert_inter_bfm_delay_if_requested()`` inserts either start-to-start or finish-to-start delay between BFM accesses if 
       this is set in the *inter_bfm_delay* parameter in 'vvc_config'. Logs information using ID_CMD_EXECUTOR.
 |   - If the command currently being processed by the executor is a BFM access, a timestamp will be stored in 
       *v_timestamp_start_of_current_bfm_access*.
 
 | Step 2
-| Executes a command depending on the requested command/operation.
+| - Executes a command depending on the requested command/operation.
 |   - *terminate_current_cmd* is only checked inside operations that require multiple BFM accesses - like for instance a POLL_UNTIL 
       command.
 |   - ``store_result()`` is executed for any BFM, where it makes sense for you to store the result of a BFM access. In our example 
       for SBI we think it only makes sense for 'READ'.
 |   - Logging as defined by your BFM.
-|   - Transaction info can be stored in the *transaction_info_for_waveview* struct for each command type, but this is optional.
-| Update the BFM access timestamps if this was a BFM access.
+| - Update the BFM access timestamps if this was a BFM access.
 |   - *v_timestamp_of_last_bfm_access* is set to 'now'.
 |   - *v_timestamp_start_of_last_bfm_access* is set to *v_timestamp_start_of_current_bfm_access*.
-| The *terminate_current_cmd* flag is reset if it has been active.
-| Update the *last_cmd_idx_executed* variable with the current command index (*v_cmd.cmd_idx*).
+| - The *terminate_current_cmd* flag is reset if it has been active.
+| - Update the *last_cmd_idx_executed* variable with the current command index (*v_cmd.cmd_idx*).
 
 Command Terminator
-^^^^^^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 The command terminator concurrent procedure sets the *is_active* flag based on the set and reset flags.
+
+Clock period
+----------------------------------------------------------------------------------------------------------------------------------
+Finds the clock period of the clk signal. This is only necessary when there is a 'valid' signal, such as tvalid in the AXI4-stream 
+protocol, in order to ignore a false trigger of the unwanted activity detection mechanism. **(Only if the Unwanted activity 
+detection feature was selected).**
+
+Unwanted activity
+----------------------------------------------------------------------------------------------------------------------------------
+Monitors unwanted activity from the DUT. For more information see :ref:`vvc_framework_unwanted_activity`. **(Only if the Unwanted 
+activity detection feature was selected).** 
 
 Additional for multi-channel VVCs
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -2034,36 +2020,71 @@ thread (here: 'channel'). No more; no less. This allows a single command queue a
 
 Note that SBI_VVC must handle both read and write accesses, but never simultaneously and always in the given order.
 
-Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. The included
-bitvis_vip_uart implementation uses the following method:
+Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. Some examples are:
 
-    *  | **A unique VVC implementation with GC_CHANNEL generic input**
+    #. | **A unique VVC implementation per channel**
+       | Unique VVCs may be used in order to omit the channel input, e.g. UART TX VVC and UART RX VVC. UART TX VVC would only 
+         contain TX specific BFM procedures, while UART RX VVC would only contain RX specific BFM procedures. With this approach 
+         the testbench sequencer calls would look like:
+       |    a. uart_transmit(UART_TX_VVCT, 0, ...)
+       |    b. uart_receive(UART_RX_VVCT, 0, ...)
+
+    #. | **A shared VVC implementation for all channels with usage restricted per instance**
+       | A combined VVC with the implementation for all channels, but using separate instances for different channels, e.g. instance 
+         0 for TX and instance 1 for RX. Using this approach the testbench sequencer calls would look like:
+       |    a. uart_transmit(UART_VVCT, 0, ...)
+       |    b. uart_receive(UART_VVCT, 1, ...)
+
+    #. | **A unique VVC implementation per channel with common VVC target parameter**
        | This approach uses unique VVC implementations for each channel, e.g. in uart_rx_vvc.vhd and uart_tx_vvc.vhd, but they 
-         both share the VVC target parameter, UART_VVCT. They both use the GC_CHANNEL generic input to specify their channel, i.e. 
-         TX or RX. The VVCs have restrictions that ensure that e.g. the UART TX VVC can't use the UART RX BFM procedures.
-         Using this UART VVC would look like:
-       |    a. uart_transmit(UART_VVCT, TX, 1, ...)
-       |    b. uart_receive(UART_VVCT, RX, 1, ...)
+         both share the VVC target parameter, UART_VVCT. They both use the C_CHANNEL constant to specify their channel, i.e. 
+         TX or RX and are instantiated inside a wrapper uart_vvc.vhd. The VVCs have restrictions that ensure that e.g. the 
+         UART TX VVC can't use the UART_RX BFM procedures, and vice-versa. Using this approach the calls would look like:
+       |    a. uart_transmit(UART_VVCT, TX, 0, ...)
+       |    b. uart_receive(UART_VVCT, RX, 0, ...)
+
+.. figure:: /images/vvc_framework/multi_channel_vvcs.png
+   :alt: Multi-channel VVC examples
+   :width: 800pt
+   :align: center
+
+   Figure 10 Multi-channel VVC examples
 
 When using multiple leaf VVCs it is recommended to use a wrapper architecture to encapsulate the channels. This way, it is 
 possible to instantiate a single VVC rather than each VVC channel individually. For more information about the wrapper architecture, 
 see the uart_vvc.vhd example in the bitvis_vip_uart/src/ directory.
+
+.. _vvc_cmd_pkg:
 
 vvc_cmd_pkg.vhd
 ==================================================================================================================================
 
 t_operation
 ----------------------------------------------------------------------------------------------------------------------------------
-Contains all UVVM common operations, e.g. AWAIT_COMPLETION and ENABLE_LOG_MSG, in addition to the VVC specific operations such as 
+Contains all UVVM common operations, e.g. ENABLE_LOG_MSG and FETCH_RESULT, in addition to the VVC specific operations such as 
 e.g. WRITE and READ. The VVC specific will have to be evaluated and potentially replaced when implementing a new VVC. The 
-t_operation type is used when relaying commands from the sequencer to the VVC. The t_operation type also has its own to_string() 
-function in this package.
+**t_operation** type is used when relaying commands from the sequencer to the VVC.
+
+.. note::
+
+    If the VVC transaction info feature was selected, this type is defined in the :ref:`transaction_pkg` instead.
+
+Constants
+----------------------------------------------------------------------------------------------------------------------------------
+In this package we can define constants that need to be set for the entire VVC. In most VVCs this will include the 
+C_VVC_CMD_STRING_MAX_LENGTH which determines the maximum size of msg variables in the VVC. It is also a good idea to declare 
+constants for maximum VVC data/address bus sizes here. It will be possible to construct VVCs with bus sizes up to and including 
+the sizes declared here.
+
+.. note::
+
+    If the VVC transaction info feature was selected, these constants are defined in the :ref:`transaction_pkg` instead.
 
 t_vvc_cmd_record
 ----------------------------------------------------------------------------------------------------------------------------------
-Record type used for relaying a command from the testbench sequencer to the VVC. The record contains fields needed in the common 
-UVVM procedures (listed under the "Common UVVM fields" comment), and VVC specific fields needed to relay data to the VVC executor. 
-There is a default constant for this type called C_VVC_CMD_DEFAULT in this package.
+Record type used for relaying a command from the testbench sequencer to the VVC. The record contains fields needed in the 
+:ref:`vvc_framework_methods`, and VVC specific fields needed to relay data to the VVC executor. There is a default constant for 
+this type called C_VVC_CMD_DEFAULT in this package.
 
 The VVC mandatory data fields are the following:
 
@@ -2072,26 +2093,18 @@ The VVC mandatory data fields are the following:
 +============================+===================================================================================================+
 | operation                  | Commanded VVC operation                                                                           |
 +----------------------------+---------------------------------------------------------------------------------------------------+
-| command_type               | Determines whether it is an immediate or queued command. Immediate commands are handled by the    |
-|                            | Interpreter and queued commands by the Executor.                                                  |
-+----------------------------+---------------------------------------------------------------------------------------------------+
 | proc_call                  | Procedure call used in log messages.                                                              |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | msg                        | User-defined message used in log messages.                                                        |
 +----------------------------+---------------------------------------------------------------------------------------------------+
-| msg_id                     | Message ID used in enable_log_msg and disable_log_msg commands.                                   |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| quietness                  | Whether to print or not a log message when using enable_log_msg and disable_log_msg commands.     |
-+----------------------------+---------------------------------------------------------------------------------------------------+
 | data_routing               | Where to store the data from read/receive commands.                                               |
 +----------------------------+---------------------------------------------------------------------------------------------------+
-| alert_level                | Alert level when data does not match in check/expect commands.                                    |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| parent_msg_id_panel        | Message ID panel from the parent HVVC which is used to print log messages in the lower-level VVC. |
-+----------------------------+---------------------------------------------------------------------------------------------------+
-| delay                      | Delay in time units for the insert_delay command.                                                 |
-+----------------------------+---------------------------------------------------------------------------------------------------+
 | cmd_idx                    | Command index.                                                                                    |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| command_type               | Determines whether it is an immediate or queued command. Immediate commands are handled by the    |
+|                            | Interpreter and queued commands by the Executor.                                                  |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| msg_id                     | Message ID used in enable_log_msg and disable_log_msg commands.                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | gen_integer_array          | Generic integer array (0 to 1).                                                                   |
 |                            |                                                                                                   |
@@ -2107,33 +2120,45 @@ The VVC mandatory data fields are the following:
 +----------------------------+---------------------------------------------------------------------------------------------------+
 | timeout                    | Timeout used in old await_completion command. DEPRECATED.                                         |
 +----------------------------+---------------------------------------------------------------------------------------------------+
+| alert_level                | Alert level when data does not match in check/expect commands.                                    |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| delay                      | Delay in time units for the insert_delay command.                                                 |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| quietness                  | Whether to print or not a log message when using enable_log_msg and disable_log_msg commands.     |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| parent_msg_id_panel        | Message ID panel from the parent HVVC which is used to print log messages in the lower-level VVC. |
++----------------------------+---------------------------------------------------------------------------------------------------+
 
 The VVC specific data fields should contain any data fields that the BFM procedures might need, e.g. data, address, timeouts etc. 
 
-Constants
-----------------------------------------------------------------------------------------------------------------------------------
-The vvc_cmd_pkg.vhd should contain constants that needs to be set for the entire VVC. In most VVCs this will include the 
-C_VVC_CMD_STRING_MAX_LENGTH which determines the maximum size of msg variables in the VVC. It is also a good idea to declare 
-constants for maximum VVC data/address bus sizes here. It will be possible to construct VVCs with bus sizes up to and including 
-the sizes declared here.
-
 Shared Variables
 ----------------------------------------------------------------------------------------------------------------------------------
-The shared_vvc_cmd shared variable (type t_vvc_cmd_record) is used for relaying commands between sequencer methods and the VVC. It 
-is default set to C_VVC_CMD_DEFAULT, which is also declared in this file.
+The shared variable ``shared_vvc_cmd`` of type **t_vvc_cmd_record** is used for relaying commands between sequencer methods and 
+the VVC. It is default set to C_VVC_CMD_DEFAULT, which is also declared in this file.
+
+The shared variable ``shared_vvc_response`` of type **t_vvc_response** is used for storing the result of a BFM procedure called 
+by the VVC, so that the result can be transported from the VVC to for example a sequencer via fetch_result(). The record element 
+``result`` of type **t_vvc_result** contains the return value of the procedure in the BFM. It can also be defined as a record if 
+multiple values shall be transported from the BFM.
+
+The shared variable ``shared_vvc_last_received_cmd_idx`` is used to get last queued index from the VVC to the sequencer.
+
+Functions
+----------------------------------------------------------------------------------------------------------------------------------
+A custom to_string() function can be defined in this package if the **t_vvc_result** is a record type.
 
 vvc_methods_pkg.vhd
 ==================================================================================================================================
 
 Constants and aliases
 ----------------------------------------------------------------------------------------------------------------------------------
-The vvc_methods_pkg contains constants for the VVC name, e.g. "<NAME>_VVC". There are also aliases created to make the code more 
-readable.
+The vvc_methods_pkg contains a constant for the VVC name, e.g. "<NAME>_VVC". There are also aliases created to make the code 
+more readable.
 
 <NAME>_VVCT
 ----------------------------------------------------------------------------------------------------------------------------------
-The <NAME>_VVCT signal (e.g. SBI_VVCT) is the VVC target record signal. The target type **t_vvc_target_record** is a record that 
-contains the parameters needed to trigger a VVC, and to identify the correct target of a VVC command.
+The <NAME>_VVCT signal (e.g. SBI_VVCT) is the VVC target record signal. The target type **t_vvc_target_record** is a record 
+that contains the parameters needed to trigger a VVC, and to identify the correct target of a VVC command.
 
 t_vvc_config
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -2143,14 +2168,13 @@ the VVC/BFM configuration will differ for each VVC. The record contents are:
 
     * inter_bfm_delay: A record containing the potential inter-bfm delay specifications, e.g. if BFM accesses shall be separated 
       with a given time.
-    * cmd_queue_count_*: Command queue specifications.
-    * result_queue_count_*: Result queue specifications.
+    * cmd_queue_count_*: Command queue specifications. DEPRECATED, use instead entity generic constants.
+    * result_queue_count_*: Result queue specifications. DEPRECATED, use instead entity generic constants.
     * bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.
-    * msg_id_panel: The ID panel that the VVC shall use.
+    * msg_id_panel: The message ID panel that the VVC shall use.
     * unwanted_activity_severity: Severity of alert for the unwanted activity detection.
 
-| A constant C_<name>_VVC_CONFIG_DEFAULT is defined for this type to use as default value.
-| A shared variable array of t_vvc_config *shared_<name>_vvc_config* is declared and all elements are set to the default value.
+A constant C_<NAME>_VVC_CONFIG_DEFAULT is defined for this type to use as default value.
 
 t_vvc_status
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -2161,18 +2185,17 @@ record can contain anything that is relevant for the outside, and it is recommen
     * previous_cmd_idx: The previous command index being processed in the executor.
     * pending_cmd_idx: The number of pending commands to be processed by the executor.
 
-| A constant C_VVC_STATUS_DEFAULT is defined for this type to use as default value.
-| A shared variable array of t_vvc_status *shared_<name>_vvc_status* is declared and all elements are set to the default value.
+A constant C_VVC_STATUS_DEFAULT is defined for this type to use as default value.
 
-t_transaction_info_for_waveview
+Shared Variables
 ----------------------------------------------------------------------------------------------------------------------------------
-The t_transaction_info_for_waveview type is an optional status record to be used in the wave-view. This record should be modified 
-to suit the BFM fields, but it can also contain the VVC field t_operation, which can be updated with the VVC operation currently 
-being processed by the executor. The transaction_info_for_waveview is meant as a way of improving the readability of wave-views.
+A shared variable array ``shared_<name>_vvc_config`` of type **t_vvc_config** is declared and all elements are set to the default 
+value.
 
-| A constant C_TRANSACTION_INFO_FOR_WAVEVIEW_DEFAULT is defined for this type to use as default value.
-| A shared variable of t_transaction_info_for_waveview *t_<name>_transaction_info_for_waveview* is declared and all elements are set 
-  to the default value.
+A shared variable array ``shared_<name>_vvc_status`` of type **t_vvc_status** is declared and all elements are set to the default 
+value.
+
+The internal VVC Scoreboard ``<NAME>_VVC_SB`` is declared here as a shared variable. **(only if the Scoreboard feature was selected).**
 
 VVC Dedicated Methods
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -2192,11 +2215,66 @@ The method bodies are quite similar for all VVC commands:
 
     #. First, the shared_vvc_cmd record is set to its default value, resetting the data from any potential previous command.
     #. The general VVC fields (e.g. name and instance index) are set using the UVVM method set_general_target_and_command_fields().
-    #. The VVC specific fields are set in the *shared_vvc_cmd* shared variable. This means e.g. address and data fields.
+    #. The VVC specific fields are set in the shared variable ``shared_vvc_cmd``. This means e.g. address and data fields.
     #. The command is sent to all VVCs using the UVVM method send_command_to_vvc(VVCT).
 
 All VVC instances and channels of this type receive the command, but only the VVC with the correct instance index, channel and 
 name will accept it and acknowledge it.
+
+Transaction info Methods
+----------------------------------------------------------------------------------------------------------------------------------
+This package also contains two procedures, set_global_vvc_transaction_info() and reset_vvc_transaction_info(). These procedures 
+are used to store the necessary information from the VVC command into the shared variable ``shared_<name>_vvc_transaction_info`` 
+and trigger a pulse via the global signal ``global_<name>_vvc_transaction_trigger`` before a command is executed, and reset the 
+information after it has finished executing. **(Only if the VVC transaction info feature was selected).**
+
+.. _transaction_pkg:
+
+transaction_pkg.vhd
+==================================================================================================================================
+**(This package is only generated if the VVC transaction info feature was selected).**
+
+t_operation
+----------------------------------------------------------------------------------------------------------------------------------
+Contains all UVVM common operations, e.g. ENABLE_LOG_MSG and FETCH_RESULT, in addition to the VVC specific operations such as 
+e.g. WRITE and READ. The VVC specific will have to be evaluated and potentially replaced when implementing a new VVC. The 
+**t_operation** type is used when relaying commands from the sequencer to the VVC.
+
+.. note::
+
+    If the VVC transaction info feature was NOT selected, this type is defined in the :ref:`vvc_cmd_pkg` instead.
+
+Constants
+----------------------------------------------------------------------------------------------------------------------------------
+In this package we can define constants that need to be set for the entire VVC. In most VVCs this will include the 
+C_VVC_CMD_STRING_MAX_LENGTH which determines the maximum size of msg variables in the VVC. It is also a good idea to declare 
+constants for maximum VVC data/address bus sizes here. It will be possible to construct VVCs with bus sizes up to and including 
+the sizes declared here.
+
+.. note::
+
+    If the VVC transaction info feature was NOT selected, these constants are defined in the :ref:`vvc_cmd_pkg` instead.
+
+Global signals and shared variables
+----------------------------------------------------------------------------------------------------------------------------------
+The global signal ``global_<name>_vvc_transaction_trigger`` is used for indicating that a new VVC transaction info is available, 
+meaning that a VVC command is about to be executed.
+
+The shared variable ``shared_<name>_vvc_transaction_info`` is used to store the information of the VVC command being executed.
+
+See :ref:`vvc_framework_transaction_info` for more details on the types used and basic concepts.
+
+vvc_sb_pkg.vhd
+==================================================================================================================================
+**(This package is only generated if the Scoreboard feature was selected).**
+
+This file contains two packages. First, the vvc_sb_pkg is a package declaration from the generic_sb_pkg using the VVCs data type 
+as the **t_element** generic type and the corresponding functions for **element_match** and **to_string_element** generics functions.
+
+It also contains the vvc_sb_support_pkg, which contains the function pad_<name>_sb() to pad the data without having to know the 
+exact length of **t_element**. This is useful because the data parameter used in the scoreboard procedures must have the same 
+length as the **t_element** defined in the VVC's built-in scoreboard, which even though is a generic type, it is constrained 
+during elaboration time.
 
 vvc_context.vhd
 ==================================================================================================================================
@@ -2208,12 +2286,10 @@ needs to add the following lines in the header::
 
 The generated file from the vvc_generator script has the following as default:
 
-    * transaction_pkg.all
+    * transaction_pkg.all **(only if the VVC transaction info feature was selected).**
     * vvc_methods_pkg.all
     * td_vvc_framework_common_methods_pkg.all
-    * <name>_bfm_pkg.t_<name>_if --> BFM interface type (remove if not used)
-    * <name>_bfm_pkg.t_<name>_bfm_config --> BFM configuration type
-    * <name>_bfm_pkg.C_<name>_CONFIG_DEFAULT --> BFM default configuration constant
+    * <name>_bfm_pkg.all
 
 Additional types or constants can be added if needed.
 
@@ -2225,14 +2301,14 @@ vvc_generator script is to work out of the box, it is necessary to have some com
     * The BFM needs to be called <name>_bfm_pkg.vhd. If this is not the case, the package use clauses in each of the VVC files 
       needs to be altered.
     * The BFM needs to contain a bfm_config record type with an associated default constant. The generated VVC file assumes that 
-      this bfm config type is called **t_<name>_bfm_config** and the constant is called C_<NAME>_BFM_CONFIG_DEFAULT. In order to 
+      this BFM config type is called **t_<name>_bfm_config** and the constant is called C_<NAME>_BFM_CONFIG_DEFAULT. In order to 
       support the delay operation in the VVC executor the BFM config type will also need to have a parameter clock_period. If this 
       is not needed, the "INSERT_DELAY" case in the generated VVC can be removed.
 
 A BFM skeleton that contains the necessary structure is created by the vvc_generator script, and can be used as a base for a BFM 
 that includes the necessary structure for the VVC to work out of the box.
 
-UVVM Framework Packages
+VVC Framework Packages
 ==================================================================================================================================
 
 td_target_support_pkg.vhd
@@ -2276,11 +2352,13 @@ sequencer to VVC.
 td_vvc_entity_support_pkg.vhd
 ----------------------------------------------------------------------------------------------------------------------------------
 The VVC support package contains procedures that are compiled into and used in the VVC. This includes initializers for the executor 
-and interpreter, and the interpreter procedures called interpreter_*, e.g. interpreter_await_completion(). For more information 
+and interpreter, and the interpreter procedures called interpreter_*, e.g. interpreter_fetch_result(). For more information 
 about the interpreter_* procedures, please see :ref:`vvc_framework_methods`. For more information about the other methods in this 
 package, see :ref:`vvc_framework_name_vvc`. In addition to the procedures, the td_vvc_entity_support_pkg.vhd also contains types 
 for VVC labels and executor results. The result array is also defined and its shared variable is instantiated in this package.
 
+
+.. _vvc_generator_script:
 
 VVC Generator script
 ==================================================================================================================================
@@ -2403,7 +2481,7 @@ Type definitions used in the VVC Framework.
 
 
 **********************************************************************************************************************************
-TI Protected Types
+TI Protected Types Package
 **********************************************************************************************************************************
 Protected type definitions used in the VVC Framework.
 

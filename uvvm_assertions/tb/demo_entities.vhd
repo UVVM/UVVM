@@ -111,3 +111,132 @@ begin
     end if;
   end process;
 end architecture rtl;
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity dummy_data_bus is
+  generic(
+    GC_DATA_WIDTH    : integer range 7 to integer'high := 32;
+    GC_PACKET_LENGTH : positive := 8;
+    GC_NUM_PACKETS   : positive := 16
+  );
+  port (
+    clk             : in  std_logic;
+    rst             : in  std_logic;
+    packet_read_ena : in  std_logic;
+    data_out        : out std_logic_vector(GC_DATA_WIDTH-1 downto 0);
+    data_vld        : out std_logic;
+    packet_start    : out std_logic;
+    packet_end      : out std_logic;
+    bus_end         : out std_logic
+  );
+end entity dummy_data_bus;
+
+architecture rtl of dummy_data_bus is
+  constant C_DUMMY_DATA_0 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (0 => '1', others => '0');
+  constant C_DUMMY_DATA_1 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (1 => '1', others => '0');
+  constant C_DUMMY_DATA_2 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (2 => '1', others => '0');
+  constant C_DUMMY_DATA_3 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (3 => '1', others => '0');
+  constant C_DUMMY_DATA_4 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (4 => '1', others => '0');
+  constant C_DUMMY_DATA_5 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (5 => '1', others => '0');
+  constant C_DUMMY_DATA_6 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (6 => '1', others => '0');
+  constant C_DUMMY_DATA_7 : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (7 => '1', others => '0');
+
+  type t_dummy_data_arr is array(0 to 7) of std_logic_vector(GC_DATA_WIDTH-1 downto 0);
+  constant C_DUMMY_DATA_ARR : t_dummy_data_arr := (
+    C_DUMMY_DATA_0,
+    C_DUMMY_DATA_1,
+    C_DUMMY_DATA_2,
+    C_DUMMY_DATA_3,
+    C_DUMMY_DATA_4,
+    C_DUMMY_DATA_5,
+    C_DUMMY_DATA_6,
+    C_DUMMY_DATA_7
+  );
+  type t_state is (S_IDLE, S_PACKET_START, S_PACKET_DATA);
+  signal state : t_state;
+
+  signal read_ena_d2      : std_logic := '0';
+
+begin
+
+  p_read_ena : process(clk)
+    variable vr_read_ena_d1 : std_logic := '0';
+  begin
+    if rising_edge(clk) then
+      if rst = '1' then
+        vr_read_ena_d1  := '0';
+        read_ena_d2     <= '0';
+      else
+        read_ena_d2     <= vr_read_ena_d1;
+        vr_read_ena_d1  := packet_read_ena;
+      end if;
+    end if;
+  end process p_read_ena;
+
+  p_main : process(clk, rst)
+    variable vr_data_arr_idx   : unsigned(2 downto 0) := (others => '0');
+    variable vr_data_sendt     : integer := 0;
+  begin
+    if rst = '1' then
+      data_out     <= (others => '0');
+      data_vld     <= '0';
+      packet_start <= '0';
+      packet_end   <= '0';
+      bus_end      <= '0';
+      state        <= S_IDLE;
+    elsif rising_edge(clk) then
+      data_vld     <= '0';
+      packet_start <= '0';
+      packet_end   <= '0';
+      bus_end      <= '0';
+      case state is
+        when S_IDLE =>
+          if read_ena_d2 = '1' then
+            vr_data_arr_idx := (others => '0');
+            vr_data_sendt   := 0;
+            state <= S_PACKET_START;
+          end if;
+
+        when S_PACKET_START =>
+          data_out     <= C_DUMMY_DATA_ARR(to_integer(vr_data_arr_idx));
+          data_vld     <= '1';
+          packet_start <= '1';
+          packet_end   <= '0';
+          
+          vr_data_arr_idx := vr_data_arr_idx + 1;
+          vr_data_sendt   := vr_data_sendt + 1;
+
+          if GC_PACKET_LENGTH = 1 then
+            packet_end <= '1'; -- edge case
+            state      <= S_PACKET_START;
+          else
+            state <= S_PACKET_DATA;
+          end if;
+
+        when S_PACKET_DATA =>
+          data_out     <= C_DUMMY_DATA_ARR(to_integer(vr_data_arr_idx));
+          data_vld     <= '1';
+          
+          vr_data_arr_idx := vr_data_arr_idx + 1;
+          vr_data_sendt   := vr_data_sendt + 1;
+
+          if (vr_data_sendt mod GC_PACKET_LENGTH) = 0 then
+            packet_end <= '1';
+            state <= S_PACKET_START;
+          else
+            state <= S_PACKET_DATA;
+          end if;
+
+      end case;
+
+      if vr_data_sendt = GC_PACKET_LENGTH*GC_NUM_PACKETS then
+        bus_end <= '1';
+        vr_data_sendt := 0;
+        state <= S_IDLE;
+      end if;
+    end if;
+  end process;
+end architecture rtl;

@@ -317,7 +317,7 @@ package body spec_cov_pkg is
     -- Check if requirement tick-off should be written
     if (tickoff_extent = LIST_EVERY_TICKOFF) or (priv_get_num_requirement_tick_offs(requirement) = 0) or (v_prev_requirement_status = PASS and v_requirement_status = FAIL) then
       -- Log result to transcript
-      log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & priv_get_description(requirement) & "'. " & msg, scope);
+      log(ID_SPEC_COV, "Ticking off requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & priv_get_description(requirement) & "'. " & msg, scope);
       -- Log to file
       if priv_result_file_exists then
         write(v_requirement_to_file_line, requirement & C_CSV_DELIMITER & priv_get_default_testcase_name & C_CSV_DELIMITER & priv_test_status_to_string(v_requirement_status));
@@ -473,9 +473,10 @@ package body spec_cov_pkg is
   procedure priv_read_and_parse_req_csv_file(
     constant req_list_file : string
   ) is
-    variable v_tc_valid : boolean;
-    variable v_file_ok  : boolean;
-    variable v_requirement : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
+    variable v_tc_valid              : boolean;
+    variable v_file_ok               : boolean;
+    variable v_requirement           : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
+    variable v_first_character_index : integer := 1;
   begin
     if priv_requirements_in_array > 0 then
       alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
@@ -499,7 +500,11 @@ package body spec_cov_pkg is
       else
         -- Read requirement
         v_requirement := priv_csv_file.read_string;
-        if (v_requirement(1) /= '#')  and (v_requirement(1) /= NUL) then -- Ignore if comment or empty line
+        -- Check for BOM character at the beginning of line (BOM is often present at the beginning of CSV files made in Excel)
+        if (v_requirement(1) = character'val(16#EF#)) and (v_requirement(2) = character'val(16#BB#)) and (v_requirement(3) = character'val(16#BF#)) then
+          v_first_character_index := 4;
+        end if;
+        if (v_requirement(v_first_character_index) /= '#')  and (v_requirement(v_first_character_index) /= NUL) then -- Ignore if comment or empty line
           priv_requirement_array(priv_requirements_in_array).requirement := new string'(v_requirement);
           -- Read description
           priv_requirement_array(priv_requirements_in_array).description := new string'(priv_csv_file.read_string);
@@ -536,12 +541,13 @@ package body spec_cov_pkg is
   procedure priv_read_and_parse_map_csv_file(
     constant map_list_file : string
   ) is
-    variable v_tc_valid          : boolean;
-    variable v_req_valid         : boolean;
-    variable v_file_ok           : boolean;
-    variable v_requirement       : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
-    variable v_sub_requirement   : line;
-    variable v_requirement_index : natural;
+    variable v_tc_valid              : boolean;
+    variable v_req_valid             : boolean;
+    variable v_file_ok               : boolean;
+    variable v_requirement           : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
+    variable v_sub_requirement       : line;
+    variable v_requirement_index     : natural;
+    variable v_first_character_index : integer := 1;
   begin
 
     -- Open file and check status, return if failing
@@ -556,7 +562,10 @@ package body spec_cov_pkg is
 
       -- Read requirement
       v_requirement := priv_csv_file.read_string;
-      if (v_requirement(1) /= '#') and (v_requirement(1) /= NUL) then -- Ignore if comment or empty line
+      if (v_requirement(1) = character'val(16#EF#)) and (v_requirement(2) = character'val(16#BB#)) and (v_requirement(3) = character'val(16#BF#)) then
+        v_first_character_index := 4;
+      end if;
+      if (v_requirement(v_first_character_index) /= '#') and (v_requirement(v_first_character_index) /= NUL) then -- Ignore if comment or empty line
 
         -- Check if requirement already exist in requirement list
         if priv_requirement_exists(v_requirement) then
@@ -881,7 +890,6 @@ package body spec_cov_pkg is
   impure function priv_find_string_length(
     search_string : string
   ) return natural is
-    variable v_return : natural := 0;
   begin
     -- loop string until NUL is found and return idx-1
     for idx in 1 to search_string'length loop

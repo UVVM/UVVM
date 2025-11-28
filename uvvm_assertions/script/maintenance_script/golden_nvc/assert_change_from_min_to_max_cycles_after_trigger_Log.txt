@@ -1,0 +1,554 @@
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                 100.0 ns  TB seq.(uvvm)                  Testing the assertion: assert_change_from_min_to_max_cycles_after_trigger
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       140.0 ns  TB seq.                        Testing Normal Operation (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        Testing std_logic_vector transitions within the window
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                     190.0 ns  TB seq.                        Change the value from "HHHH" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_UVVM_ASSERTION                280.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
+UVVM:                                                                           in window. OK after 90 ns. First change event happened in cycle-9. 
+UVVM: ID_SEQUENCER                     330.0 ns  TB seq.                        Change the value from "HHHH" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                     470.0 ns  TB seq.                        Change the value from "HHHH" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                     610.0 ns  TB seq.                        Change the value from "HHHH" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                     750.0 ns  TB seq.                        Change the value from "HHHH" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                     890.0 ns  TB seq.                        Change the value from "HHHH" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1030.0 ns  TB seq.                        Change the value from "HHHH" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1170.0 ns  TB seq.                        Change the value from "LLLL" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1310.0 ns  TB seq.                        Change the value from "LLLL" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1450.0 ns  TB seq.                        Change the value from "LLLL" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1590.0 ns  TB seq.                        Change the value from "LLLL" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1730.0 ns  TB seq.                        Change the value from "LLLL" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    1870.0 ns  TB seq.                        Change the value from "LLLL" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2010.0 ns  TB seq.                        Change the value from "LLLL" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2150.0 ns  TB seq.                        Change the value from "WWWW" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2290.0 ns  TB seq.                        Change the value from "WWWW" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2430.0 ns  TB seq.                        Change the value from "WWWW" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2570.0 ns  TB seq.                        Change the value from "WWWW" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2710.0 ns  TB seq.                        Change the value from "WWWW" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2850.0 ns  TB seq.                        Change the value from "WWWW" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    2990.0 ns  TB seq.                        Change the value from "WWWW" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3130.0 ns  TB seq.                        Change the value from "ZZZZ" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3270.0 ns  TB seq.                        Change the value from "ZZZZ" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3410.0 ns  TB seq.                        Change the value from "ZZZZ" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3550.0 ns  TB seq.                        Change the value from "ZZZZ" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3690.0 ns  TB seq.                        Change the value from "ZZZZ" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3830.0 ns  TB seq.                        Change the value from "ZZZZ" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    3970.0 ns  TB seq.                        Change the value from "ZZZZ" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4110.0 ns  TB seq.                        Change the value from "0000" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4250.0 ns  TB seq.                        Change the value from "0000" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4390.0 ns  TB seq.                        Change the value from "0000" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4530.0 ns  TB seq.                        Change the value from "0000" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4670.0 ns  TB seq.                        Change the value from "0000" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4810.0 ns  TB seq.                        Change the value from "0000" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    4950.0 ns  TB seq.                        Change the value from "0000" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5090.0 ns  TB seq.                        Change the value from "1111" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5230.0 ns  TB seq.                        Change the value from "1111" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5370.0 ns  TB seq.                        Change the value from "1111" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5510.0 ns  TB seq.                        Change the value from "1111" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5650.0 ns  TB seq.                        Change the value from "1111" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5790.0 ns  TB seq.                        Change the value from "1111" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    5930.0 ns  TB seq.                        Change the value from "1111" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6070.0 ns  TB seq.                        Change the value from "XXXX" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6210.0 ns  TB seq.                        Change the value from "XXXX" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6350.0 ns  TB seq.                        Change the value from "XXXX" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6490.0 ns  TB seq.                        Change the value from "XXXX" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6630.0 ns  TB seq.                        Change the value from "XXXX" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6770.0 ns  TB seq.                        Change the value from "XXXX" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    6910.0 ns  TB seq.                        Change the value from "XXXX" to "UUUU", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7050.0 ns  TB seq.                        Change the value from "UUUU" to "HHHH", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7190.0 ns  TB seq.                        Change the value from "UUUU" to "LLLL", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7330.0 ns  TB seq.                        Change the value from "UUUU" to "WWWW", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7470.0 ns  TB seq.                        Change the value from "UUUU" to "ZZZZ", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7610.0 ns  TB seq.                        Change the value from "UUUU" to "0000", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7750.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    7890.0 ns  TB seq.                        Change the value from "UUUU" to "XXXX", window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                    8030.0 ns  TB seq.                        Testing std_logic_vector transitions within the window /w min_cycles = 0, max_cycles = 1
+UVVM: ID_SEQUENCER                    8030.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 1
+UVVM: ID_SEQUENCER                    8080.0 ns  TB seq.                        Change the value from "HHHH" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_UVVM_ASSERTION               8090.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
+UVVM:                                                                           in window. OK after 10 ns. First change event happened in cycle-1. 
+UVVM: ID_SEQUENCER                    8140.0 ns  TB seq.                        Change the value from "HHHH" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8200.0 ns  TB seq.                        Change the value from "HHHH" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8260.0 ns  TB seq.                        Change the value from "HHHH" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8320.0 ns  TB seq.                        Change the value from "HHHH" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8380.0 ns  TB seq.                        Change the value from "HHHH" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8440.0 ns  TB seq.                        Change the value from "HHHH" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8500.0 ns  TB seq.                        Change the value from "LLLL" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8560.0 ns  TB seq.                        Change the value from "LLLL" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8620.0 ns  TB seq.                        Change the value from "LLLL" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8680.0 ns  TB seq.                        Change the value from "LLLL" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8740.0 ns  TB seq.                        Change the value from "LLLL" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8800.0 ns  TB seq.                        Change the value from "LLLL" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8860.0 ns  TB seq.                        Change the value from "LLLL" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8920.0 ns  TB seq.                        Change the value from "WWWW" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    8980.0 ns  TB seq.                        Change the value from "WWWW" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9040.0 ns  TB seq.                        Change the value from "WWWW" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9100.0 ns  TB seq.                        Change the value from "WWWW" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9160.0 ns  TB seq.                        Change the value from "WWWW" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9220.0 ns  TB seq.                        Change the value from "WWWW" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9280.0 ns  TB seq.                        Change the value from "WWWW" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9340.0 ns  TB seq.                        Change the value from "ZZZZ" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9400.0 ns  TB seq.                        Change the value from "ZZZZ" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9460.0 ns  TB seq.                        Change the value from "ZZZZ" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9520.0 ns  TB seq.                        Change the value from "ZZZZ" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9580.0 ns  TB seq.                        Change the value from "ZZZZ" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9640.0 ns  TB seq.                        Change the value from "ZZZZ" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9700.0 ns  TB seq.                        Change the value from "ZZZZ" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9760.0 ns  TB seq.                        Change the value from "0000" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9820.0 ns  TB seq.                        Change the value from "0000" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9880.0 ns  TB seq.                        Change the value from "0000" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                    9940.0 ns  TB seq.                        Change the value from "0000" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10000.0 ns  TB seq.                        Change the value from "0000" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10060.0 ns  TB seq.                        Change the value from "0000" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10120.0 ns  TB seq.                        Change the value from "0000" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10180.0 ns  TB seq.                        Change the value from "1111" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10240.0 ns  TB seq.                        Change the value from "1111" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10300.0 ns  TB seq.                        Change the value from "1111" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10360.0 ns  TB seq.                        Change the value from "1111" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10420.0 ns  TB seq.                        Change the value from "1111" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10480.0 ns  TB seq.                        Change the value from "1111" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10540.0 ns  TB seq.                        Change the value from "1111" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10600.0 ns  TB seq.                        Change the value from "XXXX" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10660.0 ns  TB seq.                        Change the value from "XXXX" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10720.0 ns  TB seq.                        Change the value from "XXXX" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10780.0 ns  TB seq.                        Change the value from "XXXX" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10840.0 ns  TB seq.                        Change the value from "XXXX" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10900.0 ns  TB seq.                        Change the value from "XXXX" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   10960.0 ns  TB seq.                        Change the value from "XXXX" to "UUUU", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11020.0 ns  TB seq.                        Change the value from "UUUU" to "HHHH", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11080.0 ns  TB seq.                        Change the value from "UUUU" to "LLLL", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11140.0 ns  TB seq.                        Change the value from "UUUU" to "WWWW", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11200.0 ns  TB seq.                        Change the value from "UUUU" to "ZZZZ", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11260.0 ns  TB seq.                        Change the value from "UUUU" to "0000", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11320.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11380.0 ns  TB seq.                        Change the value from "UUUU" to "XXXX", window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   11440.0 ns  TB seq.                        Testing multiple triggers within the window
+UVVM: ID_SEQUENCER                   11440.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: ID_UVVM_ASSERTION              11500.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
+UVVM:                                                                           in window. OK after 10 ns. First change event happened in cycle-1. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     11600.0 ns  TB seq.                        Testing Triggering Assertion (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   11600.0 ns  TB seq.                        Testing invalid sequences (no std_logic_vector transitions) within the window
+UVVM: ID_SEQUENCER                   11600.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                   11650.0 ns  TB seq.                        Hold "HHHH" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:         11750 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (HHHH) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   11800.0 ns  TB seq.                        Hold "LLLL" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:         11900 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (LLLL) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   11950.0 ns  TB seq.                        Hold "WWWW" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:         12050 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (WWWW) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   12100.0 ns  TB seq.                        Hold "ZZZZ" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:         12200 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (ZZZZ) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   12250.0 ns  TB seq.                        Hold "0000" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:         12350 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0000) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   12400.0 ns  TB seq.                        Hold "1111" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:         12500 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1111) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   12550.0 ns  TB seq.                        Hold "XXXX" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:         12650 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (XXXX) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   12700.0 ns  TB seq.                        Hold "UUUU" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:         12800 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   12850.0 ns  TB seq.                        Testing triggering assert /w multiple triggers within the window
+UVVM: ID_SEQUENCER                   12850.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:         12940 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #10  ***
+UVVM:         12960 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     13010.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   13010.0 ns  TB seq.                        Expecting a positive acknowledge on each successful window sequence
+UVVM: ID_SEQUENCER                   13010.0 ns  TB seq.                        Setting min_cycles = 10, max_cycles = 20
+UVVM: ID_SEQUENCER                   13060.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (10-cycles to 20-cycles)
+UVVM: ID_UVVM_ASSERTION              13250.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 190 ns. First change event happened in cycle-19. 
+UVVM: ID_SEQUENCER                   13300.0 ns  TB seq.                        Setting min_cycles = 20, max_cycles = 30
+UVVM: ID_SEQUENCER                   13350.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (20-cycles to 30-cycles)
+UVVM: ID_UVVM_ASSERTION              13640.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 290 ns. First change event happened in cycle-29. 
+UVVM: ID_SEQUENCER                   13690.0 ns  TB seq.                        Setting min_cycles = 30, max_cycles = 40
+UVVM: ID_SEQUENCER                   13740.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (30-cycles to 40-cycles)
+UVVM: ID_UVVM_ASSERTION              14130.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 390 ns. First change event happened in cycle-39. 
+UVVM: ID_SEQUENCER                   14180.0 ns  TB seq.                        Setting min_cycles = 40, max_cycles = 50
+UVVM: ID_SEQUENCER                   14230.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (40-cycles to 50-cycles)
+UVVM: ID_UVVM_ASSERTION              14720.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 490 ns. First change event happened in cycle-49. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     14850.0 ns  TB seq.                        Testing Normal Operation (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   14850.0 ns  TB seq.                        Testing all std_logic transitions within the window
+UVVM: ID_SEQUENCER                   14850.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                   14900.0 ns  TB seq.                        Change the value from 'U' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_UVVM_ASSERTION              14990.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
+UVVM:                                                                           in window. OK after 90 ns. First change happened in cycle-9. 
+UVVM: ID_SEQUENCER                   15040.0 ns  TB seq.                        Change the value from 'U' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   15180.0 ns  TB seq.                        Change the value from 'U' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   15320.0 ns  TB seq.                        Change the value from 'U' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   15460.0 ns  TB seq.                        Change the value from 'U' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   15600.0 ns  TB seq.                        Change the value from 'U' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   15740.0 ns  TB seq.                        Change the value from 'U' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   15880.0 ns  TB seq.                        Change the value from 'X' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16020.0 ns  TB seq.                        Change the value from 'X' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16160.0 ns  TB seq.                        Change the value from 'X' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16300.0 ns  TB seq.                        Change the value from 'X' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16440.0 ns  TB seq.                        Change the value from 'X' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16580.0 ns  TB seq.                        Change the value from 'X' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16720.0 ns  TB seq.                        Change the value from 'X' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   16860.0 ns  TB seq.                        Change the value from '1' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17000.0 ns  TB seq.                        Change the value from '1' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17140.0 ns  TB seq.                        Change the value from '1' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17280.0 ns  TB seq.                        Change the value from '1' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17420.0 ns  TB seq.                        Change the value from '1' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17560.0 ns  TB seq.                        Change the value from '1' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17700.0 ns  TB seq.                        Change the value from '1' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17840.0 ns  TB seq.                        Change the value from '0' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   17980.0 ns  TB seq.                        Change the value from '0' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18120.0 ns  TB seq.                        Change the value from '0' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18260.0 ns  TB seq.                        Change the value from '0' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18400.0 ns  TB seq.                        Change the value from '0' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18540.0 ns  TB seq.                        Change the value from '0' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18680.0 ns  TB seq.                        Change the value from '0' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18820.0 ns  TB seq.                        Change the value from 'Z' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   18960.0 ns  TB seq.                        Change the value from 'Z' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19100.0 ns  TB seq.                        Change the value from 'Z' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19240.0 ns  TB seq.                        Change the value from 'Z' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19380.0 ns  TB seq.                        Change the value from 'Z' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19520.0 ns  TB seq.                        Change the value from 'Z' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19660.0 ns  TB seq.                        Change the value from 'Z' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19800.0 ns  TB seq.                        Change the value from 'W' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   19940.0 ns  TB seq.                        Change the value from 'W' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20080.0 ns  TB seq.                        Change the value from 'W' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20220.0 ns  TB seq.                        Change the value from 'W' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20360.0 ns  TB seq.                        Change the value from 'W' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20500.0 ns  TB seq.                        Change the value from 'W' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20640.0 ns  TB seq.                        Change the value from 'W' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20780.0 ns  TB seq.                        Change the value from 'L' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   20920.0 ns  TB seq.                        Change the value from 'L' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21060.0 ns  TB seq.                        Change the value from 'L' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21200.0 ns  TB seq.                        Change the value from 'L' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21340.0 ns  TB seq.                        Change the value from 'L' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21480.0 ns  TB seq.                        Change the value from 'L' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21620.0 ns  TB seq.                        Change the value from 'L' to 'H', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21760.0 ns  TB seq.                        Change the value from 'H' to 'U', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   21900.0 ns  TB seq.                        Change the value from 'H' to 'X', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   22040.0 ns  TB seq.                        Change the value from 'H' to '1', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   22180.0 ns  TB seq.                        Change the value from 'H' to '0', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   22320.0 ns  TB seq.                        Change the value from 'H' to 'Z', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   22460.0 ns  TB seq.                        Change the value from 'H' to 'W', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   22600.0 ns  TB seq.                        Change the value from 'H' to 'L', window (7-cycles to 10-cycles)
+UVVM: ID_SEQUENCER                   22740.0 ns  TB seq.                        Testing all std_logic transitions within the window /w min_cycles = 0, max_cycles = 1
+UVVM: ID_SEQUENCER                   22740.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 1
+UVVM: ID_SEQUENCER                   22790.0 ns  TB seq.                        Change the value from 'U' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_UVVM_ASSERTION              22800.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
+UVVM:                                                                           in window. OK after 10 ns. First change happened in cycle-1. 
+UVVM: ID_SEQUENCER                   22850.0 ns  TB seq.                        Change the value from 'U' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   22910.0 ns  TB seq.                        Change the value from 'U' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   22970.0 ns  TB seq.                        Change the value from 'U' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23030.0 ns  TB seq.                        Change the value from 'U' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23090.0 ns  TB seq.                        Change the value from 'U' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23150.0 ns  TB seq.                        Change the value from 'U' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23210.0 ns  TB seq.                        Change the value from 'X' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23270.0 ns  TB seq.                        Change the value from 'X' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23330.0 ns  TB seq.                        Change the value from 'X' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23390.0 ns  TB seq.                        Change the value from 'X' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23450.0 ns  TB seq.                        Change the value from 'X' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23510.0 ns  TB seq.                        Change the value from 'X' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23570.0 ns  TB seq.                        Change the value from 'X' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23630.0 ns  TB seq.                        Change the value from '1' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23690.0 ns  TB seq.                        Change the value from '1' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23750.0 ns  TB seq.                        Change the value from '1' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23810.0 ns  TB seq.                        Change the value from '1' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23870.0 ns  TB seq.                        Change the value from '1' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23930.0 ns  TB seq.                        Change the value from '1' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   23990.0 ns  TB seq.                        Change the value from '1' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24050.0 ns  TB seq.                        Change the value from '0' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24110.0 ns  TB seq.                        Change the value from '0' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24170.0 ns  TB seq.                        Change the value from '0' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24230.0 ns  TB seq.                        Change the value from '0' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24290.0 ns  TB seq.                        Change the value from '0' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24350.0 ns  TB seq.                        Change the value from '0' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24410.0 ns  TB seq.                        Change the value from '0' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24470.0 ns  TB seq.                        Change the value from 'Z' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24530.0 ns  TB seq.                        Change the value from 'Z' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24590.0 ns  TB seq.                        Change the value from 'Z' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24650.0 ns  TB seq.                        Change the value from 'Z' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24710.0 ns  TB seq.                        Change the value from 'Z' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24770.0 ns  TB seq.                        Change the value from 'Z' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24830.0 ns  TB seq.                        Change the value from 'Z' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24890.0 ns  TB seq.                        Change the value from 'W' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   24950.0 ns  TB seq.                        Change the value from 'W' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25010.0 ns  TB seq.                        Change the value from 'W' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25070.0 ns  TB seq.                        Change the value from 'W' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25130.0 ns  TB seq.                        Change the value from 'W' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25190.0 ns  TB seq.                        Change the value from 'W' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25250.0 ns  TB seq.                        Change the value from 'W' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25310.0 ns  TB seq.                        Change the value from 'L' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25370.0 ns  TB seq.                        Change the value from 'L' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25430.0 ns  TB seq.                        Change the value from 'L' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25490.0 ns  TB seq.                        Change the value from 'L' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25550.0 ns  TB seq.                        Change the value from 'L' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25610.0 ns  TB seq.                        Change the value from 'L' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25670.0 ns  TB seq.                        Change the value from 'L' to 'H', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25730.0 ns  TB seq.                        Change the value from 'H' to 'U', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25790.0 ns  TB seq.                        Change the value from 'H' to 'X', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25850.0 ns  TB seq.                        Change the value from 'H' to '1', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25910.0 ns  TB seq.                        Change the value from 'H' to '0', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   25970.0 ns  TB seq.                        Change the value from 'H' to 'Z', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   26030.0 ns  TB seq.                        Change the value from 'H' to 'W', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   26090.0 ns  TB seq.                        Change the value from 'H' to 'L', window (0-cycles to 1-cycles)
+UVVM: ID_SEQUENCER                   26150.0 ns  TB seq.                        Testing multiple triggers within the window
+UVVM: ID_SEQUENCER                   26150.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: ID_UVVM_ASSERTION              26210.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
+UVVM:                                                                           in window. OK after 10 ns. First change happened in cycle-1. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     26310.0 ns  TB seq.                        Testing Triggering Assertion (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   26310.0 ns  TB seq.                        Testing all invalid sequences (no std_logic transitions) within the window
+UVVM: ID_SEQUENCER                   26310.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                   26360.0 ns  TB seq.                        Hold 'U' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:         26460 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   26510.0 ns  TB seq.                        Hold 'X' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #12  ***
+UVVM:         26610 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (X) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   26660.0 ns  TB seq.                        Hold '1' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #13  ***
+UVVM:         26760 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   26810.0 ns  TB seq.                        Hold '0' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #14  ***
+UVVM:         26910 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   26960.0 ns  TB seq.                        Hold 'Z' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #15  ***
+UVVM:         27060 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (Z) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   27110.0 ns  TB seq.                        Hold 'W' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #16  ***
+UVVM:         27210 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (W) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   27260.0 ns  TB seq.                        Hold 'L' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #17  ***
+UVVM:         27360 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (L) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   27410.0 ns  TB seq.                        Hold 'H' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #18  ***
+UVVM:         27510 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (H) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   27560.0 ns  TB seq.                        Testing triggering assert /w multiple triggers within the window
+UVVM: ID_SEQUENCER                   27560.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #19  ***
+UVVM:         27650 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #20  ***
+UVVM:         27670 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     27720.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   27720.0 ns  TB seq.                        Expecting a positive acknowledge on each successful window sequence
+UVVM: ID_SEQUENCER                   27720.0 ns  TB seq.                        Setting min_cycles = 10, max_cycles = 20
+UVVM: ID_SEQUENCER                   27770.0 ns  TB seq.                        Change the value from 'U' to '1', window (10-cycles to 20-cycles)
+UVVM: ID_UVVM_ASSERTION              27960.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 190 ns. First change event happened in cycle-19. 
+UVVM: ID_SEQUENCER                   28010.0 ns  TB seq.                        Setting min_cycles = 20, max_cycles = 30
+UVVM: ID_SEQUENCER                   28060.0 ns  TB seq.                        Change the value from 'U' to '1', window (20-cycles to 30-cycles)
+UVVM: ID_UVVM_ASSERTION              28350.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 290 ns. First change event happened in cycle-29. 
+UVVM: ID_SEQUENCER                   28400.0 ns  TB seq.                        Setting min_cycles = 30, max_cycles = 40
+UVVM: ID_SEQUENCER                   28450.0 ns  TB seq.                        Change the value from 'U' to '1', window (30-cycles to 40-cycles)
+UVVM: ID_UVVM_ASSERTION              28840.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 390 ns. First change event happened in cycle-39. 
+UVVM: ID_SEQUENCER                   28890.0 ns  TB seq.                        Setting min_cycles = 40, max_cycles = 50
+UVVM: ID_SEQUENCER                   28940.0 ns  TB seq.                        Change the value from 'U' to '1', window (40-cycles to 50-cycles)
+UVVM: ID_UVVM_ASSERTION              29430.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
+UVVM:                                                                           window. OK after 490 ns. First change event happened in cycle-49. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     29520.0 ns  TB seq.                        Testing Assertion Enable (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   29520.0 ns  TB seq.                        Assertion enabled as trigger is assigned, expecting alert when triggering assert
+UVVM: ID_SEQUENCER                   29520.0 ns  TB seq.                        Hold 'U' from 40-cycles to 50-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #21  ***
+UVVM:         30020 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   30110.0 ns  TB seq.                        Assertion enabled prior to trigger, expecting alert when triggering assert
+UVVM: ID_SEQUENCER                   30120.0 ns  TB seq.                        Hold 'U' from 40-cycles to 50-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #22  ***
+UVVM:         30620 ns   TB seq.(uvvm)
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     30670.0 ns  TB seq.                        Testing CLK Disabled
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   30670.0 ns  TB seq.                        Clock deactivated
+UVVM: ID_SEQUENCER                   30710.0 ns  TB seq.                        Triggering assertion while clk is disabled, expecting no behavior
+UVVM: ID_SEQUENCER                   30750.0 ns  TB seq.                        Hold 'U' from 40-cycles to 50-cycles
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :     22        22         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     31310.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -6,20 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>t_alert_level &mdash; UVVM  documentation</title>
+  <title>Types &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="UVVM Assertions (BETA)" href="uvvm_assertions.html" />
+    <link rel="next" title="Data Structures" href="data_structures.html" />
     <link rel="prev" title="Utility Library" href="utility_library.html" /> 
 </head>
 
@@ -50,68 +51,89 @@
 <li class="toctree-l1 current"><a class="reference internal" href="utility_library.html">Utility Library</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="utility_library.html#methods">Methods</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="utility_library.html#types">Types</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">t_alert_level</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-attention">t_attention</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-match-strictness">t_match_strictness</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-format-spaces">t_format_spaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-truncate-string">t_truncate_string</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-radix">t_radix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-radix-prefix">t_radix_prefix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-ascii-allow">t_ascii_allow</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-blocking-mode">t_blocking_mode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-format-zeros">t_format_zeros</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-from-point-in-time">t_from_point_in_time</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-log-destination">t_log_destination</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-log-format">t_log_format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-log-if-block-empty">t_log_if_block_empty</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-quietness">t_quietness</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-identifier-option">t_identifier_option</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-range-option">t_range_option</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-vvc-select">t_vvc_select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-list-action">t_list_action</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-bfm-sync">t_bfm_sync</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-bfm-delay-type">t_bfm_delay_type</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-inter-bfm-delay">t_inter_bfm_delay</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-order">t_order</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-flag-returning">t_flag_returning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-watchdog-ctrl">t_watchdog_ctrl</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-alert-counters">t_alert_counters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-normalization-mode">t_normalization_mode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-data-routing">t_data_routing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-report-alert-counters">t_report_alert_counters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-report-sb">t_report_sb</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-report-vvc">t_report_vvc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-byte-endianness">t_byte_endianness</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-test-status">t_test_status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-extent-tickoff">t_extent_tickoff</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-action-when-transfer-is-done">t_action_when_transfer_is_done</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-action-between-words">t_action_between_words</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-when-to-start-transfer">t_when_to_start_transfer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-stop-bits">t_stop_bits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-parity">t_parity</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-necessary-condition">t_necessary_condition</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-pos-ack-kind">t_pos_ack_kind</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-accept-all-zeros">t_accept_all_zeros</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#t-association-list-status">t_association_list_status</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">types_pkg.vhd</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utility-library">Utility library</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#t-void">t_void</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-slv-array">t_slv_array</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-byte-array">t_byte_array</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-alert-level">t_alert_level</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-attention">t_attention</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-alert-counters">t_alert_counters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-log-destination">t_log_destination</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-radix">t_radix</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-radix-prefix">t_radix_prefix</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-format-zeros">t_format_zeros</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-format-spaces">t_format_spaces</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-truncate-string">t_truncate_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-ascii-allow">t_ascii_allow</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-log-format">t_log_format</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-log-if-block-empty">t_log_if_block_empty</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-report-alert-counters">t_report_alert_counters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-order">t_order</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-blocking-mode">t_blocking_mode</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-from-point-in-time">t_from_point_in_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-match-strictness">t_match_strictness</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-quietness">t_quietness</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-byte-endianness">t_byte_endianness</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-word-endianness">t_word_endianness</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-association-list-status">t_association_list_status</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-flag-returning">t_flag_returning</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-watchdog-ctrl">t_watchdog_ctrl</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utility_library.html#message-ids">Message IDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utility_library.html#using-hierarchical-alert-reporting">Using Hierarchical Alert Reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#specification-coverage">Specification Coverage</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#t-test-status">t_test_status</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-extent-tickoff">t_extent_tickoff</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#scoreboard">Scoreboard</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#t-identifier-option">t_identifier_option</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-range-option">t_range_option</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-tag-usage">t_tag_usage</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-report-sb">t_report_sb</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#uvvm-assertions">UVVM Assertions</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#t-pos-ack-kind">t_pos_ack_kind</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-shift-one-ness-cond">t_shift_one_ness_cond</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-accept-all-zeros">t_accept_all_zeros</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#bfms">BFMs</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#t-action-when-transfer-is-done">t_action_when_transfer_is_done</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-when-to-start-transfer">t_when_to_start_transfer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-action-between-words">t_action_between_words</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-parity">t_parity</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-stop-bits">t_stop_bits</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#vvc-framework">VVC Framework</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#t-bfm-delay-type">t_bfm_delay_type</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-inter-bfm-delay">t_inter_bfm_delay</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-bfm-sync">t_bfm_sync</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-data-routing">t_data_routing</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-transaction-status">t_transaction_status</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-report-vvc">t_report_vvc</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-vvc-select">t_vvc_select</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-list-action">t_list_action</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-normalization-mode">t_normalization_mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="utility_library.html#adaptations-package">Adaptations package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utility_library.html#additional-documentation">Additional Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utility_library.html#compilation">Compilation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utility_library.html#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility_library.html#additional-documentation">Additional Documentation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -130,7 +152,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -150,7 +172,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="utility_library.html">Utility Library</a></li>
-      <li class="breadcrumb-item active">t_alert_level</li>
+      <li class="breadcrumb-item active">Types</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/types_pkg.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -160,39 +182,51 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p>Type definitions used in the Utility Library, defined in types_pkg.vhd</p>
+  <section id="types">
+<h1>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h1>
+<section id="utility-library">
+<h2>Utility library<a class="headerlink" href="#utility-library" title="Link to this heading"></a></h2>
+<section id="t-void">
+<span id="id1"></span><h3>t_void<a class="headerlink" href="#t-void" title="Link to this heading"></a></h3>
+<p>Dummy parameter used to avoid empty procedure/function calls.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">VOID</span>
+</pre></div>
+</div>
+</section>
+<section id="t-slv-array">
+<span id="id2"></span><h3>t_slv_array<a class="headerlink" href="#t-slv-array" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="w"> </span><span class="p">(</span><span class="kt">natural</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="kt">std_logic_vector</span>
+</pre></div>
+</div>
+</section>
+<section id="t-byte-array">
+<span id="id3"></span><h3>t_byte_array<a class="headerlink" href="#t-byte-array" title="Link to this heading"></a></h3>
+<pre class="literal-block"><a class="reference internal" href="#t-slv-array"><span class="std std-ref">t_slv_array(open)(7 downto 0)</span></a></pre>
+</section>
 <section id="t-alert-level">
-<span id="id1"></span><h1>t_alert_level<a class="headerlink" href="#t-alert-level" title="Link to this heading"></a></h1>
+<span id="id4"></span><h3>t_alert_level<a class="headerlink" href="#t-alert-level" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">NOTE</span><span class="p">,</span><span class="w"> </span><span class="n">TB_NOTE</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="n">MANUAL_CHECK</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">,</span><span class="w"> </span><span class="n">TB_FAILURE</span>
 </pre></div>
 </div>
 </section>
 <section id="t-attention">
-<span id="id2"></span><h1>t_attention<a class="headerlink" href="#t-attention" title="Link to this heading"></a></h1>
+<span id="id5"></span><h3>t_attention<a class="headerlink" href="#t-attention" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">REGARD</span><span class="p">,</span><span class="w"> </span><span class="n">EXPECT</span><span class="p">,</span><span class="w"> </span><span class="n">IGNORE</span>
 </pre></div>
 </div>
 </section>
-<section id="t-match-strictness">
-<span id="id3"></span><h1>t_match_strictness<a class="headerlink" href="#t-match-strictness" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD_INCL_Z</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_EXACT</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD_INCL_ZXUW</span>
-</pre></div>
-</div>
+<section id="t-alert-counters">
+<span id="id6"></span><h3>t_alert_counters<a class="headerlink" href="#t-alert-counters" title="Link to this heading"></a></h3>
+<pre class="literal-block">array (NOTE to <a class="reference internal" href="#t-alert-level"><span class="std std-ref">t_alert_level</span></a>'right) of natural</pre>
 </section>
-<section id="t-format-spaces">
-<span id="id4"></span><h1>t_format_spaces<a class="headerlink" href="#t-format-spaces" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_LEADING_SPACE</span><span class="p">,</span><span class="w"> </span><span class="n">SKIP_LEADING_SPACE</span>
-</pre></div>
-</div>
-</section>
-<section id="t-truncate-string">
-<span id="id5"></span><h1>t_truncate_string<a class="headerlink" href="#t-truncate-string" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALLOW_TRUNCATE</span><span class="p">,</span><span class="w"> </span><span class="n">DISALLOW_TRUNCATE</span>
+<section id="t-log-destination">
+<span id="id7"></span><h3>t_log_destination<a class="headerlink" href="#t-log-destination" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">CONSOLE_AND_LOG</span><span class="p">,</span><span class="w"> </span><span class="n">CONSOLE_ONLY</span><span class="p">,</span><span class="w"> </span><span class="n">LOG_ONLY</span>
 </pre></div>
 </div>
 </section>
 <section id="t-radix">
-<span id="id6"></span><h1>t_radix<a class="headerlink" href="#t-radix" title="Link to this heading"></a></h1>
+<span id="id8"></span><h3>t_radix<a class="headerlink" href="#t-radix" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">BIN</span><span class="p">,</span><span class="w"> </span><span class="n">HEX</span><span class="p">,</span><span class="w"> </span><span class="n">DEC</span><span class="p">,</span><span class="w"> </span><span class="n">HEX_BIN_IF_INVALID</span>
 </pre></div>
 </div>
@@ -203,97 +237,247 @@ binary radix.</p>
 </div>
 </section>
 <section id="t-radix-prefix">
-<span id="id7"></span><h1>t_radix_prefix<a class="headerlink" href="#t-radix-prefix" title="Link to this heading"></a></h1>
+<span id="id9"></span><h3>t_radix_prefix<a class="headerlink" href="#t-radix-prefix" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">EXCL_RADIX</span><span class="p">,</span><span class="w"> </span><span class="n">INCL_RADIX</span>
 </pre></div>
 </div>
 </section>
-<section id="t-ascii-allow">
-<span id="id8"></span><h1>t_ascii_allow<a class="headerlink" href="#t-ascii-allow" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALLOW_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_PRINTABLE_ONLY</span>
-</pre></div>
-</div>
-</section>
-<section id="t-blocking-mode">
-<span id="id9"></span><h1>t_blocking_mode<a class="headerlink" href="#t-blocking-mode" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">BLOCKING</span><span class="p">,</span><span class="w"> </span><span class="n">NON_BLOCKING</span>
-</pre></div>
-</div>
-</section>
 <section id="t-format-zeros">
-<span id="id10"></span><h1>t_format_zeros<a class="headerlink" href="#t-format-zeros" title="Link to this heading"></a></h1>
+<span id="id10"></span><h3>t_format_zeros<a class="headerlink" href="#t-format-zeros" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_LEADING_0</span><span class="p">,</span><span class="w"> </span><span class="n">SKIP_LEADING_0</span>
 </pre></div>
 </div>
 </section>
-<section id="t-from-point-in-time">
-<span id="id11"></span><h1>t_from_point_in_time<a class="headerlink" href="#t-from-point-in-time" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_LAST_EVENT</span>
+<section id="t-format-spaces">
+<span id="id11"></span><h3>t_format_spaces<a class="headerlink" href="#t-format-spaces" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_LEADING_SPACE</span><span class="p">,</span><span class="w"> </span><span class="n">SKIP_LEADING_SPACE</span>
 </pre></div>
 </div>
 </section>
-<section id="t-log-destination">
-<span id="id12"></span><h1>t_log_destination<a class="headerlink" href="#t-log-destination" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">CONSOLE_AND_LOG</span><span class="p">,</span><span class="w"> </span><span class="n">CONSOLE_ONLY</span><span class="p">,</span><span class="w"> </span><span class="n">LOG_ONLY</span>
+<section id="t-truncate-string">
+<span id="id12"></span><h3>t_truncate_string<a class="headerlink" href="#t-truncate-string" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALLOW_TRUNCATE</span><span class="p">,</span><span class="w"> </span><span class="n">DISALLOW_TRUNCATE</span>
+</pre></div>
+</div>
+</section>
+<section id="t-ascii-allow">
+<span id="id13"></span><h3>t_ascii_allow<a class="headerlink" href="#t-ascii-allow" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALLOW_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_PRINTABLE_ONLY</span>
 </pre></div>
 </div>
 </section>
 <section id="t-log-format">
-<span id="id13"></span><h1>t_log_format<a class="headerlink" href="#t-log-format" title="Link to this heading"></a></h1>
+<span id="id14"></span><h3>t_log_format<a class="headerlink" href="#t-log-format" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">FORMATTED</span><span class="p">,</span><span class="w"> </span><span class="n">UNFORMATTED</span>
 </pre></div>
 </div>
 </section>
 <section id="t-log-if-block-empty">
-<span id="id14"></span><h1>t_log_if_block_empty<a class="headerlink" href="#t-log-if-block-empty" title="Link to this heading"></a></h1>
+<span id="id15"></span><h3>t_log_if_block_empty<a class="headerlink" href="#t-log-if-block-empty" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">WRITE_HDR_IF_BLOCK_EMPTY</span><span class="p">,</span><span class="w"> </span><span class="n">SKIP_LOG_IF_BLOCK_EMPTY</span><span class="p">,</span><span class="w"> </span><span class="n">NOTIFY_IF_BLOCK_EMPTY</span>
 </pre></div>
 </div>
 </section>
+<section id="t-report-alert-counters">
+<span id="id16"></span><h3>t_report_alert_counters<a class="headerlink" href="#t-report-alert-counters" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS_FINAL</span>
+</pre></div>
+</div>
+</section>
+<section id="t-order">
+<span id="id17"></span><h3>t_order<a class="headerlink" href="#t-order" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">INTERMEDIATE</span><span class="p">,</span><span class="w"> </span><span class="n">FINAL</span>
+</pre></div>
+</div>
+</section>
+<section id="t-blocking-mode">
+<span id="id18"></span><h3>t_blocking_mode<a class="headerlink" href="#t-blocking-mode" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">BLOCKING</span><span class="p">,</span><span class="w"> </span><span class="n">NON_BLOCKING</span>
+</pre></div>
+</div>
+</section>
+<section id="t-from-point-in-time">
+<span id="id19"></span><h3>t_from_point_in_time<a class="headerlink" href="#t-from-point-in-time" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_LAST_EVENT</span>
+</pre></div>
+</div>
+</section>
+<section id="t-match-strictness">
+<span id="id20"></span><h3>t_match_strictness<a class="headerlink" href="#t-match-strictness" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD_INCL_Z</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_EXACT</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD_INCL_ZXUW</span>
+</pre></div>
+</div>
+</section>
 <section id="t-quietness">
-<span id="id15"></span><h1>t_quietness<a class="headerlink" href="#t-quietness" title="Link to this heading"></a></h1>
+<span id="id21"></span><h3>t_quietness<a class="headerlink" href="#t-quietness" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">QUIET</span>
 </pre></div>
 </div>
 </section>
+<section id="t-byte-endianness">
+<span id="id22"></span><h3>t_byte_endianness<a class="headerlink" href="#t-byte-endianness" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LOWER_BYTE_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_BYTE_RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_RIGHT</span>
+</pre></div>
+</div>
+</section>
+<section id="t-word-endianness">
+<span id="id23"></span><h3>t_word_endianness<a class="headerlink" href="#t-word-endianness" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LOWER_BYTE_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_BYTE_RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_RIGHT</span>
+</pre></div>
+</div>
+</section>
+<section id="t-association-list-status">
+<span id="id24"></span><h3>t_association_list_status<a class="headerlink" href="#t-association-list-status" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ASSOCIATION_LIST_SUCCESS</span><span class="p">,</span><span class="w"> </span><span class="n">ASSOCIATION_LIST_FAILURE</span>
+</pre></div>
+</div>
+</section>
+<section id="t-flag-returning">
+<span id="id25"></span><h3>t_flag_returning<a class="headerlink" href="#t-flag-returning" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_UNBLOCKED</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span>
+</pre></div>
+</div>
+</section>
+<section id="t-watchdog-ctrl">
+<span id="id26"></span><h3>t_watchdog_ctrl<a class="headerlink" href="#t-watchdog-ctrl" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>C_WATCHDOG_CTRL_DEFAULT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>extend</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+</tr>
+<tr class="row-odd"><td><p>restart</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+</tr>
+<tr class="row-even"><td><p>terminate</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+</tr>
+<tr class="row-odd"><td><p>extension</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+</tr>
+<tr class="row-even"><td><p>new_timeout</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="specification-coverage">
+<h2>Specification Coverage<a class="headerlink" href="#specification-coverage" title="Link to this heading"></a></h2>
+<section id="t-test-status">
+<span id="id27"></span><h3>t_test_status<a class="headerlink" href="#t-test-status" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">,</span><span class="w"> </span><span class="n">FAIL</span>
+</pre></div>
+</div>
+</section>
+<section id="t-extent-tickoff">
+<span id="id28"></span><h3>t_extent_tickoff<a class="headerlink" href="#t-extent-tickoff" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LIST_SINGLE_TICKOFF</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_EVERY_TICKOFF</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="scoreboard">
+<h2>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h2>
 <section id="t-identifier-option">
-<span id="id16"></span><h1>t_identifier_option<a class="headerlink" href="#t-identifier-option" title="Link to this heading"></a></h1>
+<span id="id29"></span><h3>t_identifier_option<a class="headerlink" href="#t-identifier-option" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span>
 </pre></div>
 </div>
 </section>
 <section id="t-range-option">
-<span id="id17"></span><h1>t_range_option<a class="headerlink" href="#t-range-option" title="Link to this heading"></a></h1>
+<span id="id30"></span><h3>t_range_option<a class="headerlink" href="#t-range-option" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SINGLE</span><span class="p">,</span><span class="w"> </span><span class="n">AND_LOWER</span><span class="p">,</span><span class="w"> </span><span class="n">AND_HIGHER</span>
 </pre></div>
 </div>
 </section>
-<section id="t-vvc-select">
-<span id="id18"></span><h1>t_vvc_select<a class="headerlink" href="#t-vvc-select" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_OF</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_VVCS</span>
+<section id="t-tag-usage">
+<span id="id31"></span><h3>t_tag_usage<a class="headerlink" href="#t-tag-usage" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="n">NO_TAG</span>
 </pre></div>
 </div>
 </section>
-<section id="t-list-action">
-<span id="id19"></span><h1>t_list_action<a class="headerlink" href="#t-list-action" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="n">CLEAR_LIST</span>
+<section id="t-report-sb">
+<span id="id32"></span><h3>t_report_sb<a class="headerlink" href="#t-report-sb" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span>
 </pre></div>
 </div>
 </section>
-<section id="t-bfm-sync">
-<span id="id20"></span><h1>t_bfm_sync<a class="headerlink" href="#t-bfm-sync" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SYNC_ON_CLOCK_ONLY</span><span class="p">,</span><span class="w"> </span><span class="n">SYNC_WITH_SETUP_AND_HOLD</span>
+</section>
+<section id="uvvm-assertions">
+<h2>UVVM Assertions<a class="headerlink" href="#uvvm-assertions" title="Link to this heading"></a></h2>
+<section id="t-pos-ack-kind">
+<span id="id33"></span><h3>t_pos_ack_kind<a class="headerlink" href="#t-pos-ack-kind" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">EVERY</span><span class="p">,</span><span class="w"> </span><span class="n">FIRST</span>
 </pre></div>
 </div>
 </section>
+<section id="t-shift-one-ness-cond">
+<span id="id34"></span><h3>t_shift_one_ness_cond<a class="headerlink" href="#t-shift-one-ness-cond" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT_NO_PIPE</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT_NO_PIPE</span>
+</pre></div>
+</div>
+</section>
+<section id="t-accept-all-zeros">
+<span id="id35"></span><h3>t_accept_all_zeros<a class="headerlink" href="#t-accept-all-zeros" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALL_ZERO_ALLOWED</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_ZERO_NOT_ALLOWED</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bfms">
+<h2>BFMs<a class="headerlink" href="#bfms" title="Link to this heading"></a></h2>
+<section id="t-action-when-transfer-is-done">
+<span id="id36"></span><h3>t_action_when_transfer_is_done<a class="headerlink" href="#t-action-when-transfer-is-done" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span>
+</pre></div>
+</div>
+</section>
+<section id="t-when-to-start-transfer">
+<span id="id37"></span><h3>t_when_to_start_transfer<a class="headerlink" href="#t-when-to-start-transfer" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">START_TRANSFER_IMMEDIATE</span><span class="p">,</span><span class="w"> </span><span class="n">START_TRANSFER_ON_NEXT_SS</span>
+</pre></div>
+</div>
+</section>
+<section id="t-action-between-words">
+<span id="id38"></span><h3>t_action_between_words<a class="headerlink" href="#t-action-between-words" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_BETWEEN_WORDS</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_BETWEEN_WORDS</span>
+</pre></div>
+</div>
+</section>
+<section id="t-parity">
+<span id="id39"></span><h3>t_parity<a class="headerlink" href="#t-parity" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">PARITY_NONE</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_ODD</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_EVEN</span>
+</pre></div>
+</div>
+</section>
+<section id="t-stop-bits">
+<span id="id40"></span><h3>t_stop_bits<a class="headerlink" href="#t-stop-bits" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">STOP_BITS_ONE</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_ONE_AND_HALF</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_TWO</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="vvc-framework">
+<h2>VVC Framework<a class="headerlink" href="#vvc-framework" title="Link to this heading"></a></h2>
 <section id="t-bfm-delay-type">
-<span id="id21"></span><h1>t_bfm_delay_type<a class="headerlink" href="#t-bfm-delay-type" title="Link to this heading"></a></h1>
+<span id="id41"></span><h3>t_bfm_delay_type<a class="headerlink" href="#t-bfm-delay-type" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_DELAY</span><span class="p">,</span><span class="w"> </span><span class="n">TIME_FINISH2START</span><span class="p">,</span><span class="w"> </span><span class="n">TIME_START2START</span>
 </pre></div>
 </div>
 </section>
 <section id="t-inter-bfm-delay">
-<span id="id22"></span><h1>t_inter_bfm_delay<a class="headerlink" href="#t-inter-bfm-delay" title="Link to this heading"></a></h1>
+<span id="id42"></span><h3>t_inter_bfm_delay<a class="headerlink" href="#t-inter-bfm-delay" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
@@ -313,51 +497,44 @@ binary radix.</p>
 </tbody>
 </table>
 </section>
-<section id="t-order">
-<span id="id23"></span><h1>t_order<a class="headerlink" href="#t-order" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">INTERMEDIATE</span><span class="p">,</span><span class="w"> </span><span class="n">FINAL</span>
+<section id="t-bfm-sync">
+<span id="id43"></span><h3>t_bfm_sync<a class="headerlink" href="#t-bfm-sync" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SYNC_ON_CLOCK_ONLY</span><span class="p">,</span><span class="w"> </span><span class="n">SYNC_WITH_SETUP_AND_HOLD</span>
 </pre></div>
 </div>
 </section>
-<section id="t-flag-returning">
-<span id="id24"></span><h1>t_flag_returning<a class="headerlink" href="#t-flag-returning" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_UNBLOCKED</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span>
+<section id="t-data-routing">
+<span id="id44"></span><h3>t_data_routing<a class="headerlink" href="#t-data-routing" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_BUFFER</span>
 </pre></div>
 </div>
 </section>
-<section id="t-watchdog-ctrl">
-<span id="id25"></span><h1>t_watchdog_ctrl<a class="headerlink" href="#t-watchdog-ctrl" title="Link to this heading"></a></h1>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Record element</p></th>
-<th class="head"><p>Type</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>extend</p></td>
-<td><p>boolean</p></td>
-</tr>
-<tr class="row-odd"><td><p>restart</p></td>
-<td><p>boolean</p></td>
-</tr>
-<tr class="row-even"><td><p>terminate</p></td>
-<td><p>boolean</p></td>
-</tr>
-<tr class="row-odd"><td><p>extension</p></td>
-<td><p>time</p></td>
-</tr>
-<tr class="row-even"><td><p>new_timeout</p></td>
-<td><p>time</p></td>
-</tr>
-</tbody>
-</table>
+<section id="t-transaction-status">
+<span id="id45"></span><h3>t_transaction_status<a class="headerlink" href="#t-transaction-status" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">INACTIVE</span><span class="p">,</span><span class="w"> </span><span class="n">IN_PROGRESS</span><span class="p">,</span><span class="w"> </span><span class="n">FAILED</span><span class="p">,</span><span class="w"> </span><span class="n">SUCCEEDED</span><span class="p">,</span><span class="w"> </span><span class="n">COMPLETED</span>
+</pre></div>
+</div>
 </section>
-<section id="t-alert-counters">
-<span id="id26"></span><h1>t_alert_counters<a class="headerlink" href="#t-alert-counters" title="Link to this heading"></a></h1>
-<pre class="literal-block">array (NOTE to <a class="reference internal" href="#t-alert-level"><span class="std std-ref">t_alert_level</span></a>'right) of natural</pre>
+<section id="t-report-vvc">
+<span id="id46"></span><h3>t_report_vvc<a class="headerlink" href="#t-report-vvc" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_VVCS</span>
+</pre></div>
+</div>
+</section>
+<section id="t-vvc-select">
+<span id="id47"></span><h3>t_vvc_select<a class="headerlink" href="#t-vvc-select" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_OF</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_VVCS</span>
+</pre></div>
+</div>
+</section>
+<section id="t-list-action">
+<span id="id48"></span><h3>t_list_action<a class="headerlink" href="#t-list-action" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="n">CLEAR_LIST</span>
+</pre></div>
+</div>
 </section>
 <section id="t-normalization-mode">
-<span id="id27"></span><h1>t_normalization_mode<a class="headerlink" href="#t-normalization-mode" title="Link to this heading"></a></h1>
+<span id="id49"></span><h3>t_normalization_mode<a class="headerlink" href="#t-normalization-mode" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALLOW_WIDER</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_NARROWER</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_WIDER_NARROWER</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_EXACT_ONLY</span>
 </pre></div>
 </div>
@@ -366,101 +543,7 @@ binary radix.</p>
 <p>This type is defined in bfm_common_pkg.vhd</p>
 </div>
 </section>
-<section id="t-data-routing">
-<span id="id28"></span><h1>t_data_routing<a class="headerlink" href="#t-data-routing" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_BUFFER</span>
-</pre></div>
-</div>
 </section>
-<section id="t-report-alert-counters">
-<span id="id29"></span><h1>t_report_alert_counters<a class="headerlink" href="#t-report-alert-counters" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS_FINAL</span>
-</pre></div>
-</div>
-</section>
-<section id="t-report-sb">
-<span id="id30"></span><h1>t_report_sb<a class="headerlink" href="#t-report-sb" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span>
-</pre></div>
-</div>
-</section>
-<section id="t-report-vvc">
-<span id="id31"></span><h1>t_report_vvc<a class="headerlink" href="#t-report-vvc" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_VVCS</span>
-</pre></div>
-</div>
-</section>
-<section id="t-byte-endianness">
-<span id="id32"></span><h1>t_byte_endianness<a class="headerlink" href="#t-byte-endianness" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LOWER_BYTE_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_BYTE_RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_RIGHT</span>
-</pre></div>
-</div>
-</section>
-<section id="t-test-status">
-<span id="id33"></span><h1>t_test_status<a class="headerlink" href="#t-test-status" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">,</span><span class="w"> </span><span class="n">FAIL</span>
-</pre></div>
-</div>
-</section>
-<section id="t-extent-tickoff">
-<span id="id34"></span><h1>t_extent_tickoff<a class="headerlink" href="#t-extent-tickoff" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LIST_SINGLE_TICKOFF</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_EVERY_TICKOFF</span>
-</pre></div>
-</div>
-</section>
-<section id="t-action-when-transfer-is-done">
-<span id="id35"></span><h1>t_action_when_transfer_is_done<a class="headerlink" href="#t-action-when-transfer-is-done" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span>
-</pre></div>
-</div>
-</section>
-<section id="t-action-between-words">
-<span id="id36"></span><h1>t_action_between_words<a class="headerlink" href="#t-action-between-words" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_BETWEEN_WORDS</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_BETWEEN_WORDS</span>
-</pre></div>
-</div>
-</section>
-<section id="t-when-to-start-transfer">
-<span id="id37"></span><h1>t_when_to_start_transfer<a class="headerlink" href="#t-when-to-start-transfer" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">START_TRANSFER_IMMEDIATE</span><span class="p">,</span><span class="w"> </span><span class="n">START_TRANSFER_ON_NEXT_SS</span>
-</pre></div>
-</div>
-</section>
-<section id="t-stop-bits">
-<span id="id38"></span><h1>t_stop_bits<a class="headerlink" href="#t-stop-bits" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">STOP_BITS_ONE</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_ONE_AND_HALF</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_TWO</span>
-</pre></div>
-</div>
-</section>
-<section id="t-parity">
-<span id="id39"></span><h1>t_parity<a class="headerlink" href="#t-parity" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">PARITY_NONE</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_ODD</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_EVEN</span>
-</pre></div>
-</div>
-</section>
-<section id="t-necessary-condition">
-<span id="id40"></span><h1>t_necessary_condition<a class="headerlink" href="#t-necessary-condition" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT_NO_PIPE</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT_NO_PIPE</span>
-</pre></div>
-</div>
-</section>
-<section id="t-pos-ack-kind">
-<span id="id41"></span><h1>t_pos_ack_kind<a class="headerlink" href="#t-pos-ack-kind" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">EVERY</span><span class="p">,</span><span class="w"> </span><span class="n">FIRST</span>
-</pre></div>
-</div>
-</section>
-<section id="t-accept-all-zeros">
-<span id="id42"></span><h1>t_accept_all_zeros<a class="headerlink" href="#t-accept-all-zeros" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALL_ZERO_ALLOWED</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_ZERO_NOT_ALLOWED</span>
-</pre></div>
-</div>
-</section>
-<section id="t-association-list-status">
-<span id="id43"></span><h1>t_association_list_status<a class="headerlink" href="#t-association-list-status" title="Link to this heading"></a></h1>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ASSOCIATION_LIST_SUCCESS</span><span class="p">,</span><span class="w"> </span><span class="n">ASSOCIATION_LIST_FAILURE</span>
-</pre></div>
-</div>
 </section>
 
 
@@ -468,7 +551,7 @@ binary radix.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="utility_library.html" class="btn btn-neutral float-left" title="Utility Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="uvvm_assertions.html" class="btn btn-neutral float-right" title="UVVM Assertions (BETA)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="data_structures.html" class="btn btn-neutral float-right" title="Data Structures" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

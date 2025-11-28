@@ -9,12 +9,13 @@
   <title>Bitvis VIP I2C &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -129,7 +127,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -186,10 +184,6 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="bfm">
 <h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
 <p>BFM functionality is implemented in i2c_bfm_pkg.vhd</p>
@@ -276,7 +270,7 @@ operation is started.</p></td>
 </tr>
 <tr class="row-even"><td><p>i2c_bit_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Bit period. Will give a TB_ERROR if not set to
 a different value than -1.</p></td>
 </tr>
@@ -336,18 +330,18 @@ the don’t care operator ‘-‘.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm_wait</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_WAIT</p></td>
 <td><p>Message ID used for logging waits in the BFM</p></td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm_poll</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_POLL</p></td>
 <td><p>Message ID used for logging polling in the BFM</p></td>
 </tr>
@@ -409,7 +403,7 @@ standard. For a list of reserved addresses, please see
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single byte or a byte array.</p></td>
@@ -446,7 +440,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -499,7 +494,7 @@ standard. For a list of reserved addresses, please see
 <td><p>data</p></td>
 <td><p>out</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value read from the addressed register, either
 a single byte or a byte array.</p></td>
@@ -536,7 +531,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -593,7 +589,7 @@ standard. For a list of reserved addresses, please see
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving the addressed
 register, either a single byte or a byte array. A
@@ -637,7 +633,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -742,7 +739,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -797,7 +795,7 @@ byte except the very last byte where a NACK (‘1’) is expected.</p></li>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single byte or a byte array.</p></td>
@@ -826,7 +824,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -867,7 +866,7 @@ value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
 <td><p>data</p></td>
 <td><p>out</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value read from the addressed register, either
 a single byte or a byte array.</p></td>
@@ -896,7 +895,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -942,7 +942,7 @@ After receiving data, the data is compared with the expected data.</p>
 <td><p>data_exp</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving the addressed
 register, either a single byte or a byte array. A
@@ -987,7 +987,8 @@ Default value is C_BFM_SCOPE (“I2C BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -1026,7 +1027,7 @@ value is C_I2C_BFM_CONFIG_DEFAULT.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -1075,8 +1076,8 @@ process. This allows calling the BFM procedures with the key parameters only, e.
 <section id="local-bfm-configuration">
 <span id="i2c-local-bfm-config"></span><h3>Local BFM configuration<a class="headerlink" href="#local-bfm-configuration" title="Link to this heading"></a></h3>
 <p>The I2C BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM
-configuration is defined with a I2C bit time of -1 ns so that the BFM can detect and alert the user that the configuration has not
-been set.</p>
+configuration is defined with a I2C bit time of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the
+configuration has not been set.</p>
 <p>Defining a local I2C BFM configuration::</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_I2C_CONFIG_LOCAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_i2c_bfm_config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">enable_10_bits_addressing</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">false</span><span class="p">,</span>
@@ -1131,17 +1132,13 @@ manual Rev. 6”, available from NXP Semiconductors.</p>
 <li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="vvc">
 <h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in i2c_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -1159,7 +1156,9 @@ manual Rev. 6”, available from NXP Semiconductors.</p>
 <tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>1</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC. Maximum value
+is defined by C_I2C_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-odd"><td><p>GC_MASTER_MODE</p></td>
 <td><p>boolean</p></td>
@@ -1215,6 +1214,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -1373,6 +1376,26 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_I2C_VVC_CMD_DATA_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>data</strong> length</p></td>
+</tr>
+<tr class="row-even"><td><p>C_I2C_VVC_CMD_ADDR_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>addr</strong> length</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_I2C_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="i2c-master-transmit-vvc">
 <span id="id3"></span><h4>i2c_master_transmit()<a class="headerlink" href="#i2c-master-transmit-vvc" title="Link to this heading"></a></h4>
 <p>Adds a master transmit command to the I2C VVC executor queue, which will run as soon as all preceding commands have completed.
@@ -1418,7 +1441,7 @@ standard. For a list of reserved addresses, please see
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single byte or a byte array.</p></td>
@@ -1442,7 +1465,8 @@ value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1528,7 +1552,8 @@ value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1599,7 +1624,7 @@ standard. For a list of reserved addresses, please see
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving the addressed
 register, either a single byte or a byte array. A
@@ -1630,7 +1655,8 @@ value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1721,7 +1747,8 @@ value is RELEASE_LINE_AFTER_TRANSFER.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1766,7 +1793,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to be transmitted to the DUT, either a
 single byte or a byte array.</p></td>
@@ -1782,7 +1809,8 @@ single byte or a byte array.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1850,7 +1878,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1912,7 +1941,7 @@ differentiate between VVCs</p></td>
 <td><p>data</p></td>
 <td><p>in</p></td>
 <td><p>std_logic_vector</p>
-<p>t_byte_array</p>
+<p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array</span></a></p>
 </td>
 <td><p>The data value to expect when receiving the addressed
 register, either a single byte or a byte array. A
@@ -1942,7 +1971,8 @@ is ‘0’ (write).</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1993,7 +2023,7 @@ POLL_UNTIL, READ, WRITE</p></td>
 master mode</p></td>
 </tr>
 <tr class="row-even"><td><p>data</p></td>
-<td><p>t_byte_array(0 to 63)</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-byte-array"><span class="std std-ref">t_byte_array(0 to 63)</span></a></p></td>
 <td><p>0x0</p></td>
 <td><p>Data for I2C receive or write transaction</p></td>
 </tr>
@@ -2036,7 +2066,7 @@ the bus.</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-even"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>
@@ -2049,8 +2079,8 @@ SUCCEEDED during a transaction</p></td>
 <h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
 <p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
 i.e. i2c_master_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method
-when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable I2C_VVC_SB, located
-in the vvc_methods_pkg.vhd, e.g.</p>
+when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">I2C_VVC_SB</span></code>,
+located in the vvc_methods_pkg.vhd, e.g.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">I2C_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_I2C_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_i2c_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -2060,7 +2090,7 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the I2C VVC scoreboard using the I2C_VVC_SB.</p>
+Scoreboard commands are available for the I2C VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">I2C_VVC_SB</span></code>.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>

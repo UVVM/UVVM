@@ -1,18 +1,25 @@
 Bitvis VIP Specification Coverage - Overview on Versions and Changes
 ==============================================================
 
+v2.0.1
+----------
+Released: 2025-11-28
+- Changed requirement tickoff log text from "Logging requirement" to "Ticking off requirement".
+- Added handling of BOM character (utf-8-sig encoding) when parsing req/map files in run_spec_cov.py and spec_cov_pkg.
+- Support running spec cov post-processing without requirement list. Labels for unlisted req tickoff.
+- Fixed testcase status for partial coverage files with no requirement tickoffs.
+
 v2.0.0
 ----------
 Released: 2024-10-23
- - Support compound requirements in req file
- - New output formats
- - Check number of requirement lines in spec_cov_pkg.
+- Support compound requirements in req file.
+- New output formats.
+- Check number of requirement lines in spec_cov_pkg.
 
 v1.1.2
 ----------
 Released: 2024-09-19
 - Fixed bug in .single_tc_vs_single_req format where tc could be given wrong status and listed without reqs.
-
 
 v1.1.1
 ----------

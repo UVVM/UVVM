@@ -224,15 +224,15 @@ package body axi_channel_handler_pkg is
     constant msg_id_panel   : in t_msg_id_panel   := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                       := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call              : string                                       := "write_address_channel_write(" & to_string(awaddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_awready        : boolean                                      := true;
     -- Normalizing unconstrained inputs
     variable v_normalized_awid      : std_logic_vector(awid'length - 1 downto 0);
     variable v_normalized_awaddr    : std_logic_vector(awaddr'length - 1 downto 0) := normalize_and_check(std_logic_vector(awaddr_value), awaddr, ALLOW_WIDER, "awaddr_value", "awaddr", msg);
     variable v_normalized_awuser    : std_logic_vector(awuser'length - 1 downto 0);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                         := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                         := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     if awid'length > 0 then
       v_normalized_awid := normalize_and_check(awid_value, awid, ALLOW_WIDER, "awid_value", "awid", msg);
@@ -260,11 +260,9 @@ package body axi_channel_handler_pkg is
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write address channel access is done
       if awready = '1' and cycle >= config.num_aw_pipe_stages then
         -- Wait according to config.bfm_sync setup
@@ -285,8 +283,8 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_address_channel_write;
 
   procedure write_data_channel_write(
@@ -306,14 +304,14 @@ package body axi_channel_handler_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                      := "write_data_channel_write(" & to_string(wdata_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(wstrb_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call              : string                                      := "write_data_channel_write(" & to_string(wdata_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(wstrb_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_wready         : boolean                                     := true;
     variable v_normalized_wdata     : std_logic_vector(wdata'length - 1 downto 0) := normalize_and_check(wdata_value(0), wdata, ALLOW_NARROWER, "WDATA", "wdata", msg);
     variable v_normalized_wstrb     : std_logic_vector(wstrb'length - 1 downto 0) := normalize_and_check(wstrb_value(0), wstrb, ALLOW_EXACT_ONLY, "WSTRB", "wstrb", msg);
     variable v_normalized_wuser     : std_logic_vector(wuser'length - 1 downto 0);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                        := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                        := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                        := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                        := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     if wuser'length > 0 then
       v_normalized_wuser := normalize_and_check(wuser_value(0), wuser, ALLOW_NARROWER, "WSTRB", "wstrb", msg);
@@ -339,11 +337,9 @@ package body axi_channel_handler_pkg is
         end if;
         wait until rising_edge(clk);
         -- Checking clock behavior
-        if v_time_of_rising_edge = -1 ns then
-          v_time_of_rising_edge := now;
+        if write_transfer_num = 0 and cycle = 0 then -- Only check once
+          check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
         end if;
-        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                  config.clock_period, config.clock_period_margin, config.clock_margin_severity);
         -- Checking if the write data channel access is done
         if wready = '1' and cycle >= config.num_w_pipe_stages then
           -- Wait according to config.bfm_sync setup
@@ -357,9 +353,9 @@ package body axi_channel_handler_pkg is
           exit;
         end if;
       end loop;
-      check_value(not v_await_wready, config.max_wait_cycles_severity, ": Timeout waiting for WREADY", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
     end loop;
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_data_channel_write;
 
   procedure write_response_channel_receive(
@@ -383,9 +379,8 @@ package body axi_channel_handler_pkg is
     constant local_proc_call        : string  := local_proc_name & "()";
     variable v_proc_call            : line;
     variable v_await_bvalid         : boolean := true;
-    variable v_time_of_rising_edge  : time    := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time    := -1 ns; -- time stamp for clk period checking
-    variable v_alert_radix          : t_radix;
+    variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     -- Setting procedure name for logging
     if ext_proc_call = "" then
@@ -404,11 +399,9 @@ package body axi_channel_handler_pkg is
         bready <= '1';
       end if;
       wait until rising_edge(clk);
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write response channel access is done
       if bvalid = '1' and cycle >= config.num_b_pipe_stages then
         -- Receiving response
@@ -428,10 +421,10 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_bvalid, config.max_wait_cycles_severity, ": Timeout waiting for BVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & " " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. read_data_channel_check)
     end if;
@@ -469,15 +462,15 @@ package body axi_channel_handler_pkg is
     constant msg_id_panel   : in t_msg_id_panel   := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                       := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call              : string                                       := "read_address_channel_write(" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_arready        : boolean                                      := true;
     -- Normalizing unconstrained inputs
     variable v_normalized_arid      : std_logic_vector(arid'length - 1 downto 0);
     variable v_normalized_araddr    : std_logic_vector(araddr'length - 1 downto 0) := normalize_and_check(std_logic_vector(araddr_value), araddr, ALLOW_WIDER, "araddr_value", "araddr", msg);
     variable v_normalized_aruser    : std_logic_vector(aruser'length - 1 downto 0);
     -- Helper variables
-    variable v_time_of_rising_edge  : time                                         := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                         := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time                                         := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     if arid'length > 0 then
       v_normalized_arid := normalize_and_check(arid_value, arid, ALLOW_WIDER, "arid_value", "arid", msg);
@@ -505,11 +498,9 @@ package body axi_channel_handler_pkg is
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
-      if v_time_of_rising_edge = -1 ns then
-        v_time_of_rising_edge := now;
+      if cycle = 0 then -- Only check once
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write address channel access is done
       if arready = '1' and cycle >= config.num_ar_pipe_stages then
         -- Wait according to config.bfm_sync setup
@@ -530,8 +521,8 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure read_address_channel_write;
 
   procedure read_data_channel_receive(
@@ -555,11 +546,10 @@ package body axi_channel_handler_pkg is
     constant local_proc_call        : string  := local_proc_name & "()"; -- Local proc_call; used if called from sequncer or VVC
     variable v_proc_call            : line;
     variable v_await_rvalid         : boolean := true;
-    variable v_time_of_rising_edge  : time    := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time    := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_rlast_detected       : boolean := false;
     variable v_returning_rid        : std_logic_vector(rid'length - 1 downto 0);
-    variable v_read_data            : t_vvc_result;
   begin
 
     if ext_proc_call = "" then
@@ -580,11 +570,9 @@ package body axi_channel_handler_pkg is
         end if;
         wait until rising_edge(clk);
         -- Checking clock behavior
-        if v_time_of_rising_edge = -1 ns then
-          v_time_of_rising_edge := now;
+        if cycle = 0 then -- Only check once
+          check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
         end if;
-        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                  config.clock_period, config.clock_period_margin, config.clock_margin_severity);
         -- Checking if the read data channel access is done
         if rvalid = '1' and cycle >= config.num_r_pipe_stages then
           v_await_rvalid := false;
@@ -603,7 +591,7 @@ package body axi_channel_handler_pkg is
           exit;
         end if;
       end loop;
-      check_value(not v_await_rvalid, config.max_wait_cycles_severity, ": Timeout waiting for RVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
       if v_rlast_detected then
         read_result := read_data_queue.fetch_from_queue(v_returning_rid);
         exit;
@@ -612,7 +600,7 @@ package body axi_channel_handler_pkg is
     end loop;
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & " " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. read_data_channel_check)
     end if;

@@ -9,18 +9,19 @@
   <title>UVVM Generic Queue &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="UVVM Association List" href="association_list.html" />
-    <link rel="prev" title="UVVM FIFO Collection" href="fifo_collection.html" /> 
+    <link rel="prev" title="UVVM Data Stack" href="data_stack.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,46 +49,49 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="data_structures.html">Data Structures</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="data_fifo.html">UVVM Data FIFO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_stack.html">UVVM Data Stack</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">UVVM Generic Queue</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functional-parameters">Functional Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#declaration">Declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#add">add()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fetch">fetch()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get">get()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flush">flush()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reset">reset()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#is-empty">is_empty()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-scope">set_scope()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-scope">get_scope()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-count">get_count()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#insert">insert()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#delete">delete()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#peek">peek()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#find-position">find_position()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#find-entry-num">find_entry_num()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-entry-num">get_entry_num()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exists">exists()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#print-queue">print_queue()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-queue-count-max">set_queue_count_max()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-queue-count-max">get_queue_count_max()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-queue-count-threshold">set_queue_count_threshold()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-queue-count-threshold">get_queue_count_threshold()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-queue-count-threshold-severity">set_queue_count_threshold_severity()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-queue-count-threshold-severity">get_queue_count_threshold_severity()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Generic Queue</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#functional-parameters">Functional Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#generics">Generics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#declaration">Declaration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#add">add()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#fetch">fetch()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get">get()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flush">flush()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#reset">reset()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#is-empty">is_empty()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-scope">set_scope()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get-scope">get_scope()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get-count">get_count()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#insert">insert()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#delete">delete()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#peek">peek()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#find-position">find_position()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#find-entry-num">find_entry_num()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get-entry-num">get_entry_num()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#exists">exists()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#print-queue">print_queue()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-queue-count-max">set_queue_count_max()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get-queue-count-max">get_queue_count_max()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-queue-count-threshold">set_queue_count_threshold()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get-queue-count-threshold">get_queue_count_threshold()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-queue-count-threshold-severity">set_queue_count_threshold_severity()</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#get-queue-count-threshold-severity">get_queue_count_threshold_severity()</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -106,7 +110,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -125,6 +129,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="data_structures.html">Data Structures</a></li>
       <li class="breadcrumb-item active">UVVM Generic Queue</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/generic_queue.rst.txt" rel="nofollow"> View page source</a>
@@ -151,7 +156,10 @@
 <tr class="row-even"><td><p>instance</p></td>
 <td><p>integer</p></td>
 <td><p>One generic queue variable can have multiple independent
-queues referred to as instances</p></td>
+queues referred to as instances.</p>
+<p>The maximum number of instances is defined by
+C_MAX_QUEUE_INSTANCE_NUM in adaptations_pkg.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>identifier_option</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-identifier-option"><span class="std std-ref">t_identifier_option</span></a></p></td>
@@ -201,16 +209,11 @@ alert is raised</p></td>
 in the queue exceeds queue_count_alert_level</p></td>
 </tr>
 <tr class="row-even"><td><p>void</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>Unused, empty input parameter</p></td>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Default queue size is 2048 bits and the size can be adjusted with the C_NUMBER_OF_BITS_IN_DATA_BUFFER located in the
-adaptations package.</p>
-</div>
 </section>
 <section id="generics">
 <h2>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h2>
@@ -302,7 +305,7 @@ trigger a TB_WARNING, and attempting to fetch() from an empty queue will trigger
 <h3>get()<a class="headerlink" href="#get" title="Link to this heading"></a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This function is deprecated. Use fetch.</p>
+<p>This function is deprecated and will be removed in v3. Use fetch.</p>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_generic_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get</span><span class="p">([</span><span class="n">instance</span><span class="p">])</span>
 </pre></div>
@@ -573,7 +576,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="fifo_collection.html" class="btn btn-neutral float-left" title="UVVM FIFO Collection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_stack.html" class="btn btn-neutral float-left" title="UVVM Data Stack" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="association_list.html" class="btn btn-neutral float-right" title="UVVM Association List" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

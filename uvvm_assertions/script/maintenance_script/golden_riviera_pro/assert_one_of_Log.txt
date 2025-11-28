@@ -1,0 +1,1044 @@
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                 100.0 ns  TB seq.(uvvm)                  Testing the assertion: assert_one_of
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       140.0 ns  TB seq.                        Testing Normal Operation (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        allowed_values = ("0000", "1111")
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        tracked_value = "0000"
+UVVM: ID_UVVM_ASSERTION                140.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                     180.0 ns  TB seq.                        tracked_value = "1111"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       220.0 ns  TB seq.                        Testing Triggering Assertion (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     220.0 ns  TB seq.                        tracked_value = "0001", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:           220 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0001) was not one of '0000'/'1111'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     270.0 ns  TB seq.                        tracked_value = "1110", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:           270 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1110) was not one of '0000'/'1111'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     320.0 ns  TB seq.                        allowed_values = ("LLLL", "HHHH")
+UVVM: ID_UVVM_ASSERTION                330.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was LLLL. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                     370.0 ns  TB seq.                        tracked_value = "LLLH", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:           370 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (LLLH) was not one of 'LLLL'/'HHHH'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     420.0 ns  TB seq.                        tracked_value = "HHHL", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:           420 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (HHHL) was not one of 'LLLL'/'HHHH'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       470.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     470.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION                480.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION                490.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION                500.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION                510.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       600.0 ns  TB seq.                        Testing Normal Operation (unsigned)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     600.0 ns  TB seq.                        allowed_values = ("0000", "1111")
+UVVM: ID_SEQUENCER                     600.0 ns  TB seq.                        tracked_value = "0000"
+UVVM: ID_UVVM_ASSERTION                600.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                     640.0 ns  TB seq.                        tracked_value = "1111"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       680.0 ns  TB seq.                        Testing Triggering Assertion (unsigned)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     680.0 ns  TB seq.                        tracked_value = "0001", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:           680 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0001) was not one of '0000'/'1111'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     730.0 ns  TB seq.                        tracked_value = "1110", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:           730 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1110) was not one of '0000'/'1111'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     780.0 ns  TB seq.                        allowed_values = ("0101", "1010")
+UVVM: ID_UVVM_ASSERTION                790.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0101. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                     830.0 ns  TB seq.                        tracked_value = "0000", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:           830 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0000) was not one of '0101'/'1010'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     880.0 ns  TB seq.                        tracked_value = "1111", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:           880 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1111) was not one of '0101'/'1010'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       930.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (unsigned)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     930.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION                940.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION                950.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION                960.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION                970.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1060.0 ns  TB seq.                        Testing Normal Operation (signed)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1060.0 ns  TB seq.                        allowed_values = ("0000", "1111")
+UVVM: ID_SEQUENCER                    1060.0 ns  TB seq.                        tracked_value = "0000"
+UVVM: ID_UVVM_ASSERTION               1060.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    1100.0 ns  TB seq.                        tracked_value = "1111"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1140.0 ns  TB seq.                        Testing Triggering Assertion (signed)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1140.0 ns  TB seq.                        tracked_value = "0001", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:          1140 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0001) was not one of '0000'/'1111'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1190.0 ns  TB seq.                        tracked_value = "1110", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #10  ***
+UVVM:          1190 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1110) was not one of '0000'/'1111'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1240.0 ns  TB seq.                        allowed_values = ("0101", "1010")
+UVVM: ID_UVVM_ASSERTION               1250.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0101. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    1290.0 ns  TB seq.                        tracked_value = "0000", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:          1290 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0000) was not one of '0101'/'1010'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1340.0 ns  TB seq.                        tracked_value = "1111", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #12  ***
+UVVM:          1340 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1111) was not one of '0101'/'1010'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1390.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (signed)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1390.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION               1400.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               1410.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION               1420.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION               1430.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1520.0 ns  TB seq.                        Testing Normal Operation (integer)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1520.0 ns  TB seq.                        allowed_values = (0, 1)
+UVVM: ID_SEQUENCER                    1520.0 ns  TB seq.                        tracked_value = 0
+UVVM: ID_UVVM_ASSERTION               1520.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    1560.0 ns  TB seq.                        tracked_value = 1
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1600.0 ns  TB seq.                        Testing Triggering Assertion (integer)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1600.0 ns  TB seq.                        tracked_value = 10, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #13  ***
+UVVM:          1600 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (10) was not one of '0'/'1'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1650.0 ns  TB seq.                        tracked_value = -10, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #14  ***
+UVVM:          1650 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-10) was not one of '0'/'1'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1700.0 ns  TB seq.                        allowed_values = (-2147483647, 2147483647)
+UVVM: ID_UVVM_ASSERTION               1710.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was -2147483647. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    1750.0 ns  TB seq.                        tracked_value = -2147483646, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #15  ***
+UVVM:          1750 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-2147483646) was not one of '-2147483647'/'2147483647'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1800.0 ns  TB seq.                        tracked_value = 2147483646, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #16  ***
+UVVM:          1800 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (2147483646) was not one of '-2147483647'/'2147483647'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1850.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (integer)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1850.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION               1860.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               1870.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION               1880.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION               1890.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1980.0 ns  TB seq.                        Testing Normal Operation (real)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1980.0 ns  TB seq.                        allowed_values = (0.0, 1.0)
+UVVM: ID_SEQUENCER                    1980.0 ns  TB seq.                        tracked_value = 0.0
+UVVM: ID_UVVM_ASSERTION               1980.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    2020.0 ns  TB seq.                        tracked_value = 1.0
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2060.0 ns  TB seq.                        Testing Triggering Assertion (real)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2060.0 ns  TB seq.                        tracked_value = 1.1, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #17  ***
+UVVM:          2060 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1.1) was not one of '0'/'1'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2110.0 ns  TB seq.                        tracked_value = -1.1, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #18  ***
+UVVM:          2110 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-1.1) was not one of '0'/'1'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2160.0 ns  TB seq.                        allowed_values = (-1.7976931348623157e307, 1.7976931348623157e307)
+UVVM: ID_UVVM_ASSERTION               2170.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was -1.79769e+307. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    2210.0 ns  TB seq.                        tracked_value = -1.7976931348623157e306, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #19  ***
+UVVM:          2210 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-1.79769e+306) was not one of '-1.79769e+307'/'1.79769e+307'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2260.0 ns  TB seq.                        tracked_value = 1.7976931348623157e306, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #20  ***
+UVVM:          2260 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1.79769e+306) was not one of '-1.79769e+307'/'1.79769e+307'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2310.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (real)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2310.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION               2320.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               2330.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION               2340.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION               2350.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2440.0 ns  TB seq.                        Testing Normal Operation (time)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2440.0 ns  TB seq.                        allowed_values = (0 ns, 1 ns)
+UVVM: ID_SEQUENCER                    2440.0 ns  TB seq.                        tracked_value = 0 ns
+UVVM: ID_UVVM_ASSERTION               2440.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0 ns. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    2480.0 ns  TB seq.                        tracked_value = 1 ns
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2520.0 ns  TB seq.                        Testing Triggering Assertion (time)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2520.0 ns  TB seq.                        tracked_value = 2 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #21  ***
+UVVM:          2520 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (2 ns) was not one of '0 ns'/'1 ns'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2570.0 ns  TB seq.                        tracked_value = -2 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #22  ***
+UVVM:          2570 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-2 ns) was not one of '0 ns'/'1 ns'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2620.0 ns  TB seq.                        allowed_values = (-2147483647 ns, 2147483647 ns)
+UVVM: ID_UVVM_ASSERTION               2630.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was -2147483647 ns. Condition occurred after 0 ns.
+UVVM: ID_SEQUENCER                    2670.0 ns  TB seq.                        tracked_value = -2147483646 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #23  ***
+UVVM:          2670 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-2147483646 ns) was not one of '-2147483647 ns'/'2147483647 ns'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2720.0 ns  TB seq.                        tracked_value = 2147483646 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #24  ***
+UVVM:          2720 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (2147483646 ns) was not one of '-2147483647 ns'/'2147483647 ns'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2770.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (time)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2770.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION               2780.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0 ns. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               2790.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0 ns. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION               2800.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0 ns. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION               2810.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0 ns. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2900.0 ns  TB seq.                        Testing Normal Operation (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2900.0 ns  TB seq.                        allowed_values = ('0', '1')
+UVVM: ID_SEQUENCER                    2900.0 ns  TB seq.                        tracked_value = '0'
+UVVM: ID_UVVM_ASSERTION               2900.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    2940.0 ns  TB seq.                        tracked_value = '1'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2980.0 ns  TB seq.                        Testing Triggering Assertion (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2980.0 ns  TB seq.                        tracked_value = 'U', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #25  ***
+UVVM:          2980 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (U) was not one of '0'/'1'. Occurred after 80 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3030.0 ns  TB seq.                        tracked_value = 'X', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #26  ***
+UVVM:          3030 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'1'. Occurred after 130 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3080.0 ns  TB seq.                        tracked_value = 'Z', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #27  ***
+UVVM:          3080 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (Z) was not one of '0'/'1'. Occurred after 180 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3130.0 ns  TB seq.                        tracked_value = 'W', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #28  ***
+UVVM:          3130 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (W) was not one of '0'/'1'. Occurred after 230 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3180.0 ns  TB seq.                        tracked_value = 'L', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #29  ***
+UVVM:          3180 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (L) was not one of '0'/'1'. Occurred after 280 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3230.0 ns  TB seq.                        tracked_value = 'H', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #30  ***
+UVVM:          3230 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (H) was not one of '0'/'1'. Occurred after 330 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3280.0 ns  TB seq.                        allowed_values = ('0', 'L')
+UVVM: ID_UVVM_ASSERTION               3290.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    3330.0 ns  TB seq.                        tracked_value = 'U', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #31  ***
+UVVM:          3330 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (U) was not one of '0'/'L'. Occurred after 40 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3380.0 ns  TB seq.                        tracked_value = 'X', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #32  ***
+UVVM:          3380 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'L'. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3430.0 ns  TB seq.                        tracked_value = '1', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #33  ***
+UVVM:          3430 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1) was not one of '0'/'L'. Occurred after 140 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3480.0 ns  TB seq.                        tracked_value = 'Z', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #34  ***
+UVVM:          3480 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (Z) was not one of '0'/'L'. Occurred after 190 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3530.0 ns  TB seq.                        tracked_value = 'W', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #35  ***
+UVVM:          3530 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (W) was not one of '0'/'L'. Occurred after 240 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3580.0 ns  TB seq.                        tracked_value = 'H', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #36  ***
+UVVM:          3580 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (H) was not one of '0'/'L'. Occurred after 290 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      3630.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    3630.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION               3640.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               3650.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION               3660.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION               3670.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      3720.0 ns  TB seq.                        Testing Assertion Enable (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    3720.0 ns  TB seq.                        Assertion enabled as tracked_value is assigned, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #37  ***
+UVVM:          3720 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'1'. Occurred after 0 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    3770.0 ns  TB seq.                        Assertion enabled prior to tracked_value, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #38  ***
+UVVM:          3780 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'1'. Occurred after 0 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      3830.0 ns  TB seq.                        Testing CLK Disabled
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    3830.0 ns  TB seq.                        Clock deactivated
+UVVM: ID_SEQUENCER                    3870.0 ns  TB seq.                        Triggering assertion while clk is disabled, expecting no behavior
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      3988.0 ns  TB seq.                        Testing Normal Operation (std_logic_vector non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    3988.0 ns  TB seq.                        allowed_values = ("0000", "1111")
+UVVM: ID_SEQUENCER                    3988.0 ns  TB seq.                        tracked_value = "0000"
+UVVM: ID_UVVM_ASSERTION               3988.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    4016.0 ns  TB seq.                        tracked_value = "1111"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4052.0 ns  TB seq.                        Testing Triggering Assertion (std_logic_vector non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4052.0 ns  TB seq.                        tracked_value = "0001", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #39  ***
+UVVM:          4052 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0001) was not one of '0000'/'1111'. Occurred after 64 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4082.0 ns  TB seq.                        tracked_value = "1110", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #40  ***
+UVVM:          4082 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1110) was not one of '0000'/'1111'. Occurred after 94 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4124.0 ns  TB seq.                        allowed_values = ("LLLL", "HHHH")
+UVVM: ID_UVVM_ASSERTION               4131.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was LLLL. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    4163.0 ns  TB seq.                        tracked_value = "LLLH", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #41  ***
+UVVM:          4163 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (LLLH) was not one of 'LLLL'/'HHHH'. Occurred after 32 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4203.0 ns  TB seq.                        tracked_value = "HHHL", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #42  ***
+UVVM:          4203 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (HHHL) was not one of 'LLLL'/'HHHH'. Occurred after 72 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4240.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic_vector non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4240.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               4246.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1111. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               4253.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 7 ns. 
+UVVM: ID_UVVM_ASSERTION               4262.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1111. Condition occurred after 16 ns. 
+UVVM: ID_UVVM_ASSERTION               4271.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 25 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4329.0 ns  TB seq.                        Testing Normal Operation (unsigned non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4329.0 ns  TB seq.                        allowed_values = ("0000", "1111")
+UVVM: ID_SEQUENCER                    4329.0 ns  TB seq.                        tracked_value = "0000"
+UVVM: ID_UVVM_ASSERTION               4329.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    4365.0 ns  TB seq.                        tracked_value = "1111"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4401.0 ns  TB seq.                        Testing Triggering Assertion (unsigned non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4401.0 ns  TB seq.                        tracked_value = "0001", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #43  ***
+UVVM:          4401 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0001) was not one of '0000'/'1111'. Occurred after 72 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4436.0 ns  TB seq.                        tracked_value = "1110", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #44  ***
+UVVM:          4436 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1110) was not one of '0000'/'1111'. Occurred after 107 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4479.0 ns  TB seq.                        allowed_values = ("0101", "1010")
+UVVM: ID_UVVM_ASSERTION               4485.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0101. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    4509.0 ns  TB seq.                        tracked_value = "0000", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #45  ***
+UVVM:          4509 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0000) was not one of '0101'/'1010'. Occurred after 24 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4544.0 ns  TB seq.                        tracked_value = "1111", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #46  ***
+UVVM:          4544 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1111) was not one of '0101'/'1010'. Occurred after 59 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4576.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (unsigned non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4576.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               4585.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1111. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               4592.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 7 ns. 
+UVVM: ID_UVVM_ASSERTION               4598.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1111. Condition occurred after 13 ns. 
+UVVM: ID_UVVM_ASSERTION               4604.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 19 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4681.0 ns  TB seq.                        Testing Normal Operation (signed non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4681.0 ns  TB seq.                        allowed_values = ("0000", "1111")
+UVVM: ID_SEQUENCER                    4681.0 ns  TB seq.                        tracked_value = "0000"
+UVVM: ID_UVVM_ASSERTION               4681.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0000. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    4705.0 ns  TB seq.                        tracked_value = "1111"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4729.0 ns  TB seq.                        Testing Triggering Assertion (signed non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4729.0 ns  TB seq.                        tracked_value = "0001", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #47  ***
+UVVM:          4729 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0001) was not one of '0000'/'1111'. Occurred after 48 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4760.0 ns  TB seq.                        tracked_value = "1110", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #48  ***
+UVVM:          4760 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1110) was not one of '0000'/'1111'. Occurred after 79 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4797.0 ns  TB seq.                        allowed_values = ("0101", "1010")
+UVVM: ID_UVVM_ASSERTION               4803.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0101. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    4835.0 ns  TB seq.                        tracked_value = "0000", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #49  ***
+UVVM:          4835 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (0000) was not one of '0101'/'1010'. Occurred after 32 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    4866.0 ns  TB seq.                        tracked_value = "1111", expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #50  ***
+UVVM:          4866 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1111) was not one of '0101'/'1010'. Occurred after 63 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4901.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (signed non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4901.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               4907.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1111. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               4915.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 8 ns. 
+UVVM: ID_UVVM_ASSERTION               4923.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1111. Condition occurred after 16 ns. 
+UVVM: ID_UVVM_ASSERTION               4929.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0000. Condition occurred after 22 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5009.0 ns  TB seq.                        Testing Normal Operation (integer non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5009.0 ns  TB seq.                        allowed_values = (0, 1)
+UVVM: ID_SEQUENCER                    5009.0 ns  TB seq.                        tracked_value = 0
+UVVM: ID_UVVM_ASSERTION               5009.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    5041.0 ns  TB seq.                        tracked_value = 1
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5073.0 ns  TB seq.                        Testing Triggering Assertion (integer non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5073.0 ns  TB seq.                        tracked_value = 10, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #51  ***
+UVVM:          5073 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (10) was not one of '0'/'1'. Occurred after 64 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5110.0 ns  TB seq.                        tracked_value = -10, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #52  ***
+UVVM:          5110 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-10) was not one of '0'/'1'. Occurred after 101 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5151.0 ns  TB seq.                        allowed_values = (-2147483647, 2147483647)
+UVVM: ID_UVVM_ASSERTION               5160.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was -2147483647. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    5192.0 ns  TB seq.                        tracked_value = -2147483646, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #53  ***
+UVVM:          5192 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-2147483646) was not one of '-2147483647'/'2147483647'. Occurred after 32 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5234.0 ns  TB seq.                        tracked_value = 2147483646, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #54  ***
+UVVM:          5234 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (2147483646) was not one of '-2147483647'/'2147483647'. Occurred after 74 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5265.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (integer non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5265.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               5271.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               5279.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 8 ns. 
+UVVM: ID_UVVM_ASSERTION               5287.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1. Condition occurred after 16 ns. 
+UVVM: ID_UVVM_ASSERTION               5293.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 22 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5373.0 ns  TB seq.                        Testing Normal Operation (real non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5373.0 ns  TB seq.                        allowed_values = (0.0, 1.0)
+UVVM: ID_SEQUENCER                    5373.0 ns  TB seq.                        tracked_value = 0.0
+UVVM: ID_UVVM_ASSERTION               5373.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    5397.0 ns  TB seq.                        tracked_value = 1.0
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5429.0 ns  TB seq.                        Testing Triggering Assertion (real non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5429.0 ns  TB seq.                        tracked_value = 1.1, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #55  ***
+UVVM:          5429 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1.1) was not one of '0'/'1'. Occurred after 56 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5466.0 ns  TB seq.                        tracked_value = -1.1, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #56  ***
+UVVM:          5466 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-1.1) was not one of '0'/'1'. Occurred after 93 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5509.0 ns  TB seq.                        allowed_values = (-1.7976931348623157e307, 1.7976931348623157e307)
+UVVM: ID_UVVM_ASSERTION               5515.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was -1.79769e+307. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    5539.0 ns  TB seq.                        tracked_value = -1.7976931348623157e306, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #57  ***
+UVVM:          5539 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-1.79769e+306) was not one of '-1.79769e+307'/'1.79769e+307'. Occurred after 24 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5570.0 ns  TB seq.                        tracked_value = 1.7976931348623157e306, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #58  ***
+UVVM:          5570 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1.79769e+306) was not one of '-1.79769e+307'/'1.79769e+307'. Occurred after 55 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5607.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (real non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5607.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               5615.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               5621.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 6 ns. 
+UVVM: ID_UVVM_ASSERTION               5629.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1. Condition occurred after 14 ns. 
+UVVM: ID_UVVM_ASSERTION               5635.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 20 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5695.0 ns  TB seq.                        Testing Normal Operation (time non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5695.0 ns  TB seq.                        allowed_values = (0 ns, 1 ns)
+UVVM: ID_SEQUENCER                    5695.0 ns  TB seq.                        tracked_value = 0 ns
+UVVM: ID_UVVM_ASSERTION               5695.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0 ns. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    5723.0 ns  TB seq.                        tracked_value = 1 ns
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5759.0 ns  TB seq.                        Testing Triggering Assertion (time non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5759.0 ns  TB seq.                        tracked_value = 2 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #59  ***
+UVVM:          5759 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (2 ns) was not one of '0 ns'/'1 ns'. Occurred after 64 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5792.0 ns  TB seq.                        tracked_value = -2 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #60  ***
+UVVM:          5792 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-2 ns) was not one of '0 ns'/'1 ns'. Occurred after 97 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5830.0 ns  TB seq.                        allowed_values = (-2147483647 ns, 2147483647 ns)
+UVVM: ID_UVVM_ASSERTION               5838.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was -2147483647 ns. Condition occurred after 0 ns.
+UVVM: ID_SEQUENCER                    5870.0 ns  TB seq.                        tracked_value = -2147483646 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #61  ***
+UVVM:          5870 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (-2147483646 ns) was not one of '-2147483647 ns'/'2147483647 ns'. Occurred after 32 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5913.0 ns  TB seq.                        tracked_value = 2147483646 ns, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #62  ***
+UVVM:          5913 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (2147483646 ns) was not one of '-2147483647 ns'/'2147483647 ns'. Occurred after 75 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5953.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (time non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5953.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               5962.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1 ns. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               5970.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0 ns. Condition occurred after 8 ns. 
+UVVM: ID_UVVM_ASSERTION               5977.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1 ns. Condition occurred after 15 ns. 
+UVVM: ID_UVVM_ASSERTION               5984.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0 ns. Condition occurred after 22 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      6057.0 ns  TB seq.                        Testing Normal Operation (std_logic non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    6057.0 ns  TB seq.                        allowed_values = ('0', '1')
+UVVM: ID_SEQUENCER                    6057.0 ns  TB seq.                        tracked_value = '0'
+UVVM: ID_UVVM_ASSERTION               6057.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    6089.0 ns  TB seq.                        tracked_value = '1'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      6121.0 ns  TB seq.                        Testing Triggering Assertion (std_logic non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    6121.0 ns  TB seq.                        tracked_value = 'U', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #63  ***
+UVVM:          6121 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (U) was not one of '0'/'1'. Occurred after 64 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6159.0 ns  TB seq.                        tracked_value = 'X', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #64  ***
+UVVM:          6159 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'1'. Occurred after 102 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6211.0 ns  TB seq.                        tracked_value = 'Z', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #65  ***
+UVVM:          6211 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (Z) was not one of '0'/'1'. Occurred after 154 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6255.0 ns  TB seq.                        tracked_value = 'W', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #66  ***
+UVVM:          6255 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (W) was not one of '0'/'1'. Occurred after 198 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6301.0 ns  TB seq.                        tracked_value = 'L', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #67  ***
+UVVM:          6301 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (L) was not one of '0'/'1'. Occurred after 244 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6337.0 ns  TB seq.                        tracked_value = 'H', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #68  ***
+UVVM:          6337 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (H) was not one of '0'/'1'. Occurred after 280 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6375.0 ns  TB seq.                        allowed_values = ('0', 'L')
+UVVM: ID_UVVM_ASSERTION               6382.0 ns  TB seq.(uvvm)                  assert_one_of() => OK (first), tracked_value was 0. Condition occurred after 0 ns. 
+UVVM: ID_SEQUENCER                    6414.0 ns  TB seq.                        tracked_value = 'U', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #69  ***
+UVVM:          6414 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (U) was not one of '0'/'L'. Occurred after 32 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6464.0 ns  TB seq.                        tracked_value = 'X', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #70  ***
+UVVM:          6464 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'L'. Occurred after 82 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6514.0 ns  TB seq.                        tracked_value = '1', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #71  ***
+UVVM:          6514 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (1) was not one of '0'/'L'. Occurred after 132 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6564.0 ns  TB seq.                        tracked_value = 'Z', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #72  ***
+UVVM:          6564 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (Z) was not one of '0'/'L'. Occurred after 182 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6614.0 ns  TB seq.                        tracked_value = 'W', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #73  ***
+UVVM:          6614 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (W) was not one of '0'/'L'. Occurred after 232 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6664.0 ns  TB seq.                        tracked_value = 'H', expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #74  ***
+UVVM:          6664 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (H) was not one of '0'/'L'. Occurred after 282 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      6714.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    6714.0 ns  TB seq.                        Expecting a positive acknowledge on each legal signal change
+UVVM: ID_UVVM_ASSERTION               6721.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               6727.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 6 ns. 
+UVVM: ID_UVVM_ASSERTION               6733.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 1. Condition occurred after 12 ns. 
+UVVM: ID_UVVM_ASSERTION               6742.0 ns  TB seq.(uvvm)                  assert_one_of() => OK, tracked_value was 0. Condition occurred after 21 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      6773.0 ns  TB seq.                        Testing Assertion Enable (std_logic non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    6773.0 ns  TB seq.                        Assertion enabled as tracked_value is assigned, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #75  ***
+UVVM:          6773 ns   TB seq.(uvvm)
+UVVM:                    assert_one_of() => Failed, tracked_value (X) was not one of '0'/'1'. Occurred after 0 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :     75        75         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      6816.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

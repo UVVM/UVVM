@@ -491,7 +491,6 @@ package body td_vvc_framework_common_methods_pkg is
     constant proc_call_short : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel) -- First part common for all
                                          & ", " & to_string(timeout, ns) & ")";
     variable v_msg_id_panel                 : t_msg_id_panel                         := shared_msg_id_panel;
-    variable v_local_cmd_idx                : integer;
     variable v_proc_call                    : line;
     variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM    := 0;
@@ -528,8 +527,8 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is registered use the new mechanism
     if v_num_vvc_instances > 0 then
-      add_to_vvc_list(vvc_target, vvc_instance_idx, vvc_channel, v_vvc_list, scope, v_msg_id_panel);
-      await_completion(ALL_OF, v_vvc_list, wanted_idx, timeout, CLEAR_LIST, msg, scope, v_msg_id_panel);
+      v_vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, vvc_channel, scope, v_msg_id_panel, ID_NEVER);
+      await_completion(ALL_OF, v_vvc_list, wanted_idx, timeout, CLEAR_LIST, msg, scope, v_msg_id_panel, v_proc_call.all);
     -- If the VVC is not registered use the old mechanism
     else
       log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, v_msg_id_panel);
@@ -858,7 +857,7 @@ package body td_vvc_framework_common_methods_pkg is
     if v_fetch_is_accepted then
       log(ID_UVVM_CMD_RESULT, proc_call & ": Legal=>" & to_string(v_fetch_is_accepted) & ", Result=>" & to_string(result) & format_command_idx(shared_cmd_idx), scope, v_msg_id_panel); -- Get and ack the new command
     else
-      alert(alert_level, "fetch_result(" & to_string(wanted_idx) & "): " & add_msg_delimiter(msg) & "." & " Failed. Trying to fetch result from not yet executed command or from command with no result stored.  " & format_command_idx(shared_cmd_idx), scope);
+      alert(alert_level, "fetch_result(" & to_string(wanted_idx) & "):" & add_msg_delimiter(msg) & "." & " Failed. Trying to fetch result from not yet executed command or from command with no result stored.  " & format_command_idx(shared_cmd_idx), scope);
     end if;
   end procedure;
 

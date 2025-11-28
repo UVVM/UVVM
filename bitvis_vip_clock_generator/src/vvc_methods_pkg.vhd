@@ -9,9 +9,10 @@
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
---========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
---========================================================================================================================
+
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -96,20 +97,11 @@ package vvc_methods_pkg is
   type t_transaction_info is record
     operation : t_operation;
     msg       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    --<USER_INPUT> Fields that could be useful to track in the waveview can be placed in this record.
-    -- Example:
-    -- addr            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    -- data            : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
   end record;
 
   type t_transaction_info_array is array (natural range <>) of t_transaction_info;
 
   constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    --<USER_INPUT> Set the data fields added to the t_transaction_info record to
-    -- their default values here.
-    -- Example:
-    -- addr                => (others => '0'),
-    -- data                => (others => '0'),
     operation => NO_OPERATION,
     msg       => (others => ' ')
   );

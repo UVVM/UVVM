@@ -187,15 +187,15 @@ begin
     -- print report of counters
     v_uart_sb.report_counters(VOID);
 
-    --==================================================================================================
+    -----------------------------------------------------------------------------
     -- Ending the simulation
-    --------------------------------------------------------------------------------------
-    wait for 1000 ns;                   -- to allow some time for completion
-    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
+    -----------------------------------------------------------------------------
+    await_sb_completion(1000 ns, print_alert_counters => REPORT_ALERT_COUNTERS_FINAL, scope => C_SCOPE);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
-    std.env.stop;
-    wait;
 
+    -- Finish the simulation
+    std.env.stop;
+    wait;                               -- to stop completely
   end process;
 
 end architecture func;

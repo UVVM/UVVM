@@ -31,14 +31,15 @@ entity uvvm_assertions_demo_th is
     clock_ena                 : in  std_logic := '0';
     assert_value_ena          : in  std_logic := '0';
     assert_value_in_range_ena : in  std_logic := '0';
-    assert_one_hot_ena        : in  std_logic := '0'
+    assert_one_hot_ena        : in  std_logic := '0';
+    assert_window_1_ena       : in  std_logic := '0';
+    assert_window_2_ena       : in  std_logic := '0'
   );
 end entity uvvm_assertions_demo_th;
 
 architecture func of uvvm_assertions_demo_th is
   signal clk            : std_logic := '0';
   signal rst            : std_logic := '1';
-  signal always_high    : std_logic := '1';
 
   -- DUT 1 - dummy_counter
   signal count          : std_logic_vector(7 downto 0);
@@ -48,6 +49,24 @@ architecture func of uvvm_assertions_demo_th is
   -- DUT 2 - one_hot_in_range_generator
   signal one_hot        : unsigned(31 downto 0);
   signal one_hot_slv    : std_logic_vector(one_hot'range);
+
+  -- DUT 3 - dummy_data_bus
+  signal data_out_dut3       : std_logic_vector(7 downto 0);
+  signal data_vld_dut3       : std_logic := '0';
+  signal packet_start_dut3   : std_logic := '0';
+  signal packet_end_dut3     : std_logic := '0';
+  signal bus_end_dut3        : std_logic := '0';
+
+  signal assert_data_bus_one_hot_ena : std_logic := '1';
+
+  -- DUT 4 - dummy_data_bus
+  signal data_out_dut4       : std_logic_vector(7 downto 0);
+  signal data_vld_dut4       : std_logic := '0';
+  signal packet_start_dut4   : std_logic := '0';
+  signal packet_end_dut4     : std_logic := '0';
+  signal bus_end_dut4        : std_logic := '0';
+
+
 begin
   -- Simple clock generator (to not be reliant on library bitvis_vip_clock_generator)
   clk <= not clk after GC_CLK_PERIOD / 2 when clock_ena = '1' else clk;
@@ -85,5 +104,71 @@ begin
   one_hot_slv <= std_logic_vector(one_hot); -- UVVM assert_one_hot only takes in slv, so convert unsigned to std_logic_vector
   -- UVVM assertion for checking if a signal is one-hot (ALL_ZERO_NOT_ALLOWED being default and not specified)
   assert_one_hot(clk, assert_one_hot_ena, one_hot_slv, "DUT 2 signal should always be one-hot");
+
+  i_dut_3 : entity work.dummy_data_bus
+  generic map (
+      GC_DATA_WIDTH    => 8,
+      GC_PACKET_LENGTH => 10,
+      GC_NUM_PACKETS   => 100
+  )
+  port map (
+      clk                  => clk,
+      rst                  => rst,
+      packet_read_ena      => '1', -- this will cause the DUT to start a new packet when previous packet is done (with 3 clk cycles delay)
+      data_out             => data_out_dut3,
+      data_vld             => data_vld_dut3,
+      packet_start         => packet_start_dut3,
+      packet_end           => packet_end_dut3,
+      bus_end              => bus_end_dut3
+  );
+
+  -- UVVM assertion for checking if a signal is one-hot
+  assert_data_bus_one_hot_ena <= assert_window_1_ena and data_vld_dut3;
+  -- This assertion pos ack is set using "ID_POS_ACK" so it will not display (among the IDs which is disabled) unless it fails
+  assert_one_hot(clk, assert_data_bus_one_hot_ena, data_out_dut3, "DUT 3 signal should always be one-hot", ERROR, msg_id => ID_POS_ACK);
+
+  -- UVVM assertion that will check the `bus_end_dut3` signal comes high within a certain number of clock cycles after `packet_start_dut3` goes high
+  assert_change_to_value_from_min_to_max_cycles_after_trigger(
+    clk             => clk,
+    ena             => assert_window_1_ena,
+    tracked_value   => bus_end_dut3,
+    trigger         => packet_start_dut3,
+    min_cycles      => 1,     -- Must have 1 cycle min (because a CHANGE must require a non '1' as previous value)
+    max_cycles      => 10*100 + 2, -- (GC_PACKET_LENGTH*GC_NUM_PACKETS + 2) to allow for some margin in the DUT
+    exp_value       => '1',
+    msg             => "'bus_end_dut3' did not go high within expected number of cycles after 'packet_start_dut3'",
+    alert_level     => ERROR
+  );
+
+
+  i_dut_4 : entity work.dummy_data_bus
+  generic map (
+      GC_DATA_WIDTH    => 8,
+      GC_PACKET_LENGTH => 500, -- using one giant packet to test using two triggers
+      GC_NUM_PACKETS   => 1
+  )
+  port map (
+      clk                  => clk,
+      rst                  => rst,
+      packet_read_ena      => '1', -- this will cause the DUT to start a new packet when previous packet is done (with 3 clk cycles delay)
+      data_out             => data_out_dut4,
+      data_vld             => data_vld_dut4,
+      packet_start         => packet_start_dut4,
+      packet_end           => packet_end_dut4,
+      bus_end              => bus_end_dut4
+  );
+
+  assert_change_to_value_from_start_to_end_trigger(
+      clk               => clk,
+      ena               => assert_window_2_ena,
+      tracked_value     => packet_end_dut4,
+      start_trigger     => packet_start_dut4,
+      end_trigger       => bus_end_dut4,
+      exp_value         => '1',
+      msg               => "packet_end_dut4 did not go high within 'packet_start_dut4' to 'bus_end_dut4' window",
+      alert_level       => TB_ERROR,
+      pos_ack_kind      => FIRST
+  );
+
 
 end architecture func;

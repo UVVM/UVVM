@@ -1,6 +1,13 @@
 UVVM Assertions Library - Overview on Versions and Changes
 ==============================================================
 
+v0.1.1 BETA
+----------
+Released: 2025-11-28
+- Modified mention (and definition) of C_MAX_CYCLES to use C_WINDOW_ASSERTIONS_MAX_CYCLES from adaptations_pkg.
+- Added C_WINDOW_ASSERTIONS_MAX_CYCLES range guard to trigger->trigger (sl) overload as well as more pipeline numbering in log.
+- Added two uses of window assertions to demo tb.
+
 v0.1.0 BETA
 ----------
 Released: 2025-09-17

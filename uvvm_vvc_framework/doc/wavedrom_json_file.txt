@@ -1,0 +1,7 @@
+{signal: [
+  {name: 'SBI VVC', wave: '3..x...|....|......|3..3..x', data: ['1. sbi_write', '8. sbi_check', '9. sbi_check']},
+  {name: 'UART RX VVC', wave: '4......|...x|......|.......', data: ['2. uart_expect']},
+  {name: 'UART TX VVC', wave: '4......|4...|4.....|x......', data: ['3. uart_transmit', '4. insert_delay', '5. uart_transmit']},
+  {name: 'DUT UART TX', wave: 'x...5..|...x|......|.......', data: ['                           transmitting']},
+  {name: 'DUT UART RX', wave: '5......|x...|5.....|x......', data: ['receiving', 'receiving']}
+]}

@@ -37,6 +37,7 @@ package uart_bfm_pkg is
   constant C_BFM_SCOPE : string := "UART BFM";
 
   constant C_DATA_MAX_LENGTH                       : natural := 8;
+  constant C_DEFAULT_TIMEOUT                       : natural := 100; -- This value should cover the transmission of a byte frame
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR : string  := "; ";
   type uart_expect_received_data_array is array (natural range <>) of std_logic_vector(C_DATA_MAX_LENGTH - 1 downto 0);
 
@@ -51,29 +52,29 @@ package uart_bfm_pkg is
   );
 
   type t_uart_bfm_config is record
-    bit_time                              : time; -- The time it takes to transfer one bit
-    num_data_bits                         : natural range 7 to 8; -- Number of data bits to send per transmission
-    idle_state                            : std_logic; -- Bit value when line is idle
-    num_stop_bits                         : t_stop_bits; -- Number of stop-bits to use per transmission {STOP_BITS_ONE, STOP_BITS_ONE_AND_HALF, STOP_BITS_TWO}
-    parity                                : t_parity; -- Transmission parity bit {PARITY_NONE, PARITY_ODD, PARITY_EVEN}
-    timeout                               : time; -- The maximum time to pass before the expected data must be received. Exceeding this limit results in an alert with severity ‘alert_level’.
-    timeout_severity                      : t_alert_level; -- The above timeout will have this severity
-    num_bytes_to_log_before_expected_data : natural; -- Maximum number of bytes to save ahead of the expected data in the receive buffer. The bytes in the receive buffer will be logged.
-    match_strictness                      : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    id_for_bfm                            : t_msg_id; -- The message ID used as a general message ID in the UART BFM
-    id_for_bfm_wait                       : t_msg_id; -- The message ID used for logging waits in the UART BFM
-    id_for_bfm_poll                       : t_msg_id; -- The message ID used for logging polling in the UART BFM -- DEPRECATE: will be removed
-    id_for_bfm_poll_summary               : t_msg_id; -- The message ID used for logging polling summary in the UART BFM
+    bit_time                              : time;                  -- The time it takes to transfer one bit
+    num_data_bits                         : natural range 7 to 8;  -- Number of data bits to send per transmission
+    idle_state                            : std_logic;             -- Bit value when line is idle
+    num_stop_bits                         : t_stop_bits;           -- Number of stop-bits to use per transmission {STOP_BITS_ONE, STOP_BITS_ONE_AND_HALF, STOP_BITS_TWO}
+    parity                                : t_parity;              -- Transmission parity bit {PARITY_NONE, PARITY_ODD, PARITY_EVEN}
+    timeout                               : time;                  -- The maximum time to pass before the expected data must be received. A value of 0 means it will never time out.
+    timeout_severity                      : t_alert_level;         -- The above timeout will have this severity
+    num_bytes_to_log_before_expected_data : natural;               -- Maximum number of bytes to save ahead of the expected data in the receive buffer. The bytes in the receive buffer will be logged.
+    match_strictness                      : t_match_strictness;    -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm                            : t_msg_id;              -- The message ID used as a general message ID in the UART BFM
+    id_for_bfm_wait                       : t_msg_id;              -- The message ID used for logging waits in the UART BFM
+    id_for_bfm_poll                       : t_msg_id;              -- DEPRECATED: will be removed in v3
+    id_for_bfm_poll_summary               : t_msg_id;              -- The message ID used for logging polling summary in the UART BFM
     error_injection                       : t_bfm_error_injection;
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
-    bit_time                              => -1 ns,
+    bit_time                              => C_UNDEFINED_TIME,
     num_data_bits                         => 8,
     idle_state                            => '1',
     num_stop_bits                         => STOP_BITS_ONE,
     parity                                => PARITY_ODD,
-    timeout                               => 0 ns, -- will default never time out
+    timeout                               => C_UNDEFINED_TIME, -- Default value is calculated in the uart_receive/uart_expect procedures using the configured bit_time
     timeout_severity                      => error,
     num_bytes_to_log_before_expected_data => 10,
     match_strictness                      => MATCH_EXACT,
@@ -138,7 +139,7 @@ package uart_bfm_pkg is
     signal   rx             : in std_logic;
     signal   terminate_loop : in std_logic;
     constant max_receptions : in natural           := 1;
-    constant timeout        : in time              := -1 ns;
+    constant timeout        : in time              := C_UNDEFINED_TIME;
     constant alert_level    : in t_alert_level     := ERROR;
     constant config         : in t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope          : in string            := C_BFM_SCOPE;
@@ -181,7 +182,7 @@ package body uart_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel
   ) is
     constant proc_name : string := "uart_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_data_value      : std_logic_vector(config.num_data_bits - 1 downto 0);
     variable v_normalized_data : std_logic_vector(config.num_data_bits - 1 downto 0) := normalize_and_check(data_value, v_data_value, ALLOW_WIDER_NARROWER, "data_value", "v_data_value", "Normalize data_value");
@@ -191,11 +192,11 @@ package body uart_bfm_pkg is
 
   begin
     -- check whether config.bit_time was set probably
-    check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
-    check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits. " & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    check_value(config.bit_time /= C_UNDEFINED_TIME, TB_ERROR, "UART Bit time was not set in config." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+    check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- check if tx line was idle when trying to transmit data
-    check_value(tx, config.idle_state, FAILURE, proc_call & " Bus was active when trying to send data. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+    check_value(tx, config.idle_state, FAILURE, proc_call & " Bus was active when trying to send data." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     tx <= not config.idle_state;
     wait for config.bit_time;
@@ -242,7 +243,7 @@ package body uart_bfm_pkg is
       wait for config.bit_time;
     end if;
 
-    log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
   ---------------------------------------------------------------------------------
@@ -266,21 +267,30 @@ package body uart_bfm_pkg is
     constant local_proc_call : string := local_proc_name & "()";
 
     -- Helper variables
-    variable v_transfer_time  : time;
-    variable v_proc_call      : line;   -- Current proc_call, external or internal
-    variable v_remaining_time : time;   -- temp variable to calculate the remaining time before timeout
-    variable v_data_value     : std_logic_vector(config.num_data_bits - 1 downto 0);
-    variable v_terminated     : boolean := false;
-    variable v_timeout        : boolean := false;
+    variable v_transfer_time    : time;
+    variable v_proc_call        : line;   -- Current proc_call, external or internal
+    variable v_remaining_time   : time;   -- temp variable to calculate the remaining time before timeout
+    variable v_data_value       : std_logic_vector(config.num_data_bits - 1 downto 0);
+    variable v_terminated       : boolean := false;
+    variable v_internal_timeout : time;
+    variable v_timeout          : boolean := false;
   begin
-    -- check whether config.bit_time was set properly
-    check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    -- Check whether config.bit_time was set properly
+    check_value(config.bit_time /= C_UNDEFINED_TIME, TB_ERROR, "UART Bit time was not set in config." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+
+    -- Choose which timeout to use and check it was set properly
+    if config.timeout /= C_UNDEFINED_TIME then
+      v_internal_timeout := config.timeout;
+    else
+      v_internal_timeout := config.bit_time * C_DEFAULT_TIMEOUT;
+    end if;
+    check_value(v_internal_timeout >= 0 ns, TB_FAILURE, "configured negative timeout (not allowed)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     data_value := (data_value'range => 'X');
-    check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits. " & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- If timeout enabled, check that timeout is longer than transfer time
-    if config.timeout /= 0 ns then
+    if v_internal_timeout /= 0 ns then
       v_transfer_time := (config.num_data_bits + 2) * config.bit_time;
       if config.parity = PARITY_ODD or config.parity = PARITY_EVEN then
         v_transfer_time := v_transfer_time + config.bit_time;
@@ -290,7 +300,7 @@ package body uart_bfm_pkg is
       elsif config.num_stop_bits = STOP_BITS_TWO then
         v_transfer_time := v_transfer_time + config.bit_time;
       end if;
-      check_value(v_transfer_time < config.timeout, TB_ERROR, "Length of timeout is shorter than or equal length of transfer time.", C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+      check_value(v_transfer_time < v_internal_timeout, TB_ERROR, "Length of timeout is shorter than or equal length of transfer time.", scope, ID_NEVER, msg_id_panel);
     end if;
 
     if ext_proc_call = "" then
@@ -302,13 +312,13 @@ package body uart_bfm_pkg is
     end if;
 
     -- check if bus is in idle state
-    check_value(rx, config.idle_state, FAILURE, v_proc_call.all & "Bus was active when trying to receive data. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+    check_value(rx, config.idle_state, FAILURE, v_proc_call.all & "Bus was active when trying to receive data." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- wait until the start bit is sent on the bus, configured timeout occures or procedure get terminate signal
-    if config.timeout = 0 ns then
+    if v_internal_timeout = 0 ns then
       wait until (rx = not config.idle_state) or (terminate_loop = '1');
     else
-      wait until (rx = not config.idle_state) or (terminate_loop = '1') for config.timeout;
+      wait until (rx = not config.idle_state) or (terminate_loop = '1') for v_internal_timeout;
     end if;
 
     if terminate_loop = '1' then
@@ -321,7 +331,7 @@ package body uart_bfm_pkg is
     end if;
 
     -- if configured timeout, check if there is enough time remaining to receive the byte
-    if config.timeout /= 0 ns and not v_terminated then
+    if v_internal_timeout /= 0 ns and not v_terminated then
       v_remaining_time := (config.num_data_bits + 2) * config.bit_time;
       if config.parity = PARITY_ODD or config.parity = PARITY_EVEN then
         v_remaining_time := v_remaining_time + config.bit_time;
@@ -331,11 +341,11 @@ package body uart_bfm_pkg is
       elsif config.num_stop_bits = STOP_BITS_TWO then
         v_remaining_time := v_remaining_time + config.bit_time;
       end if;
-      if now + v_remaining_time > start_time + config.timeout then
+      if now + v_remaining_time > start_time + v_internal_timeout then
         -- wait until timeout
-        wait for ((start_time + config.timeout) - now);
+        wait for ((start_time + v_internal_timeout) - now);
         if ext_proc_call = "" then
-          alert(config.timeout_severity, v_proc_call.all & "=> timeout. " & add_msg_delimiter(msg), scope);
+          alert(config.timeout_severity, v_proc_call.all & "=> Failed. Timeout after " & to_string(v_internal_timeout, ns) & "." & add_msg_delimiter(msg), scope);
         else
         -- timeout handled in upper module
         end if;
@@ -346,7 +356,7 @@ package body uart_bfm_pkg is
     if not v_terminated and not v_timeout then
       -- enter the middle of the bit period
       wait for config.bit_time / 2;
-      check_value(rx, not config.idle_state, FAILURE, v_proc_call.all & " Start bit was not stable during receiving. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+      check_value(rx, not config.idle_state, FAILURE, v_proc_call.all & " Start bit was not stable during receiving." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
       -- wait for data bit
       wait for config.bit_time;
       -- sample the data bits
@@ -359,37 +369,37 @@ package body uart_bfm_pkg is
       -- check parity, if enabled
       if config.parity = PARITY_ODD then
         if rx /= odd_parity(v_data_value) then
-          alert(error, v_proc_call.all & "=> Failed. Incorrect parity received. " & add_msg_delimiter(msg), scope);
+          alert(error, v_proc_call.all & "=> Failed. Incorrect parity received." & add_msg_delimiter(msg), scope);
         end if;
         wait for config.bit_time;
       elsif config.parity = PARITY_EVEN then
         if rx /= not odd_parity(v_data_value) then
-          alert(error, v_proc_call.all & "=> Failed. Incorrect parity received. " & add_msg_delimiter(msg), scope);
+          alert(error, v_proc_call.all & "=> Failed. Incorrect parity received." & add_msg_delimiter(msg), scope);
         end if;
         wait for config.bit_time;
       end if;
 
       -- check the stop bit
       if rx /= config.idle_state then
-        alert(error, v_proc_call.all & "=> Failed. Incorrect stop bit received. " & add_msg_delimiter(msg), scope);
+        alert(error, v_proc_call.all & "=> Failed. Incorrect stop bit received." & add_msg_delimiter(msg), scope);
       end if;
 
       if config.num_stop_bits = STOP_BITS_ONE_AND_HALF then
         wait for config.bit_time / 2 + config.bit_time / 4; -- middle of the last half. Last half of previous stop bit + first half of current stop bit
         if rx /= config.idle_state then
-          alert(error, v_proc_call.all & "=> Failed. Incorrect second half stop bit received. " & add_msg_delimiter(msg), scope);
+          alert(error, v_proc_call.all & "=> Failed. Incorrect second half stop bit received." & add_msg_delimiter(msg), scope);
         end if;
       elsif config.num_stop_bits = STOP_BITS_TWO then
         wait for config.bit_time;       -- middle of the last bit. Last half of previous stop bit + first half of current stop bit
         if rx /= config.idle_state then
-          alert(error, v_proc_call.all & "=> Failed. Incorrect second stop bit received. " & add_msg_delimiter(msg), scope);
+          alert(error, v_proc_call.all & "=> Failed. Incorrect second stop bit received." & add_msg_delimiter(msg), scope);
         end if;
       end if;
 
       -- return the received data
       data_value := v_data_value;
       if ext_proc_call = "" then
-        log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       else
       -- Log will be handled by calling procedure (e.g. uart_expect)
       end if;
@@ -408,14 +418,14 @@ package body uart_bfm_pkg is
     signal   rx             : in std_logic;
     signal   terminate_loop : in std_logic;
     constant max_receptions : in natural           := 1; -- 0 = any occurrence before timeout
-    constant timeout        : in time              := -1 ns;
+    constant timeout        : in time              := C_UNDEFINED_TIME;
     constant alert_level    : in t_alert_level     := ERROR;
     constant config         : in t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope          : in string            := C_BFM_SCOPE;
     constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel
   ) is
     constant proc_name                      : string                                                                                   := "uart_expect";
-    constant proc_call                      : string                                                                                   := proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call                      : string                                                                                   := proc_name & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant start_time                     : time                                                                                     := now;
     variable v_data_value                   : std_logic_vector(config.num_data_bits - 1 downto 0);
     variable v_normalized_data              : std_logic_vector(config.num_data_bits - 1 downto 0)                                      := normalize_and_check(data_exp, v_data_value, ALLOW_WIDER_NARROWER, "data_exp", "v_data_value", "Normalize data_exp");
@@ -430,20 +440,24 @@ package body uart_bfm_pkg is
     variable v_internal_timeout             : time;
     variable v_alert_radix                  : t_radix;
   begin
-    -- check whether config.bit_time was set probably
-    check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    -- Check whether config.bit_time was set probably
+    check_value(config.bit_time /= C_UNDEFINED_TIME, TB_ERROR, "UART Bit time was not set in config." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
-    -- if timeout = -1 function was called without parameter
-    if timeout = -1 ns then
-      v_internal_timeout := config.timeout;
-    else
+    -- Choose which timeout to use and check it was set properly
+    if timeout /= C_UNDEFINED_TIME then
       v_internal_timeout := timeout;
+    elsif config.timeout /= C_UNDEFINED_TIME then
+      v_internal_timeout := config.timeout;
+    elsif max_receptions = 0 then
+      v_internal_timeout := config.bit_time * C_DEFAULT_TIMEOUT;
+    else
+      v_internal_timeout := config.bit_time * C_DEFAULT_TIMEOUT * max_receptions;
     end if;
-    assert (v_internal_timeout >= 0 ns) report "configured negative timeout(not allowed). " & add_msg_delimiter(msg) severity failure;
+    check_value(v_internal_timeout >= 0 ns, TB_FAILURE, "Configured negative timeout (not allowed)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- Check for v_internal_timeout = 0 and max_receptions = 0. This combination can result in an infinite loop.
     if v_internal_timeout = 0 ns and max_receptions = 0 then
-      alert(ERROR, proc_name & " called with timeout=0 and max_receptions = 0. This combination can result in an infinite loop. " & add_msg_delimiter(msg), scope);
+      alert(ERROR, proc_name & " called with timeout=0 and max_receptions = 0. This combination can result in an infinite loop." & add_msg_delimiter(msg), scope);
     end if;
 
     if v_internal_timeout = 0 ns then
@@ -522,19 +536,19 @@ package body uart_bfm_pkg is
     end if;
 
     if v_check_ok then
-      log(v_config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time), ns) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(v_config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time), ns) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     elsif not v_timeout_ok then
-      alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(v_normalized_data, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout, ns) & ". " & add_msg_delimiter(msg), scope);
+      alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(v_normalized_data, HEX, KEEP_LEADING_0, INCL_RADIX) & " before time " & to_string(v_internal_timeout, ns) & "." & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       if max_receptions = 1 then
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
       else
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences." & add_msg_delimiter(msg), scope);
       end if;
     else
-      alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
+      alert(warning, proc_call & "=> Failed. Terminate loop received." & add_msg_delimiter(msg), scope);
     end if;
 
     DEALLOCATE(v_received_output_line);

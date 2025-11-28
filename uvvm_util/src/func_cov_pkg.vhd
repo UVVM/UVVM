@@ -1134,14 +1134,14 @@ package body func_cov_pkg is
     return string is
       variable v_line : line;
       impure function return_bin_type(
-        constant full_name     : string;
-        constant short_name    : string;
-        constant bin_verbosity : t_bin_type_verbosity)
+        constant full_name  : string;
+        constant short_name : string;
+        constant verbosity  : t_bin_type_verbosity)
       return string is
       begin
-        if bin_verbosity = LONG then
+        if verbosity = LONG then
           return full_name;
-        elsif bin_verbosity = SHORT then
+        elsif verbosity = SHORT then
           return short_name;
         else
           return "";
@@ -1675,7 +1675,6 @@ package body func_cov_pkg is
       variable v_ucdb_bin_index          : t_ucdb_bin_index;
       variable v_ucdb_bin_name           : string(1 to C_FC_MAX_UCDB_NAME_LENGTH);
       variable v_tmp_bin_name            : string(1 to C_FC_MAX_NAME_LENGTH);
-      variable v_bin_name_idx            : integer;
 
       -- Return the total number of bins in the bin array
       function num_bins_in_bin_array (
@@ -3382,8 +3381,6 @@ package body func_cov_pkg is
 
               DEALLOCATE(v_sample_shift_reg);
               DEALLOCATE(v_bin_values);
-            when others =>
-              alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope);
           end case;
         end loop;
 

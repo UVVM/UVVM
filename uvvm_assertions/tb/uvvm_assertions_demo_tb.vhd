@@ -32,9 +32,11 @@ end entity uvvm_assertions_demo_tb;
 architecture func of uvvm_assertions_demo_tb is
   constant C_CLK_PERIOD            : time      := 10 ns;  -- Clock period for the testbench
   -- For demonstration purposes, we will turn these on and off in the sequencer. they can be kept on if wanted (or handled by rst if desired)
-  signal assert_value_ena          : std_logic := '0';
-  signal assert_value_in_range_ena : std_logic := '0';
-  signal assert_one_hot_ena        : std_logic := '0';
+  signal assert_value_ena                     : std_logic := '0';
+  signal assert_value_in_range_ena            : std_logic := '0';
+  signal assert_one_hot_ena                   : std_logic := '0';
+  signal assert_window_min2max_after_trig_ena : std_logic := '0';
+  signal assert_window_trig2trig_ena          : std_logic := '0';
 begin
 
   -- demo test-harness containing all assertions and some DUTs
@@ -46,12 +48,19 @@ begin
       clock_ena                 => '1',  -- Enable clock for the test harness
       assert_value_ena          => assert_value_ena,
       assert_value_in_range_ena => assert_value_in_range_ena,
-      assert_one_hot_ena        => assert_one_hot_ena
+      assert_one_hot_ena        => assert_one_hot_ena,
+      assert_window_1_ena       => assert_window_min2max_after_trig_ena,
+      assert_window_2_ena       => assert_window_trig2trig_ena
     );
 
   -- Main test process
   p_main : process
   begin
+    disable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ID_SEQUENCER);
+    enable_log_msg(ID_UVVM_ASSERTION);
+    enable_log_msg(ID_LOG_HDR);
+
     log(ID_LOG_HDR, "STARTING SIMULATION", C_SCOPE);
     assert_value_ena <= '0';
     wait for 200*C_CLK_PERIOD;
@@ -68,9 +77,21 @@ begin
     assert_value_in_range_ena <= '1', '0' after 256*C_CLK_PERIOD;
     wait for 1000*C_CLK_PERIOD;
 
+    log(ID_LOG_HDR, "TESTING ASSERTION assert_change_to_value_from_min_to_max_cycles_after_trigger (expecting no error)", C_SCOPE);
+    assert_window_min2max_after_trig_ena <= '1', '0' after 10000*C_CLK_PERIOD;  -- Enable assertion checking for 1000 clock cycles
+    wait for 20000*C_CLK_PERIOD;
+
+    log(ID_LOG_HDR, "TESTING ASSERTION assert_change_to_value_from_start_to_end_trigger (expecting no error)", C_SCOPE);
+    assert_window_trig2trig_ena <= '1', '0' after 10000*C_CLK_PERIOD;  -- Enable assertion checking for 1000 clock cycles
+    wait for 20000*C_CLK_PERIOD;
+
+    -----------------------------------------------------------------------------
+    -- Ending the simulation
+    -----------------------------------------------------------------------------
+    report_alert_counters(FINAL);  -- Report final counters and print conclusion (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
-    report_alert_counters(FINAL);
+    -- Finish the simulation
     std.env.stop;
-    wait;
+    wait; -- to stop completely
   end process;
 end architecture func;

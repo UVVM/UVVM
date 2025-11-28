@@ -63,7 +63,7 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_SCOPE                     | string                       | N/A             | Scope of the HVVC-to-VVC Bridge                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_WORD_ENDIANNESS           | t_word_endianness            | LOWER_WORD_LEFT | Word endianness when converting between         |
+| GC_WORD_ENDIANNESS           | :ref:`t_word_endianness`     | LOWER_WORD_LEFT | Word endianness when converting between         |
 |                              |                              |                 | different slv array widths, e.g. LOWER_WORD_LEFT|
 |                              |                              |                 | or LOWER_WORD_RIGHT                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -160,7 +160,7 @@ sequencer until it is done.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | signal   | bridge_to_hvvc     | in     | :ref:`t_bridge_to_hvvc`      | Data transmitted from the bridge to the HVVC            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_words         | in     | t_slv_array                  | Data to be sent to the bridge                           |
+| constant | data_words         | in     | :ref:`t_slv_array`           | Data to be sent to the bridge                           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dut_if_field_idx   | in     | integer                      | Index of the interface field                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -169,7 +169,8 @@ sequencer until it is done.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope             |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. For more   |
+|          |                    |        |                              | information see :ref:`vvc_framework_verbosity_ctrl`.    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -203,7 +204,8 @@ sequencer until it is done.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope             |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. For more   |
+|          |                    |        |                              | information see :ref:`vvc_framework_verbosity_ctrl`.    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::

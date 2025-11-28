@@ -229,10 +229,13 @@ The ``multisim.mk`` Makefile include assumes that precompiled libraries are loca
 **********************************************************************************************************************************
 Further Reading
 **********************************************************************************************************************************
-We recommend that everyone new to UVVM have a look at the **Simple_TB_step_by_step.pps** and 
-**UVVM_Utility_Library_Concepts_and_Usage.pps** power point presentations located in the ``UVVM/uvvm_util/doc`` folder. There are 
-several other documents to explore and we recommend that you start reading those located in the ``UVVM/uvvm_vvc_framework/doc`` 
-folder when you feel ready to advance with the many features of UVVM.
+We recommend that everyone new to UVVM have a look at the 
+`Simple_TB_step_by_step <https://github.com/UVVM/UVVM/blob/master/uvvm_util/doc/Simple_TB_step_by_step.pps>`_ and 
+`UVVM_Utility_Library_Concepts_and_Usage <https://github.com/UVVM/UVVM/blob/master/uvvm_util/doc/UVVM_Utility_Library_Concepts_and_Usage.pps>`_ 
+power point presentations located in the ``UVVM/uvvm_util/doc`` folder. There are several other documents to explore and we 
+recommend that you start reading those located in the ``UVVM/uvvm_vvc_framework/doc`` folder when you feel ready to advance with 
+the many features of UVVM.
+
 
 We encourage the UVVM community to participate in the UVVM user forum with questions and discussions at https://forum.uvvm.org, 
 and to visit the UVVM news site at https://uvvm.org.

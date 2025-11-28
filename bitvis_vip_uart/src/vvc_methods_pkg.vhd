@@ -67,7 +67,7 @@ package vvc_methods_pkg is
 
   constant C_BIT_RATE_CHECKER_DEFAULT : t_bit_rate_checker := (
     enable      => FALSE,
-    min_period  => -1 ns,
+    min_period  => C_UNDEFINED_TIME,
     alert_level => WARNING
   );
 
@@ -197,7 +197,7 @@ package vvc_methods_pkg is
     constant data                : in std_logic_vector;
     constant msg                 : in string;
     constant max_receptions      : in natural        := 1;
-    constant timeout             : in time           := -1 ns;
+    constant timeout             : in time           := C_UNDEFINED_TIME;
     constant alert_level         : in t_alert_level  := error;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -251,8 +251,8 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+                                   & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                           := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -345,15 +345,15 @@ package body vvc_methods_pkg is
     constant data                : in std_logic_vector;
     constant msg                 : in string;
     constant max_receptions      : in natural        := 1;
-    constant timeout             : in time           := -1 ns;
+    constant timeout             : in time           := C_UNDEFINED_TIME;
     constant alert_level         : in t_alert_level  := error;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+                                   & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                           := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -363,11 +363,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.alert_level         := alert_level;
     shared_vvc_cmd.max_receptions      := max_receptions;
-    if timeout = -1 ns then
-      shared_vvc_cmd.timeout := shared_uart_vvc_config(RX, vvc_instance_idx).bfm_config.timeout;
-    else
-      shared_vvc_cmd.timeout := timeout;
-    end if;
+    shared_vvc_cmd.timeout             := timeout;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;

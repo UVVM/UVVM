@@ -1,0 +1,51 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(RANGE:[-2.00:2.00])=> Cyclic mode not supported for real type. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(LEN:5, RANGE:[-2.00:2.00])=> Cyclic mode not supported for real_vector type. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(RANGE:[1 ps:5 ps])=> Cyclic mode not supported for time type. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(LEN:5, RANGE:[1 ps:5 ps])=> Cyclic mode not supported for time_vector type. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(LEN:4, RANGE:[x"0":x"3"])=> Cyclic mode not supported for unsigned constraints. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(LEN:4, RANGE:[x"0":x"3"])=> Cyclic mode not supported for signed constraints. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(LEN:4, RANGE:[x"0":x"3"])=> Cyclic mode not supported for slv constraints. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    set_cyclic_mode(CYCLIC)=> Cyclic mode and uniqueness cannot be combined.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    set_uniqueness(UNIQUE)=> Uniqueness and cyclic mode cannot be combined.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

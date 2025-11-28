@@ -110,16 +110,16 @@ architecture behave of axilite_vvc is
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
   ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
     if command.msg(1 to 5) = "HVVC:" then
-      return vvc_config.parent_msg_id_panel;
+      return config.parent_msg_id_panel;
     else
-      return vvc_config.msg_id_panel;
+      return config.msg_id_panel;
     end if;
   end function;
 
@@ -259,7 +259,6 @@ begin
   cmd_executor : process
     constant C_EXECUTOR_ID                           : natural                                      := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time                                         := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time                                         := 0 ns;
     variable v_timestamp_end_of_last_bfm_access      : time                                         := 0 ns;
@@ -369,7 +368,7 @@ begin
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
-            check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
+            check_value(vvc_config.bfm_config.clock_period /= C_UNDEFINED_TIME, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
                         C_SCOPE, ID_NEVER, v_msg_id_panel);
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;
@@ -690,7 +689,6 @@ begin
     constant C_EXECUTOR_ID          : natural                                      := 5;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
-    variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     constant C_CHANNEL_SCOPE        : string                                       := get_scope_for_log(C_VVC_NAME & "_B", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin

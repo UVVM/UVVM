@@ -11,8 +11,6 @@ Bitvis VIP Ethernet
   * :ref:`ethernet_expect`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 HVVC
 **********************************************************************************************************************************
@@ -21,7 +19,7 @@ HVVC
 * HVVCs are different than normal VVCs since they represent a higher protocol level than the physical layer, i.e. they have no 
   physical connections. However due to similarities in the core code, the VVC term is used instead.
 * HVVC functionality is implemented in ethernet_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -32,10 +30,12 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Name                         | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_ETHERNET_VVC_MAX_INSTANCE_NUM   |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_PHY_INTERFACE             | :ref:`t_interface            | N/A             | Physical VVC interface type, e.g. SBI, GMII.    |
-|                              | <adaptations_pkg>`           |                 | (see note below)                                |
+| GC_PHY_INTERFACE             | :ref:`t_interface`           | N/A             | Physical VVC interface type, e.g. SBI, GMII.    |
+|                              |                              |                 | (see note below)                                |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_PHY_VVC_INSTANCE_IDX      | natural                      | N/A             | Instance number of the physical VVC             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -78,9 +78,13 @@ Generics
 
 .. note::
 
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
+
+.. note::
+
     You can use any of the physical interfaces already implemented just by using the appropriate name in GC_PHY_INTERFACE and 
     instantiating the corresponding VVC in the testbench (in addition to the HVVC). For more information see 
-    :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+    :ref:`vvc_framework_vvc_mechanisms_and_features`.
     If you however want to use an interface type which is not already included, see :ref:`vip_hvvc_to_vvc_bridge` for more info.
 
 Signals
@@ -165,6 +169,14 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_ETHERNET_VVC_CMD_STRING_MAX_LENGTH       | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _ethernet_transmit:
 
@@ -187,18 +199,19 @@ Ethernet packet and transmits each field using the HVVC-to-VVC bridge which then
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | mac_destination    | in     | unsigned(47 downto 0)        | The MAC address of destination                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | mac_source         | in     | unsigned(47 downto 0)        | The MAC address of source                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | payload            | in     | t_byte_array                 | The payload of the packet                               |
+| constant | payload            | in     | :ref:`t_byte_array`          | The payload of the packet                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -235,14 +248,15 @@ checked against the expected value (provided by the testbench).
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the read data                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -286,20 +300,21 @@ procedure.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | channel            | in     | t_channel                    | The VVC channel of the VVC instance                     |
+| constant | channel            | in     | :ref:`t_channel`             | The VVC channel of the VVC instance                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | mac_destination    | in     | unsigned(47 downto 0)        | The MAC address of destination                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | mac_source         | in     | unsigned(47 downto 0)        | The MAC address of source                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | payload            | in     | t_byte_array                 | The payload of the packet                               |
+| constant | payload            | in     | :ref:`t_byte_array`          | The payload of the packet                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -335,7 +350,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -346,13 +361,13 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. ethernet_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
-when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable ETHERNET_VVC_SB, 
-located in the vvc_methods_pkg.vhd, e.g. ::
+when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable 
+``ETHERNET_VVC_SB``, located in the vvc_methods_pkg.vhd, e.g. ::
 
     ETHERNET_VVC_SB.add_expected(C_ETH_GMII_VVC_IDX, v_expected_frame, "Adding expected");
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Ethernet VVC scoreboard using the ETHERNET_VVC_SB.
+Scoreboard commands are available for the Ethernet VVC scoreboard using the ``ETHERNET_VVC_SB``.
 
 
 Unwanted Activity Detection
@@ -373,8 +388,10 @@ More information can be found in :ref:`Essential Mechanisms - Unwanted Activity 
 
 Support package
 ==================================================================================================================================
-Contains constants and types for the Ethernet protocol, defined in support_pkg.vhd
+Contains constants, types, functions and procedures for the Ethernet protocol, defined in support_pkg.vhd
 
+Constants
+----------------------------------------------------------------------------------------------------------------------------------
 The table below shows which index in the DUT IF field configuration array (:ref:`t_dut_if_field_config_direction_array`) the 
 Ethernet fields are associated with. These configurations are only necessary when the lower level VVC is address-based, e.g. SBI. 
 The DUT IF field configuration array is a two-dimensional array (direction and index). If the same configuration is used for all 
@@ -403,17 +420,17 @@ see table below.
 
 t_ethernet_protocol_config
 ----------------------------------------------------------------------------------------------------------------------------------
-+------------------------------------+-------------------------+
-| Record element                     | Type                    |
-+====================================+=========================+
-| mac_destination                    | unsigned(47 downto 0)   |
-+------------------------------------+-------------------------+
-| mac_source                         | unsigned(47 downto 0)   |
-+------------------------------------+-------------------------+
-| fcs_error_severity                 | :ref:`t_alert_level`    |
-+------------------------------------+-------------------------+
-| interpacket_gap_time               | time                    |
-+------------------------------------+-------------------------+
++------------------------------------+-------------------------+-------------------------------------+
+| Record element                     | Type                    | C_ETHERNET_PROTOCOL_CONFIG_DEFAULT  |
++====================================+=========================+=====================================+
+| mac_destination                    | unsigned(47 downto 0)   | (others => '0')                     |
++------------------------------------+-------------------------+-------------------------------------+
+| mac_source                         | unsigned(47 downto 0)   | (others => '0')                     |
++------------------------------------+-------------------------+-------------------------------------+
+| fcs_error_severity                 | :ref:`t_alert_level`    | ERROR                               |
++------------------------------------+-------------------------+-------------------------------------+
+| interpacket_gap_time               | time                    | 96 ns                               |
++------------------------------------+-------------------------+-------------------------------------+
 
 .. note::
 
@@ -427,19 +444,63 @@ t_ethernet_protocol_config
 
 t_ethernet_frame
 ----------------------------------------------------------------------------------------------------------------------------------
-+------------------------------------+-------------------------------+
-| Record element                     | Type                          |
-+====================================+===============================+
-| mac_destination                    | unsigned(47 downto 0)         |
-+------------------------------------+-------------------------------+
-| mac_source                         | unsigned(47 downto 0)         |
-+------------------------------------+-------------------------------+
-| payload_length                     | integer                       |
-+------------------------------------+-------------------------------+
-| payload                            | t_byte_array(0 to 1499)       |
-+------------------------------------+-------------------------------+
-| fcs                                | std_logic_vector(31 downto 0) |
-+------------------------------------+-------------------------------+
++------------------------------------+-------------------------------+-------------------------------------+
+| Record element                     | Type                          | C_ETHERNET_FRAME_DEFAULT            |
++====================================+===============================+=====================================+
+| mac_destination                    | unsigned(47 downto 0)         | (others => '0')                     |
++------------------------------------+-------------------------------+-------------------------------------+
+| mac_source                         | unsigned(47 downto 0)         | (others => '0')                     |
++------------------------------------+-------------------------------+-------------------------------------+
+| payload_length                     | integer                       | 0                                   |
++------------------------------------+-------------------------------+-------------------------------------+
+| payload                            | :ref:`t_byte_array(0 to 1499) | (others => (others => '0'))         |
+|                                    | <t_byte_array>`               |                                     |
++------------------------------------+-------------------------------+-------------------------------------+
+| fcs                                | std_logic_vector(31 downto 0) | (others => '0')                     |
++------------------------------------+-------------------------------+-------------------------------------+
+
+generate_crc_32()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the IEEE 802.3 CRC32 for an ascending byte array input with LSb first. The start value is C_CRC_32_START_VALUE and the 
+polynomial is C_CRC_32_POLYNOMIAL, both defined in adaptations_pkg.
+
+.. code-block::
+
+    std_logic_vector := generate_crc_32(data_array)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | data_array         | in     | :ref:`t_byte_array`          | An array of bytes containing the data to be used for CRC|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    variable v_crc : std_logic_vector(31 downto 0);
+    ...
+    v_crc := generate_crc_32(v_data_array);
+
+
+check_crc_32()
+----------------------------------------------------------------------------------------------------------------------------------
+Generates the IEEE 802.3 CRC32 for an ascending byte array containing the frame data and the FCS. Returns true if the result is 
+equal to the expected residue defined by C_CRC_32_RESIDUE in adaptations_pkg.
+
+.. code-block::
+
+    boolean := check_crc_32(data_array)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | data_array         | in     | :ref:`t_byte_array`          | An array of bytes containing the data to be used for CRC|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    v_crc_ok := check_crc_32(v_data_array);
 
 
 Compilation

@@ -9,12 +9,13 @@
   <title>Bitvis VIP Scoreboard &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -126,7 +124,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -163,12 +161,17 @@
 <p>The scoreboard can be used with a single instance or with multiple instances. An instance is a separate queue with its own statistics.
 When multiple instances are used, the methods are called with the instance parameter. When only using a single scoreboard instance,
 the instance parameter may be omitted if that instance index is 1. Multiple instances are typically used when multiple scoreboards
-with the same data types are needed. Note that scoreboard instance numbering is in the range of 0 to N, with 1 as default.</p>
+with the same data types are needed. Note that scoreboard instance numbering is in the range of 0 to C_MAX_SB_INSTANCE_IDX (defined
+in adaptations_pkg), with instance 1 as default.</p>
 <p>All parameters in brackets are optional. No optional parameter can be used without using the preceding optional parameter, with the
 exception of the instance parameter.</p>
 <p>Each entry in the scoreboard instance consists of an expected element, source element and tag. Each entry also has an entry number,
 which is specific for each entry. The entry number is used as an identifier for a specific entry in some of the advanced methods.</p>
 <p>A message parameter can be used for print to transcript for all methods that affect the data or the functionality of the scoreboard.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The maximum number of scoreboard instances in a testbench is given by C_MAX_TB_SB_NUM * C_MAX_SB_INSTANCE_IDX in adaptations_pkg.</p>
+</div>
 </section>
 <section id="simple-usage">
 <h2>Simple usage<a class="headerlink" href="#simple-usage" title="Link to this heading"></a></h2>
@@ -414,7 +417,7 @@ This method uses the ID_CTRL message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -468,7 +471,7 @@ This method uses the ID_CTRL message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -541,7 +544,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -549,7 +552,8 @@ index 1 is default.</p>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -562,7 +566,9 @@ index 1 is default.</p>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>The element that is the raw-input to the DUT, before
-DUT-processing. For debugging and logging only.</p></td>
+DUT-processing. For debugging and logging only. Maximum
+string size is C_SB_SOURCE_WIDTH defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -619,7 +625,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -627,7 +633,8 @@ index 1 is default.</p>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -666,7 +673,7 @@ This method uses the ID_DATA message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -720,7 +727,7 @@ This method uses the ID_CTRL message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -772,7 +779,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -817,7 +824,7 @@ instance 1 is used.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -861,7 +868,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -905,7 +912,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -949,7 +956,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -994,7 +1001,7 @@ instance 1 is used.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1039,7 +1046,7 @@ parameter, instance 1 is used.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1083,7 +1090,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1156,7 +1163,7 @@ scoreboard originate</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -1199,7 +1206,7 @@ index 1 is default.</p>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
@@ -1244,7 +1251,7 @@ index 1 is default.</p>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id</p></td>
 <td><p>in</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>Message ID used in the log, defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
@@ -1258,7 +1265,9 @@ index 1 is default.</p>
 </section>
 <section id="report-counters">
 <h3>report_counters()<a class="headerlink" href="#report-counters" title="Link to this heading"></a></h3>
-<p>Prints the scoreboard results. If there is no instance parameter, instance 1 is reported.</p>
+<p>Prints the scoreboard results. If there is no instance parameter, instance 1 is reported. The printing destination can be log
+and/or console and is defined by the shared variable <code class="docutils literal notranslate"><span class="pre">shared_default_log_destination</span></code> with the default value set by
+C_DEFAULT_LOG_DESTINATION in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 <span class="n">report_counters</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
 </pre></div>
@@ -1276,7 +1285,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1364,7 +1373,7 @@ identifier_option</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -1372,7 +1381,8 @@ identifier_option</p></td>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -1385,7 +1395,9 @@ identifier_option</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>The element that is the raw-input to the DUT, before
-DUT-processing. For debugging and logging only.</p></td>
+DUT-processing. For debugging and logging only. Maximum
+string size is C_SB_SOURCE_WIDTH defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1443,7 +1455,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -1451,7 +1463,8 @@ index 1 is default.</p>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>identifier_option</p></td>
@@ -1535,7 +1548,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -1543,7 +1556,8 @@ index 1 is default.</p>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1596,7 +1610,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -1604,7 +1618,8 @@ index 1 is default.</p>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1638,7 +1653,7 @@ expected element in the scoreboard queue if no identifier specified. If the iden
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1701,7 +1716,7 @@ source element in the scoreboard queue if no identifier specified. If the identi
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1764,7 +1779,7 @@ tag in the scoreboard queue if no identifier specified. If the identifier is not
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1829,7 +1844,7 @@ This method uses the ID_DATA message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1900,7 +1915,7 @@ This method uses the ID_DATA message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1971,7 +1986,7 @@ This method uses the ID_DATA message ID.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -2058,7 +2073,7 @@ index 1 is default.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>tag_usage</p></td>
 <td><p>in</p></td>
-<td><p>t_tag_usage</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-tag-usage"><span class="std std-ref">t_tag_usage</span></a></p></td>
 <td><p>Enumerated type used before every tag is entered. Only
 ‘TAG’ can be used.</p></td>
 </tr>
@@ -2066,7 +2081,8 @@ index 1 is default.</p>
 <td><p>tag</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Tag of the scoreboard element</p></td>
+<td><p>Tag of the scoreboard element. Maximum string size is
+C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>

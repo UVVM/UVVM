@@ -41,25 +41,25 @@ package spi_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_spi_bfm_config is record
-    CPOL                     : std_logic;       -- sclk polarity, i.e. the base value of the clock.
-                                                -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
-    CPHA                     : std_logic;       -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.
-                                                -- If '0', sampling occurs on the first sclk edge and data is transmitted on the sclk active to idle state.
-                                                -- If '1', data is sampled on the second sclk edge and transmitted on sclk idle to active state.
-    spi_bit_time             : time;            -- Used in master for dictating sclk period
-    ss_n_to_sclk             : time;            -- Time from SS active until SCLK active
-    sclk_to_ss_n             : time;            -- Last SCLK until SS off
-    inter_word_delay         : time;            -- Minimum time between words, from ss_n inactive to ss_n active
+    CPOL                     : std_logic;          -- sclk polarity, i.e. the base value of the clock.
+                                                   -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
+    CPHA                     : std_logic;          -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.
+                                                   -- If '0', sampling occurs on the first sclk edge and data is transmitted on the sclk active to idle state.
+                                                   -- If '1', data is sampled on the second sclk edge and transmitted on sclk idle to active state.
+    spi_bit_time             : time;               -- Used in master for dictating sclk period
+    ss_n_to_sclk             : time;               -- Time from SS active until SCLK active
+    sclk_to_ss_n             : time;               -- Last SCLK until SS off
+    inter_word_delay         : time;               -- Minimum time between words, from ss_n inactive to ss_n active
     match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    id_for_bfm               : t_msg_id;        -- The message ID used as a general message ID in the SPI BFM
-    id_for_bfm_wait          : t_msg_id;        -- The message ID used for logging waits in the SPI BFM -- DEPRECATE: will be removed
-    id_for_bfm_poll          : t_msg_id;        -- The message ID used for logging polling in the SPI BFM -- DEPRECATE: will be removed
+    id_for_bfm               : t_msg_id;           -- The message ID used as a general message ID in the SPI BFM
+    id_for_bfm_wait          : t_msg_id;           -- DEPRECATED: will be removed in v3
+    id_for_bfm_poll          : t_msg_id;           -- DEPRECATED: will be removed in v3
   end record;
 
   constant C_SPI_BFM_CONFIG_DEFAULT : t_spi_bfm_config := (
     CPOL                   => '0',
     CPHA                   => '0',
-    spi_bit_time           => -1 ns,          -- Make sure we notice if we forget to set bit time.
+    spi_bit_time           => C_UNDEFINED_TIME, -- Make sure we notice if we forget to set bit time.
     ss_n_to_sclk           => 20 ns,
     sclk_to_ss_n           => 20 ns,
     inter_word_delay       => 0 ns,
@@ -715,7 +715,7 @@ package body spi_bfm_pkg is
 
   begin
     -- check whether config.spi_bit_time was set
-    check_value(config.spi_bit_time /= -1 ns, TB_ERROR, "SPI Bit time was not set in config. " & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    check_value(config.spi_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "SPI Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'spi_master_transmit_and_receive...'
@@ -778,7 +778,7 @@ package body spi_bfm_pkg is
             v_rx_data(C_ACCESS_SIZE - v_rx_count) := miso;
             sclk                                  <= not config.CPOL;
           end if;
-          log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
           v_access_done := true;
         end if;
       end loop;
@@ -812,7 +812,7 @@ package body spi_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & "=> Transmitted: " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". Received: " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & "=> Transmitted: " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". Received: " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. spi_master_transmit_and_check)
     end if;
@@ -914,9 +914,9 @@ package body spi_bfm_pkg is
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
@@ -1104,9 +1104,9 @@ package body spi_bfm_pkg is
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
@@ -1179,7 +1179,7 @@ package body spi_bfm_pkg is
     variable v_proc_call     : line;
   begin
     -- check whether config.spi_bit_time was set
-    check_value(config.spi_bit_time /= -1 ns, TB_ERROR, "SPI Bit time was not set in config. " & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    check_value(config.spi_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "SPI Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
 
     -- Set default
     aborted := False;
@@ -1303,10 +1303,10 @@ package body spi_bfm_pkg is
     if v_terminated then
       -- terminated
     elsif (v_tx_count < C_ACCESS_SIZE - 1) then
-      alert(aborted_alert_level, v_proc_call.all & " ss_n not kept active for tx_data size duration " & add_msg_delimiter(msg), scope);
+      alert(aborted_alert_level, v_proc_call.all & " ss_n not kept active for tx_data size duration." & add_msg_delimiter(msg), scope);
       aborted := true;
     elsif (v_rx_count < C_ACCESS_SIZE) then
-      alert(aborted_alert_level, v_proc_call.all & " ss_n not kept active for rx_data size duration " & add_msg_delimiter(msg), scope);
+      alert(aborted_alert_level, v_proc_call.all & " ss_n not kept active for rx_data size duration." & add_msg_delimiter(msg), scope);
       aborted := true;
     else
       rx_data := v_rx_data;
@@ -1319,8 +1319,8 @@ package body spi_bfm_pkg is
     miso <= 'Z';
 
     if ext_proc_call = "" and not (v_terminated) then
-      log(config.id_for_bfm, local_proc_call & "=> " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " rx completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
-      log(config.id_for_bfm, local_proc_call & "=> " & to_string(bfm_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " tx completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, local_proc_call & "=> " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " rx completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, local_proc_call & "=> " & to_string(bfm_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " tx completed." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. spi_master_transmit_and_check)
     end if;
@@ -1508,7 +1508,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string  := "spi_slave_transmit_and_check";
-    constant local_proc_call : string  := local_proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string  := local_proc_name & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length - 1 downto 0);
     variable v_check_ok      : boolean := true;
@@ -1529,16 +1529,16 @@ package body spi_bfm_pkg is
       end loop;
 
       if (v_aborted) then
-        alert(alert_level, local_proc_call & "=> Failed. SPI transaction aborted." & LF & add_msg_delimiter(msg), scope);
+        alert(alert_level, local_proc_call & "=> Failed. SPI transaction aborted." & add_msg_delimiter(msg), scope);
       elsif not v_check_ok then
         -- Use binary representation when mismatch is due to weak signals
         v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-        alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
       else
-        log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     else
-      alert(warning, local_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
+      alert(warning, local_proc_call & "=> Failed. Terminate access received." & add_msg_delimiter(msg), scope);
     end if;
   end;
 
@@ -1587,7 +1587,7 @@ package body spi_bfm_pkg is
     end loop;
 
     if terminate_access = '1' then
-      alert(warning, loc_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
+      alert(warning, loc_proc_call & "=> Failed. Terminate access received." & add_msg_delimiter(msg), scope);
     end if;
   end;
 
@@ -1625,7 +1625,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string := "spi_slave_transmit";
-    constant local_proc_call : string := local_proc_name & "(" & to_string(tx_data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string := local_proc_name & "(" & to_string(tx_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_rx_data       : std_logic_vector(tx_data'length - 1 downto 0); -- := (others => '0');
   begin
@@ -1644,7 +1644,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string := "spi_slave_transmit";
-    constant local_proc_call : string := local_proc_name & "(" & to_string(tx_data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string := local_proc_name & "(" & to_string(tx_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_rx_data       : std_logic_vector(tx_data'length - 1 downto 0); -- := (others => '0');
   begin
@@ -1679,7 +1679,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string                                                                   := "spi_slave_transmit";
-    constant local_proc_call : string                                                                   := local_proc_name & "(" & to_string(tx_data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string                                                                   := local_proc_name & "(" & to_string(tx_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_tx_data       : t_slv_array(tx_data'length - 1 downto 0)(tx_data(0)'length - 1 downto 0) := (others => (others => '0'));
   begin
@@ -1718,7 +1718,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string                                        := "spi_slave_receive";
-    constant local_proc_call : string                                        := local_proc_name & "(" & to_string(rx_data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string                                        := local_proc_name & "(" & to_string(rx_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_tx_data       : std_logic_vector(rx_data'length - 1 downto 0) := (others => '0');
   begin
@@ -1770,7 +1770,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string                                                                   := "spi_slave_receive";
-    constant local_proc_call : string                                                                   := local_proc_name & "(" & to_string(rx_data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string                                                                   := local_proc_name & "(" & to_string(rx_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_rx_data       : t_slv_array(rx_data'length - 1 downto 0)(rx_data(0)'length - 1 downto 0) := (others => (others => '0'));
   begin
@@ -1809,7 +1809,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string                                         := "spi_slave_check";
-    constant local_proc_call : string                                         := local_proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string                                         := local_proc_name & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length - 1 downto 0) := (others => 'X');
     variable v_tx_data       : std_logic_vector(data_exp'length - 1 downto 0) := (others => '0');
@@ -1836,12 +1836,12 @@ package body spi_bfm_pkg is
       elsif not v_check_ok then
         -- Use binary representation when mismatch is due to weak signals
         v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-        alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
       else
-        log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     else
-      alert(warning, local_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
+      alert(warning, local_proc_call & "=> Failed. Terminate access received." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -1875,7 +1875,7 @@ package body spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
     constant local_proc_name : string := "spi_slave_check";
-    constant local_proc_call : string := local_proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant local_proc_call : string := local_proc_name & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
   begin
     for idx in 0 to (data_exp'length - 1) loop
       exit when (terminate_access = '1');
@@ -1884,7 +1884,7 @@ package body spi_bfm_pkg is
     end loop;
 
     if terminate_access = '1' then
-      alert(warning, local_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
+      alert(warning, local_proc_call & "=> Failed. Terminate access received." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 

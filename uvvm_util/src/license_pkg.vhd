@@ -33,10 +33,6 @@ package license_pkg is
     constant dummy : in t_void
   ) return boolean;
 
-  impure function show_uvvm_utility_library_release_info(
-    constant dummy : in t_void
-  ) return boolean;
-
 end package license_pkg;
 
 package body license_pkg is
@@ -81,29 +77,6 @@ package body license_pkg is
 
   begin
     if C_SHOW_UVVM_UTILITY_LIBRARY_INFO then
-      report (C_LICENSE_STR);
-    end if;
-    return true;
-  end;
-
-  impure function show_uvvm_utility_library_release_info(
-    constant dummy : in t_void
-  ) return boolean is
-    constant C_IMPORTANT_UPDATE_FOR_THIS_VERSION : boolean := false; -- ***** NOTE: Evaluate a change here
-    constant C_SEPARATOR                         : string  := "=====================================================================================================";
-
-    constant C_LICENSE_STR : string :=
-      LF & LF &
-      C_SEPARATOR & LF &
-      C_SEPARATOR & LF &
-      "This release info may be turned off via C_SHOW_UVVM_UTILITY_LIBRARY_INFO in adaptations_pkg.vhd" & LF & LF &
-      "Important Issues for this version update: " & LF &
-      "- First release" & LF & LF & LF &
-      C_SEPARATOR & LF &
-      C_SEPARATOR & LF & LF;
-
-  begin
-    if C_SHOW_UVVM_UTILITY_LIBRARY_INFO and C_IMPORTANT_UPDATE_FOR_THIS_VERSION then
       report (C_LICENSE_STR);
     end if;
     return true;

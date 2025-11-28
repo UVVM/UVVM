@@ -130,7 +130,7 @@ begin
   end process p_sbi_write_regs;
 
   -- Read the Ethernet MAC dummy register
-  p_sbi_read_regs : process(sbi_cs, sbi_rena, sbi_addr)
+  p_sbi_read_regs : process(sbi_cs, sbi_rena, sbi_addr, dummy_reg)
   begin
     sbi_rdata  <= (others => '0');
     read_ready <= '0';

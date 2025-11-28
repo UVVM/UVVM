@@ -338,7 +338,7 @@ begin
           else
           -- Delay specified using integer
           --<USER_INPUT> Uncomment if BFM has clock_period config
-          -- check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
+          -- check_value(vvc_config.bfm_config.clock_period /= C_UNDEFINED_TIME, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
           --             C_SCOPE, ID_NEVER, v_msg_id_panel);
           -- wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;

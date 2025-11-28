@@ -9,6 +9,64 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2025.11.28
+--------------------
+Released: 2025-11-28
+- Changed spec cov requirement tickoff log text from "Logging requirement" to "Ticking off requirement".
+- Moved spec cov section to a more correct location in adaptations_pkg.
+- Set ready default value from config in init_avalon_st_if_signals function.
+- Added handling of BOM character (utf-8-sig encoding) when parsing req/map files in run_spec_cov.py and spec_cov_pkg.
+- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg and removed double definition of C_MAX_CYCLES 
+  in uvvm_assertions_pkg.
+- Added C_WINDOW_ASSERTIONS_MAX_CYCLES range guard to trigger->trigger (sl) overload as well as more pipeline numbering in log (uvvm_assertions_pkg).
+- Added two uses of window assertions to UVVM assertions demo tb.
+- Updated comments and reorganized some constants in adaptations_pkg.
+- Removed unused constants C_EMPTY_NODE and C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH from adaptations_pkg.
+- Replaced constant C_VVC_NAME_MAX_LENGTH for C_MAX_VVC_NAME_LENGTH.
+- Reorganized if statements for printing C_ERROR_REPORT_EXTENT in Avalon-ST, GMII and RGMII BFMs.
+- Reorganized types_pkg. Removed unused types t_info_target and t_global_ctrl.
+- Updated documentation with content from adaptations_pkg and added links to types descriptions.
+- Fixed bug where a log message of one character is not displayed. From pull request by user jorkrohn.
+- Support running spec cov post-processing without requirement list. Labels for unlisted req tickoff.
+- Removed unused utility library release info function and constant.
+- Added uvvm_stack_is_full() and uvvm_stack_deallocate() methods to data_stack_pkg.
+- Moved data structures into a new section in the documentation. Added documentation for data_stack.
+- Replaced shared buffer between instances of t_data_queue to avoid overwritting data between data fifo and data stack.
+- Added Sigasi project (requires Sigasi 2025.3.1 or later). Fixed a bug in compile_src.do when the UVVM repository was checked
+  out in a directory containing spaces. From pull request by user lievenlemiengre.
+- Fixed spec cov testcase status for partial coverage files with no requirement tickoffs. 
+- Moved shared_default_log_destination to string_methods_pkg and added a constant to set the default value in adaptations_pkg.
+- Added missing deprecate() calls to some functions and procedures.
+- Changed deprecate message from log message to tb_note alert.
+- Moved C_DEPRECATE_SETTING to adaptations_pkg.
+- Added more detail to await_value error messages in the I2C BFM.
+- Updated timeout alert message in several BFMs with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME in all VIPs.
+- Removed default timeout value of 1 us in VVC procedures gpio_expect and gpio_expect_stable to match the BFM procedures.
+- Replaced assertion with check_value in uart_expect and added missing timeout value check in uart_receive.
+- Fixed typos in VVC documentation for gpio_get.
+- Changed default timeout in UART BFM config.
+- Increased max_wait_cycles default value to 1000 in all BFMs.
+- Updated BFM procedures to only call check_clock_period_margin() once.
+- Updated check_clock_period_margin() documentation.
+- Added missing timeouts to BFM common procedures and updated log messages.
+- Updated wait_on_bfm_sync_start to always return time_of_rising_edge and removed extra sampling of rising_edge inside BFM procedures.
+- Initial release of Wishbone VIP.
+- Fixed the error message for check_value() using signed values and radix "DEC".
+- Fixed an issue in compile_src.do where it was creating the same directory twice with mkdir and vlib commands.
+- Updated log messages from await_completion().
+- Fixed use of await_completion with Clock Generator VVC set_clock_period() and set_clock_high_time() procedures.
+- Added comments to alert_hierarchy_pkg procedures which are for internal use. Updated hierarchical alerts documentation.
+- Minor changes to formatting in log messages across most log messages (changed add_msg_delimiter behaviour among others).
+- Documentation updates: Reorganized Utility Library and VVC framework sections. Updated multi-channel VVC examples, shared variables
+  and global signals section and VVC Implementation Guide section. Renamed and reorganized VVC Framework Essential Mechanisms section. 
+  Added info regarding logging and verbosity control. Added links to different sections in the UVVM intro section.
+- Updated vvc_generator to replace the GC_CHANNEL generic for a constant C_CHANNEL inside the VVC.
+- Use normalized value alias in string_contains_char and to_string functions.
+- Fixed multisim.sh script error when using Modelsim.
+- Fixed bug in await_change_to_value for std_logic_vector. From pull request by user MartinBoberTecmata.
+
+
 v2 2025.09.17
 --------------------
 Released: 2025-09-17

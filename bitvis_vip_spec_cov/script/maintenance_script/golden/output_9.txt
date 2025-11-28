@@ -1,0 +1,30 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : None
+partial_cov          : ../sim/pc_no_req_file.csv
+requirement_map_list : None
+spec_cov             : ../sim/sc_no_req_file.csv
+clean                : None
+strictness           : 0
+config               : None
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 0
+Number of non compliant requirements : 0
+Number of non verified requirements  : 0
+Number of not listed requirements    : 1
+Number of passing testcases : 1
+Number of failing testcases : 0
+Number of not run testcases : 0
+
+
+Not listed requirement(s) :
+REQ_1, 
+
+Passing testcase(s) :
+TC_NO_REQ_FILE, 
+
+Potential problems found. Please see ../sim/sc_no_req_file.warnings.csv.

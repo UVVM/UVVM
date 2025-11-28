@@ -1,6 +1,11 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.6.3
+----------
+Released: 2025-11-28
+- Fixed use of await_completion with set_clock_period() and set_clock_high_time() procedures.
+
 v1.6.2
 ----------
 Released: 2025-09-17

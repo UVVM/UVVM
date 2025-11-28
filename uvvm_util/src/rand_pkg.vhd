@@ -2781,12 +2781,6 @@ package body rand_pkg is
           v_mean    := priv_mean when priv_mean_configured else (real(min_value) + (real(max_value) - real(min_value)) / 2.0);
           v_std_dev := priv_std_dev when priv_std_dev_configured else ((real(max_value) - real(min_value)) / 6.0);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
-
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          priv_ret_valid := false;
-          deallocate(v_proc_call);
-          return v_ret;
       end case;
 
       -- Restore previous distribution
@@ -3061,11 +3055,6 @@ package body rand_pkg is
           v_mean    := priv_mean when priv_mean_configured else (min_value + (max_value - min_value) / 2.0);
           v_std_dev := priv_std_dev when priv_std_dev_configured else ((max_value - min_value) / 6.0);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          priv_ret_valid := false;
-          deallocate(v_proc_call);
-          return v_ret;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -3318,11 +3307,6 @@ package body rand_pkg is
         when UNIFORM =>
           random_uniform(min_value, max_value, time_resolution, priv_seed1, priv_seed2, v_ret, ext_proc_call);
         when GAUSSIAN =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          priv_ret_valid := false;
-          deallocate(v_proc_call);
-          return v_ret;
-        when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
           priv_ret_valid := false;
           deallocate(v_proc_call);
@@ -7700,7 +7684,6 @@ package body rand_pkg is
       constant C_PREVIOUS_CYCLIC_MODE : t_cyclic := priv_cyclic_mode;
       variable v_val_incl_configured  : std_logic;
       variable v_val_excl_configured  : std_logic;
-      variable v_num_ranges           : natural  := priv_time_constraints.ran_incl'length;
       variable v_gen_new_random       : boolean  := true;
       variable v_ret                  : time_vector(0 to length - 1);
     begin

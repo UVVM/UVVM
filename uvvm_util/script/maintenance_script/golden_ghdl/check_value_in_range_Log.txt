@@ -1,0 +1,118 @@
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Verifying check_value_in_range
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 1.
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(int, 3, 4) => OK. Value was 3. 'Check_value_in_range, OK'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(int, 2, 3) => OK. Value was 3. 'Check_value_in_range, OK'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return true
+UVVM:                                                                           when OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_value_in_range(int, 4, 5) => Failed. Value was 3. Expected between 4 and 5. 'Check_value_in_range, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return
+UVVM:                                                                           false when Fail'
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 2.
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(u, x"00000001", x"80000001") => OK. Value was x"80000000". 'Check
+UVVM:                                                                           2147483648 between 1 and 2147483649, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_value_in_range(u, x"00000001", x"7FFFFFFF") => Failed. Value was x"80000000". Expected between x"00000001" and x"7FFFFFFF". 'Check 2147483648
+UVVM:                    between 1 and 2147483647, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_value_in_range(u, x"00000001", x"7FFFFFFF") => Failed. Value was x"80000000". Expected between x"00000001" and x"7FFFFFFF". 'Check 2147483648
+UVVM:                    between 1 and 2147483647, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return
+UVVM:                                                                           false when Fail'
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 1.
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(s, x"80000000", x"00000001") => OK. Value was x"80000001". 'Check
+UVVM:                                                                           -2147483647 between -2147483648 and 1, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_value_in_range(s, x"80000002", x"00000001") => Failed. Value was x"80000001". Expected between x"80000002" and x"00000001". 'Check -2147483647
+UVVM:                    between -2147483646 and 1, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 1.
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(time, 2 ns, 5 ns) => OK. Value was 3 ns. 'Check time in range, OK'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(time, 3 ns, 5 ns) => OK. Value was 3 ns. 'Check time in range, OK'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return true
+UVVM:                                                                           when OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_value_in_range(time, 4 ns, 5 ns) => Failed. Value was 3 ns. Expected between 4 ns and 5 ns. 'Check time in range, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return
+UVVM:                                                                           false when Fail'
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 1.
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(real, 1.5, 3.1) => OK. Value was 3.0. 'Check real in range, OK'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value_in_range(real, 3.0, 5.1) => OK. Value was 3.0. 'Check real in range, OK'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return true
+UVVM:                                                                           when OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_value_in_range(real, 3.1, 4.9) => Failed. Value was 3.0. Expected between 3.1 and 4.9. 'Check real in range, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value(bool, true) => OK. Value was true. 'check_value with return value shall return
+UVVM:                                                                           false when Fail'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                CHECK_VALUE           :          0    
+UVVM:                CHECK_VALUE_IN_RANGE  :          0    
+UVVM:                CHECK_STABLE          :          0    
+UVVM:                CHECK_TIME_WINDOW     :          0    
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      6         6         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

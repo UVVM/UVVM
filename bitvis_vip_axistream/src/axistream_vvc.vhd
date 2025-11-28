@@ -45,7 +45,7 @@ entity axistream_vvc is
     GC_ID_WIDTH                              : integer                := 1;
     GC_DEST_WIDTH                            : integer                := 1;
     GC_INSTANCE_IDX                          : natural;
-    GC_PACKETINFO_QUEUE_COUNT_MAX            : natural                := 1; -- Number of PacketInfo Queues, normally one per source VVC -- DEPRECATE: will be removed
+    GC_PACKETINFO_QUEUE_COUNT_MAX            : natural                := 1; -- DEPRECATED: will be removed in v3
     GC_AXISTREAM_BFM_CONFIG                  : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural                := C_CMD_QUEUE_COUNT_MAX;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := C_CMD_QUEUE_COUNT_THRESHOLD;
@@ -91,16 +91,16 @@ architecture behave of axistream_vvc is
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
     ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
     if command.msg(1 to 5) = "HVVC:" then
-      return vvc_config.parent_msg_id_panel;
+      return config.parent_msg_id_panel;
     else
-      return vvc_config.msg_id_panel;
+      return config.msg_id_panel;
     end if;
   end function;
 
@@ -376,7 +376,7 @@ begin
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
-            check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
+            check_value(vvc_config.bfm_config.clock_period /= C_UNDEFINED_TIME, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
                         C_SCOPE, ID_NEVER, v_msg_id_panel);
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;

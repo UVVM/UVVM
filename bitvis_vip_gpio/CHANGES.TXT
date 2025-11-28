@@ -1,6 +1,13 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v4.0.0
+----------
+Released: 2025-11-28
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Removed default timeout value of 1 us in VVC procedures gpio_expect and gpio_expect_stable to match the BFM procedures.
+- Fixed typos in VVC documentation for gpio_get.
+
 v3.1.1
 ----------
 Released: 2025-03-25

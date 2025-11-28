@@ -1,6 +1,11 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v5.1.3
+----------
+Released: 2025-11-28
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+
 v5.1.2
 ----------
 Released: 2025-09-17

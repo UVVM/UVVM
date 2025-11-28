@@ -146,9 +146,6 @@ begin
           -- Convert from t_byte_array back to t_slv_array
           bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words - 1) <= convert_byte_array_to_slv_array(v_gmii_received_data.data_array(0 to v_num_data_bytes - 1), c_data_words_width / 8, v_byte_endianness);
 
-        when others =>
-          alert(TB_ERROR, "Unsupported operation");
-
       end case;
 
       -- Enable the interpreter waiting log after receiving its last command

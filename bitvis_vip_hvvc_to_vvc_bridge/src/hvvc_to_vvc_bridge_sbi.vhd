@@ -167,9 +167,6 @@ begin
           -- Convert from std_logic_vector to t_slv_array (word endianness is LOWER_WORD_RIGHT)
           bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words - 1) <= convert_slv_to_slv_array(v_data_slv(hvvc_to_bridge.num_data_words * c_data_words_width - 1 downto 0), c_data_words_width);
 
-        when others =>
-          alert(TB_ERROR, "Unsupported operation");
-
       end case;
 
       -- Enable the interpreter waiting log after receiving its last command

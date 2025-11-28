@@ -1,6 +1,13 @@
 UVVM VVC Framework - Overview on Versions and Changes
 ==============================================================
 
+v2.12.14
+----------
+Released: 2025-11-28
+- Replaced constant C_VVC_NAME_MAX_LENGTH for C_MAX_VVC_NAME_LENGTH.
+- Added missing deprecate() calls to some procedures.
+- Updated log messages from await_completion().
+
 v2.12.13
 ----------
 Released: 2025-09-17

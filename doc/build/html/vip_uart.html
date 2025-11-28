@@ -9,17 +9,18 @@
   <title>Bitvis VIP UART &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bitvis VIP Wishbone (BETA)" href="vip_wishbone.html" />
+    <link rel="next" title="Bitvis VIP Wishbone" href="vip_wishbone.html" />
     <link rel="prev" title="Bitvis VIP SPI" href="vip_spi.html" /> 
 </head>
 
@@ -48,15 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="association_list.html">UVVM Association List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -135,7 +133,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone (BETA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -184,10 +182,6 @@
 </li>
 <li><p><a class="reference internal" href="#monitor">Monitor</a></p></li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="bfm">
 <span id="vip-uart-bfm"></span><h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
 <p>BFM functionality is implemented in uart_bfm_pkg.vhd</p>
@@ -206,7 +200,7 @@
 <tbody>
 <tr class="row-even"><td><p>bit_time</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>The time it takes to transfer one bit. Will
 raise an error if not set.</p></td>
 </tr>
@@ -232,9 +226,17 @@ raise an error if not set.</p></td>
 </tr>
 <tr class="row-odd"><td><p>timeout</p></td>
 <td><p>time</p></td>
-<td><p>0 ns</p></td>
-<td><p>The maximum time to wait for the UART start bit
-on the RX line before timeout</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
+<td><p>The maximum time to pass before the expected
+data must be received. A value of 0 means it
+will never time out.</p>
+<p>The default value is undefined since it depends
+on the bit_time, therefore a value is calculated
+in the uart_receive/uart_expect procedures using
+the configured bit_time.</p>
+<p>This value can be overridden by the timeout
+parameter in the procedure call.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>timeout_severity</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
@@ -261,23 +263,23 @@ the don’t care operator ‘-‘.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm_wait</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_WAIT</p></td>
 <td><p>Message ID used for logging waits in the BFM</p></td>
 </tr>
 <tr class="row-odd"><td><p>id_for_bfm_poll</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_POLL</p></td>
 <td><p>DEPRECATED</p></td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm_poll_summary</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM_POLL_SUMMARY</p></td>
 <td><p>Message ID used for logging polling summary in
 the BFM</p></td>
@@ -393,7 +395,8 @@ Default value is C_BFM_SCOPE (“UART BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -409,13 +412,13 @@ value is shared_msg_id_panel.</p></td>
 <section id="uart-receive">
 <span id="uart-receive-bfm"></span><h4>uart_receive()<a class="headerlink" href="#uart-receive" title="Link to this heading"></a></h4>
 <p>Receives data from the DUT using the UART protocol. For protocol details, see the UART specification.</p>
-<p>When called, the procedure will wait for the start bit to be present on the rx line. The initial wait for the start bit will be
+<p>When called, the procedure will wait for the start bit to be present on the RX line. The initial wait for the start bit will be
 terminated if one of the following occurs:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>The start bit is present on the rx line.</p></li>
+<li><p>The start bit is present on the RX line.</p></li>
 <li><p>The terminate_loop flag is set to ‘1’.</p></li>
-<li><p>The number of clock cycles waited for the start bit exceeds ‘config.max_wait_cycles’ clock cycles.</p></li>
+<li><p>The time waited for the start bit exceeds ‘config.timeout’.</p></li>
 </ol>
 </div></blockquote>
 <p>Once all the bits have been received according to the UART specification, the parity and stop bit are checked. If correct, the
@@ -423,7 +426,7 @@ read data is placed on the output ‘data_value’ and the procedure returns.</p
 <p>The procedure reports an alert if:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Timeout occurs, i.e. start bit does not occur within ‘config.max_wait_cycles’ clock cycles (alert level: ‘config.max_wait_cycles_severity’)</p></li>
+<li><p>Timeout occurs, i.e. start bit does not occur within ‘config.timeout’ (alert level: ‘config.timeout_severity’)</p></li>
 <li><p>terminate_loop is set to ‘1’ (alert level: WARNING)</p></li>
 <li><p>Expected stop_bit does not match received stop bit(s) (alert level: ERROR)</p></li>
 <li><p>Calculated parity ‘config.parity’ does not match received parity (alert level: ERROR)</p></li>
@@ -487,7 +490,8 @@ Default value is C_BFM_SCOPE (“UART BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -583,9 +587,10 @@ to 0 will be interpreted as no limit. Default value is 1</p></td>
 <td><p>time</p></td>
 <td><p>The maximum time to pass before the expected data must
 be received. Exceeding this limit results in an alert
-with severity ‘alert_level’. Setting this value to 0
-will be interpreted as no timeout. Default value is the
-BFM config timeout.</p></td>
+with severity ‘config.timeout_severity’. Setting this
+value to 0 will be interpreted as no timeout. Default
+value is C_UNDEFINED_TIME which leads to using the
+timeout from the BFM config parameter.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>alert_level</p></td>
@@ -612,7 +617,8 @@ Default value is C_BFM_SCOPE (“UART BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -661,8 +667,8 @@ process. This allows calling the BFM procedures with the key parameters only, e.
 <section id="local-bfm-configuration">
 <span id="uart-local-bfm-config"></span><h3>Local BFM configuration<a class="headerlink" href="#local-bfm-configuration" title="Link to this heading"></a></h3>
 <p>The UART BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM
-configuration is defined with a clock period of -1 ns so that the BFM can detect and alert the user that the configuration has not
-been set.</p>
+configuration is defined with a clock period of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the
+configuration has not been set.</p>
 <p>Defining a local UART BFM configuration::</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_uart_bfm_config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">bit_time</span><span class="w">                              </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_UART_BIT_TIME</span><span class="p">,</span>
@@ -711,17 +717,13 @@ compatible with VHDL-2008 or newer.</p></li>
 <li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="vvc">
 <span id="vip-uart-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in uart_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -747,7 +749,9 @@ GC_UART_CONFIG.</p></td>
 <tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>1</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC Maximum value
+is defined by C_UART_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>GC_UART_CONFIG</p></td>
 <td><p><a class="reference internal" href="#t-uart-bfm-config"><span class="std std-ref">t_uart_bfm_config</span></a></p></td>
@@ -795,6 +799,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -1038,6 +1046,20 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_UART_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="uart-transmit-vvc">
 <span id="id3"></span><h4>uart_transmit()<a class="headerlink" href="#uart-transmit-vvc" title="Link to this heading"></a></h4>
 <div class="line-block">
@@ -1080,7 +1102,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>channel</p></td>
 <td><p>in</p></td>
-<td><p>t_channel</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-channel"><span class="std std-ref">t_channel</span></a></p></td>
 <td><p>The VVC channel of the VVC instance</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1099,7 +1121,7 @@ random data words</p></td>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>randomisation</p></td>
 <td><p>in</p></td>
-<td><p>t_randomisation</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-randomisation"><span class="std std-ref">t_randomisation</span></a></p></td>
 <td><p>Randomization profile</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
@@ -1113,7 +1135,8 @@ random data words</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1161,7 +1184,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>channel</p></td>
 <td><p>in</p></td>
-<td><p>t_channel</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-channel"><span class="std std-ref">t_channel</span></a></p></td>
 <td><p>The VVC channel of the VVC instance</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1187,7 +1210,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1246,7 +1270,7 @@ differentiate between VVCs</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>channel</p></td>
 <td><p>in</p></td>
-<td><p>t_channel</p></td>
+<td><p><a class="reference internal" href="utility_library.html#t-channel"><span class="std std-ref">t_channel</span></a></p></td>
 <td><p>The VVC channel of the VVC instance</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1276,9 +1300,10 @@ to 0 will be interpreted as no limit. Default value is 1</p></td>
 <td><p>time</p></td>
 <td><p>The maximum time to pass before the expected data must
 be received. Exceeding this limit results in an alert
-with severity ‘alert_level’. Setting this value to 0
-will be interpreted as no timeout. Default value is the
-BFM config timeout.</p></td>
+with severity ‘config.timeout_severity’. Setting this
+value to 0 will be interpreted as no timeout. Default
+value is C_UNDEFINED_TIME which leads to using the
+timeout from the BFM config parameter.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>alert_level</p></td>
@@ -1291,7 +1316,8 @@ BFM config timeout.</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1355,7 +1381,7 @@ POLL_UNTIL, READ, WRITE</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-odd"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>
@@ -1383,13 +1409,13 @@ SUCCEEDED during a transaction</p></td>
 <h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
 <p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
 i.e. uart_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
-TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable UART_VVC_SB, located in the
-vvc_methods_pkg.vhd, e.g.</p>
+TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">UART_VVC_SB</span></code>, located in
+the vvc_methods_pkg.vhd, e.g.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">UART_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_UART_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the UART VVC scoreboard using the UART_VVC_SB.</p>
+Scoreboard commands are available for the UART VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">UART_VVC_SB</span></code>.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
@@ -1519,10 +1545,6 @@ intend to use Monitor.</p></td>
 <li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 <section id="monitor">
@@ -1782,7 +1804,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="vip_spi.html" class="btn btn-neutral float-left" title="Bitvis VIP SPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vip_wishbone.html" class="btn btn-neutral float-right" title="Bitvis VIP Wishbone (BETA)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="vip_wishbone.html" class="btn btn-neutral float-right" title="Bitvis VIP Wishbone" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

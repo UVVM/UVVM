@@ -1,0 +1,598 @@
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                 100.0 ns  TB seq.(uvvm)                  Testing the assertion: assert_one_hot
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       140.0 ns  TB seq.                        Testing ALL_ZERO_NOT_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       140.0 ns  TB seq.                        Testing Normal Operation with accept_all_zeros: ALL_ZERO_NOT_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_UVVM_ASSERTION                140.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK (first), tracked_value (1000) was one-hot. Condition occurred after 0
+UVVM:                                                                           ns. 
+UVVM: ID_SEQUENCER                     150.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                     160.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                     170.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       230.0 ns  TB seq.                        Testing Triggering Assertion with accept_all_zeros: ALL_ZERO_NOT_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     230.0 ns  TB seq.                        Testing the expression: 0000
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:           230 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0000) was not one-hot. Occurred after 90 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     240.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: ID_SEQUENCER                     250.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                     260.0 ns  TB seq.                        Testing the expression: 0011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:           260 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0011) was not one-hot. Occurred after 120 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     270.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                     280.0 ns  TB seq.                        Testing the expression: 0101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:           280 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0101) was not one-hot. Occurred after 140 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     290.0 ns  TB seq.                        Testing the expression: 0110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:           290 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0110) was not one-hot. Occurred after 150 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     300.0 ns  TB seq.                        Testing the expression: 0111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:           300 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0111) was not one-hot. Occurred after 160 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     310.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_SEQUENCER                     320.0 ns  TB seq.                        Testing the expression: 1001
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:           320 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1001) was not one-hot. Occurred after 180 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     330.0 ns  TB seq.                        Testing the expression: 1010
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:           330 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1010) was not one-hot. Occurred after 190 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     340.0 ns  TB seq.                        Testing the expression: 1011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:           340 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1011) was not one-hot. Occurred after 200 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     350.0 ns  TB seq.                        Testing the expression: 1100
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:           350 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1100) was not one-hot. Occurred after 210 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     360.0 ns  TB seq.                        Testing the expression: 1101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #10  ***
+UVVM:           360 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1101) was not one-hot. Occurred after 220 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     370.0 ns  TB seq.                        Testing the expression: 1110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:           370 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1110) was not one-hot. Occurred after 230 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     380.0 ns  TB seq.                        Testing the expression: 1111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #12  ***
+UVVM:           380 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 240 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       430.0 ns  TB seq.                        Testing ALL_ZERO_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       470.0 ns  TB seq.                        Testing Normal Operation with accept_all_zeros: ALL_ZERO_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     470.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_UVVM_ASSERTION                470.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK (first), tracked_value (1000) was one-hot. Condition occurred after 0
+UVVM:                                                                           ns. 
+UVVM: ID_SEQUENCER                     480.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                     490.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                     500.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: ID_SEQUENCER                     510.0 ns  TB seq.                        Testing the expression: 0000
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       560.0 ns  TB seq.                        Testing Triggering Assertion with accept_all_zeros: ALL_ZERO_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     560.0 ns  TB seq.                        Testing the expression: 0000
+UVVM: ID_SEQUENCER                     570.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: ID_SEQUENCER                     580.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                     590.0 ns  TB seq.                        Testing the expression: 0011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #13  ***
+UVVM:           590 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0011) was not one-hot. Occurred after 120 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     600.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                     610.0 ns  TB seq.                        Testing the expression: 0101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #14  ***
+UVVM:           610 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0101) was not one-hot. Occurred after 140 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     620.0 ns  TB seq.                        Testing the expression: 0110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #15  ***
+UVVM:           620 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0110) was not one-hot. Occurred after 150 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     630.0 ns  TB seq.                        Testing the expression: 0111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #16  ***
+UVVM:           630 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0111) was not one-hot. Occurred after 160 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     640.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_SEQUENCER                     650.0 ns  TB seq.                        Testing the expression: 1001
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #17  ***
+UVVM:           650 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1001) was not one-hot. Occurred after 180 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     660.0 ns  TB seq.                        Testing the expression: 1010
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #18  ***
+UVVM:           660 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1010) was not one-hot. Occurred after 190 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     670.0 ns  TB seq.                        Testing the expression: 1011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #19  ***
+UVVM:           670 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1011) was not one-hot. Occurred after 200 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     680.0 ns  TB seq.                        Testing the expression: 1100
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #20  ***
+UVVM:           680 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1100) was not one-hot. Occurred after 210 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     690.0 ns  TB seq.                        Testing the expression: 1101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #21  ***
+UVVM:           690 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1101) was not one-hot. Occurred after 220 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     700.0 ns  TB seq.                        Testing the expression: 1110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #22  ***
+UVVM:           700 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1110) was not one-hot. Occurred after 230 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     710.0 ns  TB seq.                        Testing the expression: 1111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #23  ***
+UVVM:           710 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 240 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       760.0 ns  TB seq.                        Testing pos_ack_kind: EVERY
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     760.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
+UVVM: ID_UVVM_ASSERTION                770.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (1000) was one-hot. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION                780.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (1000) was one-hot. Condition occurred after 10 ns. 
+UVVM: ID_UVVM_ASSERTION                790.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (1000) was one-hot. Condition occurred after 20 ns. 
+UVVM: ID_UVVM_ASSERTION                800.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (1000) was one-hot. Condition occurred after 30 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       850.0 ns  TB seq.                        Testing Assertion Enable
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     850.0 ns  TB seq.                        Assertion enabled as tracked_value is assigned, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #24  ***
+UVVM:           850 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 0 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                     900.0 ns  TB seq.                        Assertion enabled prior to tracked_value, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #25  ***
+UVVM:           910 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 0 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       960.0 ns  TB seq.                        Testing CLK Disabled
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     960.0 ns  TB seq.                        Clock deactivated
+UVVM: ID_SEQUENCER                    1000.0 ns  TB seq.                        Triggering assertion while clk is disabled, expecting no behavior
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1118.0 ns  TB seq.                        Testing ALL_ZERO_NOT_ALLOWED (non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1118.0 ns  TB seq.                        Testing Normal Operation with accept_all_zeros: ALL_ZERO_NOT_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1118.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_UVVM_ASSERTION               1118.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK (first), tracked_value (1000) was one-hot. Condition occurred after 0
+UVVM:                                                                           ns. 
+UVVM: ID_SEQUENCER                    1125.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                    1134.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                    1140.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1188.0 ns  TB seq.                        Testing Triggering Assertion with accept_all_zeros: ALL_ZERO_NOT_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1188.0 ns  TB seq.                        Testing the expression: 0000
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #26  ***
+UVVM:          1188 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0000) was not one-hot. Occurred after 70 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1195.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: ID_SEQUENCER                    1203.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                    1211.0 ns  TB seq.                        Testing the expression: 0011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #27  ***
+UVVM:          1211 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0011) was not one-hot. Occurred after 93 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1219.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                    1228.0 ns  TB seq.                        Testing the expression: 0101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #28  ***
+UVVM:          1228 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0101) was not one-hot. Occurred after 110 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1235.0 ns  TB seq.                        Testing the expression: 0110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #29  ***
+UVVM:          1235 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0110) was not one-hot. Occurred after 117 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1241.0 ns  TB seq.                        Testing the expression: 0111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #30  ***
+UVVM:          1241 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0111) was not one-hot. Occurred after 123 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1248.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_SEQUENCER                    1257.0 ns  TB seq.                        Testing the expression: 1001
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #31  ***
+UVVM:          1257 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1001) was not one-hot. Occurred after 139 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1266.0 ns  TB seq.                        Testing the expression: 1010
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #32  ***
+UVVM:          1266 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1010) was not one-hot. Occurred after 148 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1272.0 ns  TB seq.                        Testing the expression: 1011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #33  ***
+UVVM:          1272 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1011) was not one-hot. Occurred after 154 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1278.0 ns  TB seq.                        Testing the expression: 1100
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #34  ***
+UVVM:          1278 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1100) was not one-hot. Occurred after 160 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1285.0 ns  TB seq.                        Testing the expression: 1101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #35  ***
+UVVM:          1285 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1101) was not one-hot. Occurred after 167 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1294.0 ns  TB seq.                        Testing the expression: 1110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #36  ***
+UVVM:          1294 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1110) was not one-hot. Occurred after 176 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1303.0 ns  TB seq.                        Testing the expression: 1111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #37  ***
+UVVM:          1303 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 185 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1338.0 ns  TB seq.                        Testing ALL_ZERO_ALLOWED (non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1366.0 ns  TB seq.                        Testing Normal Operation with accept_all_zeros: ALL_ZERO_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1366.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_UVVM_ASSERTION               1366.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK (first), tracked_value (1000) was one-hot. Condition occurred after 0
+UVVM:                                                                           ns. 
+UVVM: ID_SEQUENCER                    1375.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                    1381.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                    1387.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: ID_SEQUENCER                    1394.0 ns  TB seq.                        Testing the expression: 0000
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1433.0 ns  TB seq.                        Testing Triggering Assertion with accept_all_zeros: ALL_ZERO_ALLOWED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1433.0 ns  TB seq.                        Testing the expression: 0000
+UVVM: ID_SEQUENCER                    1439.0 ns  TB seq.                        Testing the expression: 0001
+UVVM: ID_SEQUENCER                    1448.0 ns  TB seq.                        Testing the expression: 0010
+UVVM: ID_SEQUENCER                    1455.0 ns  TB seq.                        Testing the expression: 0011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #38  ***
+UVVM:          1455 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0011) was not one-hot. Occurred after 89 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1461.0 ns  TB seq.                        Testing the expression: 0100
+UVVM: ID_SEQUENCER                    1467.0 ns  TB seq.                        Testing the expression: 0101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #39  ***
+UVVM:          1467 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0101) was not one-hot. Occurred after 101 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1476.0 ns  TB seq.                        Testing the expression: 0110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #40  ***
+UVVM:          1476 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0110) was not one-hot. Occurred after 110 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1484.0 ns  TB seq.                        Testing the expression: 0111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #41  ***
+UVVM:          1484 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (0111) was not one-hot. Occurred after 118 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1493.0 ns  TB seq.                        Testing the expression: 1000
+UVVM: ID_SEQUENCER                    1499.0 ns  TB seq.                        Testing the expression: 1001
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #42  ***
+UVVM:          1499 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1001) was not one-hot. Occurred after 133 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1505.0 ns  TB seq.                        Testing the expression: 1010
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #43  ***
+UVVM:          1505 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1010) was not one-hot. Occurred after 139 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1512.0 ns  TB seq.                        Testing the expression: 1011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #44  ***
+UVVM:          1512 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1011) was not one-hot. Occurred after 146 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1518.0 ns  TB seq.                        Testing the expression: 1100
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #45  ***
+UVVM:          1518 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1100) was not one-hot. Occurred after 152 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1527.0 ns  TB seq.                        Testing the expression: 1101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #46  ***
+UVVM:          1527 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1101) was not one-hot. Occurred after 161 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1534.0 ns  TB seq.                        Testing the expression: 1110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #47  ***
+UVVM:          1534 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1110) was not one-hot. Occurred after 168 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1540.0 ns  TB seq.                        Testing the expression: 1111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #48  ***
+UVVM:          1540 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 174 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1576.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1576.0 ns  TB seq.                        A positive acknowledge is expected each time tracked_value changes to a one-hot signal
+UVVM: ID_UVVM_ASSERTION               1582.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (0100) was one-hot. Condition occurred after 0 ns. 
+UVVM: ID_UVVM_ASSERTION               1589.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (0010) was one-hot. Condition occurred after 7 ns. 
+UVVM: ID_UVVM_ASSERTION               1596.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (0001) was one-hot. Condition occurred after 14 ns. 
+UVVM: ID_UVVM_ASSERTION               1602.0 ns  TB seq.(uvvm)                  assert_one_hot() => OK, tracked_value (1000) was one-hot. Condition occurred after 20 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1642.0 ns  TB seq.                        Testing Assertion Enable (non-clocked)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1642.0 ns  TB seq.                        Assertion enabled as tracked_value is assigned, expecting alert
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #49  ***
+UVVM:          1642 ns   TB seq.(uvvm)
+UVVM:                    assert_one_hot() => Failed, tracked_value (1111) was not one-hot. Occurred after 0 ns. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :     49        49         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1690.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

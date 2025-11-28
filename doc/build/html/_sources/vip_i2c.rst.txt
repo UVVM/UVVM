@@ -26,8 +26,6 @@ Bitvis VIP I2C
   * :ref:`i2c_slave_check_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -83,7 +81,7 @@ Default value for the record is C_I2C_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | max_wait_sda_change_severity | :ref:`t_alert_level`         | failure         | The above timeout will have this severity.      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| i2c_bit_time                 | time                         | -1 ns           | Bit period. Will give a TB_ERROR if not set to  |
+| i2c_bit_time                 | time                         | C_UNDEFINED_TIME| Bit period. Will give a TB_ERROR if not set to  |
 |                              |                              |                 | a different value than -1.                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | i2c_bit_time_severity        | :ref:`t_alert_level`         | failure         | A master method will report an alert with this  |
@@ -121,12 +119,12 @@ Default value for the record is C_I2C_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
 |                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
+| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
@@ -173,7 +171,7 @@ The procedure reports an alert if:
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single byte or a byte array.                            |
-|          |                    |        | t_byte_array                 |                                                         |
+|          |                    |        | :ref:`t_byte_array`          |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -187,7 +185,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -228,7 +227,7 @@ The procedure will report alerts for the same conditions as the :ref:`i2c_master
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | data               | out    | std_logic_vector             | The data value read from the addressed register, either |
 |          |                    |        |                              | a single byte or a byte array.                          |
-|          |                    |        | t_byte_array                 |                                                         |
+|          |                    |        | :ref:`t_byte_array`          |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -242,7 +241,8 @@ The procedure will report alerts for the same conditions as the :ref:`i2c_master
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -285,7 +285,7 @@ After receiving data, the data is compared with the expected data.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving the addressed   |
 |          |                    |        |                              | register, either a single byte or a byte array. A       |
-|          |                    |        | t_byte_array                 | mismatch results in an alert with severity 'alert_level'|
+|          |                    |        | :ref:`t_byte_array`          | mismatch results in an alert with severity 'alert_level'|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -301,7 +301,8 @@ After receiving data, the data is compared with the expected data.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -362,7 +363,8 @@ Transmits a zero-byte message to a slave DUT at the specified address using the 
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -406,7 +408,7 @@ The procedure reports an alert if:
 +==========+====================+========+==============================+=========================================================+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single byte or a byte array.                            |
-|          |                    |        | t_byte_array                 |                                                         |
+|          |                    |        | :ref:`t_byte_array`          |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -416,7 +418,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -449,7 +452,7 @@ The procedure will report alerts for the same conditions as the :ref:`i2c_slave_
 +==========+====================+========+==============================+=========================================================+
 | variable | data               | out    | std_logic_vector             | The data value read from the addressed register, either |
 |          |                    |        |                              | a single byte or a byte array.                          |
-|          |                    |        | t_byte_array                 |                                                         |
+|          |                    |        | :ref:`t_byte_array`          |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -459,7 +462,8 @@ The procedure will report alerts for the same conditions as the :ref:`i2c_slave_
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -495,7 +499,7 @@ After receiving data, the data is compared with the expected data.
 +==========+====================+========+==============================+=========================================================+
 | constant | data_exp           | in     | std_logic_vector             | The data value to expect when receiving the addressed   |
 |          |                    |        |                              | register, either a single byte or a byte array. A       |
-|          |                    |        | t_byte_array                 | mismatch results in an alert with severity 'alert_level'|
+|          |                    |        | :ref:`t_byte_array`          | mismatch results in an alert with severity 'alert_level'|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -512,7 +516,8 @@ After receiving data, the data is compared with the expected data.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("I2C BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_i2c_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_i2c_bfm_config>`          | value is C_I2C_BFM_CONFIG_DEFAULT.                      |
@@ -541,7 +546,7 @@ Initializes the I2C interface. All the BFM outputs are set to '0', and BFM input
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -590,8 +595,8 @@ Using a local overload like this also allows the following – if wanted:
 Local BFM configuration
 ==================================================================================================================================
 The I2C BFM requires that a local configuration is declared in the testbench and used in the BFM procedure calls. The default BFM 
-configuration is defined with a I2C bit time of -1 ns so that the BFM can detect and alert the user that the configuration has not 
-been set.
+configuration is defined with a I2C bit time of C_UNDEFINED_TIME so that the BFM can detect and alert the user that the 
+configuration has not been set.
 
 Defining a local I2C BFM configuration:::
 
@@ -642,13 +647,11 @@ manual Rev. 6", available from NXP Semiconductors.
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in i2c_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -659,7 +662,9 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Name                         | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_I2C_VVC_MAX_INSTANCE_NUM        |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_MASTER_MODE               | boolean                      | true            | When set to 'true' the VVC may only use the     |
 |                              |                              |                 | 'i2c_master_<transmit/check>' methods. When set |
@@ -693,6 +698,10 @@ Generics
 | OLD_SEVERITY                 |                              | _COUNT_THRESHOL\| GC_RESULT_QUEUE_COUNT_THRESHOLD                 |
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
 
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -783,6 +792,18 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_I2C_VVC_CMD_DATA_MAX_LENGTH              | Maximum **data** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_I2C_VVC_CMD_ADDR_MAX_LENGTH              | Maximum **addr** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_I2C_VVC_CMD_STRING_MAX_LENGTH            | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _i2c_master_transmit_vvc:
 
@@ -812,7 +833,7 @@ be called when the I2C VVC is instantiated in master mode, i.e. setting the VVC 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single byte or a byte array.                            |
-|          |                    |        | t_byte_array                 |                                                         |
+|          |                    |        | :ref:`t_byte_array`          |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -821,7 +842,8 @@ be called when the I2C VVC is instantiated in master mode, i.e. setting the VVC 
 |          |                    |        |                              | value is RELEASE_LINE_AFTER_TRANSFER.                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -873,7 +895,8 @@ in master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to
 |          |                    |        |                              | value is RELEASE_LINE_AFTER_TRANSFER.                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -928,7 +951,7 @@ master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 't
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to expect when receiving the addressed   |
 |          |                    |        |                              | register, either a single byte or a byte array. A       |
-|          |                    |        | t_byte_array                 | mismatch results in an alert with severity 'alert_level'|
+|          |                    |        | :ref:`t_byte_array`          | mismatch results in an alert with severity 'alert_level'|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -939,7 +962,8 @@ master mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 't
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -991,7 +1015,8 @@ be called when the I2C VVC is instantiated in master mode, i.e. setting the VVC 
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1023,12 +1048,13 @@ be called when the I2C VVC is instantiated in slave mode, i.e. setting the VVC e
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to be transmitted to the DUT, either a   |
 |          |                    |        |                              | single byte or a byte array.                            |
-|          |                    |        | t_byte_array                 |                                                         |
+|          |                    |        | :ref:`t_byte_array`          |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1070,7 +1096,8 @@ in slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1120,7 +1147,7 @@ slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 'fa
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_logic_vector             | The data value to expect when receiving the addressed   |
 |          |                    |        |                              | register, either a single byte or a byte array. A       |
-|          |                    |        | t_byte_array                 | mismatch results in an alert with severity 'alert_level'|
+|          |                    |        | :ref:`t_byte_array`          | mismatch results in an alert with severity 'alert_level'|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1130,7 +1157,8 @@ slave mode, i.e. setting the VVC entity generic constant 'GC_MASTER_MODE' to 'fa
 |          |                    |        |                              | is '0' (write).                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1161,7 +1189,8 @@ Transaction Info
     | addr                         | unsigned(9 downto 0)         | 0x0             | Slave address to interact with when VVC is in   |
     |                              |                              |                 | master mode                                     |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data                         | t_byte_array(0 to 63)        | 0x0             | Data for I2C receive or write transaction       |
+    | data                         | :ref:`t_byte_array(0 to 63)  | 0x0             | Data for I2C receive or write transaction       |
+    |                              | <t_byte_array>`              |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | num_bytes                    | natural                      | 0               | Number of bytes to be received                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -1181,7 +1210,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1192,8 +1221,8 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. i2c_master_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
-when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable I2C_VVC_SB, located 
-in the vvc_methods_pkg.vhd, e.g. ::
+when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable ``I2C_VVC_SB``, 
+located in the vvc_methods_pkg.vhd, e.g. ::
 
     I2C_VVC_SB.add_expected(C_I2C_VVC_IDX, pad_i2c_sb(v_expected), "Adding expected");
 
@@ -1203,7 +1232,7 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
     I2C_VVC_SB.add_expected(<I2C VVC instance number>, pad_i2c_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the I2C VVC scoreboard using the I2C_VVC_SB.
+Scoreboard commands are available for the I2C VVC scoreboard using the ``I2C_VVC_SB``.
 
 
 Unwanted Activity Detection

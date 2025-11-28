@@ -62,13 +62,10 @@ architecture behave of uart_monitor is
     signal   uart_line           : in std_logic;
     variable monitor_config      : in t_uart_monitor_config
   ) is
-    alias interface_config       : t_uart_interface_config is monitor_config.interface_config;
-    variable v_data              : std_logic_vector(C_MAX_BITS_IN_DATA - 1 downto 0) := (others => '0');
-    variable v_parity_error      : boolean;
-    variable v_stop_bit_error    : boolean_vector(0 to 1);
-    variable v_legal_transaction : boolean;
-    variable v_time_stamp        : time;
-    variable v_timeout           : time;
+    alias interface_config    : t_uart_interface_config is monitor_config.interface_config;
+    variable v_data           : std_logic_vector(C_MAX_BITS_IN_DATA - 1 downto 0) := (others => '0');
+    variable v_parity_error   : boolean;
+    variable v_stop_bit_error : boolean_vector(0 to 1);
   begin
 
     -- Give constructor some time to set values

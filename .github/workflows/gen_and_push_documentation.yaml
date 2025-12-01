@@ -52,7 +52,7 @@ jobs:
             exit 0
           fi
           git commit -m "Update documentation (html gen)"
-          git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM master
+          git push https://x-access-token:${PAT_TOKEN}@github.com/UVVM/UVVM master
 
   push_docs_to_uvvm_github_io:
     needs: gen_html_docs
@@ -63,6 +63,7 @@ jobs:
       uses: actions/checkout@master
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        ref: master # to collect any new HTML gens
 
     - name: Setup Git
       run: |
@@ -79,11 +80,12 @@ jobs:
       run: |
         cd github_io        
         git add .
+
         # Check if there are any changes to commit
         if git diff --staged --quiet; then
           echo "No changes to commit."
           exit 0
         fi
         git commit -m "Update documentation from ${{ github.repository }} at ${{ github.sha }}"
-        git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main
+        git push https://x-access-token:${PAT_TOKEN}@github.com/UVVM/UVVM.github.io.git main
 

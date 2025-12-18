@@ -15,9 +15,9 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library bitvis_vip_apb;
-  use bitvis_vip_apb.transaction_pkg.all;
-  use bitvis_vip_apb.vvc_methods_pkg.all;
-  use bitvis_vip_apb.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_apb.apb_bfm_pkg.all;
+  library external_vip_apb;
+  use external_vip_apb.transaction_pkg.all;
+  use external_vip_apb.vvc_methods_pkg.all;
+  use external_vip_apb.td_vvc_framework_common_methods_pkg.all;
+  use external_vip_apb.apb_bfm_pkg.all;
 end context;

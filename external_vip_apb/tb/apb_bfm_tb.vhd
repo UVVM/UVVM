@@ -9,10 +9,10 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_apb;
+library external_vip_apb;
 
-use bitvis_vip_apb.apb_bfm_pkg.all;
-use bitvis_vip_apb.vvc_methods_pkg.all;
+use external_vip_apb.apb_bfm_pkg.all;
+use external_vip_apb.vvc_methods_pkg.all;
 
 entity apb_bfm_tb is
 end apb_bfm_tb;

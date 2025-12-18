@@ -1,4 +1,4 @@
-# library bitvis_vip_apb
+# library external_vip_apb
 ../src/apb_bfm_pkg.vhd
 ../src/transaction_pkg.vhd
 ../src/vvc_cmd_pkg.vhd

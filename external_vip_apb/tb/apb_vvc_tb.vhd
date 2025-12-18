@@ -10,10 +10,10 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_apb;
-use bitvis_vip_apb.vvc_methods_pkg.all;
-use bitvis_vip_apb.td_vvc_framework_common_methods_pkg.all;
-use bitvis_vip_apb.apb_bfm_pkg.all;
+library external_vip_apb;
+use external_vip_apb.vvc_methods_pkg.all;
+use external_vip_apb.td_vvc_framework_common_methods_pkg.all;
+use external_vip_apb.apb_bfm_pkg.all;
 
 entity apb_vvc_tb is
 end apb_vvc_tb;
@@ -49,7 +49,7 @@ begin
     PSLVERR => apb_if.pslverr
   );
 
-  i_apb_vvc_inst : entity bitvis_vip_apb.apb_vvc
+  i_apb_vvc_inst : entity external_vip_apb.apb_vvc
     generic map(
       GC_ADDR_WIDTH => GC_ADDR_WIDTH,
       GC_DATA_WIDTH => GC_DATA_WIDTH

@@ -15,8 +15,8 @@ hr.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
 hr.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
-hr.add_files("../src/*.vhd", "bitvis_vip_apb")
-hr.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_apb")
+hr.add_files("../src/*.vhd", "external_vip_apb")
+hr.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "external_vip_apb")
 
 # Add testbech file to library my_tb_lib:
 hr.add_files("../tb/*.vhd", "my_tb_lib")

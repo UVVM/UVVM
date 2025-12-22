@@ -93,7 +93,7 @@ package string_methods_pkg is
     delim_left  : character;
     delim_right : character;
     start_from  : SIDE;                 -- search from left or right  (Only RIGHT implemented so far)
-    occurrence  : positive := 1         -- stop on N'th occurrence of delimeter pair. Default first occurrence
+    occurrence  : positive := 1         -- stop on N'th occurrence of delimiter pair. Default first occurrence
   ) return string;
 
   impure function get_procedure_name_from_instance_name(
@@ -637,7 +637,7 @@ package body string_methods_pkg is
 
   -- get_*_name
   -- Note: for sub-programs the following is given: library:package:procedure:object
-  -- Note: for design hierachy the following is given: complete hierarchy from sim-object down to process object
+  -- Note: for design hierarchy the following is given: complete hierarchy from sim-object down to process object
   -- e.g.  'sbi_tb:i_test_harness:i2_sbi_vvc:p_constructor:v_msg'
   -- Attribute instance_name also gives [procedure signature] or @entity-name(architecture name)
   function get_string_between_delimiters(
@@ -645,7 +645,7 @@ package body string_methods_pkg is
     delim_left  : character;
     delim_right : character;
     start_from  : SIDE;                 -- search from left or right  (Only RIGHT implemented so far)
-    occurrence  : positive := 1         -- stop on N'th occurrence of delimeter pair. Default first occurrence
+    occurrence  : positive := 1         -- stop on N'th occurrence of delimiter pair. Default first occurrence
   ) return string is
     variable v_left       : natural := 0;
     variable v_right      : natural := 0;
@@ -660,28 +660,28 @@ package body string_methods_pkg is
       v_left  := 0;                     -- default
       v_right := pos_of_rightmost(delim_right, a_val(1 to v_start), 0);
       if v_right > 0 then               -- i.e. found
-        L1 : for i in v_right - 1 downto 1 loop -- searching backwards for delimeter
+        L1 : for i in v_right - 1 downto 1 loop -- searching backwards for delimiter
           if (a_val(i) = delim_left) then
             v_left       := i;
-            v_start      := i;          -- Previous end delimeter could also be a start delimeter for next section
+            v_start      := i;          -- Previous end delimiter could also be a start delimiter for next section
             v_occurrence := v_occurrence + 1;
             exit L1;
           end if;
         end loop;                       -- searching backwards
       end if;
       if v_right = 0 or v_left = 0 then
-        return "";                      -- No delimeter pair found, and none can be found in the rest (with chars in between)
+        return "";                      -- No delimiter pair found, and none can be found in the rest (with chars in between)
       end if;
       if v_occurrence = occurrence then
         -- Match
         if (v_right - v_left) < 2 then
-          return "";                    -- no chars in between delimeters
+          return "";                    -- no chars in between delimiters
         else
           return a_val(v_left + 1 to v_right - 1);
         end if;
       end if;
       if v_start < 3 then
-        return "";                      -- No delimeter pair found, and none can be found in the rest (with chars in between)
+        return "";                      -- No delimiter pair found, and none can be found in the rest (with chars in between)
       end if;
     end loop;                           -- Will continue until match or not found
   end;
@@ -1287,7 +1287,7 @@ package body string_methods_pkg is
       deallocate(v_line);
       return v_result(1 to v_width);
 
-    else                                -- No decimal convertion: May be treated as slv, so use the slv overload
+    else                                -- No decimal conversion: May be treated as slv, so use the slv overload
       return to_string(std_logic_vector(val), radix, format, prefix);
     end if;
   end;
@@ -1301,7 +1301,7 @@ package body string_methods_pkg is
 
     -- helper function to prevent null arrays
     function get_string_len(value : t_slv_array) return integer is
-      variable v_parantheses           : integer := 2; -- Parentheses
+      variable v_parentheses           : integer := 2; -- Parentheses
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
@@ -1316,7 +1316,7 @@ package body string_methods_pkg is
           deallocate(v_line);
         end loop;
       end if;
-      return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len);
+      return (v_parentheses + v_commas + v_radix_prefix + v_max_array_element_len);
     end function;
 
     variable v_line   : line;
@@ -1357,7 +1357,7 @@ package body string_methods_pkg is
 
     -- helper function to prevent null arrays
     function get_string_len(value : t_signed_array) return integer is
-      variable v_parantheses           : integer := 2; -- Parentheses
+      variable v_parentheses           : integer := 2; -- Parentheses
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
@@ -1372,7 +1372,7 @@ package body string_methods_pkg is
           deallocate(v_line);
         end loop;
       end if;
-      return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len);
+      return (v_parentheses + v_commas + v_radix_prefix + v_max_array_element_len);
     end function;
 
     variable v_line   : line;
@@ -1413,7 +1413,7 @@ package body string_methods_pkg is
 
     -- helper function to prevent null arrays
     function get_string_len(value : t_unsigned_array) return integer is
-      variable v_parantheses           : integer := 2; -- Parentheses
+      variable v_parentheses           : integer := 2; -- Parentheses
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
@@ -1428,7 +1428,7 @@ package body string_methods_pkg is
           deallocate(v_line);
         end loop;
       end if;
-      return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len);
+      return (v_parentheses + v_commas + v_radix_prefix + v_max_array_element_len);
     end function;
 
     variable v_line   : line;
@@ -1749,7 +1749,7 @@ package body string_methods_pkg is
     constant path : string
   ) return string is
 
-    -- Returns the index of the last occurance of the given
+    -- Returns the index of the last occurrence of the given
     -- character in the given string, or -1 if it is not found.
     function index_of_last_character (
       char : character;

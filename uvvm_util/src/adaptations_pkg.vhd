@@ -429,6 +429,14 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_COMMON_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
+  -- APB
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_APB_VVC_CMD_DATA_MAX_LENGTH        : natural := 32;
+  constant C_APB_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
+  constant C_APB_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 4;
+  constant C_APB_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_APB_VVC_MAX_INSTANCE_NUM           : natural := C_MAX_VVC_INSTANCE_NUM;
+
   -- Avalon-MM
   -- Constants for the maximum sizes to use in the VVC.
   constant C_AVALON_MM_VVC_CMD_DATA_MAX_LENGTH        : natural := 1024;

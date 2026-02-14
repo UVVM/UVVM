@@ -15,6 +15,18 @@ import os
 import subprocess
 import sys
 
+def find_python3_executable():
+    python_executables = ["python3", "python"]
+
+    for executable in python_executables:
+        try:
+            output = (subprocess.check_output([executable, "--version"], stderr=subprocess.STDOUT).decode().strip())
+            if "Python 3" in output:
+                return executable
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+    return None
+
 num_errors = 0
 
 try:
@@ -37,7 +49,7 @@ try:
     # Add Spec Cov VIP
     hr.add_files("../src/*.vhd", "bitvis_vip_spec_cov")
     # Add Demo files
-    hr.add_files("../demo/advanced_usage/*.vhd", "bitvis_vip_spec_cov")
+    hr.add_files("../tb/advanced_demo/*.vhd", "bitvis_vip_spec_cov")
 
     sim_options = None
     simulator_name = hr.settings.get_simulator_name()
@@ -62,7 +74,7 @@ except:
       num_errors += subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
 
 # Run the specification coverage python script
-num_errors += subprocess.call(['python', '../script/run_spec_cov.py', '--config', '../demo/advanced_usage/config_advanced_demo.txt'], stderr=subprocess.PIPE)
+num_errors += subprocess.call([find_python3_executable(), '../script/run_spec_cov.py', '--config', '../tb/advanced_demo/config_advanced_demo.txt'], stderr=subprocess.PIPE)
 
 if num_errors != 0:
     sys.exit(num_errors)

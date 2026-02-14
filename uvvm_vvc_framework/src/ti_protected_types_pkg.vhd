@@ -38,11 +38,11 @@ package ti_protected_types_pkg is
 
     -- Update a VVC's state
     procedure priv_report_vvc_activity(
-      constant vvc_idx                : in natural;
-      constant executor_id            : in natural;
-      constant activity               : in t_activity;
-      constant last_cmd_idx_executed  : in integer;
-      constant cmd_completed          : in boolean
+      constant vvc_idx               : in natural;
+      constant executor_id           : in natural;
+      constant activity              : in t_activity;
+      constant last_cmd_idx_executed : in integer;
+      constant cmd_completed         : in boolean
     );
 
     -- DEPRECATED: will be removed in v3
@@ -147,7 +147,7 @@ package ti_protected_types_pkg is
       constant channel      : in t_channel := NA;
       constant scope        : in string;
       constant msg_id_panel : in t_msg_id_panel;
-      constant msg_id       : in t_msg_id := ID_AWAIT_COMPLETION_LIST
+      constant msg_id       : in t_msg_id  := ID_AWAIT_COMPLETION_LIST
     );
 
     procedure add(
@@ -274,11 +274,11 @@ package body ti_protected_types_pkg is
     end function;
 
     procedure priv_report_vvc_activity(
-      constant vvc_idx                : in natural;
-      constant executor_id            : in natural;
-      constant activity               : in t_activity;
-      constant last_cmd_idx_executed  : in integer;
-      constant cmd_completed          : in boolean
+      constant vvc_idx               : in natural;
+      constant executor_id           : in natural;
+      constant activity              : in t_activity;
+      constant last_cmd_idx_executed : in integer;
+      constant cmd_completed         : in boolean
     ) is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
@@ -555,7 +555,7 @@ package body ti_protected_types_pkg is
       constant channel      : in t_channel := NA;
       constant scope        : in string;
       constant msg_id_panel : in t_msg_id_panel;
-      constant msg_id       : in t_msg_id := ID_AWAIT_COMPLETION_LIST
+      constant msg_id       : in t_msg_id  := ID_AWAIT_COMPLETION_LIST
     ) is
       variable v_duplicate : boolean := false;
     begin

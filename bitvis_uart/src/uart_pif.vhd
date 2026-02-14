@@ -14,9 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use work.uart_pif_pkg.all;
 
@@ -35,7 +35,7 @@ entity uart_pif is
     p2c   : out t_p2c;
     c2p   : in  t_c2p
   );
-end uart_pif;
+end entity uart_pif;
 
 architecture rtl of uart_pif is
   signal p2c_i   : t_p2c := (
@@ -56,7 +56,7 @@ begin
   --   Provides read/write/trigger strobes and write data to auxiliary
   --   registers and fields, i.e., registers and fields implemented in core.
   --
-  p_aux : process(wdata, addr, cs, wr, rd, arst)
+  p_aux : process(wdata, addr, cs, wr, rd, arst) is
   begin
     -- Reset for pif registers
     if arst = '1' then
@@ -92,7 +92,7 @@ begin
 
   end process p_aux;
 
-  p_read_reg : process(all)
+  p_read_reg : process(all) is
   begin
     -- default values
     rdata_i <= (others => '0');
@@ -115,5 +115,5 @@ begin
 
   rdata <= rdata_i;
 
-end rtl;
+end architecture rtl;
 

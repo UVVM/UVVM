@@ -17,7 +17,7 @@ def main():
 
 	versions_file.write(header)
 
-	with open("component_list.txt", "r") as components:
+	with open("../script/component_list.txt", "r") as components:
 		line = components.readline()
 		while line:
 			component = line.strip()

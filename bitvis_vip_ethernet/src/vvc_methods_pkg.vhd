@@ -110,7 +110,7 @@ package vvc_methods_pkg is
 
   shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
   shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable ETHERNET_VVC_SB            : t_generic_sb;
+  shared variable ethernet_vvc_sb            : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -155,7 +155,8 @@ package vvc_methods_pkg is
     constant channel          : in t_channel;
     constant data_routing     : in t_data_routing;
     constant msg              : in string;
-    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call    : in string := ""
   );
 
   procedure ethernet_receive(
@@ -281,14 +282,14 @@ package body vvc_methods_pkg is
     constant msg              : in string;
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name : string := "ethernet_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", MAC dest: " & to_string(mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(payload'length) & ")";
+    constant C_PROC_NAME : string := "ethernet_transmit";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                     & ", MAC dest: " & to_string(mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.mac_destination                  := mac_destination;
     shared_vvc_cmd.mac_source                       := mac_source;
     shared_vvc_cmd.payload_length                   := payload'length;
@@ -329,15 +330,18 @@ package body vvc_methods_pkg is
     constant channel          : in t_channel;
     constant data_routing     : in t_data_routing;
     constant msg              : in string;
-    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT;
+    constant ext_proc_call    : in string := ""
   ) is
-    constant proc_name : string := "ethernet_receive";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
+    constant C_PROC_NAME       : string := "ethernet_receive";
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_LOCAL_PROC_CALL, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.data_routing := data_routing;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
   end procedure ethernet_receive;
@@ -349,8 +353,10 @@ package body vvc_methods_pkg is
     constant msg              : in string;
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
+    constant C_PROC_NAME : string := "ethernet_receive";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
   begin
-    ethernet_receive(VVCT, vvc_instance_idx, channel, NA, msg, scope);
+    ethernet_receive(VVCT, vvc_instance_idx, channel, NA, msg, scope, C_PROC_CALL);
   end procedure ethernet_receive;
 
   procedure ethernet_expect(
@@ -364,14 +370,14 @@ package body vvc_methods_pkg is
     constant alert_level      : in t_alert_level := ERROR;
     constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name : string := "ethernet_expect";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", MAC dest: " & to_string(mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(payload'length) & ")";
+    constant C_PROC_NAME : string := "ethernet_expect";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                     & ", MAC dest: " & to_string(mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, EXPECT);
     shared_vvc_cmd.mac_destination                  := mac_destination;
     shared_vvc_cmd.mac_source                       := mac_source;
     shared_vvc_cmd.payload_length                   := payload'length;
@@ -422,8 +428,8 @@ package body vvc_methods_pkg is
     constant scope                : in string;
     constant msg_id_panel         : in t_msg_id_panel
   ) is
-    constant proc_name              : string           := "ethernet_transmit";
-    constant proc_call              : string           := proc_name & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
+    constant C_PROC_NAME            : string           := "ethernet_transmit";
+    constant C_PROC_CALL            : string           := C_PROC_NAME & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
     variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH - 1);
     variable v_frame                : t_ethernet_frame;
     variable v_payload_length       : natural;
@@ -528,16 +534,16 @@ package body vvc_methods_pkg is
       v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
     end if;
 
-    log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_INITIATE, C_PROC_CALL & ". Start transmitting packet." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Send only configured fields to the bridge
     if v_use_preamble_and_sfd then
-      log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      log(ID_PACKET_PREAMBLE, C_PROC_CALL & ". Transmitting preamble." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7), C_FIELD_IDX_PREAMBLE_AND_SFD,
                               v_pos_preamble_and_sfd, scope, msg_id_panel);
     end if;
     if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
-      log(ID_PACKET_HDR, proc_call & ". Transmitting header." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
+      log(ID_PACKET_HDR, C_PROC_CALL & ". Transmitting header." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
     end if;
     if v_use_mac_dest then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13), C_FIELD_IDX_MAC_DESTINATION,
@@ -552,17 +558,17 @@ package body vvc_methods_pkg is
                               v_pos_payload_length, scope, msg_id_panel);
     end if;
     if v_use_payload then
-      log(ID_PACKET_DATA, proc_call & ". Transmitting payload." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
+      log(ID_PACKET_DATA, C_PROC_CALL & ". Transmitting payload." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22 + v_payload_length - 1), C_FIELD_IDX_PAYLOAD,
                               v_pos_payload, scope, msg_id_panel);
     end if;
     if v_use_fcs then
-      log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
+      log(ID_PACKET_CHECKSUM, C_PROC_CALL & ". Transmitting FCS." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 + v_payload_length to 22 + v_payload_length + 4 - 1), C_FIELD_IDX_FCS,
                               v_pos_fcs, scope, msg_id_panel);
     end if;
 
-    log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_COMPLETE, C_PROC_CALL & ". Finished transmitting packet." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Interpacket gap
     log(ID_PACKET_GAP, "Waiting for the interpacket gap." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
@@ -582,8 +588,8 @@ package body vvc_methods_pkg is
     constant msg_id_panel         : in t_msg_id_panel;
     constant ext_proc_call        : in string := "" -- External proc_call. Overwrite if called from another procedure
   ) is
-    constant local_proc_name          : string                        := "ethernet_receive";
-    constant local_proc_call          : string                        := local_proc_name & "()";
+    constant C_LOCAL_PROC_NAME        : string                        := "ethernet_receive";
+    constant C_LOCAL_PROC_CALL        : string                        := C_LOCAL_PROC_NAME & "()";
     variable v_preamble_and_sfd       : std_logic_vector(63 downto 0) := (others => '0');
     variable v_packet                 : t_byte_array(0 to C_MAX_PACKET_LENGTH - 1);
     alias a_bridge_to_hvvc_data_words : t_byte_array(0 to C_MAX_PACKET_LENGTH-1) is bridge_to_hvvc.data_words; -- Temporary fix to bug in Questa Sim 2022.1
@@ -604,10 +610,10 @@ package body vvc_methods_pkg is
   begin
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'ethernet_receive...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another procedure, log 'ext_proc_call while executing ethernet_receive...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     received_frame := C_ETHERNET_FRAME_DEFAULT;
@@ -760,8 +766,8 @@ package body vvc_methods_pkg is
     constant scope                : in string;
     constant msg_id_panel         : in t_msg_id_panel
   ) is
-    constant proc_name        : string           := "ethernet_expect";
-    constant proc_call        : string           := proc_name & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
+    constant C_PROC_NAME      : string           := "ethernet_expect";
+    constant C_PROC_CALL      : string           := C_PROC_NAME & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
     variable v_expected_frame : t_ethernet_frame := C_ETHERNET_FRAME_DEFAULT;
     variable v_received_frame : t_ethernet_frame;
     variable v_fcs_error      : boolean;
@@ -783,20 +789,20 @@ package body vvc_methods_pkg is
                                       vvc_transaction_info => vvc_transaction_info,
                                       scope                => scope,
                                       msg_id_panel         => msg_id_panel,
-                                      ext_proc_call        => proc_call);
+                                      ext_proc_call        => C_PROC_CALL);
 
     -- Check received frame against expected frame
-    if not check_value(v_received_frame.mac_destination, v_expected_frame.mac_destination, vvc_cmd.alert_level, "Verify MAC destination." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(v_received_frame.mac_destination, v_expected_frame.mac_destination, vvc_cmd.alert_level, "Verify MAC destination." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL) then
       v_frame_passed := false;
     end if;
-    if not check_value(v_received_frame.mac_source, v_expected_frame.mac_source, vvc_cmd.alert_level, "Verify MAC source." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(v_received_frame.mac_source, v_expected_frame.mac_source, vvc_cmd.alert_level, "Verify MAC source." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL) then
       v_frame_passed := false;
     end if;
-    if not check_value(v_received_frame.payload_length, v_expected_frame.payload_length, vvc_cmd.alert_level, "Verify payload length." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(v_received_frame.payload_length, v_expected_frame.payload_length, vvc_cmd.alert_level, "Verify payload length." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, ID_NEVER, msg_id_panel, C_PROC_CALL) then
       v_frame_passed := false;
     end if;
     for i in 0 to v_received_frame.payload_length - 1 loop
-      if not check_value(v_received_frame.payload(i), v_expected_frame.payload(i), vvc_cmd.alert_level, "Verify payload byte " & to_string(i) & "." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+      if not check_value(v_received_frame.payload(i), v_expected_frame.payload(i), vvc_cmd.alert_level, "Verify payload byte " & to_string(i) & "." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL) then
         v_frame_passed := false;
       end if;
     end loop;
@@ -805,7 +811,7 @@ package body vvc_methods_pkg is
     end if;
 
     if v_frame_passed then
-      log(ID_PACKET_COMPLETE, proc_call & " => OK." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      log(ID_PACKET_COMPLETE, C_PROC_CALL & " => OK." & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
   end procedure priv_ethernet_expect_from_bridge;
 

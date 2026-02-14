@@ -96,7 +96,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -186,7 +186,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process
     variable v_cmd                                    : t_vvc_cmd_record;
     variable v_timestamp_start_of_current_bfm_access  : time                                         := 0 ns;
     variable v_timestamp_start_of_last_bfm_access     : time                                         := 0 ns;

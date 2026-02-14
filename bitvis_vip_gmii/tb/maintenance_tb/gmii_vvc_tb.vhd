@@ -261,19 +261,19 @@ begin
     log(ID_LOG_HDR, "Testing scoreboard");
     gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to 19), "");
     for i in 0 to 19 loop
-      GMII_VVC_SB.add_expected(C_VVC_IDX, v_data_array(i));
+      gmii_vvc_sb.add_expected(C_VVC_IDX, v_data_array(i));
     end loop;
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, TO_SB, "Sending received data to SB");
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
     gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to 9), "");
     for i in 0 to 9 loop
-      GMII_VVC_SB.add_expected(C_VVC_IDX, v_data_array(i));
+      gmii_vvc_sb.add_expected(C_VVC_IDX, v_data_array(i));
     end loop;
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, 10, TO_SB, "Sending received data to SB");
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
-    GMII_VVC_SB.report_counters(ALL_INSTANCES);
+    gmii_vvc_sb.report_counters(ALL_INSTANCES);
     shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.bfm_sync := SYNC_ON_CLOCK_ONLY; -- Set to default before next test
     shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.bfm_sync := SYNC_ON_CLOCK_ONLY; -- Set to default before next test
 

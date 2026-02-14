@@ -39,7 +39,7 @@ package uart_bfm_pkg is
   constant C_DATA_MAX_LENGTH                       : natural := 8;
   constant C_DEFAULT_TIMEOUT                       : natural := 100; -- This value should cover the transmission of a byte frame
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR : string  := "; ";
-  type uart_expect_received_data_array is array (natural range <>) of std_logic_vector(C_DATA_MAX_LENGTH - 1 downto 0);
+  type t_uart_expect_received_data_array is array (natural range <>) of std_logic_vector(C_DATA_MAX_LENGTH - 1 downto 0);
 
   type t_bfm_error_injection is record
     parity_bit_error : boolean;
@@ -168,7 +168,7 @@ package body uart_bfm_pkg is
   return std_logic is
   begin
     return xnor(data);
-  end odd_parity;
+  end function odd_parity;
 
   ---------------------------------------------------------------------------------
   -- uart_transmit
@@ -181,8 +181,8 @@ package body uart_bfm_pkg is
     constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel
   ) is
-    constant proc_name : string := "uart_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := "uart_transmit";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_data_value      : std_logic_vector(config.num_data_bits - 1 downto 0);
     variable v_normalized_data : std_logic_vector(config.num_data_bits - 1 downto 0) := normalize_and_check(data_value, v_data_value, ALLOW_WIDER_NARROWER, "data_value", "v_data_value", "Normalize data_value");
@@ -196,7 +196,7 @@ package body uart_bfm_pkg is
     check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- check if tx line was idle when trying to transmit data
-    check_value(tx, config.idle_state, FAILURE, proc_call & " Bus was active when trying to send data." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+    check_value(tx, config.idle_state, FAILURE, C_PROC_CALL & " Bus was active when trying to send data." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     tx <= not config.idle_state;
     wait for config.bit_time;
@@ -243,7 +243,7 @@ package body uart_bfm_pkg is
       wait for config.bit_time;
     end if;
 
-    log(config.id_for_bfm, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
   ---------------------------------------------------------------------------------
@@ -260,11 +260,11 @@ package body uart_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel;
     constant ext_proc_call  : in string            := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant start_time : time := now;
+    constant C_START_TIME : time := now;
 
     -- local_proc_* used if uart_receive is called directly from sequencer or VVC
-    constant local_proc_name : string := "uart_receive";
-    constant local_proc_call : string := local_proc_name & "()";
+    constant C_LOCAL_PROC_NAME : string := "uart_receive";
+    constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "()";
 
     -- Helper variables
     variable v_transfer_time    : time;
@@ -305,10 +305,10 @@ package body uart_bfm_pkg is
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'uart_receive...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing uart_receive...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name & ". ");
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME & ". ");
     end if;
 
     -- check if bus is in idle state
@@ -341,9 +341,9 @@ package body uart_bfm_pkg is
       elsif config.num_stop_bits = STOP_BITS_TWO then
         v_remaining_time := v_remaining_time + config.bit_time;
       end if;
-      if now + v_remaining_time > start_time + v_internal_timeout then
+      if now + v_remaining_time > C_START_TIME + v_internal_timeout then
         -- wait until timeout
-        wait for ((start_time + v_internal_timeout) - now);
+        wait for ((C_START_TIME + v_internal_timeout) - now);
         if ext_proc_call = "" then
           alert(config.timeout_severity, v_proc_call.all & "=> Failed. Timeout after " & to_string(v_internal_timeout, ns) & "." & add_msg_delimiter(msg), scope);
         else
@@ -424,18 +424,18 @@ package body uart_bfm_pkg is
     constant scope          : in string            := C_BFM_SCOPE;
     constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel
   ) is
-    constant proc_name                      : string                                                                                   := "uart_expect";
-    constant proc_call                      : string                                                                                   := proc_name & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-    constant start_time                     : time                                                                                     := now;
+    constant C_PROC_NAME                    : string                                                                                   := "uart_expect";
+    constant C_PROC_CALL                    : string                                                                                   := C_PROC_NAME & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_START_TIME                   : time                                                                                     := now;
     variable v_data_value                   : std_logic_vector(config.num_data_bits - 1 downto 0);
     variable v_normalized_data              : std_logic_vector(config.num_data_bits - 1 downto 0)                                      := normalize_and_check(data_exp, v_data_value, ALLOW_WIDER_NARROWER, "data_exp", "v_data_value", "Normalize data_exp");
     variable v_num_of_occurrences           : natural                                                                                  := 0;
     variable v_check_ok                     : boolean;
     variable v_num_of_occurrences_ok        : boolean;
     variable v_timeout_ok                   : boolean;
-    variable v_config                       : t_uart_bfm_config                                                                        := config;
-    variable v_received_data_fifo           : uart_expect_received_data_array(0 to v_config.num_bytes_to_log_before_expected_data - 1) := (others => (others => '0'));
-    variable v_received_data_fifo_write_idx : natural                                                                                  := 0;
+    variable v_config                       : t_uart_bfm_config                                                                          := config;
+    variable v_received_data_fifo           : t_uart_expect_received_data_array(0 to v_config.num_bytes_to_log_before_expected_data - 1) := (others => (others => '0'));
+    variable v_received_data_fifo_write_idx : natural                                                                                    := 0;
     variable v_received_output_line         : line;
     variable v_internal_timeout             : time;
     variable v_alert_radix                  : t_radix;
@@ -457,7 +457,7 @@ package body uart_bfm_pkg is
 
     -- Check for v_internal_timeout = 0 and max_receptions = 0. This combination can result in an infinite loop.
     if v_internal_timeout = 0 ns and max_receptions = 0 then
-      alert(ERROR, proc_name & " called with timeout=0 and max_receptions = 0. This combination can result in an infinite loop." & add_msg_delimiter(msg), scope);
+      alert(ERROR, C_PROC_NAME & " called with timeout=0 and max_receptions = 0. This combination can result in an infinite loop." & add_msg_delimiter(msg), scope);
     end if;
 
     if v_internal_timeout = 0 ns then
@@ -484,7 +484,7 @@ package body uart_bfm_pkg is
     while not v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and (terminate_loop = '0') loop
 
       -- Receive and check data
-      uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
+      uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, C_PROC_CALL);
       for i in 0 to v_config.num_data_bits - 1 loop
         -- Allow don't care in expected value and use match strictness from config for comparison
         if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
@@ -518,7 +518,7 @@ package body uart_bfm_pkg is
       if v_internal_timeout = 0 ns then
         v_timeout_ok := true;
       else
-        v_timeout_ok := now < start_time + v_internal_timeout;
+        v_timeout_ok := now < C_START_TIME + v_internal_timeout;
       end if;
     end loop;
 
@@ -536,19 +536,19 @@ package body uart_bfm_pkg is
     end if;
 
     if v_check_ok then
-      log(v_config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time), ns) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(v_config.id_for_bfm, C_PROC_CALL & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - C_START_TIME), ns) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     elsif not v_timeout_ok then
-      alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(v_normalized_data, HEX, KEEP_LEADING_0, INCL_RADIX) & " before time " & to_string(v_internal_timeout, ns) & "." & add_msg_delimiter(msg), scope);
+      alert(config.timeout_severity, C_PROC_CALL & "=> Failed due to timeout. Did not get expected value " & to_string(v_normalized_data, HEX, KEEP_LEADING_0, INCL_RADIX) & " before time " & to_string(v_internal_timeout, ns) & "." & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       if max_receptions = 1 then
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, C_PROC_CALL & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
       else
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences." & add_msg_delimiter(msg), scope);
+        alert(alert_level, C_PROC_CALL & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences." & add_msg_delimiter(msg), scope);
       end if;
     else
-      alert(warning, proc_call & "=> Failed. Terminate loop received." & add_msg_delimiter(msg), scope);
+      alert(warning, C_PROC_CALL & "=> Failed. Terminate loop received." & add_msg_delimiter(msg), scope);
     end if;
 
     DEALLOCATE(v_received_output_line);

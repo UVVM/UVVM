@@ -362,12 +362,12 @@ Scoreboard
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. ethernet_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
 when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable 
-``ETHERNET_VVC_SB``, located in the vvc_methods_pkg.vhd, e.g. ::
+``ethernet_vvc_sb``, located in the vvc_methods_pkg.vhd, e.g. ::
 
-    ETHERNET_VVC_SB.add_expected(C_ETH_GMII_VVC_IDX, v_expected_frame, "Adding expected");
+    ethernet_vvc_sb.add_expected(C_ETH_GMII_VVC_IDX, v_expected_frame, "Adding expected");
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Ethernet VVC scoreboard using the ``ETHERNET_VVC_SB``.
+Scoreboard commands are available for the Ethernet VVC scoreboard using the ``ethernet_vvc_sb``.
 
 
 Unwanted Activity Detection

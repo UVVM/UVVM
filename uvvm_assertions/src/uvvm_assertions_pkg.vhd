@@ -17,25 +17,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : boolean;
 
-    constant exp_value     : boolean        := true; -- default value to check against
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : boolean        := true; -- default value to check against
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : boolean;
 
-    constant exp_value     : boolean        := true; -- default value to check against
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : boolean        := true; -- default value to check against
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -43,25 +43,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : std_logic_vector;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : std_logic_vector;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -69,25 +69,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -95,25 +95,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_slv_array;
 
-    constant exp_value     : t_slv_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_slv_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : t_slv_array;
 
-    constant exp_value     : t_slv_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_slv_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -121,25 +121,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_unsigned_array;
 
-    constant exp_value     : t_unsigned_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_unsigned_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : t_unsigned_array;
 
-    constant exp_value     : t_unsigned_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_unsigned_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -147,25 +147,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_signed_array;
 
-    constant exp_value     : t_signed_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_signed_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : t_signed_array;
 
-    constant exp_value     : t_signed_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_signed_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -173,25 +173,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant exp_value     : unsigned;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : unsigned;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant exp_value     : unsigned;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : unsigned;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -199,25 +199,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant exp_value     : signed;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : signed;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant exp_value     : signed;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : signed;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -225,25 +225,25 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant exp_value     : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant exp_value     : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -251,26 +251,26 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant exp_value     : real;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : real;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant exp_value     : real;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : real;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
@@ -278,212 +278,212 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant exp_value     : time;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : time;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant exp_value     : time;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : time;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   -- #endregion assert_value
 
   -- #region ASSERT_ONE_OF
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant allowed_values : t_slv_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic_vector;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant allowed_values : t_slv_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic;
 
     constant allowed_values : std_logic_vector; -- e.g "01" or "01X" or "01XL"
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic;
 
     constant allowed_values : std_logic_vector; -- e.g "01" or "01X" or "01XL"
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : unsigned;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : unsigned;
 
     constant allowed_values : t_unsigned_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : unsigned;
+    signal   ena           : std_logic;
+    signal   tracked_value : unsigned;
 
     constant allowed_values : t_unsigned_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : signed;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : signed;
 
     constant allowed_values : t_signed_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : signed;
+    signal   ena           : std_logic;
+    signal   tracked_value : signed;
 
     constant allowed_values : t_signed_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : integer;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : integer;
 
     constant allowed_values : t_integer_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : integer;
+    signal   ena           : std_logic;
+    signal   tracked_value : integer;
 
     constant allowed_values : t_integer_array;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : real;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : real;
 
     constant allowed_values : real_vector;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : real;
+    signal   ena           : std_logic;
+    signal   tracked_value : real;
 
     constant allowed_values : real_vector;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : time;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : time;
 
     constant allowed_values : time_vector;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : time;
+    signal   ena           : std_logic;
+    signal   tracked_value : time;
 
     constant allowed_values : time_vector;
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
   -- #endregion ASSERT_ONE_OF
 
   -- #region ASSERT_ONE_HOT
   procedure assert_one_hot(
-    signal   clk             : std_logic;
-    signal   ena             : std_logic;
-    signal   tracked_value   : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant msg             : string;
     constant alert_level     : t_alert_level      := ERROR;
@@ -494,8 +494,8 @@ package uvvm_assertions_pkg is
     constant msg_id_panel    : t_msg_id_panel     := shared_msg_id_panel
   );
   procedure assert_one_hot(
-    signal   ena             : std_logic;
-    signal   tracked_value   : std_logic_vector;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant msg             : string;
     constant alert_level     : t_alert_level      := ERROR;
@@ -513,163 +513,163 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant lower_limit   : unsigned;            -- inclusive
-    constant upper_limit   : unsigned;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : unsigned;            -- inclusive
+    constant upper_limit  : unsigned;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant lower_limit   : unsigned;            -- inclusive
-    constant upper_limit   : unsigned;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : unsigned;            -- inclusive
+    constant upper_limit  : unsigned;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   clk           : std_logic;
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant lower_limit   : signed;            -- inclusive
-    constant upper_limit   : signed;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : signed;            -- inclusive
+    constant upper_limit  : signed;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant lower_limit   : signed;            -- inclusive
-    constant upper_limit   : signed;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : signed;            -- inclusive
+    constant upper_limit  : signed;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   clk           : std_logic;
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant lower_limit   : integer;            -- inclusive
-    constant upper_limit   : integer;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : integer;            -- inclusive
+    constant upper_limit  : integer;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant lower_limit   : integer;            -- inclusive
-    constant upper_limit   : integer;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : integer;            -- inclusive
+    constant upper_limit  : integer;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   clk           : std_logic;
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant lower_limit   : real;            -- inclusive
-    constant upper_limit   : real;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : real;            -- inclusive
+    constant upper_limit  : real;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant lower_limit   : real;            -- inclusive
-    constant upper_limit   : real;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : real;            -- inclusive
+    constant upper_limit  : real;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   clk           : std_logic;
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant lower_limit   : time;            -- inclusive
-    constant upper_limit   : time;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : time;            -- inclusive
+    constant upper_limit  : time;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_in_range(
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant lower_limit   : time;            -- inclusive
-    constant upper_limit   : time;            -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : time;            -- inclusive
+    constant upper_limit  : time;            -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   -- #endregion ASSERT_VALUE_IN_RANGE
 
   -- #region ASSERT_SHIFT_ONE_FROM_LEFT
   procedure assert_shift_one_from_left(
-    signal   clk                 : std_logic;
-    signal   ena                 : std_logic;
-    signal   tracked_value       : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant necessary_condition : t_shift_one_ness_cond;
     constant msg                 : string;
-    constant alert_level         : t_alert_level          := ERROR;
-    constant scope               : string                 := C_SCOPE;
-    constant pos_ack_kind        : t_pos_ack_kind         := FIRST;
-    constant msg_id              : t_msg_id               := ID_UVVM_ASSERTION;
-    constant msg_id_panel        : t_msg_id_panel         := shared_msg_id_panel
+    constant alert_level         : t_alert_level  := ERROR;
+    constant scope               : string         := C_SCOPE;
+    constant pos_ack_kind        : t_pos_ack_kind := FIRST;
+    constant msg_id              : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel        : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_shift_one_from_left(
-    signal   clk                 : std_logic;
-    signal   ena                 : std_logic;
-    signal   tracked_value       : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
-    constant msg                 : string;
-    constant alert_level         : t_alert_level          := ERROR;
-    constant scope               : string                 := C_SCOPE;
-    constant pos_ack_kind        : t_pos_ack_kind         := FIRST;
-    constant msg_id              : t_msg_id               := ID_UVVM_ASSERTION;
-    constant msg_id_panel        : t_msg_id_panel         := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   -- #endregion ASSERT_SHIFT_ONE_FROM_LEFT
 
@@ -684,15 +684,15 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_to_value_from_min_to_max_cycles_after_trigger(
     signal   clk           : std_logic;
@@ -700,15 +700,15 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_from_min_to_max_cycles_after_trigger(
     signal   clk           : std_logic;
@@ -716,14 +716,14 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_stable_from_min_to_max_cycles_after_trigger(
     signal   clk           : std_logic;
@@ -731,14 +731,14 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -747,13 +747,13 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_to_value_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -762,13 +762,13 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -777,12 +777,12 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_stable_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -791,14 +791,13 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
-
 
   -- std_logic_vector overloads
 
@@ -808,15 +807,15 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_to_value_from_min_to_max_cycles_after_trigger(
     signal   clk           : std_logic;
@@ -824,15 +823,15 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_from_min_to_max_cycles_after_trigger(
     signal   clk           : std_logic;
@@ -840,14 +839,14 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_stable_from_min_to_max_cycles_after_trigger(
     signal   clk           : std_logic;
@@ -855,14 +854,14 @@ package uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer;
-    constant max_cycles    : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer;
+    constant max_cycles   : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_value_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -871,13 +870,13 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_to_value_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -886,13 +885,13 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_change_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -901,12 +900,12 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
   procedure assert_stable_from_start_to_end_trigger(
     signal   clk           : std_logic;
@@ -915,25 +914,25 @@ package uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   );
 
-  -- #endregion WINDOW_ASSERTIONS
+-- #endregion WINDOW_ASSERTIONS
 
-end package;
+end package uvvm_assertions_pkg;
 package body uvvm_assertions_pkg is
 
   -- #region ASSERT_VALUE
 
   -- assert_value (boolean):
   function f_assert_value_core (
-  -- NOTE: VHDL-2008 does not allow type conversion in procedure call parameters, and so
-  --       There is no way to overload the existing assert_value procedure to accept boolean
+    -- NOTE: VHDL-2008 does not allow type conversion in procedure call parameters, and so
+    --       There is no way to overload the existing assert_value procedure to accept boolean
     tracked_value  : boolean;
     exp_value      : boolean;
     alert_level    : t_alert_level;
@@ -997,13 +996,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : boolean;
 
-    constant exp_value     : boolean        := true; -- default value to check against
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : boolean        := true; -- default value to check against
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1060,13 +1059,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : std_logic_vector;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level    := ERROR;
-    constant scope         : string           := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind   := FIRST;
-    constant msg_id        : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel   := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1094,13 +1093,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : std_logic_vector;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level    := ERROR;
-    constant scope         : string           := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind   := FIRST;
-    constant msg_id        : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel   := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1153,19 +1152,18 @@ package body uvvm_assertions_pkg is
     return v_first_ack;
   end function f_assert_value_core;
 
-
   -- assert_value OVERLOAD (std_logic):
   procedure assert_value(
     signal   ena           : std_logic;
     signal   tracked_value : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1192,13 +1190,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1269,13 +1267,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_slv_array;
 
-    constant exp_value     : t_slv_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_slv_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1302,13 +1300,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_slv_array;
 
-    constant exp_value     : t_slv_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_slv_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1379,13 +1377,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_unsigned_array;
 
-    constant exp_value     : t_unsigned_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_unsigned_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1412,13 +1410,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_unsigned_array;
 
-    constant exp_value     : t_unsigned_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_unsigned_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1489,13 +1487,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_signed_array;
 
-    constant exp_value     : t_signed_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_signed_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1522,13 +1520,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : t_signed_array;
 
-    constant exp_value     : t_signed_array;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : t_signed_array;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1587,13 +1585,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant exp_value     : unsigned;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : unsigned;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1620,13 +1618,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant exp_value     : unsigned;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : unsigned;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1685,13 +1683,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant exp_value     : signed;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : signed;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1718,13 +1716,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant exp_value     : signed;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : signed;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1783,13 +1781,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant exp_value     : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1816,13 +1814,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant exp_value     : integer;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : integer;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1881,13 +1879,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant exp_value     : real;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : real;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1914,13 +1912,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant exp_value     : real;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : real;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -1979,13 +1977,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant exp_value     : time;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : time;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -2012,13 +2010,13 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant exp_value     : time;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : time;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value()";
     variable v_first_ack    : boolean := true;
@@ -2100,8 +2098,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic_vector;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant allowed_values : t_slv_array; -- e.g ("01", "11") or ("00", "11")
     constant msg            : string;
@@ -2132,9 +2130,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant allowed_values : t_slv_array; -- e.g ("01", "11") or ("00", "11")
     constant msg            : string;
@@ -2196,7 +2194,7 @@ package body uvvm_assertions_pkg is
     end function one_of;
 
     variable v_print_line : line;
-    
+
   begin
     if not one_of(tracked_value, allowed_values) then
       -- takes in an std_logic_vector (e.g "010" or "01X") and returns a string with each bit separated by a '/' and surrounded by "'" (e.g "'0'/'1'/'H'")
@@ -2221,16 +2219,16 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic;
 
     constant allowed_values : std_logic_vector; -- e.g "01" or "01X" or "01XL"
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_one_of()";
     variable v_first_ack    : boolean := true;
@@ -2253,17 +2251,17 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic;
 
     constant allowed_values : std_logic_vector; -- e.g "01" or "01X" or "01XL"
     constant msg            : string;
-    constant alert_level    : t_alert_level    := ERROR;
-    constant scope          : string           := C_SCOPE;
-    constant pos_ack_kind   : t_pos_ack_kind   := FIRST;
-    constant msg_id         : t_msg_id         := ID_UVVM_ASSERTION;
-    constant msg_id_panel   : t_msg_id_panel   := shared_msg_id_panel
+    constant alert_level    : t_alert_level  := ERROR;
+    constant scope          : string         := C_SCOPE;
+    constant pos_ack_kind   : t_pos_ack_kind := FIRST;
+    constant msg_id         : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME       : string  := "assert_one_of()";
     variable v_first_ack  : boolean := true;
@@ -2317,7 +2315,7 @@ package body uvvm_assertions_pkg is
     end function one_of;
 
     variable v_print_line : line;
-    
+
   begin
     if not one_of(tracked_value, allowed_values) then
       -- takes in an t_slv_array, e.g ("01", "10) or ("1X", "UU") and returns a string with each bit separated by a '/' and surrounded by "'" (e.g "'01'/'10'/'UU'")
@@ -2342,8 +2340,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : unsigned;
+    signal   ena           : std_logic;
+    signal   tracked_value : unsigned;
 
     constant allowed_values : t_unsigned_array; -- e.g ("01", "11") or ("00", "11")
     constant msg            : string;
@@ -2374,9 +2372,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : unsigned;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : unsigned;
 
     constant allowed_values : t_unsigned_array; -- e.g ("01", "11") or ("00", "11")
     constant msg            : string;
@@ -2438,7 +2436,7 @@ package body uvvm_assertions_pkg is
     end function one_of;
 
     variable v_print_line : line;
-    
+
   begin
     if not one_of(tracked_value, allowed_values) then
       -- takes in an t_slv_array, e.g ("01", "10) or ("1X", "UU") and returns a string with each bit separated by a '/' and surrounded by "'" (e.g "'01'/'10'/'UU'")
@@ -2463,8 +2461,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : signed;
+    signal   ena           : std_logic;
+    signal   tracked_value : signed;
 
     constant allowed_values : t_signed_array; -- e.g ("01", "11") or ("00", "11")
     constant msg            : string;
@@ -2495,9 +2493,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : signed;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : signed;
 
     constant allowed_values : t_signed_array; -- e.g ("01", "11") or ("00", "11")
     constant msg            : string;
@@ -2583,8 +2581,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : integer;
+    signal   ena           : std_logic;
+    signal   tracked_value : integer;
 
     constant allowed_values : t_integer_array;
     constant msg            : string;
@@ -2615,9 +2613,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : integer;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : integer;
 
     constant allowed_values : t_integer_array;
     constant msg            : string;
@@ -2703,8 +2701,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : real;
+    signal   ena           : std_logic;
+    signal   tracked_value : real;
 
     constant allowed_values : real_vector;
     constant msg            : string;
@@ -2735,9 +2733,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : real;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : real;
 
     constant allowed_values : real_vector;
     constant msg            : string;
@@ -2823,8 +2821,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_of_core;
 
   procedure assert_one_of(
-    signal   ena            : std_logic;
-    signal   tracked_value  : time;
+    signal   ena           : std_logic;
+    signal   tracked_value : time;
 
     constant allowed_values : time_vector;
     constant msg            : string;
@@ -2855,9 +2853,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_of;
 
   procedure assert_one_of(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : time;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : time;
 
     constant allowed_values : time_vector;
     constant msg            : string;
@@ -2950,8 +2948,8 @@ package body uvvm_assertions_pkg is
   end function f_assert_one_hot_core;
 
   procedure assert_one_hot(
-    signal   ena            : std_logic;
-    signal   tracked_value   : std_logic_vector;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant msg             : string;
     constant alert_level     : t_alert_level      := ERROR;
@@ -2982,9 +2980,9 @@ package body uvvm_assertions_pkg is
   end procedure assert_one_hot;
 
   procedure assert_one_hot(
-    signal   clk             : std_logic;
-    signal   ena             : std_logic;
-    signal   tracked_value   : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant msg             : string;
     constant alert_level     : t_alert_level      := ERROR;
@@ -3060,14 +3058,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant lower_limit   : integer; -- inclusive
-    constant upper_limit   : integer; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : integer; -- inclusive
+    constant upper_limit  : integer; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME       : string  := "assert_value_in_range()";
     variable v_first_ack  : boolean := true;
@@ -3094,14 +3092,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant lower_limit   : integer; -- inclusive
-    constant upper_limit   : integer; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : integer; -- inclusive
+    constant upper_limit  : integer; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME         : string  := "assert_value_in_range()";
     variable v_first_ack    : boolean := true;
@@ -3130,14 +3128,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant lower_limit   : unsigned; -- inclusive
-    constant upper_limit   : unsigned; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : unsigned; -- inclusive
+    constant upper_limit  : unsigned; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
@@ -3169,19 +3167,19 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : unsigned;
 
-    constant lower_limit   : unsigned; -- inclusive
-    constant upper_limit   : unsigned; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : unsigned; -- inclusive
+    constant upper_limit  : unsigned; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
     variable v_start_time        : time    := 0 ns;
-    variable v_tracked_value_int : integer;    
+    variable v_tracked_value_int : integer;
     variable v_lower_limit_int   : integer := to_integer(lower_limit);
     variable v_upper_limit_int   : integer := to_integer(upper_limit);
   begin
@@ -3210,14 +3208,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant lower_limit   : signed; -- inclusive
-    constant upper_limit   : signed; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : signed; -- inclusive
+    constant upper_limit  : signed; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
@@ -3249,19 +3247,19 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : signed;
 
-    constant lower_limit   : signed; -- inclusive
-    constant upper_limit   : signed; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : signed; -- inclusive
+    constant upper_limit  : signed; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
     variable v_start_time        : time    := 0 ns;
-    variable v_tracked_value_int : integer;    
+    variable v_tracked_value_int : integer;
     variable v_lower_limit_int   : integer := to_integer(lower_limit);
     variable v_upper_limit_int   : integer := to_integer(upper_limit);
   begin
@@ -3326,14 +3324,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant lower_limit   : real; -- inclusive
-    constant upper_limit   : real; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : real; -- inclusive
+    constant upper_limit  : real; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
@@ -3359,14 +3357,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : real;
 
-    constant lower_limit   : real; -- inclusive
-    constant upper_limit   : real; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : real; -- inclusive
+    constant upper_limit  : real; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
@@ -3430,14 +3428,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant lower_limit   : time; -- inclusive
-    constant upper_limit   : time; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : time; -- inclusive
+    constant upper_limit  : time; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
@@ -3463,14 +3461,14 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : time;
 
-    constant lower_limit   : time; -- inclusive
-    constant upper_limit   : time; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant lower_limit  : time; -- inclusive
+    constant upper_limit  : time; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME              : string  := "assert_value_in_range()";
     variable v_first_ack         : boolean := true;
@@ -3498,17 +3496,17 @@ package body uvvm_assertions_pkg is
   -- #region ASSERT_SHIFT_ONE_FROM_LEFT
 
   procedure assert_shift_one_from_left(
-    signal   clk                 : std_logic;
-    signal   ena                 : std_logic;
-    signal   tracked_value       : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
     constant necessary_condition : t_shift_one_ness_cond;
     constant msg                 : string;
-    constant alert_level         : t_alert_level          := ERROR;
-    constant scope               : string                 := C_SCOPE;
-    constant pos_ack_kind        : t_pos_ack_kind         := FIRST;
-    constant msg_id              : t_msg_id               := ID_UVVM_ASSERTION;
-    constant msg_id_panel        : t_msg_id_panel         := shared_msg_id_panel
+    constant alert_level         : t_alert_level  := ERROR;
+    constant scope               : string         := C_SCOPE;
+    constant pos_ack_kind        : t_pos_ack_kind := FIRST;
+    constant msg_id              : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel        : t_msg_id_panel := shared_msg_id_panel
   ) is
     -- used for logging:
     constant C_NAME              : string                                  := "assert_shift_one_from_left()";
@@ -3597,16 +3595,16 @@ package body uvvm_assertions_pkg is
   end procedure assert_shift_one_from_left;
 
   procedure assert_shift_one_from_left(
-    signal   clk                 : std_logic;
-    signal   ena                 : std_logic;
-    signal   tracked_value       : std_logic_vector;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
 
-    constant msg                 : string;
-    constant alert_level         : t_alert_level          := ERROR;
-    constant scope               : string                 := C_SCOPE;
-    constant pos_ack_kind        : t_pos_ack_kind         := FIRST;
-    constant msg_id              : t_msg_id               := ID_UVVM_ASSERTION;
-    constant msg_id_panel        : t_msg_id_panel         := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NECESSARY_CONDITION : t_shift_one_ness_cond := ANY_BIT_ALERT;
   begin
@@ -3619,10 +3617,10 @@ package body uvvm_assertions_pkg is
 
   -- does not have an async variant, since its based on num-cycles (clk)
   procedure assert_min_to_max_cycles_after_trigger_core(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic;
-    signal   trigger        : std_logic;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic;
+    signal   trigger       : std_logic;
 
     constant min_cycles     : integer; -- inclusive
     constant max_cycles     : integer; -- inclusive
@@ -3680,7 +3678,7 @@ package body uvvm_assertions_pkg is
                       alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to "& to_string(exp_value) &" after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles). pipe: (" & to_string(i) & ")." & add_msg_delimiter(msg), scope);
                     else
                       alert(alert_level, procedure_name & " => Failed. tracked_value ("& to_string(tracked_value) &") was not equal to "& to_string(exp_value) &" after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "(" & to_string(v_cycle_count_arr(i)) & "-cycles)." & add_msg_delimiter(msg), scope);
-                    end if;                    
+                    end if;
                     v_active_pipe_arr(i) := false; -- can stop checking this pipe
                   end if;
                 when CHANGE =>
@@ -3797,15 +3795,15 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_value_from_min_to_max_cycles_after_trigger()";
   begin
@@ -3818,15 +3816,15 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_change_to_value_from_min_to_max_cycles_after_trigger()";
   begin
@@ -3839,14 +3837,14 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_change_from_min_to_max_cycles_after_trigger()";
     constant C_EXP_VALUE : std_logic := '1'; -- only needed for port mapping to core
@@ -3860,14 +3858,14 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_stable_from_min_to_max_cycles_after_trigger()";
     constant C_EXP_VALUE : std_logic := '1'; -- only needed for port mapping
@@ -3876,11 +3874,11 @@ package body uvvm_assertions_pkg is
   end procedure assert_stable_from_min_to_max_cycles_after_trigger;
 
   procedure assert_from_start_to_end_trigger_core(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic;
-    signal   start_trigger  : std_logic;
-    signal   end_trigger    : std_logic;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic;
+    signal   start_trigger : std_logic;
+    signal   end_trigger   : std_logic;
 
     constant exp_value      : std_logic;
     constant alert_level    : t_alert_level;
@@ -4059,7 +4057,7 @@ package body uvvm_assertions_pkg is
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
                     log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
-                  end if;  
+                  end if;
               end case;
               alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
               v_active_pipe_arr(i) := false; -- can stop checking this pipe
@@ -4080,13 +4078,13 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_value_from_start_to_end_trigger()";
   begin
@@ -4100,13 +4098,13 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_change_to_value_from_start_to_end_trigger()";
   begin
@@ -4120,12 +4118,12 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_change_from_start_to_end_trigger()";
     constant C_EXP_VALUE : std_logic := '1'; -- only needed for port mapping
@@ -4140,12 +4138,12 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_stable_from_start_to_end_trigger()";
     constant C_EXP_VALUE : std_logic := '1'; -- only needed for port mapping
@@ -4153,12 +4151,11 @@ package body uvvm_assertions_pkg is
     assert_from_start_to_end_trigger_core(clk, ena, tracked_value, start_trigger, end_trigger, C_EXP_VALUE, alert_level, msg, scope, pos_ack_kind, msg_id, msg_id_panel, C_NAME, STABLE);
   end procedure assert_stable_from_start_to_end_trigger;
 
-
   procedure assert_min_to_max_cycles_after_trigger_core(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic_vector;
-    signal   trigger        : std_logic;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
+    signal   trigger       : std_logic;
 
     constant min_cycles     : integer; -- inclusive
     constant max_cycles     : integer; -- inclusive
@@ -4318,7 +4315,7 @@ package body uvvm_assertions_pkg is
 
             -- update the previous value and cycle count for next clk-cycle
             v_prev_tracked_value_arr(i) := tracked_value;
-            
+
             -- if we reached the max cycles, we can log an error (this is a niche case, as the window should end with an end_trigger normally)
             if v_cycle_count_arr(i) = C_WINDOW_ASSERTIONS_MAX_CYCLES then
               case window_type is
@@ -4335,7 +4332,7 @@ package body uvvm_assertions_pkg is
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
                     log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
-                  end if;  
+                  end if;
               end case;
               alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
               v_active_pipe_arr(i) := false; -- can stop checking this pipe
@@ -4355,15 +4352,15 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_value_from_min_to_max_cycles_after_trigger()";
   begin
@@ -4376,15 +4373,15 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_change_to_value_from_min_to_max_cycles_after_trigger()";
   begin
@@ -4397,14 +4394,14 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_change_from_min_to_max_cycles_after_trigger()";
     constant C_EXP_VALUE : std_logic_vector(tracked_value'range) := (others => '1'); -- only needed for port mapping to core
@@ -4418,14 +4415,14 @@ package body uvvm_assertions_pkg is
     signal   tracked_value : std_logic_vector;
     signal   trigger       : std_logic;
 
-    constant min_cycles    : integer; -- inclusive
-    constant max_cycles    : integer; -- inclusive
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant min_cycles   : integer; -- inclusive
+    constant max_cycles   : integer; -- inclusive
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_stable_from_min_to_max_cycles_after_trigger()";
     constant C_EXP_VALUE : std_logic_vector(tracked_value'range) := (others => '1'); -- only needed for port mapping
@@ -4434,11 +4431,11 @@ package body uvvm_assertions_pkg is
   end procedure assert_stable_from_min_to_max_cycles_after_trigger;
 
   procedure assert_from_start_to_end_trigger_core(
-    signal   clk            : std_logic;
-    signal   ena            : std_logic;
-    signal   tracked_value  : std_logic_vector;
-    signal   start_trigger  : std_logic;
-    signal   end_trigger    : std_logic;
+    signal   clk           : std_logic;
+    signal   ena           : std_logic;
+    signal   tracked_value : std_logic_vector;
+    signal   start_trigger : std_logic;
+    signal   end_trigger   : std_logic;
 
     constant exp_value      : std_logic_vector;
     constant alert_level    : t_alert_level;
@@ -4599,7 +4596,7 @@ package body uvvm_assertions_pkg is
 
             -- update the previous value and cycle count for next clk-cycle
             v_prev_tracked_value_arr(i) := tracked_value;
-            
+
             -- if we reached the max cycles, we can log an error (this is a niche case, as the window should end with an end_trigger normally)
             if v_cycle_count_arr(i) = C_WINDOW_ASSERTIONS_MAX_CYCLES then
               case window_type is
@@ -4616,7 +4613,7 @@ package body uvvm_assertions_pkg is
                     v_first_alert := false;
                   elsif pos_ack_kind = EVERY then
                     log(msg_id, procedure_name & " => OK. (timeout) tracked_value was stable in window (WINDOW TIMED OUT). OK after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
-                  end if;  
+                  end if;
               end case;
               alert(TB_ERROR, "The window reached the maximum number of cycles (without end_trigger). To increase the maximum number of cycles, set the constant C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg higher (this will increase memory usage).", scope);
               v_active_pipe_arr(i) := false; -- can stop checking this pipe
@@ -4637,13 +4634,13 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_value_from_start_to_end_trigger()";
   begin
@@ -4657,13 +4654,13 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant exp_value     : std_logic_vector;
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant exp_value    : std_logic_vector;
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME : string := "assert_change_to_value_from_start_to_end_trigger()";
   begin
@@ -4677,12 +4674,12 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_change_from_start_to_end_trigger()";
     constant C_EXP_VALUE : std_logic_vector(tracked_value'range) := (others => '1'); -- only needed for port mapping to core
@@ -4697,12 +4694,12 @@ package body uvvm_assertions_pkg is
     signal   start_trigger : std_logic;
     signal   end_trigger   : std_logic;
 
-    constant msg           : string;
-    constant alert_level   : t_alert_level  := ERROR;
-    constant scope         : string         := C_SCOPE;
-    constant pos_ack_kind  : t_pos_ack_kind := FIRST;
-    constant msg_id        : t_msg_id       := ID_UVVM_ASSERTION;
-    constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
+    constant msg          : string;
+    constant alert_level  : t_alert_level  := ERROR;
+    constant scope        : string         := C_SCOPE;
+    constant pos_ack_kind : t_pos_ack_kind := FIRST;
+    constant msg_id       : t_msg_id       := ID_UVVM_ASSERTION;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant C_NAME      : string    := "assert_stable_from_start_to_end_trigger()";
     constant C_EXP_VALUE : std_logic_vector(tracked_value'range) := (others => '1'); -- only needed for port mapping to core

@@ -889,18 +889,18 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. gpio_get(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable ``GPIO_VVC_SB``, located in 
+TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable ``gpio_vvc_sb``, located in 
 the vvc_methods_pkg.vhd, e.g. ::
 
-    GPIO_VVC_SB.add_expected(C_GPIO_VVC_IDX, pad_gpio_sb(v_expected), "Adding expected");
+    gpio_vvc_sb.add_expected(C_GPIO_VVC_IDX, pad_gpio_sb(v_expected), "Adding expected");
 
 The GPIO scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the 
 data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_gpio_sb() function, e.g. ::
 
-    GPIO_VVC_SB.add_expected(<GPIO VVC instance number>, pad_gpio_sb(<exp data>));
+    gpio_vvc_sb.add_expected(<GPIO VVC instance number>, pad_gpio_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the GPIO VVC scoreboard using the ``GPIO_VVC_SB``.
+Scoreboard commands are available for the GPIO VVC scoreboard using the ``gpio_vvc_sb``.
 
 
 Unwanted Activity Detection

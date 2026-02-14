@@ -36,7 +36,7 @@ package global_signals_and_shared_variables_pkg is
   shared variable shared_rand_seeds_register : t_seeds;
 
   -- UVVM internal shared variables
-  shared variable deprecated_subprogram_list         : t_deprecate_list                                := (others => (others => ' '));
+  shared variable shared_deprecated_subprogram_list  : t_deprecate_list                                := (others => (others => ' '));
   shared variable shared_initialised_util            : boolean                                         := false;
   shared variable shared_log_file_name_is_set        : boolean                                         := false;
   shared variable shared_alert_file_name_is_set      : boolean                                         := false;

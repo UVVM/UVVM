@@ -1,6 +1,12 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v6.1.4
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+- Fixed inconsistency in axistream_expect-log messages in vvc_methods_pkg.vhd
+
 v6.1.3
 ----------
 Released: 2025-11-28

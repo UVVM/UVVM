@@ -34,8 +34,7 @@ package adaptations_pkg is
   constant C_LOG_FILE_NAME                            : string := "UVVM_Log.txt";
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
 
-  constant C_DEFAULT_LOG_DESTINATION : t_log_destination := CONSOLE_AND_LOG; -- This parameter can also be modified per testbench by
-                                                                             -- updating the shared variable shared_default_log_destination
+  constant C_DEFAULT_LOG_DESTINATION : t_log_destination := CONSOLE_AND_LOG; -- This parameter can also be modified per testbench by updating the shared variable shared_default_log_destination
 
   constant C_SHOW_UVVM_UTILITY_LIBRARY_INFO : boolean := true; -- Set this to false when you no longer need the initial info
 
@@ -57,8 +56,7 @@ package adaptations_pkg is
   constant C_LOG_INFO_WIDTH    : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
   constant C_USE_BACKSLASH_N_AS_LF : boolean := true; -- If true interprets '\n' as Line feed
-  constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r' is the first character of the string.
-                                                      -- All others '\r' will be printed as is.
+  constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r' is the first character of the string. All others '\r' will be printed as is.
 
   constant C_SINGLE_LINE_ALERT : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG   : boolean := false; -- If true prints log messages on a single line.
@@ -303,8 +301,7 @@ package adaptations_pkg is
   constant C_CSV_DELIMITER                 : character     := ',';        -- Delimiter when reading and writing CSV files.
   constant C_MAX_REQUIREMENT_LINES         : positive      := 1000;       -- Maximum number of requirements in the req_map file used in initialize_req_cov().
   constant C_MAX_TESTCASES_PER_REQ         : positive      := 20;         -- Max number of testcases allowed per requirement.
-  constant C_MISSING_REQ_LABEL_SEVERITY    : t_alert_level := TB_WARNING; -- Alert level used when the tick_off_req_cov() procedure does not find the specified
-                                                                          -- requirement label in the requirement list.
+  constant C_MISSING_REQ_LABEL_SEVERITY    : t_alert_level := TB_WARNING; -- Alert level used when the tick_off_req_cov() procedure does not find the specified requirement label in the requirement list.
   constant C_COMPOUND_REQ_TICKOFF_SEVERITY : t_alert_level := TB_WARNING; -- Alert level used when tickoff is performed on a requirement that has sub requirements.
 
   --------------------------------------------------------------------------------------------------------------------------------
@@ -421,7 +418,7 @@ package adaptations_pkg is
     ALL_CHANNELS,                       -- When command shall be received by all channels
     -- UVVM predefined channels.
     RX, TX
-    -- User can add more channels if needed below.
+  -- User can add more channels if needed below.
   );
 
   --------------------------------------------------------------------------------------------------------------------------------

@@ -15,7 +15,7 @@
 ---------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library bitvis_vip_avalon_st;
+library bitvis_vip_avalon_st;
   use bitvis_vip_avalon_st.transaction_pkg.all;
   use bitvis_vip_avalon_st.vvc_methods_pkg.all;
   use bitvis_vip_avalon_st.td_vvc_framework_common_methods_pkg.all;

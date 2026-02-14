@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2025 UVVM
+-- Copyright 2026 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library external_vip_apb;
+library external_vip_apb;
   use external_vip_apb.transaction_pkg.all;
   use external_vip_apb.vvc_methods_pkg.all;
   use external_vip_apb.td_vvc_framework_common_methods_pkg.all;

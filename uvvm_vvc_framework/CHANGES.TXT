@@ -1,6 +1,11 @@
 UVVM VVC Framework - Overview on Versions and Changes
 ==============================================================
 
+v2.12.15
+----------
+Released: 2026-02-14
+- Updated await_uvvm_completion() to check first that scoreboards are empty and then VVCs are inactive.
+
 v2.12.14
 ----------
 Released: 2025-11-28

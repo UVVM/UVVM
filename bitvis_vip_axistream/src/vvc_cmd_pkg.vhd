@@ -50,8 +50,7 @@ package vvc_cmd_pkg is
     id_array_length     : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One id_array entry per word (clock cycle)
     dest_array          : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1);
     dest_array_length   : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One dest_array entry per word (clock cycle)
-
-    -- Common VVC fields
+    -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation           : t_operation;
     proc_call           : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     msg                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -59,9 +58,9 @@ package vvc_cmd_pkg is
     cmd_idx             : natural;
     command_type        : t_immediate_or_queued;
     msg_id              : t_msg_id;
-    gen_integer_array   : t_integer_array(0 to 1); -- Increase array length if needed
-    gen_boolean         : boolean;      -- Generic boolean
-    timeout             : time;
+    gen_integer_array   : t_integer_array(0 to 1);
+    gen_boolean         : boolean; -- DEPRECATED: will be removed in v3
+    timeout             : time;    -- DEPRECATED: will be removed in v3
     alert_level         : t_alert_level;
     delay               : time;
     quietness           : t_quietness;
@@ -69,6 +68,7 @@ package vvc_cmd_pkg is
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
+    -- VVC dedicated fields
     data_array          => (others => (others => '0')),
     data_array_length   => 1,
     user_array          => (others => (others => '0')),
@@ -162,7 +162,7 @@ package body vvc_cmd_pkg is
   ) return string is
   begin
     return to_string(result.data_length) & " Bytes";
-  end;
+  end function;
 
 end package body vvc_cmd_pkg;
 

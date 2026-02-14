@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context spec_cov_context is
-  library bitvis_vip_spec_cov;
+library bitvis_vip_spec_cov;
   use bitvis_vip_spec_cov.csv_file_reader_pkg.all;
   use bitvis_vip_spec_cov.spec_cov_pkg.all;
 end context;

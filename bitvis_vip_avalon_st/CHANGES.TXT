@@ -1,6 +1,11 @@
 Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.0.2
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+
 v4.0.1
 ----------
 Released: 2025-11-28

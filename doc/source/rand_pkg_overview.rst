@@ -640,6 +640,74 @@ Clearing configuration
 **********************************************************************************************************************************
 To clear the complete configuration in the random generator use the ``clear_config()`` procedure.
 
+.. _questa_rand:
+
+**********************************************************************************************************************************
+Questa One extended features
+**********************************************************************************************************************************
+Questa One v. 2026.1 and newer offers support for some extended functionality in UVVM Randomization. 
+
+See :ref:`Getting Started - Questa One Extended Features<questa_enabling>` for information about how to enable the extended functionality.
+
+Additional constraints for multi-method approach
+==================================================================================================================================
+The Questa One extended features adds support for a set of additional constraint methods for UVVM Enhanced Randomization. See 
+:ref:`Questa One randomization methods<questa_rand_methods>` for description of these methods.
+
+Linking of variables
+==================================================================================================================================
+Linking of variables allows for the definition of a relationship between two randomized variables. For instance, a link constrain
+between randomized variables *v1* and *v2* can be set so that the value of *v1* is always greater than the value of *v2*.
+
+The linking relationship is added to the constraint set of one of the randomized variables. When this variable is randomized through a
+call to randm(), a randomized value for the other (linked) variable is automatically generated at the same time. This linked value is
+stored in the randomization (*t_rand*) object of the linked variable, and can be fetched using the get_value() method.
+
+Say that we want to generate two randomized integers, v_integer_v1 and v_integer_v2, and we always want v_integer_v1 to be larger than
+v_integer_v2. This is done by first defining a t_rand object for each of the randomized integers. 
+
+.. code-block::
+
+    variable v_rand_v1 : t_rand;
+    variable v_rand_v2 : t_rand;
+
+Optionally, we can apply other constraints, e.g. range constraints, to each of these t_rand objects:
+
+.. code-block::
+
+    v_rand_v1.add_range(0, 10); -- Constrain v1 to range 0-10
+    v_rand_v2.add_range(0, 5);  -- Constrain v2 to range 0-5
+
+Now, we want to define a link between the two variables, saying that *v1 > v2*. This linking needs to be done through a reference
+handle to one of the t_rand objects. Through this handle, other t_rand objects can trigger the genereation of a linked randomized value
+inside the referenced object. We define a randomization handle for v_rand_v2, and use this handle to add a relationship constraint to
+v_rand_v1. 
+
+.. code-block::
+
+    v_handle_v2 := v_rand_v2.create_rand(VOID); -- Create randomization handle for v_rand_v2.
+    v_rand_v1.link(GT, v_handle_v2);            -- Creates relational link to v_rand_v2 in constraint set of v_rand_v1
+
+Now that a link to v2 has been added in v_rand_v1, calling v_rand_v1.randm() will result in the generation of two randomized values,
+v1 and v2. These values satisfy the condition v1 > v2, in addition to meeting the individual constraints defined in v_rand_v1 and
+v_rand_v2, respectively. Value v1 is returned by the v_rand_v1.randm() call. Subsequently calling v_rand_v2.get_value() will return
+value v2. 
+
+
+.. code-block::
+
+    --------------------------------------------------------------------------------------------------------------------
+    -- Full example: v1 > v2
+    -- Generates two random variables v1 and v2, where the value of v1 is always greater than the value of v2
+    -- my_rand_v1 and my_rand_v2 are randomization objects of type t_rand.
+    --------------------------------------------------------------------------------------------------------------------
+    my_rand_v1.add_range(0, 10); -- Constrain v1 to range 0-10
+    my_rand_v2.add_range(0, 5);  -- constrain v2 to range 0-5
+    v_link_handle_v2 := v_rand_v2.create_rand(VOID); -- Create randomization handle to v_rand_v2
+    v_rand_v1.link(GT, v_link_handle_v2);  -- Add v1 > v2 as link constraint to v_rand_v1
+    v_integer_v1 := v_rand_v1.randm();     -- Get value v1
+    v_integer_v2 := v_rand_v2.get_value(); -- Get value v2
+
 **********************************************************************************************************************************
 Additional info
 **********************************************************************************************************************************
@@ -648,14 +716,14 @@ Log messages within the procedures and functions in the *rand_pkg* use the follo
 * ID_RAND_GEN: Used for logging "Enhanced Randomization" values returned by ``rand()/randm()``.
 * ID_RAND_CONF: Used for logging "Enhanced Randomization" configuration changes, except from name and scope.
 
-The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``. 
+The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``.
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
 
 The number of decimal digits displayed in the real values logs can be adjusted with C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
 
 .. note::
 
-    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar 
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar
     functionality in SystemVerilog and OSVVM.
 
 .. _rand_pkg:

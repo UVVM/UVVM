@@ -2039,7 +2039,7 @@ begin
 
       -- Delayed check of received
       barrier_a <= '0', '1' after 50 ns, '0' after 200 ns;
-      await_sb_completion(100 ns, TB_WARNING, 10 ns, NO_REPORT, NO_REPORT, C_SCOPE);
+      await_sb_completion(100 ns, TB_WARNING, 100 ns, NO_REPORT, NO_REPORT, C_SCOPE);
       wait for 200 ns; -- Just to make sure the helper process has finished
 
       v_sb.disable(VOID); -- Will remove the SB for the next test

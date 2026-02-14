@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2025 UVVM
+-- Copyright 2026 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -26,9 +26,10 @@ library bitvis_vip_scoreboard;
 use work.transaction_pkg.all;
 
 package vvc_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
-              element_match     => std_match,
-              to_string_element => to_string);
+  generic map(
+    t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
+    element_match     => std_match,
+    to_string_element => to_string);
 
 --==========================================================================================
 --  vvc_sb_support_pkg
@@ -47,16 +48,16 @@ package vvc_sb_support_pkg is
   -- the t_element defined in the VVC's built-in scoreboard, since even though it is a generic
   -- type, it constrained during elaboration time.
   -- This function is used to pad the data without having to know the exact length of t_element.
-  function pad_sbi_sb(
+  function pad_apb_sb(
     constant data : in std_logic_vector
   ) return std_logic_vector;
 end package vvc_sb_support_pkg;
 
 package body vvc_sb_support_pkg is
-  function pad_sbi_sb(
+  function pad_apb_sb(
     constant data : in std_logic_vector
   ) return std_logic_vector is
   begin
     return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_sbi_sb;
+  end function pad_apb_sb;
 end package body vvc_sb_support_pkg;

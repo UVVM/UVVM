@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2025 UVVM
+-- Copyright 2026 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -38,7 +38,7 @@ use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
 use work.vvc_sb_support_pkg.all;
 
-
+--================================================================================================================================
 entity apb_vvc is
   generic (
     GC_ADDR_WIDTH                            : integer range 1 to C_VVC_CMD_ADDR_MAX_LENGTH := 32; -- APB address bus
@@ -53,28 +53,28 @@ entity apb_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port (
-    apb_vvc_master_if  : inout t_apb_if := init_apb_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
+    apb_vvc_master_if : inout t_apb_if := init_apb_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
   );
 begin
   -- Check the interface widths to assure that the interface was correctly set up
-  assert (apb_vvc_master_if.paddr'length = GC_ADDR_WIDTH) report "sbi_vvc_master_if.addr'length =/ GC_ADDR_WIDTH" severity failure;
-  assert (apb_vvc_master_if.pwdata'length = GC_DATA_WIDTH) report "sbi_vvc_master_if.wdata'length =/ GC_DATA_WIDTH" severity failure;
-  assert (apb_vvc_master_if.prdata'length = GC_DATA_WIDTH) report "sbi_vvc_master_if.rdata'length =/ GC_DATA_WIDTH" severity failure;
-  assert (apb_vvc_master_if.pstrb'length = GC_DATA_WIDTH/8) report "sbi_vvc_master_if.rdata'length =/ GC_DATA_WIDTH/8" severity failure;
+  assert (apb_vvc_master_if.paddr'length = GC_ADDR_WIDTH) report "apb_vvc_master_if.addr'length =/ GC_ADDR_WIDTH" severity failure;
+  assert (apb_vvc_master_if.pwdata'length = GC_DATA_WIDTH) report "apb_vvc_master_if.wdata'length =/ GC_DATA_WIDTH" severity failure;
+  assert (apb_vvc_master_if.prdata'length = GC_DATA_WIDTH) report "apb_vvc_master_if.rdata'length =/ GC_DATA_WIDTH" severity failure;
+  assert (apb_vvc_master_if.pstrb'length = GC_DATA_WIDTH/8) report "apb_vvc_master_if.rdata'length =/ GC_DATA_WIDTH/8" severity failure;
 end entity apb_vvc;
 
 --=================================================================================================
 --=================================================================================================
-
 architecture behave of apb_vvc is
 
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy      : boolean := false;
-  signal queue_is_increasing   : boolean := false;
-  signal last_cmd_idx_executed : natural := 0;
-  signal terminate_current_cmd : t_flag_record;
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -82,12 +82,24 @@ architecture behave of apb_vvc is
 
   alias vvc_config                          : t_vvc_config is shared_apb_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status                          : t_vvc_status is shared_apb_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info                    : t_transaction_info is shared_apb_transaction_info(GC_INSTANCE_IDX);
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_apb_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_apb_vvc_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity
-  signal entry_num_in_vvc_activity_register : integer;
+
+  --UVVM: temporary fix for HVVC, remove function below in v3.0
+  function get_msg_id_panel(
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
+  ) return t_msg_id_panel is
+  begin
+    -- If the parent_msg_id_panel is set then use it,
+    -- otherwise use the VVCs msg_id_panel from its config.
+    if command.msg(1 to 5) = "HVVC:" then
+      return config.parent_msg_id_panel;
+    else
+      return config.msg_id_panel;
+    end if;
+  end function;
 
 begin
 
@@ -105,7 +117,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -197,7 +209,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural                                            := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
@@ -219,10 +231,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup APB scoreboard
-    APB_VVC_SB.set_scope("APB_VVC_SB");
-    APB_VVC_SB.enable(GC_INSTANCE_IDX, "APB VVC SB Enabled");
-    APB_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    APB_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    apb_vvc_sb.set_scope("APB_VVC_SB");
+    apb_vvc_sb.enable(GC_INSTANCE_IDX, "APB VVC SB Enabled");
+    apb_vvc_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    apb_vvc_sb.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -235,11 +247,6 @@ begin
 
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
-
-      -- Set the transaction info for waveview
-      transaction_info           := C_TRANSACTION_INFO_DEFAULT;
-      transaction_info.operation := v_cmd.operation;
-      transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -283,19 +290,16 @@ begin
           else
             v_normalised_byte_ena := normalize_and_check(v_cmd.byte_enable, v_normalised_byte_ena, ALLOW_WIDER_NARROWER, "v_cmd.byte_enable", "v_normalised_byte_ena", "avalon_mm_write() called with too wide byte_enable. " & v_cmd.msg);
           end if;
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0)              := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0)              := v_normalised_addr;
-          transaction_info.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0) := v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
-          apb_write(addr_value    => v_normalised_addr,
-                    data_value    => v_normalised_data,
-                    byte_enable   => v_normalised_byte_ena,
-                    protection    => v_cmd.protection,
-                    msg           => format_msg(v_cmd),
-                    apb_if        => apb_vvc_master_if,
-                    scope         => C_SCOPE,
-                    msg_id_panel  => v_msg_id_panel,
-                    config        => vvc_config.bfm_config);
+          apb_write(addr_value   => v_normalised_addr,
+                    data_value   => v_normalised_data,
+                    byte_enable  => v_normalised_byte_ena,
+                    protection   => v_cmd.protection,
+                    msg          => format_msg(v_cmd),
+                    apb_if       => apb_vvc_master_if,
+                    scope        => C_SCOPE,
+                    msg_id_panel => v_msg_id_panel,
+                    config       => vvc_config.bfm_config);
           -- Update vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
@@ -306,21 +310,20 @@ begin
           -- Normalise address
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "paddr", "shared_vvc_cmd.addr", "apb_read() called with too wide address. " & v_cmd.msg);
 
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
-          apb_read(addr_value    => v_normalised_addr,
-                   data_value    => v_read_data,
-                   protection    => v_cmd.protection,
-                   msg           => format_msg(v_cmd),
-                   apb_if        => apb_vvc_master_if,
-                   scope         => C_SCOPE,
-                   msg_id_panel  => v_msg_id_panel,
-                   config        => vvc_config.bfm_config);
+          apb_read(addr_value   => v_normalised_addr,
+                   data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
+                   protection   => v_cmd.protection,
+                   msg          => format_msg(v_cmd),
+                   apb_if       => apb_vvc_master_if,
+                   scope        => C_SCOPE,
+                   msg_id_panel => v_msg_id_panel,
+                   config       => vvc_config.bfm_config);
 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            APB_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sbi_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            apb_vvc_sb.check_received(GC_INSTANCE_IDX, pad_apb_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                         cmd_idx      => v_cmd.cmd_idx,
@@ -338,18 +341,16 @@ begin
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "paddr", "shared_vvc_cmd.addr", "apb_check() called with too wide address. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "prdata", "shared_vvc_cmd.data", "apb_check() called with too wide data. " & v_cmd.msg);
 
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
-          apb_check(addr_value    => v_normalised_addr,
-                    data_exp      => v_normalised_data,
-                    protection    => v_cmd.protection,
-                    msg           => v_cmd.msg,
-                    apb_if        => apb_vvc_master_if,
-                    alert_level   => v_cmd.alert_level,
-                    scope         => C_SCOPE,
-                    msg_id_panel  => v_msg_id_panel,
-                    config        => vvc_config.bfm_config);
+          apb_check(addr_value   => v_normalised_addr,
+                    data_exp     => v_normalised_data,
+                    protection   => v_cmd.protection,
+                    msg          => v_cmd.msg,
+                    apb_if       => apb_vvc_master_if,
+                    alert_level  => v_cmd.alert_level,
+                    scope        => C_SCOPE,
+                    msg_id_panel => v_msg_id_panel,
+                    config       => vvc_config.bfm_config);
           -- Update vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
@@ -361,8 +362,6 @@ begin
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "paddr", "shared_vvc_cmd.addr", "apb_poll_until() called with too wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "prdata", "shared_vvc_cmd.data", "apb_poll_until() called with too wide data. " & v_cmd.msg);
 
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
           apb_poll_until(addr_value     => v_normalised_addr,
                          data_exp       => v_normalised_data,
@@ -413,15 +412,11 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-      -- Reset the transaction info for waveview
-      transaction_info      := C_TRANSACTION_INFO_DEFAULT;
       -- Set VVC Transaction Info back to default values
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
   --===============================================================================================
-
-
 
   --===============================================================================================
   -- Command termination handler
@@ -430,5 +425,37 @@ begin
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
   --===============================================================================================
 
+  --==========================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --==========================================================================================
+  p_unwanted_activity : process is
+  begin
+    -- Add a delay to allow the VVC to be registered in the activity register
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      -- The pready signal is not monitored. See APB VVC QuickRef.
+      wait on apb_vvc_master_if.prdata, apb_vvc_master_if.pslverr, global_trigger_vvc_activity_register;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        check_unwanted_activity(apb_vvc_master_if.prdata, vvc_config.unwanted_activity_severity, "prdata", C_SCOPE);
+        check_unwanted_activity(apb_vvc_master_if.pslverr, vvc_config.unwanted_activity_severity, "pslverr", C_SCOPE);
+      end if;
+    end loop;
+  end process p_unwanted_activity;
+--==========================================================================================
 
 end architecture behave;

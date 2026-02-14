@@ -297,7 +297,7 @@ begin
     begin
       log(ID_SEQUENCER_SUB, "Testing get on GPIO VVC " & to_string(vvc_instance_idx) & " using SB");
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
-      GPIO_VVC_SB.add_expected(vvc_instance_idx, pad_gpio_sb(data));
+      gpio_vvc_sb.add_expected(vvc_instance_idx, pad_gpio_sb(data));
       -- Perform get, which stores the data in the VVC's Scoreboard
       gpio_get(GPIO_VVCT, vvc_instance_idx, TO_SB, "Readback inside VVC using SB");
       v_cmd_idx := get_last_received_cmd_idx(GPIO_VVCT, vvc_instance_idx);  -- for last get
@@ -482,7 +482,7 @@ begin
     get_and_verify_gpio_sb(3, gpio_3_input, "11111111");
     get_and_verify_gpio_sb(4, gpio_4_input, v_data_exp_1024);
 
-    GPIO_VVC_SB.report_counters(ALL_INSTANCES);
+    gpio_vvc_sb.report_counters(ALL_INSTANCES);
 
 
     --------------------------------------------------------------------------------------

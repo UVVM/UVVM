@@ -102,6 +102,11 @@ bitvis_vip_wishbone.files = [
 'bitvis_vip_wishbone/**/*.vhd',
 ]
 
+external_vip_apb.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'external_vip_apb/**/*.vhd',
+]
+
 bitvis_uart.files = [
 'bitvis_uart/**/*.vhd',
 ]

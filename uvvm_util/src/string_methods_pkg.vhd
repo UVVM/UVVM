@@ -14,9 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -377,7 +377,7 @@ package body string_methods_pkg is
     assert val
     report LF & C_LOG_PREFIX & " *** " & to_string(severeness) & "*** caused by Bitvis Util > string handling > " & scope & LF & C_LOG_PREFIX & add_msg_delimiter(msg) & LF
     severity severeness;
-  end;
+  end procedure;
 
   function to_upper(
     val : string
@@ -391,7 +391,7 @@ package body string_methods_pkg is
       end if;
     end loop;
     return v_result;
-  end to_upper;
+  end function to_upper;
 
   function fill_string(
     val   : character;
@@ -407,7 +407,7 @@ package body string_methods_pkg is
       end loop;
     end if;
     return v_result;
-  end fill_string;
+  end function fill_string;
 
   function pad_string(
     val   : string;
@@ -431,7 +431,7 @@ package body string_methods_pkg is
       end if;
     end if;
     return v_result;
-  end pad_string;
+  end function pad_string;
 
   function justify(
     val       : string;
@@ -441,7 +441,7 @@ package body string_methods_pkg is
   ) return string is
     constant C_VAL_LENGTH     : natural                   := val'length;
     constant C_VAL_NORMALISED : string(1 to C_VAL_LENGTH) := val;
-    variable result           : string(1 to width)        := (others => ' ');
+    variable v_result         : string(1 to width)        := (others => ' ');
   begin
     -- return val if width is too small
     if C_VAL_LENGTH >= width then
@@ -452,11 +452,11 @@ package body string_methods_pkg is
       end if;
     end if;
     if justified = left then
-      result(1 to C_VAL_LENGTH) := C_VAL_NORMALISED;
+      v_result(1 to C_VAL_LENGTH) := C_VAL_NORMALISED;
     elsif justified = right then
-      result(width - C_VAL_LENGTH + 1 to width) := C_VAL_NORMALISED;
+      v_result(width - C_VAL_LENGTH + 1 to width) := C_VAL_NORMALISED;
     end if;
-    return result;
+    return v_result;
   end function;
 
   function justify(
@@ -560,7 +560,7 @@ package body string_methods_pkg is
       end if;
     end loop;
     return result_if_not_found;
-  end;
+  end function;
 
   function pos_of_rightmost(
     target              : character;
@@ -577,7 +577,7 @@ package body string_methods_pkg is
       end if;
     end loop;
     return result_if_not_found;
-  end;
+  end function;
 
   function pos_of_leftmost_non_zero(
     vector              : string;
@@ -592,7 +592,7 @@ package body string_methods_pkg is
       end if;
     end loop;
     return result_if_not_found;
-  end;
+  end function;
 
   function pos_of_rightmost_non_whitespace(
     vector              : string;
@@ -607,14 +607,14 @@ package body string_methods_pkg is
       end if;
     end loop;
     return result_if_not_found;
-  end;
+  end function;
 
   function valid_length(                -- of string excluding trailing NULs
     vector : string
   ) return natural is
   begin
     return pos_of_leftmost(NUL, vector, vector'length + 1) - 1;
-  end;
+  end function;
 
   function string_contains_char(
     val  : string;
@@ -633,7 +633,7 @@ package body string_methods_pkg is
       -- falls through only if not found
       return false;
     end if;
-  end;
+  end function;
 
   -- get_*_name
   -- Note: for sub-programs the following is given: library:package:procedure:object
@@ -660,12 +660,12 @@ package body string_methods_pkg is
       v_left  := 0;                     -- default
       v_right := pos_of_rightmost(delim_right, a_val(1 to v_start), 0);
       if v_right > 0 then               -- i.e. found
-        L1 : for i in v_right - 1 downto 1 loop -- searching backwards for delimiter
+        l_1 : for i in v_right - 1 downto 1 loop -- searching backwards for delimiter
           if (a_val(i) = delim_left) then
             v_left       := i;
             v_start      := i;          -- Previous end delimiter could also be a start delimiter for next section
             v_occurrence := v_occurrence + 1;
-            exit L1;
+            exit l_1;
           end if;
         end loop;                       -- searching backwards
       end if;
@@ -684,7 +684,7 @@ package body string_methods_pkg is
         return "";                      -- No delimiter pair found, and none can be found in the rest (with chars in between)
       end if;
     end loop;                           -- Will continue until match or not found
-  end;
+  end function;
 
   -- ':sbi_tb(func):i_test_harness@test_harness(struct):i2_sbi_vvc@sbi_vvc(struct):p_constructor:instance'
   -- ':sbi_tb:i_test_harness:i1_sbi_vvc:p_constructor:instance'
@@ -850,7 +850,7 @@ package body string_methods_pkg is
       end if;
       return v_dest(1 to v_dest_idx);
     end if;
-  end;
+  end function;
 
   function replace_backslash_r_with_lf(
     source : string
@@ -878,7 +878,7 @@ package body string_methods_pkg is
       end if;
     end if;
     return v_dest(1 to v_dest_idx);
-  end;
+  end function;
 
   function remove_initial_chars(
     source : string;
@@ -891,7 +891,7 @@ package body string_methods_pkg is
     else
       return C_SOURCE_NORMALISED(1 + num to C_SOURCE_NORMALISED'right);
     end if;
-  end;
+  end function;
 
   function wrap_lines(
     constant text_string    : string;
@@ -906,11 +906,11 @@ package body string_methods_pkg is
     write(v_text_lines, text_string);
     wrap_lines(v_text_lines, alignment_pos1, alignment_pos2, line_width);
     v_result_width                := v_text_lines'length;
-    bitvis_assert(v_result_width  <= v_result'length, FAILURE, " String is too long after wrapping. Increase v_result string size.", "wrap_lines()");
+    bitvis_assert(v_result_width <= v_result'length, FAILURE, " String is too long after wrapping. Increase v_result string size.", "wrap_lines()");
     v_result(1 to v_result_width) := v_text_lines.all;
     deallocate(v_text_lines);
     return v_result(1 to v_result_width);
-  end;
+  end function;
 
   procedure wrap_lines(
     variable text_lines     : inout line;
@@ -985,7 +985,7 @@ package body string_methods_pkg is
       write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to v_max_string_wrap) & LF); -- Added LF termination
       v_last_string_wrap := v_max_string_wrap;
     end loop;
-  end;
+  end procedure;
 
   procedure prefix_lines(
     variable text_lines : inout line;
@@ -993,7 +993,6 @@ package body string_methods_pkg is
   ) is
     constant C_TEXT_LINES_STR       : string(1 to text_lines'length) := text_lines.all;
     constant C_TEXT_LINES_STR_WIDTH : natural                        := text_lines'length;
-    constant prefix_width           : natural                        := prefix'length;
     variable v_last_string_wrap     : natural                        := 0;
     variable v_i                    : natural                        := 0; -- for indexing text_lines_str
   begin
@@ -1024,7 +1023,7 @@ package body string_methods_pkg is
         exit;
       end if;
     end loop;
-  end;
+  end procedure;
 
   function replace(
     val           : string;
@@ -1039,7 +1038,7 @@ package body string_methods_pkg is
       end if;
     end loop;
     return v_result;
-  end;
+  end function;
 
   procedure replace(
     variable text_line : inout line;
@@ -1066,7 +1065,7 @@ package body string_methods_pkg is
         end if;
       end loop;
     end if;
-  end;
+  end procedure;
 
   --========================================================
   -- Handle missing overloads from 'standard_additions' + advanced overloads
@@ -1081,7 +1080,7 @@ package body string_methods_pkg is
   ) return string is
   begin
     return justify(to_string(val), justified, width, format_spaces, truncate);
-  end;
+  end function;
 
   impure function to_string(
     val           : integer;
@@ -1142,7 +1141,7 @@ package body string_methods_pkg is
     v_len := v_line'length;
     deallocate(v_line);
     return to_string(val, v_len, LEFT, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE, radix, prefix, format);
-  end;
+  end function;
 
   function to_string(
     val       : boolean;
@@ -1152,7 +1151,7 @@ package body string_methods_pkg is
   ) return string is
   begin
     return justify(to_string(val), width, justified, format);
-  end;
+  end function;
 
   function to_string(
     val       : integer;
@@ -1162,7 +1161,7 @@ package body string_methods_pkg is
   ) return string is
   begin
     return justify(to_string(val), width, justified, format);
-  end;
+  end function;
 
   function to_string(
     val    : std_logic_vector;
@@ -1237,7 +1236,7 @@ package body string_methods_pkg is
     v_result(1 to v_width) := v_line.all;
     deallocate(v_line);
     return v_result(1 to v_width);
-  end;
+  end function;
 
   function to_string(
     val    : unsigned;
@@ -1247,7 +1246,7 @@ package body string_methods_pkg is
   ) return string is
   begin
     return to_string(std_logic_vector(val), radix, format, prefix);
-  end;
+  end function;
 
   function to_string(
     val    : signed;
@@ -1290,7 +1289,7 @@ package body string_methods_pkg is
     else                                -- No decimal conversion: May be treated as slv, so use the slv overload
       return to_string(std_logic_vector(val), radix, format, prefix);
     end if;
-  end;
+  end function;
 
   function to_string(
     val    : t_slv_array;
@@ -1616,7 +1615,7 @@ package body string_methods_pkg is
   ) return string is
   begin
     return to_upper(justify(t_attention'image(val), justified, width));
-  end;
+  end function;
 
   function to_string(
     val       : t_check_type;
@@ -1652,7 +1651,7 @@ package body string_methods_pkg is
       return ' ';                       -- Must return something when invisible control signals
     end if;
 
-  end;
+  end function;
 
   -- Convert from character to ASCII integer
   function char_to_ascii(
@@ -1660,7 +1659,7 @@ package body string_methods_pkg is
   ) return integer is
   begin
     return character'pos(char);
-  end;
+  end function;
 
   -- return string with only valid ascii characters
   function to_string(
@@ -1688,7 +1687,7 @@ package body string_methods_pkg is
     else
       return v_new_string(1 to v_char_idx);
     end if;
-  end;
+  end function;
 
   function add_msg_delimiter(
     msg : string
@@ -1704,7 +1703,7 @@ package body string_methods_pkg is
       end if;
     end if;
     return "";
-  end;
+  end function;
 
   -- Returns a string with a timestamp and a text. Used in report headers
   function timestamp_header(

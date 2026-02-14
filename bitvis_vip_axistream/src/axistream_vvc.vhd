@@ -53,11 +53,11 @@ entity axistream_vvc is
     GC_RESULT_QUEUE_COUNT_MAX                : natural                := C_RESULT_QUEUE_COUNT_MAX;
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := C_RESULT_QUEUE_COUNT_THRESHOLD;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
-    );
+  );
   port(
     clk              : in    std_logic;
     axistream_vvc_if : inout t_axistream_if := init_axistream_if_signals(GC_VVC_IS_MASTER, GC_DATA_WIDTH, GC_USER_WIDTH, GC_ID_WIDTH, GC_DEST_WIDTH, GC_AXISTREAM_BFM_CONFIG)
-    );
+  );
 begin
   -- Check the interface widths to assure that the interface was correctly set up
   assert (axistream_vvc_if.tdata'length = GC_DATA_WIDTH) report "axistream_vvc_if.data'length =/ GC_DATA_WIDTH" severity failure;
@@ -70,11 +70,12 @@ architecture behave of axistream_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy      : boolean := false;
-  signal queue_is_increasing   : boolean := false;
-  signal last_cmd_idx_executed : natural := 0;
-  signal terminate_current_cmd : t_flag_record;
-  signal clock_period          : time;
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
+  signal clock_period                       : time;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -86,14 +87,12 @@ architecture behave of axistream_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_axistream_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_axistream_vvc_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity 
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
     constant command : in t_vvc_cmd_record;
     constant config  : in t_vvc_config
-    ) return t_msg_id_panel is
+  ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
@@ -120,7 +119,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --========================================================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -211,7 +210,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --========================================================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
@@ -288,17 +287,17 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             axistream_transmit(
-              data_array          => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
-              user_array          => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
-              strb_array          => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
-              id_array            => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
-              dest_array          => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
-              msg                 => format_msg(v_cmd),
-              clk                 => clk,
-              axistream_if        => axistream_vvc_if,
-              scope               => C_SCOPE,
-              msg_id_panel        => v_msg_id_panel,
-              config              => vvc_config.bfm_config);
+              data_array   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
+              user_array   => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
+              strb_array   => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
+              id_array     => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
+              dest_array   => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
+              msg          => format_msg(v_cmd),
+              clk          => clk,
+              axistream_if => axistream_vvc_if,
+              scope        => C_SCOPE,
+              msg_id_panel => v_msg_id_panel,
+              config       => vvc_config.bfm_config);
 
             -- Update vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
@@ -311,18 +310,18 @@ begin
             -- Set vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
-            axistream_receive(data_array          => v_result.data_array,
-                              data_length         => v_result.data_length,
-                              user_array          => v_result.user_array,
-                              strb_array          => v_result.strb_array,
-                              id_array            => v_result.id_array,
-                              dest_array          => v_result.dest_array,
-                              msg                 => format_msg(v_cmd),
-                              clk                 => clk,
-                              axistream_if        => axistream_vvc_if,
-                              scope               => C_SCOPE,
-                              msg_id_panel        => v_msg_id_panel,
-                              config              => vvc_config.bfm_config);
+            axistream_receive(data_array   => v_result.data_array,
+                              data_length  => v_result.data_length,
+                              user_array   => v_result.user_array,
+                              strb_array   => v_result.strb_array,
+                              id_array     => v_result.id_array,
+                              dest_array   => v_result.dest_array,
+                              msg          => format_msg(v_cmd),
+                              clk          => clk,
+                              axistream_if => axistream_vvc_if,
+                              scope        => C_SCOPE,
+                              msg_id_panel => v_msg_id_panel,
+                              config       => vvc_config.bfm_config);
 
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
@@ -348,18 +347,18 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             axistream_expect(
-              exp_data_array      => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
-              exp_user_array      => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
-              exp_strb_array      => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
-              exp_id_array        => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
-              exp_dest_array      => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
-              msg                 => format_msg(v_cmd),
-              clk                 => clk,
-              axistream_if        => axistream_vvc_if,
-              alert_level         => v_cmd.alert_level,
-              scope               => C_SCOPE,
-              msg_id_panel        => v_msg_id_panel,
-              config              => vvc_config.bfm_config);
+              exp_data_array => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
+              exp_user_array => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
+              exp_strb_array => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
+              exp_id_array   => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
+              exp_dest_array => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
+              msg            => format_msg(v_cmd),
+              clk            => clk,
+              axistream_if   => axistream_vvc_if,
+              alert_level    => v_cmd.alert_level,
+              scope          => C_SCOPE,
+              msg_id_panel   => v_msg_id_panel,
+              config         => vvc_config.bfm_config);
 
             -- Update vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
@@ -419,7 +418,7 @@ begin
   -- Clock period
   -- - Finds the clock period
   --===============================================================================================
-  p_clock_period : process
+  p_clock_period : process is
   begin
     wait until rising_edge(clk);
     clock_period <= now;
@@ -434,7 +433,7 @@ begin
   -- - Monitors unwanted activity from the DUT
   --========================================================================================================================
   g_unwanted_activity : if not GC_VVC_IS_MASTER generate
-    p_unwanted_activity : process
+    p_unwanted_activity : process is
     begin
       -- Add a delay to allow the VVC to be registered in the activity register
       wait for std.env.resolution_limit;
@@ -473,7 +472,7 @@ begin
       end loop;
     end process p_unwanted_activity;
   end generate g_unwanted_activity;
-  --========================================================================================================================
+--========================================================================================================================
 
-end behave;
+end architecture behave;
 

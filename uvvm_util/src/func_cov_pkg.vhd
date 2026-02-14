@@ -659,7 +659,6 @@ package func_cov_pkg is
       constant trigger      : in string;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-
   end protected t_coverpoint;
 
 end package func_cov_pkg;
@@ -973,7 +972,7 @@ package body func_cov_pkg is
     constant C_HEADER_3        : string   := "*** OVERALL HOLES REPORT: " & to_string(scope) & " ***";
     constant C_COLUMN_WIDTH    : positive := 20;
     constant C_PRINT_GOAL      : boolean  := protected_covergroup_status.get_covpts_coverage_goal(VOID) /= 100;
-    variable C_PRINT_NUM_TC    : boolean  := protected_covergroup_status.is_covpt_loaded(VOID);
+    constant C_PRINT_NUM_TC    : boolean  := protected_covergroup_status.is_covpt_loaded(VOID);
     variable v_line            : line;
     variable v_log_extra_space : integer  := 0;
   begin
@@ -1111,10 +1110,10 @@ package body func_cov_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in bin_array'range loop
@@ -1148,10 +1147,10 @@ package body func_cov_pkg is
         end if;
       end function;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in bin_array'range loop
@@ -1220,10 +1219,10 @@ package body func_cov_pkg is
       variable v_new_bin_array : t_new_bin_array(0 to 0);
       variable v_line          : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in 0 to priv_num_bins_crossed - 1 loop
@@ -1722,7 +1721,7 @@ package body func_cov_pkg is
         constant idx            : integer;
         constant max_str_length : integer := C_FC_MAX_NAME_LENGTH
       ) return string is
-      constant C_IDX_STR : string := "["& to_string(idx) & "]";
+        constant C_IDX_STR : string := "[" & to_string(idx) & "]";
         variable v_ret   : string(1 to max_str_length);
       begin
         if valid_length(str) + C_IDX_STR'length >= max_str_length then
@@ -1780,7 +1779,7 @@ package body func_cov_pkg is
 
             -- Add bins to UCDB model
             priv_bins(priv_bins_idx).ucdb_index := v_ucdb_bin_index;
-            v_ucdb_bin_name := get_bin_name_with_values(bin_name, to_string(priv_bins_idx + priv_invalid_bins_idx + 1), priv_bins(priv_bins_idx), true, C_FC_MAX_UCDB_NAME_LENGTH); -- default bin names are 1-indexed
+            v_ucdb_bin_name := get_bin_name_with_values(v_tmp_bin_name, to_string(priv_bins_idx + priv_invalid_bins_idx + 1), priv_bins(priv_bins_idx), true, C_FC_MAX_UCDB_NAME_LENGTH); -- default bin names are 1-indexed
             fli_add_ucdb_bin(priv_ucdb_handle, C_UCDB_ACTION_COUNT, min_hits, v_ucdb_bin_name, v_ucdb_bin_index);
 
             priv_bins_idx := priv_bins_idx + 1;
@@ -2558,10 +2557,10 @@ package body func_cov_pkg is
       variable v_line          : line;
       variable v_num_bins      : natural := 0;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       if priv_bins_idx = 0 and priv_invalid_bins_idx = 0 then
@@ -2698,7 +2697,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", min_hits:" & to_string(min_hits) &
-        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : natural := 2;
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -2742,7 +2741,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", min_hits:" & to_string(min_hits) &
-        ", """ & bin_name & """)";
+                                        ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2770,7 +2769,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : natural := 3;
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -2815,7 +2814,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+                                        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2827,7 +2826,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", """ & bin_name & """)";
+                                        ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2846,7 +2845,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : natural := 4;
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -2892,7 +2891,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+                                        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2905,7 +2904,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", " & get_proc_calls(bin4) & ", """ & bin_name & """)";
+                                        ", " & get_proc_calls(bin4) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2925,7 +2924,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : natural := 5;
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -2973,7 +2972,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+                                        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, bin5, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2987,7 +2986,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
-        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", """ & bin_name & """)";
+                                        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, bin5, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -3004,7 +3003,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) &
-        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -3075,7 +3074,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) &
-        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID) + coverpoint3.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -3121,7 +3120,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) &
-        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+                                        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -3151,7 +3150,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) &
-        ", " & coverpoint4.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", " & coverpoint4.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID) + coverpoint3.get_num_bins_crossed(VOID) + coverpoint4.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -3198,7 +3197,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
-        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+                                        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, coverpoint4, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -3230,7 +3229,7 @@ package body func_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL              : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
-        ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+                                                      ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS          : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID) + coverpoint3.get_num_bins_crossed(VOID) + coverpoint4.get_num_bins_crossed(VOID) + coverpoint5.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT         : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call               : line;
@@ -3278,7 +3277,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
-        ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+                                        ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, coverpoint4, coverpoint5, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -3292,7 +3291,7 @@ package body func_cov_pkg is
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
-        ", " & coverpoint5.get_name(VOID) & ", """ & bin_name & """)";
+                                        ", " & coverpoint5.get_name(VOID) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, coverpoint4, coverpoint5, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -3909,7 +3908,8 @@ package body func_cov_pkg is
         vendor_func_cov_set_sampling_var(priv_vendor_coverpoint_id, trigger);
         return;
       else
-        alert(TB_ERROR, "Procedure enable_auto_sampling() is only supported in Questa One 2026.1 and newer", C_SCOPE);
+        alert(TB_ERROR, "Procedure enable_auto_sampling() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
       end if;
     end procedure;
 

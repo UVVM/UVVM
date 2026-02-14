@@ -44,7 +44,8 @@ package transaction_pkg is
     -- VVC local
     MASTER_TRANSMIT, MASTER_RECEIVE, MASTER_CHECK,
     SLAVE_TRANSMIT, SLAVE_RECEIVE, SLAVE_CHECK,
-    MASTER_QUICK_CMD);
+    MASTER_QUICK_CMD
+  );
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
   alias C_VVC_CMD_DATA_MAX_LENGTH   is C_I2C_VVC_CMD_DATA_MAX_LENGTH;

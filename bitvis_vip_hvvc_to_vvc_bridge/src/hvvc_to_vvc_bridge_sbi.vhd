@@ -29,18 +29,18 @@ use work.support_pkg.all;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
-architecture SBI of hvvc_to_vvc_bridge is
+architecture sbi of hvvc_to_vvc_bridge is
 begin
 
-  p_executor : process
-    constant c_data_words_width          : natural := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
+  p_executor : process is
+    constant C_DATA_WORDS_WIDTH          : natural := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
     variable v_cmd_idx                   : integer;
     variable v_sbi_received_data         : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
     variable v_dut_address               : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
     variable v_dut_address_increment     : integer;
     variable v_dut_data_width            : positive;
     variable v_num_transfers             : integer;
-    variable v_data_slv                  : std_logic_vector(GC_MAX_NUM_WORDS * c_data_words_width - 1 downto 0);
+    variable v_data_slv                  : std_logic_vector(GC_MAX_NUM_WORDS * C_DATA_WORDS_WIDTH - 1 downto 0);
     variable v_dut_if_field_pos_is_first : boolean;
     variable v_dut_if_field_pos_is_last  : boolean;
     variable v_disabled_msg_id_int_wait  : boolean;
@@ -53,12 +53,12 @@ begin
     function convert_slv_array_to_slv(
       constant slv_array : t_slv_array
     ) return std_logic_vector is
-      constant c_num_words : integer := slv_array'length;
-      constant c_word_len  : integer := slv_array(slv_array'low)'length;
-      variable v_slv       : std_logic_vector(c_num_words * c_word_len - 1 downto 0);
+      constant C_NUM_WORDS : integer := slv_array'length;
+      constant C_WORD_LEN  : integer := slv_array(slv_array'low)'length;
+      variable v_slv       : std_logic_vector(C_NUM_WORDS * C_WORD_LEN - 1 downto 0);
     begin
-      for word_idx in 0 to c_num_words - 1 loop
-        v_slv(c_word_len * (word_idx + 1) - 1 downto c_word_len * word_idx) := slv_array(word_idx);
+      for word_idx in 0 to C_NUM_WORDS - 1 loop
+        v_slv(C_WORD_LEN * (word_idx + 1) - 1 downto C_WORD_LEN * word_idx) := slv_array(word_idx);
       end loop;
       return v_slv;
     end function;
@@ -68,10 +68,10 @@ begin
       constant slv      : std_logic_vector;
       constant word_len : integer
     ) return t_slv_array is
-      constant c_num_words : integer := slv'length / word_len;
-      variable v_slv_array : t_slv_array(0 to c_num_words - 1)(word_len - 1 downto 0);
+      constant C_NUM_WORDS : integer := slv'length / word_len;
+      variable v_slv_array : t_slv_array(0 to C_NUM_WORDS - 1)(word_len - 1 downto 0);
     begin
-      for word_idx in 0 to c_num_words - 1 loop
+      for word_idx in 0 to C_NUM_WORDS - 1 loop
         v_slv_array(word_idx) := slv(word_len * (word_idx + 1) - 1 downto word_len * word_idx);
       end loop;
       return v_slv_array;
@@ -117,9 +117,9 @@ begin
       get_data_width_config(GC_DUT_IF_FIELD_CONFIG, hvvc_to_bridge, v_dut_data_width);
 
       -- Calculate number of transfers
-      v_num_transfers := (hvvc_to_bridge.num_data_words * c_data_words_width) / v_dut_data_width;
+      v_num_transfers := (hvvc_to_bridge.num_data_words * C_DATA_WORDS_WIDTH) / v_dut_data_width;
       -- Extra transfer if data bits remainder
-      if ((hvvc_to_bridge.num_data_words * c_data_words_width) rem v_dut_data_width) /= 0 then
+      if ((hvvc_to_bridge.num_data_words * C_DATA_WORDS_WIDTH) rem v_dut_data_width) /= 0 then
         v_num_transfers := v_num_transfers + 1;
       end if;
 
@@ -165,7 +165,7 @@ begin
           end loop;
 
           -- Convert from std_logic_vector to t_slv_array (word endianness is LOWER_WORD_RIGHT)
-          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words - 1) <= convert_slv_to_slv_array(v_data_slv(hvvc_to_bridge.num_data_words * c_data_words_width - 1 downto 0), c_data_words_width);
+          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words - 1) <= convert_slv_to_slv_array(v_data_slv(hvvc_to_bridge.num_data_words * C_DATA_WORDS_WIDTH - 1 downto 0), C_DATA_WORDS_WIDTH);
 
       end case;
 
@@ -184,4 +184,4 @@ begin
 
   end process;
 
-end architecture SBI;
+end architecture sbi;

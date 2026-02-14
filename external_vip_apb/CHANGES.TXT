@@ -1,0 +1,7 @@
+External VIP APB - Overview on Versions and Changes
+==============================================================
+
+v1.0.0
+----------
+Released: 2026-02-14
+- Initial version of APB VIP. From pull request by user mikkelmi2.

@@ -59,8 +59,8 @@ package i2c_bfm_pkg is
     reserved_address_severity       : t_alert_level;        -- The methods will trigger an alert with this severity if the slave address is equal to one of the reserved addresses from the NXP I2C Specification. For a list of reserved addresses, please see the document referred to in section 3.
     match_strictness                : t_match_strictness;   -- Matching strictness for std_logic values in check procedures.
     id_for_bfm                      : t_msg_id;             -- The message ID used as a general message ID in the I2C BFM.
-    id_for_bfm_wait                 : t_msg_id;             -- The message ID used for logging waits in the I2C BFM.
-    id_for_bfm_poll                 : t_msg_id;             -- The message ID used for logging polling in the I2C BFM.
+    id_for_bfm_wait                 : t_msg_id;             -- DEPRECATED: will be removed in v3
+    id_for_bfm_poll                 : t_msg_id;             -- DEPRECATED: will be removed in v3
   end record;
 
   constant C_I2C_BFM_CONFIG_DEFAULT : t_i2c_bfm_config := (
@@ -446,8 +446,8 @@ package body i2c_bfm_pkg is
     constant scope       : in string := C_TB_SCOPE_DEFAULT
   ) is
     constant C_SCOPE   : string := scope & ": i2c_check_slave_addr()";
-    constant head      : string := "This address is reserved for ";
-    constant tail      : string := ". Only use this address if you are certain " & "that the address is never going to be used " & "for its intended purpose. See I2C-bus specification Rev. 6 " & "for more information.";
+    constant C_HEAD    : string := "This address is reserved for ";
+    constant C_TAIL    : string := ". Only use this address if you are certain " & "that the address is never going to be used " & "for its intended purpose. See I2C-bus specification Rev. 6 " & "for more information.";
     alias a_addr_value : unsigned(6 downto 0) is addr_value(6 downto 0);
   begin
     if addr_value'length = 7 then
@@ -456,28 +456,28 @@ package body i2c_bfm_pkg is
           when "00" =>
             -- general call (rw = 0)
             -- START byte (rw = 1)
-            alert(alert_level, head & "general call and START byte" & tail, C_SCOPE);
+            alert(alert_level, C_HEAD & "general call and START byte" & C_TAIL, C_SCOPE);
           when "01" =>
             -- cbus addr
-            alert(alert_level, head & "CBUS address" & tail, C_SCOPE);
+            alert(alert_level, C_HEAD & "CBUS address" & C_TAIL, C_SCOPE);
           when "10" =>
             -- reserved for different bus format
-            alert(alert_level, head & "different bus format" & tail, C_SCOPE);
+            alert(alert_level, C_HEAD & "different bus format" & C_TAIL, C_SCOPE);
           when "11" =>
             -- reserved for future purposes
-            alert(alert_level, head & "future purposes" & tail, C_SCOPE);
+            alert(alert_level, C_HEAD & "future purposes" & C_TAIL, C_SCOPE);
           when others =>
             null;
         end case;
       elsif a_addr_value(6 downto 2) = "00001" then
         -- Hs-mode master code
-        alert(alert_level, head & "High-speed mode (Hs-mode) master code" & tail, C_SCOPE);
+        alert(alert_level, C_HEAD & "High-speed mode (Hs-mode) master code" & C_TAIL, C_SCOPE);
       elsif a_addr_value(6 downto 2) = "11111" then
         -- device ID
-        alert(alert_level, head & "device ID" & tail, C_SCOPE);
+        alert(alert_level, C_HEAD & "device ID" & C_TAIL, C_SCOPE);
       elsif a_addr_value(6 downto 2) = "11110" then
         -- 10-bit-addressing
-        alert(alert_level, head & "10-bit-addressing" & tail, C_SCOPE);
+        alert(alert_level, C_HEAD & "10-bit-addressing" & C_TAIL, C_SCOPE);
       else
       -- do nothing
       end if;
@@ -495,11 +495,11 @@ package body i2c_bfm_pkg is
   function init_i2c_if_signals(
     constant VOID : in t_void
   ) return t_i2c_if is
-    variable result : t_i2c_if;
+    variable v_result : t_i2c_if;
   begin
-    result.sda := 'Z';
-    result.scl := 'Z';
-    return result;
+    v_result.sda := 'Z';
+    v_result.scl := 'Z';
+    return v_result;
   end function;
 
   procedure i2c_master_transmit_single_byte(
@@ -761,8 +761,8 @@ package body i2c_bfm_pkg is
     constant msg_id_panel                 : in t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name                : string                       := "i2c_master_transmit";
-    constant proc_call                : string                       := proc_name & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME              : string                       := "i2c_master_transmit";
+    constant C_PROC_CALL              : string                       := C_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
 
     -- Normalize to the 7 bit addr and 8 bit data widths
@@ -867,10 +867,10 @@ package body i2c_bfm_pkg is
         wait for config.master_stop_condition_hold_time;
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
+      alert(error, C_PROC_CALL & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
 
   end procedure;
 
@@ -929,8 +929,8 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "i2c_slave_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := "i2c_slave_transmit";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_bfm_rx_data   : std_logic_vector(7 downto 0) := (others => '0');
     variable v_received_addr : unsigned(9 downto 0)         := (others => '0');
@@ -1002,7 +1002,7 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " wrong slave address!" & " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) & ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
+            alert(config.slave_mode_address_severity, C_PROC_CALL & " wrong slave address!" & " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) & ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
             return;
           end if;
         else                            -- 10 bit addressing
@@ -1020,7 +1020,7 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected!" & add_msg_delimiter(msg), scope);
+            alert(config.slave_mode_address_severity, C_PROC_CALL & " first byte was other than expected!" & add_msg_delimiter(msg), scope);
             return;
           end if;
 
@@ -1036,7 +1036,7 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " wrong slave address!" & " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) & ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
+            alert(config.slave_mode_address_severity, C_PROC_CALL & " wrong slave address!" & " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) & ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
             return;
           end if;
 
@@ -1065,11 +1065,11 @@ package body i2c_bfm_pkg is
                 i2c_slave_set_ack('0');
               else
                 -- NACK
-                alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected!" & add_msg_delimiter(msg), scope);
+                alert(config.slave_mode_address_severity, C_PROC_CALL & " first byte was other than expected!" & add_msg_delimiter(msg), scope);
                 return;
               end if;
             else
-              alert(error, proc_call & " sda and scl not inactive (high) when wishing to start after repeated start condition for 10 bit address" & add_msg_delimiter(msg), scope);
+              alert(error, C_PROC_CALL & " sda and scl not inactive (high) when wishing to start after repeated start condition for 10 bit address" & add_msg_delimiter(msg), scope);
             end if;
           end if;
         end if;
@@ -1096,10 +1096,10 @@ package body i2c_bfm_pkg is
 
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start." & add_msg_delimiter(msg), scope);
+      alert(error, C_PROC_CALL & " sda and scl not inactive (high) when wishing to start." & add_msg_delimiter(msg), scope);
     end if;
 
-    log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
 
   end procedure;
 
@@ -1154,9 +1154,9 @@ package body i2c_bfm_pkg is
   ) is
 
     -- Local proc_name; used if called from sequncer or VVC
-    constant local_proc_name : string := "i2c_master_receive";
+    constant C_LOCAL_PROC_NAME : string := "i2c_master_receive";
     -- Local proc_call; used if called from sequncer or VVC
-    constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
 
@@ -1200,10 +1200,10 @@ package body i2c_bfm_pkg is
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'i2c_master_receive...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing i2c_master_receive...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     if not config.enable_10_bits_addressing then
@@ -1382,9 +1382,9 @@ package body i2c_bfm_pkg is
     constant ext_proc_call : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     -- Local proc_name; used if called from sequncer or VVC
-    constant local_proc_name : string := "i2c_slave_receive";
+    constant C_LOCAL_PROC_NAME : string := "i2c_slave_receive";
     -- Local proc_call; used if called from sequncer or VVC
-    constant local_proc_call : string := local_proc_name & "()";
+    constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "()";
 
     variable v_proc_call     : line;
     variable v_received_addr : unsigned(9 downto 0) := (others => '0');
@@ -1412,10 +1412,10 @@ package body i2c_bfm_pkg is
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'i2c_slave_receive...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing i2c_slave_receive...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     if not config.enable_10_bits_addressing then
@@ -1575,8 +1575,8 @@ package body i2c_bfm_pkg is
     constant msg_id_panel                 : in t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name     : string  := "i2c_master_check";
-    constant proc_call     : string  := proc_name & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME   : string  := "i2c_master_check";
+    constant C_PROC_CALL   : string  := C_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- Helper variables
     variable v_data_array  : t_byte_array(data_exp'range);
     variable v_check_ok    : boolean := true;
@@ -1586,7 +1586,7 @@ package body i2c_bfm_pkg is
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
 
-    i2c_master_receive(addr_value, v_data_array, msg, scl, sda, action_when_transfer_is_done, scope, msg_id_panel, config, proc_call);
+    i2c_master_receive(addr_value, v_data_array, msg, scl, sda, action_when_transfer_is_done, scope, msg_id_panel, config, C_PROC_CALL);
 
     for byte in data_exp'range loop
       for i in data_exp(byte)'range loop
@@ -1602,13 +1602,13 @@ package body i2c_bfm_pkg is
       if not v_byte_ok then
         -- Use binary representation when mismatch is due to weak signals
         v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-        alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        alert(alert_level, C_PROC_CALL & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         v_check_ok    := false;
       end if;
     end loop;
 
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
@@ -1668,8 +1668,8 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "i2c_slave_check";
-    constant proc_call : string := proc_name & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := "i2c_slave_check";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     -- Helper variables
     variable v_data_array  : t_byte_array(data_exp'range);
@@ -1677,7 +1677,7 @@ package body i2c_bfm_pkg is
     variable v_byte_ok     : boolean;
     variable v_alert_radix : t_radix;
   begin
-    i2c_slave_receive(v_data_array, msg, scl, sda, exp_rw_bit, scope, msg_id_panel, config, proc_call);
+    i2c_slave_receive(v_data_array, msg, scl, sda, exp_rw_bit, scope, msg_id_panel, config, C_PROC_CALL);
 
     for byte in data_exp'range loop
       for i in data_exp(byte)'range loop
@@ -1693,13 +1693,13 @@ package body i2c_bfm_pkg is
       if not v_byte_ok then
         -- Use binary representation when mismatch is due to weak signals
         v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-        alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        alert(alert_level, C_PROC_CALL & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         v_check_ok    := false;
       end if;
     end loop;
 
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
@@ -1758,7 +1758,7 @@ package body i2c_bfm_pkg is
     constant config                       : in t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
   ) is
 
-    constant proc_call : string := "i2c_master_quick_command (A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", rw_bit: " & to_string(rw_bit) & ")";
+    constant C_PROC_CALL : string := "i2c_master_quick_command (A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", rw_bit: " & to_string(rw_bit) & ")";
 
     constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
 
@@ -1800,7 +1800,7 @@ package body i2c_bfm_pkg is
     end if;
 
     -- start condition
-    log(config.id_for_bfm, proc_call & "=> Awaiting start condition." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "=> Awaiting start condition." & add_msg_delimiter(msg), scope, msg_id_panel);
     await_value(i2c_if.sda, '1', MATCH_STD, 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, "Waiting for SDA idle bus." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
     await_value(i2c_if.scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, "Waiting for SCL idle bus." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
@@ -1812,38 +1812,38 @@ package body i2c_bfm_pkg is
 
       if i2c_if.sda = '0' then
         -- Transmit address
-        log(config.id_for_bfm, proc_call & "=> Transmitting address." & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, C_PROC_CALL & "=> Transmitting address." & add_msg_delimiter(msg), scope, msg_id_panel);
         if not config.enable_10_bits_addressing then
           i2c_master_transmit_single_byte(std_logic_vector(v_normalized_addr(6 downto 0)) & rw_bit);
         else                            -- 10-bits addressing enabled
           -- Transmit Slave Address first 7 bits 11110<addr bit 9><addr bit 8><Write>
           i2c_master_transmit_single_byte(C_FIRST_10_BIT_ADDRESS_BITS & rw_bit);
         end if;
-        log(config.id_for_bfm, proc_call & "=> Address transmitted." & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, C_PROC_CALL & "=> Address transmitted." & add_msg_delimiter(msg), scope, msg_id_panel);
 
         -- Check ACK
         -- The master shall drive scl during the acknowledge cycle
         -- A valid ack is detected when sda is '0'.
-        log(config.id_for_bfm, proc_call & "=> Checking ACK." & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, C_PROC_CALL & "=> Checking ACK." & add_msg_delimiter(msg), scope, msg_id_panel);
         i2c_master_check_ack(v_ack_received, '0');
-        log(config.id_for_bfm, proc_call & "=> ACK was " & to_string(v_ack_received) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, C_PROC_CALL & "=> ACK was " & to_string(v_ack_received) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
 
         -- If 10-bits addressing is enabled, transmit second address byte.
         if config.enable_10_bits_addressing then
-          log(config.id_for_bfm, proc_call & "=> Transmitting second part of address." & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(config.id_for_bfm, C_PROC_CALL & "=> Transmitting second part of address." & add_msg_delimiter(msg), scope, msg_id_panel);
           i2c_master_transmit_single_byte(std_logic_vector(v_normalized_addr(7 downto 0)));
 
           -- Check ACK
           -- The master shall drive scl during the acknowledge cycle
           -- A valid ack is detected when sda is '0'.
-          log(config.id_for_bfm, proc_call & "=> Checking ACK." & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(config.id_for_bfm, C_PROC_CALL & "=> Checking ACK." & add_msg_delimiter(msg), scope, msg_id_panel);
           i2c_master_check_ack(v_ack_received, '0');
-          log(config.id_for_bfm, proc_call & "=> ACK was " & to_string(v_ack_received) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(config.id_for_bfm, C_PROC_CALL & "=> ACK was " & to_string(v_ack_received) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
 
           -- Now generate a repeated start condition, send the first byte again (only with read/write-bit set to read), check ack. Then receive data bytes.
 
           -- Generate repeated start condition
-          log(config.id_for_bfm, proc_call & "=> Repeating start condition." & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(config.id_for_bfm, C_PROC_CALL & "=> Repeating start condition." & add_msg_delimiter(msg), scope, msg_id_panel);
           wait for config.i2c_bit_time / 4;
           i2c_if.sda <= 'Z';
           wait for config.i2c_bit_time / 4;
@@ -1858,15 +1858,15 @@ package body i2c_bfm_pkg is
           i2c_if.scl <= '0';
           if i2c_if.sda = '0' then
             -- Transmit Slave Address first 7 bits 11110<addr bit 9><addr bit 8><Write>
-            log(config.id_for_bfm, proc_call & "=> Transmitting Slave Address first 7 bits." & add_msg_delimiter(msg), scope, msg_id_panel);
+            log(config.id_for_bfm, C_PROC_CALL & "=> Transmitting Slave Address first 7 bits." & add_msg_delimiter(msg), scope, msg_id_panel);
             i2c_master_transmit_single_byte(C_FIRST_10_BIT_ADDRESS_BITS & '1');
 
             -- Check ACK
             -- The master shall drive scl during the acknowledge cycle
             -- A valid ack is detected when sda is '0'.
-            log(config.id_for_bfm, proc_call & "=> Checking ACK." & add_msg_delimiter(msg), scope, msg_id_panel);
+            log(config.id_for_bfm, C_PROC_CALL & "=> Checking ACK." & add_msg_delimiter(msg), scope, msg_id_panel);
             i2c_master_check_ack(v_ack_received, '0');
-            log(config.id_for_bfm, proc_call & "=> ACK was " & to_string(v_ack_received) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+            log(config.id_for_bfm, C_PROC_CALL & "=> ACK was " & to_string(v_ack_received) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
           else
             alert(error, "i2c_master_quick_command sda not '0' when expected after repeated start condition for 10-bit addressing!" & add_msg_delimiter(msg), scope);
           end if;
@@ -1875,7 +1875,7 @@ package body i2c_bfm_pkg is
         -- Do the stop condition if action_when_transfer_is_done is set to RELEASE_LINE_AFTER_TRANSFER
         if action_when_transfer_is_done = RELEASE_LINE_AFTER_TRANSFER then
           -- do the stop condition
-          log(config.id_for_bfm, proc_call & "=> Setting stop condition.", scope, msg_id_panel);
+          log(config.id_for_bfm, C_PROC_CALL & "=> Setting stop condition.", scope, msg_id_panel);
           i2c_if.sda <= '0';
           wait for config.i2c_bit_time / 4;
           i2c_if.scl <= 'Z';
@@ -1896,7 +1896,7 @@ package body i2c_bfm_pkg is
         wait for config.master_stop_condition_hold_time;
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start" & add_msg_delimiter(msg), scope);
+      alert(error, C_PROC_CALL & " sda and scl not inactive (high) when wishing to start" & add_msg_delimiter(msg), scope);
     end if;
 
     -- Compare values, but ignore any leading zero's if widths are different.
@@ -1909,9 +1909,9 @@ package body i2c_bfm_pkg is
     end if;
 
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK, slave response was " & to_string(v_ack_received) & ", expected " & to_string(exp_ack) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, slave response was " & to_string(v_ack_received) & ", expected " & to_string(exp_ack) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, proc_call & "=> FAILED, slave response was " & to_string(v_ack_received) & ", expected " & to_string(exp_ack) & "." & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> FAILED, slave response was " & to_string(v_ack_received) & ", expected " & to_string(exp_ack) & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 

@@ -39,7 +39,7 @@ end entity error_injection_slv;
 architecture behave of error_injection_slv is
 begin
 
-  p_error_injection : process
+  p_error_injection : process is
     constant C_INITIAL_VALUE_DONT_CARE : std_logic_vector(ei_in'length - 1 downto 0) := (others => '-');
     constant C_IS_VECTOR               : boolean                                     := (ei_in'length > 1);
     -- helper variables

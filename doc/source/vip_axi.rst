@@ -1186,7 +1186,7 @@ scoreboard where it will be checked against the expected value (provided by the 
       arburst          => INCR,
       arlock           => NORMAL,
       arcache          => "0000",
-      arprot           => UNPRIVILEGED_UNSECURE_DATA,
+      arprot           => UNPRIVILEGED_NONSECURE_DATA,
       arqos            => "0000",
       arregion         => "0000",
       aruser           => x"01",
@@ -1307,7 +1307,7 @@ severity 'alert_level' will be issued. The read data will not be stored by this 
       arburst          => INCR,
       arlock           => NORMAL,
       arcache          => "0000",
-      arprot           => UNPRIVILEGED_UNSECURE_DATA,
+      arprot           => UNPRIVILEGED_NONSECURE_DATA,
       arqos            => "0000",
       arregion         => "0000",
       aruser           => x"01",
@@ -1489,16 +1489,16 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. axi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable ``AXI_VVC_SB``, located in 
+TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable ``axi_vvc_sb``, located in 
 the vvc_methods_pkg.vhd, e.g. ::
 
-    AXI_VVC_SB.add_expected(C_AXI_VVC_IDX, v_expected, "Adding expected");
+    axi_vvc_sb.add_expected(C_AXI_VVC_IDX, v_expected, "Adding expected");
 
 The AXI4 scoreboard is per default the maximum width of rid, rdata, rresp and ruser. When sending expected result to the scoreboard, 
 where the result width is smaller than the default scoreboard width, we recommend zero-padding the data.
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the AXI4 VVC scoreboard using the ``AXI_VVC_SB``.
+Scoreboard commands are available for the AXI4 VVC scoreboard using the ``axi_vvc_sb``.
 
 
 Unwanted Activity Detection

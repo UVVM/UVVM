@@ -1,0 +1,187 @@
+rule:
+  global: # Disable all rules by default.
+    disable: true
+  group:
+    case: # Check all code has lower case.
+      disable: false
+      case: 'lower'
+      # Exceptions are: VOID parameter and all signals which address the VVCs.
+      case_exceptions: ['VOID', 'VVCT', 'THIS_VVCT', 'VVC_BROADCAST',
+        'AVALON_MM_VVCT', 'AVALON_ST_VVCT', 'AXI_VVCT', 'AXILITE_VVCT', 'AXISTREAM_VVCT', 'CLOCK_GENERATOR_VVCT', 'ETHERNET_VVCT',
+        'GMII_VVCT', 'GPIO_VVCT', 'I2C_VVCT', 'RGMII_VVCT', 'SBI_VVCT', 'SPI_VVCT', 'UART_VVCT', 'WISHBONE_VVCT', 'APB_VVCT']
+    indent: # Check all code has indentation of 2 spaces.
+      disable: false
+      indent_size: 2
+      indent_style: 'spaces'
+  #####################################
+  # Rules for casing
+  #####################################
+  alias_declaration_502: # This rule checks the alias designator has proper case.
+    disable: false
+    case: 'upper_or_lower'
+  bit_string_literal_501: # This rule checks the bit value has proper case.
+    disable: false
+    case: 'upper'
+  constant_004: # This rule checks the constant identifier has proper case.
+    disable: false
+    case: 'upper'
+  file_500: # This rule checks the file identifier has proper case.
+    disable: false
+    case: 'upper_or_lower'
+  generic_007: # This rule checks the generic names have proper case.
+    disable: false
+    case: 'upper'
+  generic_map_002: # This rule checks generic names have proper case.
+    disable: false
+    case: 'upper_or_lower'
+  interface_incomplete_type_declaration_501: # This rule checks the type name has proper case.
+    disable: false
+    case: 'upper_or_lower'
+  procedure_509: # This rule checks for consistent capitalization of parameter names within the subprogram body.
+    disable: false
+  type_500: # This rule checks enumerate types have proper case.
+    disable: false
+    case: 'upper'
+  type_mark_500: # This rule checks that the type marks without declarations in the current file have proper case.
+    disable: false
+    case: 'upper_or_lower'
+  use_clause_502: # This rule checks the item name called out in the selected name has proper case.
+    disable: false
+    case: 'upper_or_lower'
+  #####################################
+  # Rules for indentation
+  #####################################
+  assert_001: # This rule checks indent of multiline assert statements.
+    disable: true
+  constant_014: # This rule checks the indent of multiline constants that do not contain arrays.
+    disable: false
+  context_ref_001: # This rule checks the indent of the context keyword.
+    disable: false
+    indent_size: 0
+  library_001: # This rule checks the indent of the library keyword.
+    disable: false
+    indent_size: 0
+  library_008: # This rule checks the indent of the use keyword.
+    disable: true
+  #####################################
+  # Rules for alignment
+  #####################################
+  constant_400: # This rule checks the alignment of assignment keywords in constant declarations.
+    blank_line_ends_group: False
+    comment_line_ends_group: False
+  generic_map_005: # This rule checks if the generic map keywords and a generic assignment are on the same line.
+    disable: false
+  procedure_410: # This rule checks the alignment of the colon for each parameter in the procedure declaration.
+    disable: false
+    comment_line_ends_group: False
+  procedure_411: # This rule checks the alignment of := operator for each parameter in the procedure declaration.
+    disable: false
+  procedure_call_401: # This rule checks the alignment of => keywords in procedure calls.
+    disable: false
+  #####################################
+  # Rules for blank lines
+  #####################################
+  entity_016: # This rule checks for blank lines above the end entity keywords.
+    disable: false
+  record_type_definition_201: # This rule checks for blank lines above the end keyword.
+    disable: false
+  #####################################
+  # Rules for whitespace
+  #####################################
+  constant_005: # This rule checks for a single space after the colon.
+    disable: false
+  whitespace_001: # This rule check for trailing spaces.
+    disable: false
+  whitespace_002: # This rule will check for the existence of tabs in the middle of a line.
+    disable: false
+  whitespace_003: # This rule checks for spaces before semicolons.
+    disable: false
+  whitespace_004: # This rule checks for spaces before commas.
+    disable: false
+  whitespace_006: # This rule checks for spaces before a close parenthesis.
+    disable: false
+  whitespace_007: # This rule checks for spaces after a comma.
+    disable: false
+  whitespace_010: # This rule checks for spaces before and after the concatenate (&) operator.
+    disable: false
+  whitespace_013: # This rule checks for at least a single space before and after logical operators.
+    disable: false
+  whitespace_100: # This rule checks for at least a single space before and after relational operators.
+    disable: false
+  whitespace_101: # This rule checks for at least a single space before and after logical operators.
+    disable: false
+  whitespace_200: # This rule enforces a maximum number of consecutive blank lines.
+    disable: false
+  ###########################
+  # Rules for structure
+  ###########################
+  architecture_010: # This rule checks for the keyword architecture in the end architecture statement.
+    disable: false
+  architecture_025: # This rule checks for valid names for the architecture.
+    disable : false
+    names : ['rtl', 'behave', 'func', 'struct', 'dummy', 'tb', 'th', 'gmii', 'sbi']
+  entity_015: # This rule checks for the keyword entity in the end entity statement.
+    disable: false
+  function_018: # This rule checks the function keyword exists in the closing of the function specification.
+    disable: false
+  package_007: # This rule checks for the package keyword on the end package declaration.
+    disable: false
+  package_014: # This rule checks the package name exists on the same line as the end package keywords.
+    disable: false
+  package_body_002: # This rule checks for the optional package body keywords on the end package body declaration.
+    disable: false
+  package_body_003: # This rule checks the package name exists in the closing of the package body declaration.
+    disable: false
+  procedure_012: # This rule checks the procedure keyword exists in the closing of the procedure specification.
+    disable: false
+  process_012: # This rule checks for the existence of the is keyword.
+    disable: false
+  #####################################
+  # Rules for prefixes and sufixes
+  #####################################
+  block_601: # This rule checks for valid prefixes on block labels.
+    disable: false
+    prefixes: ['b_']
+  constant_015: # This rule checks for valid prefixes on constant identifiers.
+    disable: false
+    prefixes: ['C_']
+    exceptions: ['ALL_INSTANCES', 'ALL_ENABLED_INSTANCES']
+  generate_017: # This rule checks for valid prefixes on generate statement labels.
+    disable: false
+    prefixes: ['g_']
+  generic_020: # This rule checks for valid prefixes on generic identifiers.
+    disable: false
+    prefixes: ['GC_']
+    exceptions: ['SCOPE', 'SB_CONFIG_DEFAULT'] # TODO: fix in v3
+  instantiation_601: # This rule checks for valid prefixes on instantiation labels.
+    disable: false
+    prefixes: ['i_', 'i0_', 'i1_', 'i2_', 'i3_', 'i4_', 'i5_', 'i6_', 'i7_', 'i8_', 'i9_']
+  loop_statement_600: # This rule checks for valid prefixes on loop labels.
+    disable: false
+    prefixes: ['l_']
+  package_016: # This rule checks for valid suffixes on package identifiers.
+    disable: false
+    suffixes: ['_pkg']
+  package_body_600: # This rule checks for valid suffixes on package body identifiers.
+    disable: false
+    suffixes: ['_pkg']
+  process_036: # This rule checks for valid prefixes on process labels.
+    disable: false
+    prefixes: ['p_']
+  subtype_004: # This rule checks for valid prefixes in subtype identifiers.
+    disable: false
+    prefixes: ['t_']
+  type_015: # This rule checks for valid prefixes in user defined type identifiers.
+    disable: false
+    prefixes: ['t_']
+  variable_012: # This rule checks for valid prefixes on variable identifiers.
+    disable: false
+    prefixes: ['v_', 'vr_', 'shared_', 'priv_', 'protected_']
+    # Exceptions are: the internal queues inside the VVCs, these are meant only to be used by the VVC and not the user.
+    exceptions: ['command_queue', 'command_response_queue', 'result_queue', '.*_channel_queue', '.*_sb'] # TODO: fix scoreboard in v3
+  #####################################
+  # Rules for comments
+  #####################################
+  comment_012: # This rule checks for user defined keywords in comments.
+    disable: false
+    keywords: ['TODO', 'FIXME']

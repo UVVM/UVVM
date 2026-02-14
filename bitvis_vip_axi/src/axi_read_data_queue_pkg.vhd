@@ -52,7 +52,8 @@ end package axi_read_data_queue_pkg;
 package body axi_read_data_queue_pkg is
 
   package axi_read_data_generic_queue_pkg is new uvvm_util.generic_queue_pkg
-    generic map(t_generic_element => t_vvc_result);
+    generic map(
+      t_generic_element => t_vvc_result);
 
   use axi_read_data_generic_queue_pkg.all;
 

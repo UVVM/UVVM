@@ -1,0 +1,6 @@
+# Modelsim files
+sim/*
+# Sigasi files
+.library_mapping.xml
+.project
+.settings/*

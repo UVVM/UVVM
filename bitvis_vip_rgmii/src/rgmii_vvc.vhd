@@ -81,4 +81,4 @@ begin
       rgmii_vvc_rx_if => rgmii_vvc_rx_if
     );
 
-end struct;
+end architecture struct;

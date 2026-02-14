@@ -115,10 +115,10 @@ package vvc_methods_pkg is
   shared variable shared_wishbone_vvc_config       : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_WISHBONE_VVC_CONFIG_DEFAULT);
   shared variable shared_wishbone_vvc_status       : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_wishbone_transaction_info : t_transaction_info_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-  shared variable WISHBONE_VVC_SB                  : t_generic_sb;
+  shared variable wishbone_vvc_sb                  : t_generic_sb;
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -143,7 +143,8 @@ package vvc_methods_pkg is
     constant data_routing        : in t_data_routing;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   );
 
   procedure wishbone_read(
@@ -188,8 +189,8 @@ package vvc_methods_pkg is
   );
 
   procedure reset_vvc_transaction_info (
-    variable vvc_transaction_info_group  : inout t_transaction_group;
-    constant vvc_cmd                     : in t_vvc_cmd_record
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record
   );
 
 end package vvc_methods_pkg;
@@ -209,17 +210,17 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := "wishbone_write";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address." & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    constant C_PROC_NAME : string := "wishbone_write";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", C_PROC_CALL & " called with too wide address." & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, WRITE);
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
@@ -236,18 +237,20 @@ package body vvc_methods_pkg is
     constant data_routing        : in t_data_routing;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   ) is
-    constant proc_name : string := "wishbone_read";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0) := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address." & add_msg_delimiter(msg));
+    constant C_PROC_NAME       : string := "wishbone_read";
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0) := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", C_LOCAL_PROC_CALL & " called with too wide address." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                    := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, READ);
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
@@ -265,8 +268,11 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := "wishbone_read";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
   begin
-    wishbone_read(VVCT, vvc_instance_idx, addr, NA, msg, scope, parent_msg_id_panel);
+    wishbone_read(VVCT, vvc_instance_idx, addr, NA, msg, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   procedure wishbone_check(
@@ -279,17 +285,17 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := "wishbone_check";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address." & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    constant C_PROC_NAME : string := "wishbone_check";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", C_PROC_CALL & " called with too wide address." & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, CHECK);
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.alert_level         := alert_level;
@@ -352,8 +358,8 @@ package body vvc_methods_pkg is
   end procedure set_global_vvc_transaction_info;
 
   procedure reset_vvc_transaction_info (
-    variable vvc_transaction_info_group  : inout t_transaction_group;
-    constant vvc_cmd                     : in t_vvc_cmd_record
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record
   ) is
   begin
     case vvc_cmd.operation is

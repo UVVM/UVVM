@@ -1,6 +1,11 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v5.0.1
+----------
+Released: 2026-02-14
+- Print data_routing and randomisation parameters in corresponding VVC procedures.
+
 v5.0.0
 ----------
 Released: 2025-11-28

@@ -130,7 +130,7 @@ begin
     disable_log_msg(ID_AWAIT_COMPLETION_WAIT);
     disable_log_msg(WISHBONE_VVCT, 0, ALL_MESSAGES);
     enable_log_msg(WISHBONE_VVCT, 0, ID_BFM);
-    WISHBONE_VVC_SB.disable_log_msg(0, ID_DATA);
+    wishbone_vvc_sb.disable_log_msg(0, ID_DATA);
 
     ------------------------------------------------------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Wishbone");
@@ -235,7 +235,7 @@ begin
     for i in 0 to 7 loop
       v_data := std_logic_vector(to_unsigned(i + 1, GC_DATA_WIDTH));
       wishbone_write(WISHBONE_VVCT, 0, C_ADDR_FIFO, v_data, "Writing to FIFO");
-      WISHBONE_VVC_SB.add_expected(0, pad_wishbone_sb(v_data));
+      wishbone_vvc_sb.add_expected(0, pad_wishbone_sb(v_data));
     end loop;
     await_completion(WISHBONE_VVCT, 0, 1 us, "Awaiting execution");
 
@@ -245,7 +245,7 @@ begin
     end loop;
     await_completion(WISHBONE_VVCT, 0, 1 us, "Awaiting execution");
 
-    WISHBONE_VVC_SB.report_counters(ALL_INSTANCES);
+    wishbone_vvc_sb.report_counters(ALL_INSTANCES);
     wait for 100 ns;
 
     ------------------------------------------------------------------------------------------------------------------------------

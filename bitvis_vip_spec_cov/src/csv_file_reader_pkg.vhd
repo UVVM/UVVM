@@ -12,7 +12,7 @@ context uvvm_util.uvvm_util_context;
 
 -- Define operations to read formatted data from a comma-separated-values file
 -- (CSV file). To use this package:
---    1. Create a csv_file_reader:      variable csv: csv_file_reader_type;
+--    1. Create a csv_file_reader:      variable csv: t_csv_file_reader;
 --    2. Open a csv file:               csv.initialize("c:\file.csv");
 --    3. Read one line at a time:       csv.readline;
 --    4. Start reading values:          my_integer := csv.read_integer;
@@ -20,7 +20,7 @@ context uvvm_util.uvvm_util_context;
 --    6. To move to the next line, call csv.readline() again
 package csv_file_reader_pkg is
 
-  type csv_file_reader_type is protected
+  type t_csv_file_reader is protected
     -- Open the CSV text file to be used for subsequent read operations
     impure function initialize(file_pathname : string; csv_delimiter : character := ',') return boolean;
     -- Release (close) the associated CSV file
@@ -39,13 +39,13 @@ package csv_file_reader_pkg is
     impure function read_string return string;
     -- True when the end of the CSV file was reached
     impure function end_of_file return boolean;
-  end protected csv_file_reader_type;
+  end protected t_csv_file_reader;
 
 end package csv_file_reader_pkg;
 
 package body csv_file_reader_pkg is
 
-  type csv_file_reader_type is protected body
+  type t_csv_file_reader is protected body
 
     constant C_CSV_READER_SCOPE       : string    := "CSV_READER";
     variable priv_csv_delimiter       : character := ';';
@@ -163,6 +163,6 @@ package body csv_file_reader_pkg is
       return v_return_string;
     end function read_string;
 
-  end protected body csv_file_reader_type;
+  end protected body t_csv_file_reader;
 
 end package body csv_file_reader_pkg;

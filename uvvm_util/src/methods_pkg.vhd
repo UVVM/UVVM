@@ -30,7 +30,7 @@ use std.env.all;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2025.11.28";
+  constant C_UVVM_VERSION : string := "v2 2026.02.14";
 
   -- ============================================================================
   -- Initialization
@@ -1330,7 +1330,7 @@ package methods_pkg is
     constant value_type   : string         := "t_u_array"
   );
 
-  -- 
+  --
   -- Check_value_in_range
   impure function check_value_in_range(
     constant value        : integer;
@@ -3141,7 +3141,7 @@ package methods_pkg is
 
   -----------------------------------------------------
   -- Adjustable Clock Generator Procedures
-  -----------------------------------------------------  
+  -----------------------------------------------------
   procedure adjustable_clock_generator(
     signal clock_signal          : inout std_logic;
     signal clock_ena             : in boolean;
@@ -3274,7 +3274,7 @@ package methods_pkg is
     constant polynomial : in std_logic_vector
   ) return std_logic_vector;
 
-end package;
+end package methods_pkg;
 
 --=================================================================================================
 --=================================================================================================
@@ -3461,7 +3461,7 @@ package body methods_pkg is
     -- 3. Derive Time number (integer or real)
     if C_LOG_TIME_DECIMALS = 0 then
       v_time_number_width := v_delimeter_pos - 1;
-      -- v_result as is
+    -- v_result as is
     else -- i.e. a decimal value is required
       if v_found_decimal_point then
         v_result(v_value_width - 2 to v_result'right) := (others => '0'); -- Zero extend
@@ -3637,7 +3637,7 @@ package body methods_pkg is
   begin
     if ((log_file_name'length = 0) and ((log_destination = CONSOLE_AND_LOG) or (log_destination = LOG_ONLY))) then
       alert(TB_ERROR, "log_text_block called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
-      -- Check if message ID is enabled
+    -- Check if message ID is enabled
     elsif (msg_id_panel(msg_id) = ENABLED) then
       initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
@@ -4193,8 +4193,8 @@ package body methods_pkg is
     attention   : t_attention := REGARD; -- regard, expect, ignore
     number      : natural     := 1
   ) is
-    type alert_array is array (1 to 6) of t_alert_level;
-    constant C_ALERT_CHECK_ARRAY : alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
+    type t_alert_array is array (1 to 6) of t_alert_level;
+    constant C_ALERT_CHECK_ARRAY : t_alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
     alias found_unexpected_simulation_warnings_or_worse is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
     alias found_unexpected_simulation_errors_or_worse is shared_uvvm_status.found_unexpected_simulation_errors_or_worse;
     alias mismatch_on_expected_simulation_warnings_or_worse is shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse;
@@ -4273,7 +4273,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
-    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
+    initialize_util(void); -- Only executed the first time called. Ensures that the log and alert files are open.
     -- Print report header
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     write(v_line, timestamp_header(now, justify("*** SUMMARY OF SCOREBOARDS***", LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
@@ -4312,8 +4312,8 @@ package body methods_pkg is
   begin
     v_found := false;
     if C_DEPRECATE_SETTING /= NO_DEPRECATE then -- only perform if deprecation enabled
-      l_find_caller_name_in_list : for i in deprecated_subprogram_list'range loop
-        if deprecated_subprogram_list(i) = justify(caller_name, right, 100) then
+      l_find_caller_name_in_list : for i in shared_deprecated_subprogram_list'range loop
+        if shared_deprecated_subprogram_list(i) = justify(caller_name, right, 100) then
           v_found := true;
           exit l_find_caller_name_in_list;
         end if;
@@ -4328,9 +4328,9 @@ package body methods_pkg is
         end if;
       else
         -- Has not been printed yet.
-        l_insert_caller_name_in_first_available : for i in deprecated_subprogram_list'range loop
-          if deprecated_subprogram_list(i) = justify("", right, 100) then
-            deprecated_subprogram_list(i) := justify(caller_name, right, 100);
+        l_insert_caller_name_in_first_available : for i in shared_deprecated_subprogram_list'range loop
+          if shared_deprecated_subprogram_list(i) = justify("", right, 100) then
+            shared_deprecated_subprogram_list(i) := justify(caller_name, right, 100);
             exit l_insert_caller_name_in_first_available;
           end if;
         end loop;
@@ -4920,7 +4920,7 @@ package body methods_pkg is
           return false;
         end if;
       end loop;
-    else -- lenght or direction check not ok 
+    else -- lenght or direction check not ok
       return false;
     end if;
 
@@ -5260,7 +5260,7 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking     
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
@@ -5275,7 +5275,7 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking     
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
@@ -5290,7 +5290,7 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking     
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
@@ -5309,7 +5309,7 @@ package body methods_pkg is
     constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5327,7 +5327,7 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5346,7 +5346,7 @@ package body methods_pkg is
     constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_s_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5364,7 +5364,7 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_s_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5383,7 +5383,7 @@ package body methods_pkg is
     constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_u_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5401,7 +5401,7 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_u_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -7317,7 +7317,7 @@ package body methods_pkg is
     for i in 1 to C_STR_LEN / 2 loop
       seed1 := (seed1 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
     end loop;
-      seed2 := (seed2 + seed1) mod C_MAX_POS;
+    seed2 := (seed2 + seed1) mod C_MAX_POS;
     for i in C_STR_LEN / 2 + 1 to C_STR_LEN loop
       seed2 := (seed2 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
     end loop;
@@ -7371,7 +7371,7 @@ package body methods_pkg is
 
     for byte_idx in 0 to v_num_bytes - 1 loop
       for bit_idx in 7 downto 0 loop
-        if v_slv_idx =- 1 then
+        if v_slv_idx = - 1 then
           v_byte_array(byte_idx)(bit_idx) := 'Z'; -- Pads 'Z'
         else
           if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
@@ -7539,34 +7539,34 @@ package body methods_pkg is
   function reverse_vector(
     constant value : std_logic_vector
   ) return std_logic_vector is
-    variable return_val : std_logic_vector(value'range);
+    variable v_return_val : std_logic_vector(value'range);
   begin
     for i in 0 to value'length - 1 loop
-      return_val(value'low + i) := value(value'high - i);
+      v_return_val(value'low + i) := value(value'high - i);
     end loop;
-    return return_val;
+    return v_return_val;
   end function;
 
   impure function reverse_vectors_in_array(
     constant value : t_slv_array
   ) return t_slv_array is
-    variable return_val : t_slv_array(value'range)(value(value'low)'range);
+    variable v_return_val : t_slv_array(value'range)(value(value'low)'range);
   begin
     for i in value'range loop
-      return_val(i) := reverse_vector(value(i));
+      v_return_val(i) := reverse_vector(value(i));
     end loop;
-    return return_val;
+    return v_return_val;
   end function;
 
   function log2(
     constant num : positive)
     return natural is
-    variable return_val : natural := 0;
+    variable v_return_val : natural := 0;
   begin
-    while (2 ** return_val < num) and (return_val < 31) loop
-      return_val := return_val + 1;
+    while (2 ** v_return_val < num) and (v_return_val < 31) loop
+      v_return_val := v_return_val + 1;
     end loop;
-    return return_val;
+    return v_return_val;
   end function;
 
   -- ============================================================================
@@ -8254,7 +8254,7 @@ package body methods_pkg is
 
   -- Await Change to Value
   -- Wait until target to change (regardless of value) and then wait until it changes to the expected value
-  -- Unlike await_value, this procedure is a non fall-through procedure and requires the signal to change before it can check the value  
+  -- Unlike await_value, this procedure is a non fall-through procedure and requires the signal to change before it can check the value
 
   -- main std_logic version (cannot be sendt into std_logic_vector bc of signal)
   procedure await_change_to_value(
@@ -8440,8 +8440,8 @@ package body methods_pkg is
 
   -- main boolean version
   procedure await_change_to_value(
-    signal target      : boolean;
-    constant exp_value : boolean;
+    signal target         : boolean;
+    constant exp_value    : boolean;
     -- match_strictness does not apply to boolean (and will result in an error if used on boolean)
     constant min_time     : time;
     constant max_time     : time;
@@ -9546,11 +9546,12 @@ package body methods_pkg is
     variable v_elapsed_time : time   := 0 ns;
     variable v_line         : line;
     variable v_proc_call    : line;
+    variable v_timed_out    : boolean := false;
   begin
     -- Called directly from sequencer
     if ext_proc_call = "" then
       write(v_proc_call, C_NAME);
-      -- Called from another procedure
+    -- Called from another procedure
     else
       write(v_proc_call, ext_proc_call);
     end if;
@@ -9565,7 +9566,10 @@ package body methods_pkg is
 
     -- Wait until the scoreboards are empty or a timeout occurs
     loop
-      if check_sb_completion(TB_ERROR, ext_proc_call => v_proc_call.all) or v_elapsed_time >= timeout then
+      if check_sb_completion(TB_ERROR, ext_proc_call => v_proc_call.all) then
+        exit;
+      elsif v_elapsed_time >= timeout then
+        v_timed_out := true;
         exit;
       else
         wait for sb_poll_time;
@@ -9574,7 +9578,7 @@ package body methods_pkg is
     end loop;
 
     -- Print success/fail log message
-    if v_elapsed_time >= timeout then
+    if v_timed_out then
       for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
         if protected_sb_activity_register.is_enabled(idx) and protected_sb_activity_register.get_sb_element_cnt(idx) > 0 then
           write(v_line, "  " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) & LF);
@@ -10592,7 +10596,7 @@ package body methods_pkg is
           v_timeout := (v_prev_timeout + v_timeout - now) + watchdog_ctrl.extension;
         end if;
         v_prev_timeout := now;
-        -- Watchdog was reinitialized
+      -- Watchdog was reinitialized
       elsif watchdog_ctrl.restart then
         log(ID_WATCHDOG, "Reinitializing general watchdog: " & to_string(watchdog_ctrl.new_timeout) & "." & LF & msg);
         v_timeout      := watchdog_ctrl.new_timeout;
@@ -10601,7 +10605,7 @@ package body methods_pkg is
         -- Watchdog was terminated
         if watchdog_ctrl.terminate then
           log(ID_WATCHDOG, "Terminating general watchdog. " & msg);
-          -- Watchdog has timed out
+        -- Watchdog has timed out
         else
           alert(alert_level, "General watchdog timer ended! " & msg);
         end if;
@@ -10688,4 +10692,4 @@ package body methods_pkg is
     return v_crc_out;
   end function;
 
-end package body;
+end package body methods_pkg;

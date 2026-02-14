@@ -1,6 +1,11 @@
 Bitvis VIP Wishbone - Overview on Versions and Changes
 ==============================================================
 
+v1.0.1
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+
 v1.0.0
 ----------
 Released: 2025-11-28

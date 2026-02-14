@@ -185,7 +185,7 @@ package body td_target_support_pkg is
       check_value(v_cnt < 2, TB_FAILURE, "Arbitration mechanism failed. Check VVC " & to_string(v_result.vvc_name) & " implementation and semaphore handling. Crashing instances with numbers " & v_instance_string(1 to v_width), "Multiple scopes", ID_NEVER);
       return v_result;
     end if;
-  end resolved;
+  end function resolved;
 
   function to_string(
     value        : t_vvc_target_record;
@@ -218,7 +218,7 @@ package body td_target_support_pkg is
         return to_string(value.vvc_name) & "," & to_string(v_instance) & "," & to_upper(to_string(v_channel));
       end if;
     end if;
-  end;
+  end function;
 
   function set_vvc_target_defaults(
     constant vvc_name : in string;
@@ -278,7 +278,7 @@ package body td_target_support_pkg is
   ) return string is
   begin
     return format_command_idx(command.cmd_idx);
-  end;
+  end function;
 
   procedure send_command_to_vvc(
     signal   vvc_target   : inout t_vvc_target_record;

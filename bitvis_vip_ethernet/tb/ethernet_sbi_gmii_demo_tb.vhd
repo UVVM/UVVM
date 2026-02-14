@@ -136,7 +136,7 @@ begin
     log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (need padding)");
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len - 1));
-    ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
+    ethernet_vvc_sb.add_expected(C_VVC_ETH_GMII, v_expected_frame);
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
@@ -148,7 +148,7 @@ begin
     log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (minimum size)");
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len - 1));
-    ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
+    ethernet_vvc_sb.add_expected(C_VVC_ETH_GMII, v_expected_frame);
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
@@ -160,7 +160,7 @@ begin
     log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (maximum size)");
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len - 1));
-    ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
+    ethernet_vvc_sb.add_expected(C_VVC_ETH_GMII, v_expected_frame);
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
@@ -181,7 +181,7 @@ begin
     -- Ending the simulation
     -----------------------------------------------------------------------------
     wait for 1000 ns;                   -- Allow some time for completion
-    ETHERNET_VVC_SB.report_counters(ALL_INSTANCES);
+    ethernet_vvc_sb.report_counters(ALL_INSTANCES);
     await_uvvm_completion(1000 ns, print_alert_counters => REPORT_ALERT_COUNTERS_FINAL, scope => C_SCOPE);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
     -- Finish the simulation

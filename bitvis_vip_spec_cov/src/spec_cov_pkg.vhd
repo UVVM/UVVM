@@ -30,8 +30,7 @@ package spec_cov_pkg is
   type t_requirement_type is (NA, SUB_REQ, COMPOUND_REQ);
 
   type t_spec_cov_config is record
-    missing_req_label_severity    : t_alert_level; -- Alert level used when the tick_off_req_cov() procedure does not find the specified
-                                                   -- requirement label in the requirement list.
+    missing_req_label_severity    : t_alert_level; -- Alert level used when the tick_off_req_cov() procedure does not find the specified requirement label in the requirement list.
     compound_req_tickoff_severity : t_alert_level; -- Alert level used when tickoff is performed on a requirement that has sub requirements.
     csv_delimiter                 : character;     -- Character used as delimiter in the CSV files. Default is ",".
     max_requirement_lines         : natural;       -- Maximum number of requirement lines in the req list file used in initialize_req_cov().
@@ -93,9 +92,9 @@ package spec_cov_pkg is
     constant VOID : t_void
   );
 
-  --=================================================================================================  
+  --=================================================================================================
   -- Functions and procedures declared below this line are intended as private internal functions
-  --=================================================================================================  
+  --=================================================================================================
 
   procedure priv_log_entry(
     constant index : natural
@@ -207,7 +206,7 @@ package body spec_cov_pkg is
   type t_requirement_entry_array is array (natural range <>) of t_requirement_entry;
 
   -- Shared variables used internally in this context
-  shared variable priv_csv_file                : csv_file_reader_type;
+  shared variable priv_csv_file                : t_csv_file_reader;
   shared variable priv_requirement_array       : t_requirement_entry_array(0 to shared_spec_cov_config.max_requirement_lines);
   shared variable priv_requirements_in_array   : natural                                 := 0;
   shared variable priv_testcase_name           : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
@@ -294,7 +293,7 @@ package body spec_cov_pkg is
 
     -- Issue TB_WARNING if requirement is a compound requirement (supposed to be tested through sub-requirements)
     if priv_get_requirement_type(requirement) = COMPOUND_REQ then
-      alert(TB_WARNING, "Requirement " & to_string(requirement) & " has been specified for testing through sub-requirements." , C_SCOPE);
+      alert(TB_WARNING, "Requirement " & to_string(requirement) & " has been specified for testing through sub-requirements.", C_SCOPE);
     end if;
 
     ---- Check if there were any errors globally or testcase was explicit set to FAIL
@@ -303,13 +302,13 @@ package body spec_cov_pkg is
       -- Set failing testcase for finishing summary line
       priv_testcase_passed := false;
     elsif requirement_status = FAIL then
-        v_requirement_status := FAIL;
+      v_requirement_status := FAIL;
     else
       v_requirement_status := PASS;
     end if;
 
     -- Get previous requirement status (used for checking for PASS to FAIL transition)
-    v_prev_requirement_status := priv_get_requirement_status(requirement);   
+    v_prev_requirement_status := priv_get_requirement_status(requirement);
 
     -- Save requirement status
     priv_set_requirement_status(requirement, v_requirement_status);
@@ -355,7 +354,7 @@ package body spec_cov_pkg is
   procedure disable_cond_tick_off_req_cov(
     constant requirement : string
   ) is
-    constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
+    constant C_REQUIREMENT_LENGTH : natural := priv_get_requirement_name_length(requirement);
   begin
     -- Check: is requirement already tracked?
     --        method will also check if the requirement exist in the requirement file.
@@ -368,7 +367,7 @@ package body spec_cov_pkg is
     for idx in 0 to priv_disabled_tick_off_array'length - 1 loop
       -- find a free entry, add requirement and exit loop
       if priv_disabled_tick_off_array(idx)(1) = NUL then
-        priv_disabled_tick_off_array(idx)(1 to c_requirement_length) := to_upper(requirement);
+        priv_disabled_tick_off_array(idx)(1 to C_REQUIREMENT_LENGTH) := to_upper(requirement);
         exit;
       end if;
     end loop;
@@ -381,7 +380,7 @@ package body spec_cov_pkg is
   procedure enable_cond_tick_off_req_cov(
     constant requirement : string
   ) is
-    constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
+    constant C_REQUIREMENT_LENGTH : natural := priv_get_requirement_name_length(requirement);
   begin
     -- Check: is requirement not tracked?
     --        method will also check if the requirement exist in the requirement file.
@@ -392,7 +391,7 @@ package body spec_cov_pkg is
       -- find the requirement and wipe it out from conditional tick off array
       for idx in 0 to priv_disabled_tick_off_array'length - 1 loop
         -- found requirement, wipe the entry and exit
-        if priv_disabled_tick_off_array(idx)(1 to c_requirement_length) = to_upper(requirement) then
+        if priv_disabled_tick_off_array(idx)(1 to C_REQUIREMENT_LENGTH) = to_upper(requirement) then
           priv_disabled_tick_off_array(idx) := (others => NUL);
           exit;
         end if;
@@ -435,9 +434,9 @@ package body spec_cov_pkg is
     priv_req_cov_initialized := false;
   end procedure finalize_req_cov;
 
-  --=================================================================================================  
+  --=================================================================================================
   -- Functions and procedures declared below this line are intended as private internal functions
-  --=================================================================================================  
+  --=================================================================================================
 
   --
   -- Initialize the partial_cov result file
@@ -613,8 +612,6 @@ package body spec_cov_pkg is
             end loop;
           end if;
 
-
-
         -- If the requirement doesn't exist in requirement list, it means that the line is a requirement to sub requirement mapping
         -- line, where the sub-requirements have previously been defined in the requirement list, and the compound requirement has not
         -- previously been defined anywhere.
@@ -632,7 +629,6 @@ package body spec_cov_pkg is
 
     priv_csv_file.dispose;
   end procedure priv_read_and_parse_map_csv_file;
-
 
   --
   -- Log CSV readout to terminal
@@ -671,7 +667,7 @@ package body spec_cov_pkg is
 
   --
   -- Check if requirement exists, return boolean
-  -- 
+  --
   impure function priv_requirement_exists(
     requirement : string
   ) return boolean is
@@ -703,7 +699,7 @@ package body spec_cov_pkg is
     return 0;
   end function priv_get_num_requirement_tick_offs;
 
-  -- 
+  --
   -- Set tick off status for requirement
   --
   procedure priv_set_requirement_status(
@@ -726,7 +722,7 @@ package body spec_cov_pkg is
   impure function priv_get_requirement_status(
     requirement : string
   ) return t_test_status is
-  begin 
+  begin
     for i in 0 to priv_requirements_in_array - 1 loop
       if priv_get_requirement_name_length(priv_requirement_array(i).requirement.all) = valid_length(requirement) then
         if to_upper(priv_requirement_array(i).requirement.all(1 to valid_length(requirement))) = to_upper(requirement(1 to valid_length(requirement))) then
@@ -926,7 +922,7 @@ package body spec_cov_pkg is
   impure function priv_req_listed_in_disabled_tick_off_array(
     requirement : string
   ) return boolean is
-    constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
+    constant C_REQUIREMENT_LENGTH : natural := priv_get_requirement_name_length(requirement);
   begin
     -- Check if requirement exists
     if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
@@ -936,7 +932,7 @@ package body spec_cov_pkg is
     -- Check if requirement is listed in priv_disabled_tick_off_array() array
     for idx in 0 to priv_disabled_tick_off_array'length - 1 loop
       -- found
-      if priv_disabled_tick_off_array(idx)(1 to c_requirement_length) = to_upper(requirement(1 to c_requirement_length)) then
+      if priv_disabled_tick_off_array(idx)(1 to C_REQUIREMENT_LENGTH) = to_upper(requirement(1 to C_REQUIREMENT_LENGTH)) then
         return true;
       end if;
     end loop;

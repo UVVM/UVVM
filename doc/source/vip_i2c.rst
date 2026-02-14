@@ -122,9 +122,9 @@ Default value for the record is C_I2C_BFM_CONFIG_DEFAULT.
 | id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
+| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
@@ -1221,18 +1221,18 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. i2c_master_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
-when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable ``I2C_VVC_SB``, 
+when the TO_SB parameter is applied. The I2C scoreboard is accessible from the testbench as a shared variable ``i2c_vvc_sb``, 
 located in the vvc_methods_pkg.vhd, e.g. ::
 
-    I2C_VVC_SB.add_expected(C_I2C_VVC_IDX, pad_i2c_sb(v_expected), "Adding expected");
+    i2c_vvc_sb.add_expected(C_I2C_VVC_IDX, pad_i2c_sb(v_expected), "Adding expected");
 
 The I2C scoreboard is per default a 64 bits wide standard logic vector. When sending expected data to the scoreboard, where the 
 data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_i2c_sb() function, e.g. ::
 
-    I2C_VVC_SB.add_expected(<I2C VVC instance number>, pad_i2c_sb(<exp data>));
+    i2c_vvc_sb.add_expected(<I2C VVC instance number>, pad_i2c_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the I2C VVC scoreboard using the ``I2C_VVC_SB``.
+Scoreboard commands are available for the I2C VVC scoreboard using the ``i2c_vvc_sb``.
 
 
 Unwanted Activity Detection

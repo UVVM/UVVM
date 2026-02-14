@@ -1,6 +1,11 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v5.1.4
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+
 v5.1.3
 ----------
 Released: 2025-11-28

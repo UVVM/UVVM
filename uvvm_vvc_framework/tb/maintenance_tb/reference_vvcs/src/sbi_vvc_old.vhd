@@ -108,7 +108,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -198,7 +198,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time                                         := 0 ns;
@@ -218,10 +218,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup SBI scoreboard
-    SBI_VVC_SB.set_scope("SBI_VVC_SB");
-    SBI_VVC_SB.enable(GC_INSTANCE_IDX, "SBI VVC SB Enabled");
-    SBI_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    SBI_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    sbi_vvc_sb.set_scope("SBI_VVC_SB");
+    sbi_vvc_sb.enable(GC_INSTANCE_IDX, "SBI VVC SB Enabled");
+    sbi_vvc_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    sbi_vvc_sb.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -329,7 +329,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            SBI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            sbi_vvc_sb.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                         cmd_idx      => v_cmd.cmd_idx,

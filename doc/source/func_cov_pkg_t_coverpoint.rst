@@ -836,3 +836,34 @@ Returns the randomization seeds. ::
     -- Examples:
     my_coverpoint.get_rand_seeds(seed1, seed2);
     seed_vector := my_coverpoint.get_rand_seeds(VOID);
+
+
+enable_auto_sampling() - **Questa One only**
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Enables automatic sampling of the coverpoint. The value of the ``trigger`` signal or variable will be sampled every time the ``target``
+signal changes. ::
+
+    enable_auto_sampling(target, trigger, [msg_id_panel])
+
++----------+--------------------+--------+----------------------------+--------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                       | Description                                            |
++==========+====================+========+============================+========================================================+
+| constant | target             | in     | string                     | Path to the signal or variable to sample. Format of    |
+|          |                    |        |                            | path is                                                |
+|          |                    |        |                            | /<entity_name>/<process_name>/<variable_name> for      |
+|          |                    |        |                            | variables and /<entity_name>/<signal_name> for signals.|
++----------+--------------------+--------+----------------------------+--------------------------------------------------------+
+| constant | trigger            | in     | string                     | Path to the signal that will trigger sampling. Format  |
+|          |                    |        |                            | of path is /<entity_name>/<signal_name>.               |
++----------+--------------------+--------+----------------------------+--------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel             | Controls verbosity within a specified scope. Default   |
+|          |                    |        |                            | value is shared_msg_id_panel.                          |
++----------+--------------------+--------+----------------------------+--------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_coverpoint.enable_auto_sampling(value, value); -- Sample "value" signal each time it changes
+

@@ -51,8 +51,8 @@ package association_list_pkg is
     --    else ASSOCIATION_LIST_SUCCESS.
     --
     impure function append (
-        constant key   : GC_KEY_TYPE;
-        constant value : GC_VALUE_TYPE
+      constant key   : GC_KEY_TYPE;
+      constant value : GC_VALUE_TYPE
     ) return t_association_list_status;
 
     ------------------------------------------
@@ -245,12 +245,12 @@ package body association_list_pkg is
     -- append
     ------------------------------------------
     impure function append (
-        constant key   : GC_KEY_TYPE;
-        constant value : GC_VALUE_TYPE
+      constant key   : GC_KEY_TYPE;
+      constant value : GC_VALUE_TYPE
     ) return t_association_list_status is
-        variable v_node : t_node;
-        variable v_node_ptr : t_node_ptr := NULL;
-        variable v_ret : t_association_list_status;
+      variable v_node : t_node;
+      variable v_node_ptr : t_node_ptr := NULL;
+      variable v_ret : t_association_list_status;
     begin
 
       if key_in_list(key) = false then --  the key is not in the list

@@ -70,15 +70,16 @@ architecture behave of avalon_mm_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy                : boolean := false;
-  signal read_response_is_busy           : boolean := false;
-  signal any_executors_busy              : boolean := false;
-  signal queue_is_increasing             : boolean := false;
-  signal response_queue_is_increasing    : boolean := false;
-  signal last_cmd_idx_executed           : natural := 0;
-  signal last_read_response_idx_executed : natural := 0;
-  signal terminate_current_cmd           : t_flag_record;
-  signal clock_period                    : time;
+  signal executor_is_busy                   : boolean := false;
+  signal read_response_is_busy              : boolean := false;
+  signal any_executors_busy                 : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal response_queue_is_increasing       : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal last_read_response_idx_executed    : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
+  signal clock_period                       : time;
 
   -- Instantiation of element dedicated Queues
   shared variable command_queue          : work.td_cmd_queue_pkg.t_generic_queue;
@@ -91,8 +92,6 @@ architecture behave of avalon_mm_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_avalon_mm_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_avalon_mm_vvc_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -131,7 +130,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -223,9 +222,9 @@ begin
   --===============================================================================================
   -- Command executor
   -- - Fetch and execute the commands.
-  -- - Note that the read response is handled in the read_response process.
+  -- - Note that the read response is handled in the p_read_response process.
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural                                            := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
@@ -247,10 +246,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup Avalon MM scoreboard
-    AVALON_MM_VVC_SB.set_scope("AVALON_MM_VVC_SB");
-    AVALON_MM_VVC_SB.enable(GC_INSTANCE_IDX, "AVALON_MM VVC SB Enabled");
-    AVALON_MM_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    AVALON_MM_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    avalon_mm_vvc_sb.set_scope("AVALON_MM_VVC_SB");
+    avalon_mm_vvc_sb.enable(GC_INSTANCE_IDX, "AVALON_MM VVC SB Enabled");
+    avalon_mm_vvc_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    avalon_mm_vvc_sb.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -367,7 +366,7 @@ begin
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+              avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
             else
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -520,7 +519,7 @@ begin
   --   read request (or check).
   -- - Note the use of propagation delayed avalon_mm_vv_master_if signal
   --===============================================================================================
-  read_response : process
+  p_read_response : process is
     constant C_EXECUTOR_ID          : natural                                      := 1;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
@@ -573,7 +572,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -627,7 +626,7 @@ begin
   -- Clock period
   -- - Finds the clock period
   --===============================================================================================
-  p_clock_period : process
+  p_clock_period : process is
   begin
     wait until rising_edge(clk);
     clock_period <= now;
@@ -641,7 +640,7 @@ begin
   -- Unwanted activity detection
   -- - Monitors unwanted activity from the DUT
   --===============================================================================================
-  p_unwanted_activity : process
+  p_unwanted_activity : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -673,7 +672,7 @@ begin
       end if;
     end loop;
   end process p_unwanted_activity;
-  --===============================================================================================
+--===============================================================================================
 
-end behave;
+end architecture behave;
 

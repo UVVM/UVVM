@@ -16,9 +16,9 @@
 -- Description   : See dedicated powerpoint presentation and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use work.irqc_pif_pkg.all;
 
@@ -39,43 +39,43 @@ entity irqc is
     irq2cpu     : out std_logic;
     irq2cpu_ack : in  std_logic
   );
-end irqc;
+end entity irqc;
 
 architecture rtl of irqc is
 
   -- PIF-core interface
-  signal p2c : t_p2c;                   --
-  signal c2p : t_c2p;                   --
+  signal p2c : t_p2c;
+  signal c2p : t_c2p;
 
 begin
 
   i_irqc_pif : entity work.irqc_pif
     port map(
-      arst => arst,                     --
-      clk  => clk,                      --
+      arst => arst,
+      clk  => clk,
       -- CPU interface
-      cs   => cs,                       --
-      addr => addr,                     --
-      wr   => wr,                       --
-      rd   => rd,                       --
-      din  => din,                      --
-      dout => dout,                     --
+      cs   => cs,
+      addr => addr,
+      wr   => wr,
+      rd   => rd,
+      din  => din,
+      dout => dout,
       --
-      p2c  => p2c,                      --
-      c2p  => c2p                       --
+      p2c  => p2c,
+      c2p  => c2p
     );
 
   i_irqc_core : entity work.irqc_core
     port map(
-      clk         => clk,               --
-      arst        => arst,              --
+      clk         => clk,
+      arst        => arst,
       -- PIF-core interface
-      p2c         => p2c,               --
-      c2p         => c2p,               --
+      p2c         => p2c,
+      c2p         => c2p,
       -- Interrupt related signals
-      irq_source  => irq_source,        --
-      irq2cpu     => irq2cpu,           --
-      irq2cpu_ack => irq2cpu_ack        --
+      irq_source  => irq_source,
+      irq2cpu     => irq2cpu,
+      irq2cpu_ack => irq2cpu_ack
     );
 
-end rtl;
+end architecture rtl;

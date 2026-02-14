@@ -226,6 +226,50 @@ is the 2nd argument to the script. For example, on Windows/MSYS2, enter the foll
 The ``multisim.mk`` Makefile include assumes that precompiled libraries are located in the ``.simlib`` sub-directory of the 
 **home** directory. You can change this by setting the ``SIM_LIB_PATH`` variable in your Makefile.
 
+.. _questa_enabling:
+
+**********************************************************************************************************************************
+Questa One Extended Features
+**********************************************************************************************************************************
+Questa One v.2026.1 and newer supports some extended features for UVVM Functional Coverage and Enhanced Randomization. *Note that these
+features are exclusive to Questa One, and will not work with other simulators.*
+
+When running Questa One, follow these steps to enable the extended features:
+
+1. In the ``uvvm_util/src`` directory, replace the files named ``dummy_<package_name>`` with the corresponding packages named
+   ``questa_<package_name>`` found in the ``misc/vendor_extensions/questa`` directory. 
+2. If using the UVVM compile scripts found in the ``uvvm_util/script`` directory, open the file ``uvvm_util/script/compile_order.txt``
+   and change the names of the files replaced in step 1 from ``dummy_<package_name>`` to ``questa_<package_name>``.
+3. When running simulations, use the ``qopt`` and ``qsim`` commands for optimalization and simulation. The ``qopt`` command must be run
+   with argument ``qoneRandLib.RandLib`` for the Enhanced Randomization extensions to work and with the ``-access=r+/.`` switch for the
+   Functional Coverage auto-sampling feature to work.
+
+Example of ``qopt``/``qsim`` commands:
+
+.. code-block:: console
+
+    vcom -2008 <vhdl files>
+    qopt -o opt <my_tb_entity> qoneRandLib.RandLib  -noincr -access=r+/.
+    qsim -c opt -do "run -all"
+
++----------------------+---------------------------------------------------------------------------+
+| qopt argument        | When is it required?                                                      |
++======================+===========================================================================+
+| qoneRandLib.Randlib  | Required for Questa One Enhanced Randomization extensions to work.        |
++----------------------+---------------------------------------------------------------------------+
+| -access=r+/.         | Required for Questa One Functional Coverage auto-sampling feature to work.|
++----------------------+---------------------------------------------------------------------------+
+| -noincr              | Optional. Forces full re-run of design optimization, which may be needed  |
+|                      | if the design was previously optimized without the ``access=r+/.`` switch |
++----------+-----------+---------------------------------------------------------------------------+
+  
+
+For more information about extended features for Functional Coverage, see :ref:`Questa One extended Functional Coverage
+functionality<questa_func_cov>`
+
+For more information about extended features for Enhanced Randomization, see :ref:`Questa One extended Randomization
+functionality<questa_rand>`
+
 **********************************************************************************************************************************
 Further Reading
 **********************************************************************************************************************************

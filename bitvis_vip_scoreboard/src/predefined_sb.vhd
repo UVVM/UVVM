@@ -59,9 +59,10 @@ use work.local_pkg.all;
 
 -- DEPRECATED: will be removed in v3
 package slv_sb_pkg is new work.generic_sb_pkg
-  generic map(t_element         => std_logic_vector(C_SB_SLV_WIDTH - 1 downto 0),
-              element_match     => std_match,
-              to_string_element => slv_to_string);
+  generic map(
+    t_element         => std_logic_vector(C_SB_SLV_WIDTH - 1 downto 0),
+    element_match     => std_match,
+    to_string_element => slv_to_string);
 
 ------------------------------------------------------------------------------------------
 --
@@ -80,9 +81,10 @@ context uvvm_util.uvvm_util_context;
 use work.local_pkg.all;
 
 package slv8_sb_pkg is new work.generic_sb_pkg
-  generic map(t_element         => std_logic_vector(7 downto 0),
-              element_match     => std_match,
-              to_string_element => slv_to_string);
+  generic map(
+    t_element         => std_logic_vector(7 downto 0),
+    element_match     => std_match,
+    to_string_element => slv_to_string);
 
 ------------------------------------------------------------------------------------------
 --
@@ -92,6 +94,7 @@ package slv8_sb_pkg is new work.generic_sb_pkg
 --
 ------------------------------------------------------------------------------------------
 package int_sb_pkg is new work.generic_sb_pkg
-  generic map(t_element         => integer,
-              element_match     => "=",
-              to_string_element => to_string);
+  generic map(
+    t_element         => integer,
+    element_match     => "=",
+    to_string_element => to_string);

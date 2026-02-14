@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2025 UVVM
+-- Copyright 2026 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -46,11 +46,11 @@ package transaction_pkg is
   );
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
-  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := C_APB_VVC_CMD_DATA_MAX_LENGTH;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := C_APB_VVC_CMD_ADDR_MAX_LENGTH;
-  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := C_APB_VVC_CMD_BYTE_ENABLE_MAX_LENGTH;
-  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := C_APB_VVC_CMD_STRING_MAX_LENGTH;
-  constant C_VVC_MAX_INSTANCE_NUM           : natural := C_APB_VVC_MAX_INSTANCE_NUM;
+  alias C_VVC_CMD_DATA_MAX_LENGTH        is C_APB_VVC_CMD_DATA_MAX_LENGTH;
+  alias C_VVC_CMD_ADDR_MAX_LENGTH        is C_APB_VVC_CMD_ADDR_MAX_LENGTH;
+  alias C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH is C_APB_VVC_CMD_BYTE_ENABLE_MAX_LENGTH;
+  alias C_VVC_CMD_STRING_MAX_LENGTH      is C_APB_VVC_CMD_STRING_MAX_LENGTH;
+  alias C_VVC_MAX_INSTANCE_NUM           is C_APB_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -91,8 +91,6 @@ package transaction_pkg is
     operation          : t_operation;
     address            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0); -- Max width may be increased if required
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
-    randomisation      : t_randomisation;
-    num_words          : natural;
     max_polls          : integer;
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
@@ -102,8 +100,6 @@ package transaction_pkg is
     operation          => NO_OPERATION,
     address            => (others => '0'),
     data               => (others => '0'),
-    randomisation      => NA,
-    num_words          => 1,
     max_polls          => 1,
     vvc_meta           => C_VVC_META_DEFAULT,
     transaction_status => INACTIVE

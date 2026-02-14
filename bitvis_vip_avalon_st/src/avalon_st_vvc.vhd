@@ -45,7 +45,6 @@ entity avalon_st_vvc is
     GC_EMPTY_WIDTH                           : integer                := 1;
     GC_INSTANCE_IDX                          : natural;
     GC_AVALON_ST_BFM_CONFIG                  : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    -- Common VVC fields
     GC_CMD_QUEUE_COUNT_MAX                   : natural                := C_CMD_QUEUE_COUNT_MAX;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := C_CMD_QUEUE_COUNT_THRESHOLD;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
@@ -66,11 +65,12 @@ architecture behave of avalon_st_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy      : boolean := false;
-  signal queue_is_increasing   : boolean := false;
-  signal last_cmd_idx_executed : natural := 0;
-  signal terminate_current_cmd : t_flag_record;
-  signal clock_period          : time;
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
+  signal clock_period                       : time;
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -81,8 +81,6 @@ architecture behave of avalon_st_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_avalon_st_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_avalon_st_vvc_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity 
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -115,7 +113,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --==========================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -206,7 +204,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --==========================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
@@ -243,7 +241,7 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
-      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay 
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
       if v_cmd.operation = TRANSMIT or v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
@@ -410,7 +408,7 @@ begin
   -- Clock period
   -- - Finds the clock period
   --===============================================================================================
-  p_clock_period : process
+  p_clock_period : process is
   begin
     wait until rising_edge(clk);
     clock_period <= now;
@@ -425,7 +423,7 @@ begin
   -- - Monitors unwanted activity from the DUT
   --==========================================================================================
   g_unwanted_activity : if not GC_VVC_IS_MASTER generate
-    p_unwanted_activity : process
+    p_unwanted_activity : process is
     begin
       -- Add a delay to allow the VVC to be registered in the activity register
       wait for std.env.resolution_limit;
@@ -462,6 +460,6 @@ begin
       end loop;
     end process p_unwanted_activity;
   end generate g_unwanted_activity;
-  --==========================================================================================
+--==========================================================================================
 
-end behave;
+end architecture behave;

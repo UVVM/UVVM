@@ -463,71 +463,71 @@ package body axi_bfm_pkg is
     id_width   : natural;
     user_width : natural
   ) return t_axi_if is
-    variable init_if : t_axi_if(write_address_channel(awid(id_width - 1 downto 0),
-                                                      awaddr(addr_width - 1 downto 0),
-                                                      awuser(user_width - 1 downto 0)),
-                                write_data_channel(wdata(data_width - 1 downto 0),
-                                                   wstrb((data_width / 8) - 1 downto 0),
-                                                   wuser(user_width - 1 downto 0)),
-                                write_response_channel(bid(id_width - 1 downto 0),
-                                                       buser(user_width - 1 downto 0)),
-                                read_address_channel(arid(id_width - 1 downto 0),
-                                                     araddr(addr_width - 1 downto 0),
-                                                     aruser(user_width - 1 downto 0)),
-                                read_data_channel(rid(id_width - 1 downto 0),
-                                                  rdata(data_width - 1 downto 0),
-                                                  ruser(user_width - 1 downto 0)));
+    variable v_init_if : t_axi_if(write_address_channel(awid(id_width - 1 downto 0),
+                                                        awaddr(addr_width - 1 downto 0),
+                                                        awuser(user_width - 1 downto 0)),
+                                  write_data_channel(wdata(data_width - 1 downto 0),
+                                                     wstrb((data_width / 8) - 1 downto 0),
+                                                     wuser(user_width - 1 downto 0)),
+                                  write_response_channel(bid(id_width - 1 downto 0),
+                                                         buser(user_width - 1 downto 0)),
+                                  read_address_channel(arid(id_width - 1 downto 0),
+                                                       araddr(addr_width - 1 downto 0),
+                                                       aruser(user_width - 1 downto 0)),
+                                  read_data_channel(rid(id_width - 1 downto 0),
+                                                    rdata(data_width - 1 downto 0),
+                                                    ruser(user_width - 1 downto 0)));
   begin
     -- Write Address Channel
-    init_if.write_address_channel.awid     := (others => '0');
-    init_if.write_address_channel.awaddr   := (others => '0');
-    init_if.write_address_channel.awlen    := (others => '0');
-    init_if.write_address_channel.awsize   := (others => '0');
-    init_if.write_address_channel.awburst  := (others => '0');
-    init_if.write_address_channel.awlock   := '0';
-    init_if.write_address_channel.awcache  := (others => '0');
-    init_if.write_address_channel.awprot   := (others => '0');
-    init_if.write_address_channel.awqos    := (others => '0');
-    init_if.write_address_channel.awregion := (others => '0');
-    init_if.write_address_channel.awuser   := (others => '0');
-    init_if.write_address_channel.awvalid  := '0';
-    init_if.write_address_channel.awready  := 'Z';
+    v_init_if.write_address_channel.awid     := (others => '0');
+    v_init_if.write_address_channel.awaddr   := (others => '0');
+    v_init_if.write_address_channel.awlen    := (others => '0');
+    v_init_if.write_address_channel.awsize   := (others => '0');
+    v_init_if.write_address_channel.awburst  := (others => '0');
+    v_init_if.write_address_channel.awlock   := '0';
+    v_init_if.write_address_channel.awcache  := (others => '0');
+    v_init_if.write_address_channel.awprot   := (others => '0');
+    v_init_if.write_address_channel.awqos    := (others => '0');
+    v_init_if.write_address_channel.awregion := (others => '0');
+    v_init_if.write_address_channel.awuser   := (others => '0');
+    v_init_if.write_address_channel.awvalid  := '0';
+    v_init_if.write_address_channel.awready  := 'Z';
     -- Write Data Channel
-    init_if.write_data_channel.wdata       := (others => '0');
-    init_if.write_data_channel.wstrb       := (others => '0');
-    init_if.write_data_channel.wlast       := '0';
-    init_if.write_data_channel.wuser       := (others => '0');
-    init_if.write_data_channel.wvalid      := '0';
-    init_if.write_data_channel.wready      := 'Z';
+    v_init_if.write_data_channel.wdata       := (others => '0');
+    v_init_if.write_data_channel.wstrb       := (others => '0');
+    v_init_if.write_data_channel.wlast       := '0';
+    v_init_if.write_data_channel.wuser       := (others => '0');
+    v_init_if.write_data_channel.wvalid      := '0';
+    v_init_if.write_data_channel.wready      := 'Z';
     -- Write Response Channel
-    init_if.write_response_channel.bid     := (others => 'Z');
-    init_if.write_response_channel.bresp   := (others => 'Z');
-    init_if.write_response_channel.buser   := (others => 'Z');
-    init_if.write_response_channel.bvalid  := 'Z';
-    init_if.write_response_channel.bready  := '0';
+    v_init_if.write_response_channel.bid     := (others => 'Z');
+    v_init_if.write_response_channel.bresp   := (others => 'Z');
+    v_init_if.write_response_channel.buser   := (others => 'Z');
+    v_init_if.write_response_channel.bvalid  := 'Z';
+    v_init_if.write_response_channel.bready  := '0';
     -- Read Address Channel
-    init_if.read_address_channel.arid      := (others => '0');
-    init_if.read_address_channel.araddr    := (others => '0');
-    init_if.read_address_channel.arlen     := (others => '0');
-    init_if.read_address_channel.arsize    := (others => '0');
-    init_if.read_address_channel.arburst   := (others => '0');
-    init_if.read_address_channel.arlock    := '0';
-    init_if.read_address_channel.arcache   := (others => '0');
-    init_if.read_address_channel.arprot    := (others => '0');
-    init_if.read_address_channel.arqos     := (others => '0');
-    init_if.read_address_channel.arregion  := (others => '0');
-    init_if.read_address_channel.aruser    := (others => '0');
-    init_if.read_address_channel.arvalid   := '0';
-    init_if.read_address_channel.arready   := 'Z';
+    v_init_if.read_address_channel.arid      := (others => '0');
+    v_init_if.read_address_channel.araddr    := (others => '0');
+    v_init_if.read_address_channel.arlen     := (others => '0');
+    v_init_if.read_address_channel.arsize    := (others => '0');
+    v_init_if.read_address_channel.arburst   := (others => '0');
+    v_init_if.read_address_channel.arlock    := '0';
+    v_init_if.read_address_channel.arcache   := (others => '0');
+    v_init_if.read_address_channel.arprot    := (others => '0');
+    v_init_if.read_address_channel.arqos     := (others => '0');
+    v_init_if.read_address_channel.arregion  := (others => '0');
+    v_init_if.read_address_channel.aruser    := (others => '0');
+    v_init_if.read_address_channel.arvalid   := '0';
+    v_init_if.read_address_channel.arready   := 'Z';
     -- Read Data Channel
-    init_if.read_data_channel.rid          := (others => 'Z');
-    init_if.read_data_channel.rdata        := (others => 'Z');
-    init_if.read_data_channel.rresp        := (others => 'Z');
-    init_if.read_data_channel.rlast        := 'Z';
-    init_if.read_data_channel.ruser        := (others => 'Z');
-    init_if.read_data_channel.rvalid       := 'Z';
-    init_if.read_data_channel.rready       := '0';
-    return init_if;
+    v_init_if.read_data_channel.rid          := (others => 'Z');
+    v_init_if.read_data_channel.rdata        := (others => 'Z');
+    v_init_if.read_data_channel.rresp        := (others => 'Z');
+    v_init_if.read_data_channel.rlast        := 'Z';
+    v_init_if.read_data_channel.ruser        := (others => 'Z');
+    v_init_if.read_data_channel.rvalid       := 'Z';
+    v_init_if.read_data_channel.rready       := '0';
+    return v_init_if;
   end function;
 
   procedure axi_write(
@@ -554,7 +554,7 @@ package body axi_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel               := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                                                    := "axi_write(A:" & to_string(awaddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(wdata_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_CALL            : string                                                                    := "axi_write(A:" & to_string(awaddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(wdata_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_awready        : boolean                                                                   := true;
     variable v_await_wready         : boolean                                                                   := true;
     variable v_await_bvalid         : boolean                                                                   := true;
@@ -598,9 +598,9 @@ package body axi_bfm_pkg is
     end if;
 
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     end if;
 
     for write_transfer_num in 0 to to_integer(unsigned(awlen_value)) loop
@@ -677,8 +677,8 @@ package body axi_bfm_pkg is
         end if;
       end loop;
 
-      check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
       v_await_wready := true;
     end loop;
@@ -697,7 +697,7 @@ package body axi_bfm_pkg is
 
       if axi_if.write_response_channel.bvalid = '1' and cycle >= config.num_b_pipe_stages then
         -- Checking response
-        check_value(axi_if.write_response_channel.bid, v_awid_value, config.general_severity, "Checking BID", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+        check_value(axi_if.write_response_channel.bid, v_awid_value, config.general_severity, "Checking BID", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL);
         buser_value := normalize_and_check(axi_if.write_response_channel.buser, buser_value, ALLOW_WIDER_NARROWER, "axi_if.write_response_channel.buser", "buser_value", msg);
         bresp_value := slv_to_xresp(axi_if.write_response_channel.bresp);
         -- Wait according to config.bfm_sync setup
@@ -712,9 +712,9 @@ package body axi_bfm_pkg is
       end if;
     end loop;
 
-    check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
-    log(config.id_for_bfm, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure axi_write;
 
   procedure axi_read(
@@ -740,8 +740,8 @@ package body axi_bfm_pkg is
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call  : in string                       := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant local_proc_name        : string                                                                   := "axi_read"; -- Local proc_name; used if called from sequncer or VVC
-    constant local_proc_call        : string                                                                   := local_proc_name & "(A:" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
+    constant C_LOCAL_PROC_NAME      : string                                                                   := "axi_read"; -- Local proc_name; used if called from sequncer or VVC
+    constant C_LOCAL_PROC_CALL      : string                                                                   := C_LOCAL_PROC_NAME & "(A:" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
     -- Normalize to the DUT addr/data widths
     variable v_normalized_addr      : std_logic_vector(axi_if.read_address_channel.araddr'length - 1 downto 0) := normalize_and_check(std_logic_vector(araddr_value), axi_if.read_address_channel.araddr, ALLOW_WIDER_NARROWER, "addr", "axi_if.read_address_channel.araddr", msg);
     -- Variables for the unconstrained inputs
@@ -768,17 +768,17 @@ package body axi_bfm_pkg is
     end if;
 
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_CALL);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_CALL);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_CALL);
     end if;
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'axi_read...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing axi_read...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     for cycle in 0 to config.max_wait_cycles loop
@@ -897,7 +897,7 @@ package body axi_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel               := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call     : string                                                := "axi_check(A:" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_CALL   : string                                                := "axi_check(A:" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_rdata_value : t_slv_array(0 to to_integer(unsigned(arlen_value)))(axi_if.read_data_channel.rdata'length - 1 downto 0);
     variable v_rresp_value : t_xresp_array(0 to to_integer(unsigned(arlen_value)));
     variable v_ruser_value : t_slv_array(0 to to_integer(unsigned(arlen_value)))(axi_if.read_data_channel.ruser'length - 1 downto 0);
@@ -945,7 +945,7 @@ package body axi_bfm_pkg is
              scope          => scope,
              msg_id_panel   => msg_id_panel,
              config         => config,
-             ext_proc_call  => proc_call);
+             ext_proc_call  => C_PROC_CALL);
 
     if not check_value(v_rdata_value, rdata_exp, alert_level, "Checking RDATA", scope, HEX, KEEP_LEADING_0, ID_POS_ACK, msg_id_panel) then
       v_check_ok := false;
@@ -958,7 +958,7 @@ package body axi_bfm_pkg is
     end if;
 
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure axi_check;

@@ -1,6 +1,13 @@
 UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
+v2.21.4
+----------
+Released: 2026-02-14
+- Fixed a fatal error in await_sb_completion() when waiting for a sb_poll_time equal or greater than the timeout.
+- Fixed typos in string_methods_pkg.vhd. From pull request by user JHertz5.
+- Extended randomization and functional coverage functionality for Questa One is now supported. 
+
 v2.21.3
 ----------
 Released: 2025-11-28

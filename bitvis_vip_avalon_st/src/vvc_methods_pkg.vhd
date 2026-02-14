@@ -34,7 +34,7 @@ use work.transaction_pkg.all;
 package vvc_methods_pkg is
 
   --==========================================================================================
-  -- Types and constants for the AVALON_ST VVC 
+  -- Types and constants for the AVALON_ST VVC
   --==========================================================================================
   constant C_VVC_NAME : string := "AVALON_ST_VVC";
 
@@ -97,7 +97,7 @@ package vvc_methods_pkg is
   shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -136,7 +136,8 @@ package vvc_methods_pkg is
     constant data_routing        : in t_data_routing;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   );
 
   procedure avalon_st_receive(
@@ -215,24 +216,24 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := "avalon_st_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(data_array'length) & " words, ch:" & to_string(channel_value, DEC, KEEP_LEADING_0) & ")";
-    constant c_data_word_size  : natural                                                                := data_array(data_array'low)'length;
-    variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0)               := normalize_and_check(channel_value, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", proc_call & ". " & msg);
-    variable v_normalized_data : t_slv_array(0 to data_array'length - 1)(c_data_word_size - 1 downto 0) := data_array;
+    constant C_PROC_NAME : string := "avalon_st_transmit";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(data_array'length) & " words, ch:" & to_string(channel_value, DEC, KEEP_LEADING_0) & ")";
+    constant C_DATA_WORD_SIZE  : natural                                                                := data_array(data_array'low)'length;
+    variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0)               := normalize_and_check(channel_value, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", C_PROC_CALL & ". " & msg);
+    variable v_normalized_data : t_slv_array(0 to data_array'length - 1)(C_DATA_WORD_SIZE - 1 downto 0) := data_array;
     variable v_msg_id_panel    : t_msg_id_panel                                                         := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, TRANSMIT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.channel_value        := v_normalized_chan;
     for i in 0 to v_normalized_data'high loop
-      shared_vvc_cmd.data_array(i)(c_data_word_size - 1 downto 0) := v_normalized_data(i);
+      shared_vvc_cmd.data_array(i)(C_DATA_WORD_SIZE - 1 downto 0) := v_normalized_data(i);
     end loop;
     shared_vvc_cmd.data_array_length    := v_normalized_data'length;
-    shared_vvc_cmd.data_array_word_size := c_data_word_size;
+    shared_vvc_cmd.data_array_word_size := C_DATA_WORD_SIZE;
     shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -248,9 +249,9 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant channel_value : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0) := (others => '0');
+    constant C_CHANNEL_VALUE : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0) := (others => '0');
   begin
-    avalon_st_transmit(VVCT, vvc_instance_idx, channel_value, data_array, msg, scope, parent_msg_id_panel);
+    avalon_st_transmit(VVCT, vvc_instance_idx, C_CHANNEL_VALUE, data_array, msg, scope, parent_msg_id_panel);
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -264,17 +265,19 @@ package body vvc_methods_pkg is
     constant data_routing        : in t_data_routing;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   ) is
-    constant proc_name : string := "avalon_st_receive";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant C_PROC_NAME       : string := "avalon_st_receive";
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
+    variable v_msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.data_array_length    := data_array_len;
     shared_vvc_cmd.data_array_word_size := data_word_size;
     shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
@@ -294,9 +297,12 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := "avalon_st_receive";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ")";
   begin
     -- call overloaded procedure
-    avalon_st_receive(VVCT, vvc_instance_idx, data_array_len, data_word_size, TO_BUFFER, msg, scope, parent_msg_id_panel);
+    avalon_st_receive(VVCT, vvc_instance_idx, data_array_len, data_word_size, TO_BUFFER, msg, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -312,24 +318,24 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := "avalon_st_expect";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(data_exp'length) & " words, ch:" & to_string(channel_exp, DEC, KEEP_LEADING_0) & ")";
-    constant c_data_word_size  : natural                                                              := data_exp(data_exp'low)'length;
-    variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0)             := normalize_and_check(channel_exp, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", proc_call & ". " & msg);
-    variable v_normalized_data : t_slv_array(0 to data_exp'length - 1)(c_data_word_size - 1 downto 0) := data_exp;
+    constant C_PROC_NAME : string := "avalon_st_expect";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(data_exp'length) & " words, ch:" & to_string(channel_exp, DEC, KEEP_LEADING_0) & ")";
+    constant C_DATA_WORD_SIZE  : natural                                                              := data_exp(data_exp'low)'length;
+    variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0)             := normalize_and_check(channel_exp, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", C_PROC_CALL & ". " & msg);
+    variable v_normalized_data : t_slv_array(0 to data_exp'length - 1)(C_DATA_WORD_SIZE - 1 downto 0) := data_exp;
     variable v_msg_id_panel    : t_msg_id_panel                                                       := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, EXPECT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, EXPECT);
     shared_vvc_cmd.channel_value        := v_normalized_chan;
     for i in 0 to v_normalized_data'high loop
-      shared_vvc_cmd.data_array(i)(c_data_word_size - 1 downto 0) := v_normalized_data(i);
+      shared_vvc_cmd.data_array(i)(C_DATA_WORD_SIZE - 1 downto 0) := v_normalized_data(i);
     end loop;
     shared_vvc_cmd.data_array_length    := v_normalized_data'length;
-    shared_vvc_cmd.data_array_word_size := c_data_word_size;
+    shared_vvc_cmd.data_array_word_size := C_DATA_WORD_SIZE;
     shared_vvc_cmd.alert_level          := alert_level;
     shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
@@ -347,9 +353,9 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant channel_exp : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0) := (others => '0');
+    constant C_CHANNEL_EXP : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0) := (others => '0');
   begin
-    avalon_st_expect(VVCT, vvc_instance_idx, channel_exp, data_exp, msg, alert_level, scope, parent_msg_id_panel);
+    avalon_st_expect(VVCT, vvc_instance_idx, C_CHANNEL_EXP, data_exp, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
 
   --==============================================================================

@@ -139,22 +139,22 @@ package body rgmii_bfm_pkg is
 
   function init_rgmii_if_signals
   return t_rgmii_tx_if is
-    variable init_if : t_rgmii_tx_if;
+    variable v_init_if : t_rgmii_tx_if;
   begin
-    init_if.txc    := 'Z';
-    init_if.txd    := (init_if.txd'range => '0');
-    init_if.tx_ctl := '0';
-    return init_if;
+    v_init_if.txc    := 'Z';
+    v_init_if.txd    := (v_init_if.txd'range => '0');
+    v_init_if.tx_ctl := '0';
+    return v_init_if;
   end function;
 
   function init_rgmii_if_signals
   return t_rgmii_rx_if is
-    variable init_if : t_rgmii_rx_if;
+    variable v_init_if : t_rgmii_rx_if;
   begin
-    init_if.rxc    := 'Z';
-    init_if.rxd    := (init_if.rxd'range => 'Z');
-    init_if.rx_ctl := 'Z';
-    return init_if;
+    v_init_if.rxc    := 'Z';
+    v_init_if.rxd    := (v_init_if.rxd'range => 'Z');
+    v_init_if.rx_ctl := 'Z';
+    return v_init_if;
   end function;
 
   ---------------------------------------------------------------------------------------------
@@ -182,16 +182,16 @@ package body rgmii_bfm_pkg is
     constant msg_id_panel                 : in t_msg_id_panel     := shared_msg_id_panel;
     constant config                       : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string  := "rgmii_write";
-    constant proc_call : string  := proc_name & "(" & to_string(data_array'length) & " bytes)";
-    variable v_timeout : boolean := false;
+    constant C_PROC_NAME : string  := "rgmii_write";
+    constant C_PROC_CALL : string  := C_PROC_NAME & "(" & to_string(data_array'length) & " bytes)";
+    variable v_timeout   : boolean := false;
 
   begin
-    check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
     rgmii_tx_if.txc <= 'Z';
-    log(config.id_for_bfm, proc_call & "=>" & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "=>" & add_msg_delimiter(msg), scope, msg_id_panel);
     -- Wait for the first rising edge to enable the control line
     wait until rising_edge(rgmii_tx_if.txc) for config.clock_period * config.max_wait_cycles;
     if rgmii_tx_if.txc = '1' then
@@ -221,7 +221,7 @@ package body rgmii_bfm_pkg is
             wait until rising_edge(rgmii_tx_if.txc);
             rgmii_tx_if <= init_rgmii_if_signals;
           end if;
-          -- else: Keep the control line active, and next byte is held until next rgmii_write (first rising edge in this procedure)
+        -- else: Keep the control line active, and next byte is held until next rgmii_write (first rising edge in this procedure)
         end if;
       end loop;
     else
@@ -229,9 +229,9 @@ package body rgmii_bfm_pkg is
     end if;
 
     if v_timeout then
-      alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout while waiting for txc during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope);
+      alert(config.max_wait_cycles_severity, C_PROC_CALL & "=> Failed. Timeout while waiting for txc during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & " DONE." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & " DONE." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
@@ -249,8 +249,8 @@ package body rgmii_bfm_pkg is
     constant config        : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string             := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant local_proc_name   : string  := "rgmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call   : string  := local_proc_name & "(" & to_string(data_array'length) & " bytes)";
+    constant C_LOCAL_PROC_NAME : string  := "rgmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
+    constant C_LOCAL_PROC_CALL : string  := C_LOCAL_PROC_NAME & "(" & to_string(data_array'length) & " bytes)";
     variable v_proc_call       : line;  -- Current proc_call, external or local
     variable v_normalized_data : t_byte_array(0 to data_array'length - 1);
     variable v_byte_cnt        : natural := 0;
@@ -261,10 +261,10 @@ package body rgmii_bfm_pkg is
   begin
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'rgmii_read...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing rgmii_read...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -357,8 +357,8 @@ package body rgmii_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel     := shared_msg_id_panel;
     constant config       : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name          : string                                 := "rgmii_expect";
-    constant proc_call          : string                                 := proc_name & "(" & to_string(data_exp'length) & " bytes)";
+    constant C_PROC_NAME        : string                                 := "rgmii_expect";
+    constant C_PROC_CALL        : string                                 := C_PROC_NAME & "(" & to_string(data_exp'length) & " bytes)";
     variable v_normalized_data  : t_byte_array(0 to data_exp'length - 1) := data_exp;
     variable v_rx_data_array    : t_byte_array(v_normalized_data'range);
     variable v_rx_data_len      : natural;
@@ -368,10 +368,10 @@ package body rgmii_bfm_pkg is
     variable v_alert_radix      : t_radix;
   begin
 
-    check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
     -- Read data
-    rgmii_read(v_rx_data_array, v_rx_data_len, msg, rgmii_rx_if, scope, msg_id_panel, config, proc_call);
+    rgmii_read(v_rx_data_array, v_rx_data_len, msg, rgmii_rx_if, scope, msg_id_panel, config, C_PROC_CALL);
 
     -- Check the length of the received data
     if v_rx_data_len /= v_normalized_data'length then
@@ -395,23 +395,23 @@ package body rgmii_bfm_pkg is
 
     -- Done. Report result
     if v_length_error then
-      alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) & ". Expected " & to_string(v_normalized_data'length) & "." & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) & ". Expected " & to_string(v_normalized_data'length) & "." & add_msg_delimiter(msg), scope);
     elsif v_data_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD,
         NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       if C_ERROR_REPORT_EXTENT = EXTENDED then
-        alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " &
+        alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " &
           to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte),
           v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & LF & "Was:" & LF & to_string(v_rx_data_array, v_alert_radix, KEEP_LEADING_0) & LF &"Expected:" & LF &
           to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
       elsif C_ERROR_REPORT_EXTENT = BRIEF then
-        alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " &
+        alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " &
           to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte),
           v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
       end if;
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 

@@ -206,9 +206,9 @@ begin
       ----------------------------------------------------------------------------------------------------------------------------
       log("Write with both interfaces");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"85", "Write on FIFO 1");
-      SBI_VVC_SB.add_expected(2, pad_sbi_sb(x"85"));
+      sbi_vvc_sb.add_expected(2, pad_sbi_sb(x"85"));
       sbi_write(SBI_VVCT, 2, C_ADDR_FIFO_PUT, x"EC", "Write on FIFO 2");
-      SBI_VVC_SB.add_expected(1, pad_sbi_sb(x"EC"));
+      sbi_vvc_sb.add_expected(1, pad_sbi_sb(x"EC"));
       await_completion(SBI_VVCT, 2, 16 ns, "Await execution");
 
       log("Read and check FIFO 1 using SBI IF 2");
@@ -219,7 +219,7 @@ begin
       sbi_read(SBI_VVCT, 1, C_ADDR_FIFO_GET, TO_SB, "Read from FIFO 2 and store result in VVC's SB");
       await_completion(SBI_VVCT, 1, 100 ns, "Wait for sbi_read to finish");
 
-      SBI_VVC_SB.report_counters(ALL_INSTANCES);
+      sbi_vvc_sb.report_counters(ALL_INSTANCES);
 
     elsif GC_TESTCASE = "test_of_poll_until" then
       ----------------------------------------------------------------------------------------------------------------------------

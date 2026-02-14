@@ -128,22 +128,22 @@ package body wishbone_bfm_pkg is
     addr_width : natural;
     data_width : natural
   ) return t_wishbone_if is
-    variable result : t_wishbone_if(dat_o(data_width - 1 downto 0),
-                                    dat_i(data_width - 1 downto 0),
-                                    adr_o(addr_width - 1 downto 0)
-                                   );
+    variable v_result : t_wishbone_if(dat_o(data_width - 1 downto 0),
+                                      dat_i(data_width - 1 downto 0),
+                                      adr_o(addr_width - 1 downto 0)
+                                     );
   begin
     -- BFM to DUT signals
-    result.dat_o := (result.dat_o'range => '0');
-    result.adr_o := (result.adr_o'range => '0');
-    result.cyc_o := '0';
-    result.stb_o := '0';
-    result.we_o  := '0';
+    v_result.dat_o := (v_result.dat_o'range => '0');
+    v_result.adr_o := (v_result.adr_o'range => '0');
+    v_result.cyc_o := '0';
+    v_result.stb_o := '0';
+    v_result.we_o  := '0';
 
     -- DUT to BFM signals
-    result.dat_i := (result.dat_i'range => 'Z');
-    result.ack_i := 'Z';
-    return result;
+    v_result.dat_i := (v_result.dat_i'range => 'Z');
+    v_result.ack_i := 'Z';
+    return v_result;
   end function;
 
   procedure wishbone_write(
@@ -156,8 +156,8 @@ package body wishbone_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel        := shared_msg_id_panel;
     constant config       : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name              : string                                                  := "wishbone_write";
-    constant proc_call              : string                                                  := "wishbone_write(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME            : string                                                  := "wishbone_write";
+    constant C_PROC_CALL            : string                                                  := C_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- normalize_and_check to the DUT addr/data widths
     variable v_normalized_addr      : std_logic_vector(wishbone_if.adr_o'length - 1 downto 0) := normalize_and_check(std_logic_vector(addr_value), wishbone_if.adr_o, ALLOW_NARROWER, "address", "wishbone_if.adr_o", msg);
     variable v_normalized_data      : std_logic_vector(wishbone_if.dat_o'length - 1 downto 0) := normalize_and_check(data_value, wishbone_if.dat_o, ALLOW_NARROWER, "data", "wishbone_if.dat_o", msg);
@@ -166,9 +166,9 @@ package body wishbone_bfm_pkg is
     variable v_time_of_falling_edge : time                                                    := C_UNDEFINED_TIME; -- time stamp for clk period checking
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     end if;
 
     -- Wait according to config.bfm_sync setup
@@ -198,7 +198,7 @@ package body wishbone_bfm_pkg is
 
     -- did we timeout?
     if v_timeout then
-      alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for ack_i during " & to_string(config.max_wait_cycles) & " clock cycles." &  add_msg_delimiter(msg), scope);
+      alert(config.max_wait_cycles_severity, C_PROC_CALL & "=> Failed. Timeout waiting for ack_i during " & to_string(config.max_wait_cycles) & " clock cycles." &  add_msg_delimiter(msg), scope);
     end if;
 
     -- Wait according to config.bfm_sync setup
@@ -206,7 +206,7 @@ package body wishbone_bfm_pkg is
 
     wishbone_if <= init_wishbone_if_signals(wishbone_if.adr_o'length, wishbone_if.dat_o'length);
 
-    log(config.id_for_bfm, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure wishbone_write;
 
   procedure wishbone_read(
@@ -221,8 +221,8 @@ package body wishbone_bfm_pkg is
     constant ext_proc_call : in string                := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     -- local_proc_name/call used if called from sequencer or VVC
-    constant local_proc_name : string := "wishbone_read";
-    constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_LOCAL_PROC_NAME : string := "wishbone_read";
+    constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     -- normalize_and_check to the DUT addr/data widths
     variable v_normalized_addr : std_logic_vector(wishbone_if.adr_o'length - 1 downto 0) := normalize_and_check(std_logic_vector(addr_value), wishbone_if.adr_o, ALLOW_NARROWER, "addr", "wishbone_if.adr_o", msg);
@@ -235,17 +235,17 @@ package body wishbone_bfm_pkg is
     variable v_proc_call            : line;
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_CALL);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_CALL);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_CALL);
     end if;
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'wishbone_read...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing wishbone_read...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     -- Wait according to config.bfm_sync setup
@@ -305,8 +305,8 @@ package body wishbone_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel        := shared_msg_id_panel;
     constant config       : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "wishbone_check";
-    constant proc_call : string := "wishbone_check(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := "wishbone_check";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     -- normalize_and_check to the DUT addr/data widths
     variable v_normalized_data : std_logic_vector(wishbone_if.dat_i'length - 1 downto 0) := normalize_and_check(data_exp, wishbone_if.dat_i, ALLOW_NARROWER, "data", "wishbone_if.dat_i", msg);
@@ -316,7 +316,7 @@ package body wishbone_bfm_pkg is
     variable v_check_ok    : boolean                                                 := true;
     variable v_alert_radix : t_radix;
   begin
-    wishbone_read(addr_value, v_data_value, msg, clk, wishbone_if, scope, msg_id_panel, config, proc_call);
+    wishbone_read(addr_value, v_data_value, msg, clk, wishbone_if, scope, msg_id_panel, config, C_PROC_CALL);
 
     for i in v_normalized_data'range loop
       -- Allow don't care in expected value and use match strictness from config for comparison
@@ -331,9 +331,9 @@ package body wishbone_bfm_pkg is
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, msg_id_panel) else HEX;
-      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure wishbone_check;
 

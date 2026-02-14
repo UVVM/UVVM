@@ -30,6 +30,7 @@ UVVM consists currently of the following elements:
    optimized_rand.rst
    uvvm_assertions.rst
    vvc_framework.rst
+   vip_apb.rst
    vip_avalon_mm.rst
    vip_avalon_st.rst
    vip_axi.rst

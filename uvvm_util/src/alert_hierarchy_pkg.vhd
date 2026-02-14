@@ -28,7 +28,7 @@ use work.adaptations_pkg.all;
 
 package alert_hierarchy_pkg is
 
-  shared variable global_hierarchy_tree : t_hierarchy_linked_list;
+  shared variable priv_global_hierarchy_tree : t_hierarchy_linked_list;
 
   -- For internal use only: This procedure is called from initialize_util() when C_ENABLE_HIERARCHICAL_ALERTS is set to true
   procedure initialize_hierarchy(
@@ -103,7 +103,7 @@ package body alert_hierarchy_pkg is
     constant stop_limit : t_alert_counters := (others => 0)
   ) is
   begin
-    global_hierarchy_tree.initialize_hierarchy(justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), stop_limit);
+    priv_global_hierarchy_tree.initialize_hierarchy(justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), stop_limit);
   end procedure;
 
   procedure add_to_alert_hierarchy(
@@ -116,7 +116,7 @@ package body alert_hierarchy_pkg is
     variable v_hierarchy_node : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
     variable v_found          : boolean                                   := false;
   begin
-    global_hierarchy_tree.contains_scope_return_data(v_scope, v_found, v_hierarchy_node);
+    priv_global_hierarchy_tree.contains_scope_return_data(v_scope, v_found, v_hierarchy_node);
     if v_found then
       -- Scope already in tree.
 
@@ -129,14 +129,14 @@ package body alert_hierarchy_pkg is
       -- changed back to base level once another parent_scope has been chosen.
       if v_parent_scope /= justify(C_BASE_HIERARCHY_LEVEL, LEFT, C_HIERARCHY_NODE_NAME_LENGTH) then
         -- Verify that new parent is in tree. If not, the old parent will be kept.
-        global_hierarchy_tree.change_parent(v_scope, v_parent_scope);
+        priv_global_hierarchy_tree.change_parent(v_scope, v_parent_scope);
       end if;
 
     else
       -- Scope not in tree. Check if parent is in tree. Set node data if
       -- parent is in tree.
       v_hierarchy_node := (v_scope, (others => (others => 0)), stop_limit, (others => true));
-      global_hierarchy_tree.insert_in_tree(v_hierarchy_node, v_parent_scope);
+      priv_global_hierarchy_tree.insert_in_tree(v_hierarchy_node, v_parent_scope);
     end if;
   end procedure;
 
@@ -145,14 +145,14 @@ package body alert_hierarchy_pkg is
     constant value       : natural
   ) is
   begin
-    global_hierarchy_tree.set_top_level_stop_limit(alert_level, value);
+    priv_global_hierarchy_tree.set_top_level_stop_limit(alert_level, value);
   end procedure;
 
   impure function get_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level
   ) return natural is
   begin
-    return global_hierarchy_tree.get_top_level_stop_limit(alert_level);
+    return priv_global_hierarchy_tree.get_top_level_stop_limit(alert_level);
   end function;
 
   procedure hierarchical_alert(
@@ -162,7 +162,7 @@ package body alert_hierarchy_pkg is
     constant attention   : t_attention
   ) is
   begin
-    global_hierarchy_tree.alert(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, attention, msg);
+    priv_global_hierarchy_tree.alert(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, attention, msg);
   end procedure;
 
   procedure increment_expected_alerts(
@@ -171,7 +171,7 @@ package body alert_hierarchy_pkg is
     constant amount      : natural := 1
   ) is
   begin
-    global_hierarchy_tree.increment_expected_alerts(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, amount);
+    priv_global_hierarchy_tree.increment_expected_alerts(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, amount);
   end procedure;
 
   procedure set_expected_alerts(
@@ -180,7 +180,7 @@ package body alert_hierarchy_pkg is
     constant expected_alerts : natural
   ) is
   begin
-    global_hierarchy_tree.set_expected_alerts(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, expected_alerts);
+    priv_global_hierarchy_tree.set_expected_alerts(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, expected_alerts);
   end procedure;
 
   procedure increment_stop_limit(
@@ -189,7 +189,7 @@ package body alert_hierarchy_pkg is
     constant amount      : natural := 1
   ) is
   begin
-    global_hierarchy_tree.increment_stop_limit(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, amount);
+    priv_global_hierarchy_tree.increment_stop_limit(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, amount);
   end procedure;
 
   procedure set_stop_limit(
@@ -198,21 +198,21 @@ package body alert_hierarchy_pkg is
     constant stop_limit  : natural
   ) is
   begin
-    global_hierarchy_tree.set_stop_limit(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, stop_limit);
+    priv_global_hierarchy_tree.set_stop_limit(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, stop_limit);
   end procedure;
 
   procedure print_hierarchical_log(
     constant order : t_order := FINAL
   ) is
   begin
-    global_hierarchy_tree.print_hierarchical_log(order);
+    priv_global_hierarchy_tree.print_hierarchical_log(order);
   end procedure;
 
   procedure clear_hierarchy(
     constant VOID : t_void
   ) is
   begin
-    global_hierarchy_tree.clear;
+    priv_global_hierarchy_tree.clear;
   end procedure;
 
 end package body alert_hierarchy_pkg;

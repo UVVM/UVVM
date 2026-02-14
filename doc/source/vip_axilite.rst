@@ -932,19 +932,19 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. axilite_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The AXI4-Lite scoreboard is accessible from the testbench as a shared variable ``AXILITE_VVC_SB``, 
+TO_SB parameter is applied. The AXI4-Lite scoreboard is accessible from the testbench as a shared variable ``axilite_vvc_sb``, 
 located in the vvc_methods_pkg.vhd, e.g. ::
 
-    AXILITE_VVC_SB.add_expected(C_AXILITE_VVC_IDX, pad_axilite_sb(v_expected), "Adding expected");
+    axilite_vvc_sb.add_expected(C_AXILITE_VVC_IDX, pad_axilite_sb(v_expected), "Adding expected");
 
 The AXI4-Lite scoreboard is per default 256 bits wide standard logic vector. When sending expected result to the scoreboard, where 
 the result width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_axilite_sb() 
 function, e.g. ::
 
-    AXILITE_VVC_SB.add_expected(<AXI-Lite VVC instance number>, pad_axilite_sb(<exp data>));
+    axilite_vvc_sb.add_expected(<AXI-Lite VVC instance number>, pad_axilite_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the AXI4-Lite VVC scoreboard using the ``AXILITE_VVC_SB``.
+Scoreboard commands are available for the AXI4-Lite VVC scoreboard using the ``axilite_vvc_sb``.
 
 
 Unwanted Activity Detection

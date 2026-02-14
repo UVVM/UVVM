@@ -801,13 +801,13 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. uart_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable ``UART_VVC_SB``, located in 
+TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable ``uart_vvc_sb``, located in 
 the vvc_methods_pkg.vhd, e.g. ::
 
-    UART_VVC_SB.add_expected(C_UART_VVC_IDX, v_expected, "Adding expected");
+    uart_vvc_sb.add_expected(C_UART_VVC_IDX, v_expected, "Adding expected");
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the UART VVC scoreboard using the ``UART_VVC_SB``.
+Scoreboard commands are available for the UART VVC scoreboard using the ``uart_vvc_sb``.
 
 
 Unwanted Activity Detection

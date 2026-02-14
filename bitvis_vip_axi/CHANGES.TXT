@@ -1,6 +1,12 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
+v3.1.2
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+- Fixed axi_read() and axi_check() VVC examples typo.
+
 v3.1.1
 ----------
 Released: 2025-11-28

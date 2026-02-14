@@ -259,7 +259,7 @@ begin
     v_expected_result.rdata(1)(31 downto 0) := x"55555555";
     v_expected_result.ruser(0)(7 downto 0)  := x"00";
     v_expected_result.ruser(1)(7 downto 0)  := x"00";
-    AXI_VVC_SB.add_expected(1, v_expected_result);
+    axi_vvc_sb.add_expected(1, v_expected_result);
     axi_read(
       VVCT             => AXI_VVCT,
       vvc_instance_idx => 1,

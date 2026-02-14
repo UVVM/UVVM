@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library bitvis_vip_clock_generator;
+library bitvis_vip_clock_generator;
   use bitvis_vip_clock_generator.vvc_cmd_pkg.all;
   use bitvis_vip_clock_generator.vvc_methods_pkg.all;
   use bitvis_vip_clock_generator.td_vvc_framework_common_methods_pkg.all;

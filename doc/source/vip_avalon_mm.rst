@@ -1189,18 +1189,18 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. avalon_mm_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when 
-the TO_SB parameter is applied. The Avalon-MM scoreboard is accessible from the testbench as a shared variable ``AVALON_MM_VVC_SB``, 
+the TO_SB parameter is applied. The Avalon-MM scoreboard is accessible from the testbench as a shared variable ``avalon_mm_vvc_sb``, 
 located in the vvc_methods_pkg.vhd, e.g. ::
 
-    AVALON_MM_VVC_SB.add_expected(C_AVALON_MM_VVC_IDX, pad_avalon_mm_sb(v_expected), "Adding expected");
+    avalon_mm_vvc_sb.add_expected(C_AVALON_MM_VVC_IDX, pad_avalon_mm_sb(v_expected), "Adding expected");
 
 The Avalon-MM scoreboard is per default a 1024 bits wide standard logic vector. When sending expected data to the scoreboard, where the 
 data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_avalon_mm_sb() function, e.g. ::
 
-    AVALON_MM_VVC_SB.add_expected(<Avalon-MM VVC instance number>, pad_avalon_mm_sb(<exp data>));
+    avalon_mm_vvc_sb.add_expected(<Avalon-MM VVC instance number>, pad_avalon_mm_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Avalon-MM VVC scoreboard using the ``AVALON_MM_VVC_SB``.
+Scoreboard commands are available for the Avalon-MM VVC scoreboard using the ``avalon_mm_vvc_sb``.
 
 
 Unwanted Activity Detection

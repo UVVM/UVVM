@@ -137,7 +137,7 @@ package vvc_methods_pkg is
   shared variable shared_uart_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
   shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
-  shared variable UART_VVC_SB                  : t_generic_sb;
+  shared variable uart_vvc_sb                  : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -177,7 +177,8 @@ package vvc_methods_pkg is
     constant msg                 : in string;
     constant alert_level         : in t_alert_level  := error;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   );
 
   procedure uart_receive(
@@ -249,16 +250,16 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                     & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                           := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
@@ -277,15 +278,15 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", RANDOM)";
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                     & ", " & to_string(num_words) & ", " & to_upper(to_string(randomisation)) & ")";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, TRANSMIT);
     -- Randomisation specific
     shared_vvc_cmd.randomisation := randomisation;
     shared_vvc_cmd.num_words     := num_words;
@@ -305,17 +306,19 @@ package body vvc_methods_pkg is
     constant msg                 : in string;
     constant alert_level         : in t_alert_level  := error;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
+    variable v_msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_LOCAL_PROC_CALL, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.alert_level         := alert_level;
     shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
@@ -334,8 +337,11 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                     & ")";
   begin
-    uart_receive(VVCT, vvc_instance_idx, channel, NA, msg, alert_level, scope, parent_msg_id_panel);
+    uart_receive(VVCT, vvc_instance_idx, channel, NA, msg, alert_level, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   procedure uart_expect(
@@ -350,16 +356,16 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
-                                   & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                     & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                           := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, EXPECT);
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.alert_level         := alert_level;
     shared_vvc_cmd.max_receptions      := max_receptions;

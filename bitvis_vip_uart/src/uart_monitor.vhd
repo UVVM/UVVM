@@ -56,7 +56,7 @@ architecture behave of uart_monitor is
 
   procedure monitor_uart_line(
     constant operation           : in t_operation;
-    constant C_LOG_PREFIX        : in string;
+    constant log_prefix          : in string;
     signal   transaction_trigger : inout std_logic;
     variable transaction_info    : inout t_base_transaction;
     signal   uart_line           : in std_logic;
@@ -99,14 +99,14 @@ architecture behave of uart_monitor is
         end if;
 
         -- Start bit registered and transaction is active
-        log(ID_FRAME_INITIATE, C_LOG_PREFIX & "Start bit detected", monitor_config.scope_name, monitor_config.msg_id_panel);
+        log(ID_FRAME_INITIATE, log_prefix & "Start bit detected", monitor_config.scope_name, monitor_config.msg_id_panel);
         transaction_info.transaction_status := IN_PROGRESS;
 
         -- Align to end of start bit
         wait for interface_config.bit_time;
       else
         -- Second stop bit interpreted as start bit transaction is active
-        log(ID_FRAME_INITIATE, C_LOG_PREFIX & "Second stop bit interpreted as start bit.", monitor_config.scope_name, monitor_config.msg_id_panel);
+        log(ID_FRAME_INITIATE, log_prefix & "Second stop bit interpreted as start bit.", monitor_config.scope_name, monitor_config.msg_id_panel);
         transaction_info.transaction_status := IN_PROGRESS;
         -- Align to end of start bit
         wait for (interface_config.bit_time - uart_line'last_event);
@@ -121,17 +121,17 @@ architecture behave of uart_monitor is
       end loop;
 
       if interface_config.parity = PARITY_NONE then
-          v_parity_error := false;
+        v_parity_error := false;
       else
-          -- middle of the parity bit
-          wait for (interface_config.bit_time / 2);
-          -- Parity bit
-          if interface_config.parity = PARITY_ODD then
-            v_parity_error := xor(v_data & uart_line) = '0';
-          elsif interface_config.parity = PARITY_EVEN then
-            v_parity_error := xor(v_data & uart_line) = '1';
-          end if;
-          wait for (interface_config.bit_time / 2);
+        -- middle of the parity bit
+        wait for (interface_config.bit_time / 2);
+        -- Parity bit
+        if interface_config.parity = PARITY_ODD then
+          v_parity_error := xor(v_data & uart_line) = '0';
+        elsif interface_config.parity = PARITY_EVEN then
+          v_parity_error := xor(v_data & uart_line) = '1';
+        end if;
+        wait for (interface_config.bit_time / 2);
       end if;
 
       -- First stop bit (middle of the first stop bit)
@@ -155,9 +155,9 @@ architecture behave of uart_monitor is
 
       -- Determine legal transaction
       if v_parity_error or or(v_stop_bit_error) then
-        log(ID_MONITOR, C_LOG_PREFIX & "Non-legal transaction detected: parity_error: " & to_string(v_parity_error) & "; stop_bit_error: " & to_string(or(v_stop_bit_error)) & ".", monitor_config.scope_name, monitor_config.msg_id_panel);
+        log(ID_MONITOR, log_prefix & "Non-legal transaction detected: parity_error: " & to_string(v_parity_error) & "; stop_bit_error: " & to_string(or(v_stop_bit_error)) & ".", monitor_config.scope_name, monitor_config.msg_id_panel);
       else
-        log(ID_MONITOR, C_LOG_PREFIX & "Legal transaction completed.", monitor_config.scope_name, monitor_config.msg_id_panel);
+        log(ID_MONITOR, log_prefix & "Legal transaction completed.", monitor_config.scope_name, monitor_config.msg_id_panel);
       end if;
 
       -- Update transaction

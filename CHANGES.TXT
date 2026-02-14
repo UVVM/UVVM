@@ -9,6 +9,25 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2026.02.14
+--------------------
+Released: 2026-02-14
+- Fixed a fatal error in await_sb_completion() when waiting for a sb_poll_time equal or greater than the timeout.
+- Fixed axi_read() and axi_check() VVC examples typo.
+- Improved code formatting of src files to be consistent with regards to prefixes, casing, indentation, etc.
+- Print data_routing and randomisation parameters in corresponding VVC procedures.
+- Fixed typos in string_methods_pkg.vhd. From pull request by user JHertz5.
+- Fixed source path display error in compile-scripts.
+- Fixed inconsistency in axistream_expect-log messages in vvc_methods_pkg.vhd in bitvis_vip_axistream.
+- Updated await_uvvm_completion() to check first that scoreboards are empty and then VVCs are inactive.
+- Moved bitvis_vip_spec_cov demo folders under its tb folder.
+- Added a python script "copy_td_files_to_vips.py" which copies all the necessary files under each <vip>/src/vvc_framework_td folder,
+  this was requested since Vivado can't compile the same file in different libraries.
+- Added initial version of APB VIP. From pull request by user mikkelmi2.
+- Removed duplicate component_list.txt file under the release folder.
+- Removed unused testbench.py script under the script folder.
+- Extended randomization and functional coverage functionality for Questa One is now supported. 
+
 v2 2025.11.28
 --------------------
 Released: 2025-11-28

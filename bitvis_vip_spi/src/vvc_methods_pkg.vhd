@@ -62,7 +62,6 @@ package vvc_methods_pkg is
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
     unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
-
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -121,10 +120,10 @@ package vvc_methods_pkg is
   shared variable shared_spi_vvc_config       : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_SPI_VVC_CONFIG_DEFAULT);
   shared variable shared_spi_vvc_status       : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_spi_transaction_info : t_transaction_info_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-  shared variable SPI_VVC_SB                  : t_generic_sb;
+  shared variable spi_vvc_sb                  : t_generic_sb;
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -144,7 +143,8 @@ package vvc_methods_pkg is
     constant msg                          : in string;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call                : in string                         := ""
   );
   procedure spi_master_transmit_and_receive(
     signal   VVCT                         : inout t_vvc_target_record;
@@ -165,7 +165,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call                : in string                         := ""
   );
   procedure spi_master_transmit_and_receive(
     signal   VVCT                         : inout t_vvc_target_record;
@@ -235,7 +236,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call                : in string                         := ""
   );
 
   procedure spi_master_receive_only(
@@ -285,7 +287,8 @@ package vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call          : in string                   := ""
   );
   procedure spi_slave_transmit_and_receive(
     signal   VVCT                   : inout t_vvc_target_record;
@@ -305,7 +308,8 @@ package vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call          : in string                   := ""
   );
   procedure spi_slave_transmit_and_receive(
     signal   VVCT                   : inout t_vvc_target_record;
@@ -371,7 +375,8 @@ package vvc_methods_pkg is
     constant num_words              : in positive                 := 1;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call          : in string                   := ""
   );
   procedure spi_slave_receive_only(
     signal   VVCT                   : inout t_vvc_target_record;
@@ -451,10 +456,13 @@ package body vvc_methods_pkg is
     constant msg                          : in string;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call                : in string                         := ""
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
     -- Helper variable
     variable v_word_length     : natural                                                                               := data'length;
     variable v_num_words       : natural                                                                               := 1;
@@ -462,12 +470,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_LOCAL_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, MASTER_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data(0)(v_word_length - 1 downto 0) := v_normalized_data(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                           := v_num_words;
     shared_vvc_cmd.word_length                         := v_word_length;
@@ -490,8 +498,10 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, scope, parent_msg_id_panel);
+    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   -- Multi-word
@@ -504,10 +514,13 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call                : in string                         := ""
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
     -- Helper variable
     variable v_word_length     : natural                                                                               := data(0)'length;
     variable v_num_words       : natural                                                                               := data'length;
@@ -515,12 +528,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_LOCAL_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, MASTER_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data                         := v_normalized_data;
     shared_vvc_cmd.num_words                    := v_num_words;
     shared_vvc_cmd.word_length                  := v_word_length;
@@ -544,8 +557,10 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel);
+    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -560,8 +575,8 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data'length;
     variable v_num_words           : natural                                                                               := 1;
@@ -570,14 +585,14 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
-    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, MASTER_TRANSMIT_AND_CHECK);
     shared_vvc_cmd.data(0)(v_word_length - 1 downto 0)     := v_normalized_data(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.data_exp(0)(v_word_length - 1 downto 0) := v_normalized_data_exp(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                               := v_num_words;
@@ -604,8 +619,8 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data(0)'length;
     variable v_num_words           : natural                                                                               := data'length;
@@ -614,13 +629,13 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
-    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, MASTER_TRANSMIT_AND_CHECK);
     shared_vvc_cmd.data                         := v_normalized_data;
     shared_vvc_cmd.data_exp                     := v_normalized_data_exp;
     shared_vvc_cmd.num_words                    := v_num_words;
@@ -645,8 +660,8 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length     : natural                                                                               := data'length;
     variable v_num_words       : natural                                                                               := 1;
@@ -654,13 +669,13 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0) := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data(0) := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, MASTER_TRANSMIT_ONLY);
     shared_vvc_cmd.data(0)(v_word_length - 1 downto 0) := v_normalized_data(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                           := v_num_words;
     shared_vvc_cmd.word_length                         := v_word_length;
@@ -683,8 +698,8 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length     : natural                                                                               := data(0)'length;
     variable v_num_words       : natural                                                                               := data'length;
@@ -692,12 +707,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, MASTER_TRANSMIT_ONLY);
     shared_vvc_cmd.data                         := v_normalized_data;
     shared_vvc_cmd.num_words                    := v_num_words;
     shared_vvc_cmd.word_length                  := v_word_length;
@@ -720,17 +735,20 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call                : in string                         := ""
   ) is
-    constant proc_name      : string         := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
+    variable v_msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_RECEIVE_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, MASTER_RECEIVE_ONLY);
     shared_vvc_cmd.data_routing                 := data_routing;
     shared_vvc_cmd.num_words                    := num_words;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
@@ -752,8 +770,10 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_master_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel);
+    spi_master_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -767,8 +787,8 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data_exp'length;
     variable v_num_words           : natural                                                                               := 1;
@@ -776,13 +796,13 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_CHECK_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, MASTER_CHECK_ONLY);
     shared_vvc_cmd.data_exp(0)(v_word_length - 1 downto 0) := v_normalized_data_exp(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                               := v_num_words;
     shared_vvc_cmd.word_length                             := v_word_length;
@@ -807,8 +827,8 @@ package body vvc_methods_pkg is
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data_exp(0)'length;
     variable v_num_words           : natural                                                                               := data_exp'length;
@@ -816,12 +836,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_CHECK_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, MASTER_CHECK_ONLY);
     shared_vvc_cmd.data_exp                     := v_normalized_data_exp;
     shared_vvc_cmd.num_words                    := v_num_words;
     shared_vvc_cmd.word_length                  := v_word_length;
@@ -847,10 +867,13 @@ package body vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call          : in string                   := ""
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
     -- Helper variable
     variable v_word_length     : natural                                                                               := data'length;
     variable v_num_words       : natural                                                                               := 1;
@@ -858,12 +881,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_LOCAL_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_AND_RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, SLAVE_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data(0)(v_word_length - 1 downto 0) := v_normalized_data(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                           := v_num_words;
     shared_vvc_cmd.word_length                         := v_word_length;
@@ -885,8 +908,10 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel);
+    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   -- Multi-word
@@ -898,10 +923,13 @@ package body vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call          : in string                   := ""
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
     -- Helper variable
     variable v_word_length     : natural                                                                               := data(0)'length;
     variable v_num_words       : natural                                                                               := data'length;
@@ -909,12 +937,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_LOCAL_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_AND_RECEIVE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, SLAVE_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data                   := v_normalized_data;
     shared_vvc_cmd.num_words              := v_num_words;
     shared_vvc_cmd.word_length            := v_word_length;
@@ -936,8 +964,10 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel);
+    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -952,8 +982,8 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data'length;
     variable v_num_words           : natural                                                                               := 1;
@@ -962,14 +992,14 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
-    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_AND_CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SLAVE_TRANSMIT_AND_CHECK);
     shared_vvc_cmd.data(0)(v_word_length - 1 downto 0)     := v_normalized_data(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.data_exp(0)(v_word_length - 1 downto 0) := v_normalized_data_exp(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                               := v_num_words;
@@ -995,8 +1025,8 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data(0)'length;
     variable v_num_words           : natural                                                                               := data'length;
@@ -1005,13 +1035,13 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
-    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_AND_CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SLAVE_TRANSMIT_AND_CHECK);
     shared_vvc_cmd.data                   := v_normalized_data;
     shared_vvc_cmd.data_exp               := v_normalized_data_exp;
     shared_vvc_cmd.num_words              := v_num_words;
@@ -1035,8 +1065,8 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length     : natural                                                                               := data'length;
     variable v_num_words       : natural                                                                               := 1;
@@ -1044,12 +1074,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SLAVE_TRANSMIT_ONLY);
     shared_vvc_cmd.data(0)(v_word_length - 1 downto 0) := v_normalized_data(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                           := v_num_words;
     shared_vvc_cmd.word_length                         := v_word_length;
@@ -1071,8 +1101,8 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name         : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call         : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length     : natural                                                                               := data(0)'length;
     variable v_num_words       : natural                                                                               := data'length;
@@ -1080,13 +1110,13 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SLAVE_TRANSMIT_ONLY);
     shared_vvc_cmd.data                   := v_normalized_data;
     shared_vvc_cmd.num_words              := v_num_words;
     shared_vvc_cmd.word_length            := v_word_length;
@@ -1107,17 +1137,20 @@ package body vvc_methods_pkg is
     constant num_words              : in positive                 := 1;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call          : in string                   := ""
   ) is
-    constant proc_name      : string         := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
+    variable v_msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_RECEIVE_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, SLAVE_RECEIVE_ONLY);
     shared_vvc_cmd.data_routing           := data_routing;
     shared_vvc_cmd.num_words              := num_words;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
@@ -1137,8 +1170,10 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_slave_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, when_to_start_transfer, scope, parent_msg_id_panel);
+    spi_slave_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, when_to_start_transfer, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -1152,8 +1187,8 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data_exp'length;
     variable v_num_words           : natural                                                                               := 1;
@@ -1161,12 +1196,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data_exp(0)                               := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp(0)                               := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_CHECK_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SLAVE_CHECK_ONLY);
     --shared_vvc_cmd.data_exp       := v_normalized_data_exp;
     shared_vvc_cmd.data_exp(0)(v_word_length - 1 downto 0) := v_normalized_data_exp(0)(v_word_length - 1 downto 0);
     shared_vvc_cmd.num_words                               := v_num_words;
@@ -1191,8 +1226,8 @@ package body vvc_methods_pkg is
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name             : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call             : string                                                                                := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Helper variable
     variable v_word_length         : natural                                                                               := data_exp(0)'length;
     variable v_num_words           : natural                                                                               := data_exp'length;
@@ -1200,12 +1235,12 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data." & add_msg_delimiter(msg));
+    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_CHECK_ONLY);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SLAVE_CHECK_ONLY);
     shared_vvc_cmd.data_exp               := v_normalized_data_exp;
     shared_vvc_cmd.num_words              := v_num_words;
     shared_vvc_cmd.word_length            := v_word_length;

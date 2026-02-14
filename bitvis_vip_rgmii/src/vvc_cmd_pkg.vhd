@@ -41,7 +41,7 @@ package vvc_cmd_pkg is
     data_array                   : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1);
     data_array_length            : natural;
     action_when_transfer_is_done : t_action_when_transfer_is_done;
-    -- Common VVC fields
+    -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation                    : t_operation;
     proc_call                    : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     msg                          : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -49,9 +49,9 @@ package vvc_cmd_pkg is
     cmd_idx                      : natural;
     command_type                 : t_immediate_or_queued;
     msg_id                       : t_msg_id;
-    gen_integer_array            : t_integer_array(0 to 1); -- Increase array length if needed
-    gen_boolean                  : boolean;      -- Generic boolean
-    timeout                      : time;
+    gen_integer_array            : t_integer_array(0 to 1);
+    gen_boolean                  : boolean; -- DEPRECATED: will be removed in v3
+    timeout                      : time;    -- DEPRECATED: will be removed in v3
     alert_level                  : t_alert_level;
     delay                        : time;
     quietness                    : t_quietness;
@@ -59,6 +59,7 @@ package vvc_cmd_pkg is
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
+    -- VVC dedicated fields
     data_array                   => (others => (others => '0')),
     data_array_length            => 0,
     action_when_transfer_is_done => RELEASE_LINE_AFTER_TRANSFER,
@@ -87,7 +88,7 @@ package vvc_cmd_pkg is
 
   --==========================================================================================
   -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response :
-  -- 
+  --
   -- - Used for storing the result of a BFM procedure called by the VVC,
   --   so that the result can be transported from the VVC to for example a sequencer via
   --   fetch_result() as described in uvvm_vvc_framework/Common_VVC_Methods QuickRef.
@@ -113,7 +114,7 @@ package vvc_cmd_pkg is
   shared variable shared_vvc_response : t_vvc_response;
 
   --==========================================================================================
-  -- t_last_received_cmd_idx : 
+  -- t_last_received_cmd_idx :
   -- - Used to store the last queued cmd in VVC interpreter.
   --==========================================================================================
   type t_last_received_cmd_idx is array (t_channel range <>, natural range <>) of integer;
@@ -141,6 +142,6 @@ package body vvc_cmd_pkg is
   ) return string is
   begin
     return to_string(result.data_array'length) & " Bytes";
-  end;
+  end function;
 
 end package body vvc_cmd_pkg;

@@ -124,7 +124,7 @@ the HVVC from the test harness/testbench. Additional interfaces can be added by 
 .. code-block::
 
     gen_hvvc_bridge : if GC_PHY_INTERFACE = GMII generate
-      i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(GMII)
+      i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(gmii)
         generic map(
           GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
           GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,

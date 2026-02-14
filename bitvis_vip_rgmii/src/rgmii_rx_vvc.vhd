@@ -61,11 +61,12 @@ architecture behave of rgmii_rx_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
-  signal executor_is_busy      : boolean := false;
-  signal queue_is_increasing   : boolean := false;
-  signal last_cmd_idx_executed : natural := 0;
-  signal terminate_current_cmd : t_flag_record;
-  signal clock_period          : time;
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
+  signal clock_period                       : time;
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -76,8 +77,6 @@ architecture behave of rgmii_rx_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_rgmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_rgmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
-  -- VVC Activity 
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -112,7 +111,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --==========================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -204,7 +203,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --==========================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
@@ -221,10 +220,10 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup RGMII scoreboard
-    RGMII_VVC_SB.set_scope("RGMII_VVC_SB");
-    RGMII_VVC_SB.enable(GC_INSTANCE_IDX, "RGMII VVC SB Enabled");
-    RGMII_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    RGMII_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    rgmii_vvc_sb.set_scope("RGMII_VVC_SB");
+    rgmii_vvc_sb.enable(GC_INSTANCE_IDX, "RGMII VVC SB Enabled");
+    rgmii_vvc_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    rgmii_vvc_sb.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -245,7 +244,7 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
-      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay 
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
       if v_cmd.operation = READ or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
@@ -287,7 +286,7 @@ begin
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
             for i in 0 to v_result.data_array_length - 1 loop
-              RGMII_VVC_SB.check_received(GC_INSTANCE_IDX, v_result.data_array(i));
+              rgmii_vvc_sb.check_received(GC_INSTANCE_IDX, v_result.data_array(i));
             end loop;
           else
             -- Store the result
@@ -365,7 +364,7 @@ begin
   -- Clock period
   -- - Finds the clock period
   --===============================================================================================
-  p_clock_period : process
+  p_clock_period : process is
   begin
     wait until rising_edge(rgmii_vvc_rx_if.rxc);
     clock_period <= now;
@@ -379,7 +378,7 @@ begin
   -- Unwanted activity detection
   -- - Monitors unwanted activity from the DUT
   --==========================================================================================
-  p_unwanted_activity : process
+  p_unwanted_activity : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -408,6 +407,6 @@ begin
       end if;
     end loop;
   end process p_unwanted_activity;
-  --==========================================================================================
+--==========================================================================================
 
-end behave;
+end architecture behave;

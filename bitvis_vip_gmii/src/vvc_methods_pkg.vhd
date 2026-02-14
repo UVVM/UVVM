@@ -35,7 +35,7 @@ use work.vvc_sb_pkg.all;
 package vvc_methods_pkg is
 
   --==========================================================================================
-  -- Types and constants for the GMII VVC 
+  -- Types and constants for the GMII VVC
   --==========================================================================================
   constant C_VVC_NAME : string := "GMII_VVC";
 
@@ -96,10 +96,10 @@ package vvc_methods_pkg is
 
   shared variable shared_gmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_GMII_VVC_CONFIG_DEFAULT));
   shared variable shared_gmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable GMII_VVC_SB            : t_generic_sb;
+  shared variable gmii_vvc_sb            : t_generic_sb;
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -134,7 +134,8 @@ package vvc_methods_pkg is
     constant data_routing        : in t_data_routing;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   );
 
   procedure gmii_read(
@@ -216,8 +217,8 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := "gmii_write";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
+    constant C_PROC_NAME : string := "gmii_write";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
   begin
     gmii_write(VVCT, vvc_instance_idx, channel, data_array, msg, RELEASE_LINE_AFTER_TRANSFER, scope, parent_msg_id_panel);
   end procedure;
@@ -232,14 +233,14 @@ package body vvc_methods_pkg is
     constant scope                        : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name      : string         := "gmii_write";
-    constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
+    constant C_PROC_NAME    : string         := "gmii_write";
+    constant C_PROC_CALL    : string         := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, WRITE);
     shared_vvc_cmd.data_array(0 to data_array'length - 1) := data_array;
     shared_vvc_cmd.data_array_length                      := data_array'length;
     shared_vvc_cmd.action_when_transfer_is_done           := action_when_transfer_is_done;
@@ -258,16 +259,19 @@ package body vvc_methods_pkg is
     constant data_routing        : in t_data_routing;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant ext_proc_call       : in string         := ""
   ) is
-    constant proc_name      : string         := "gmii_read";
-    constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant C_PROC_NAME       : string := "gmii_read";
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel)-- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
+    variable v_msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_LOCAL_PROC_CALL, msg, QUEUED, READ);
     shared_vvc_cmd.num_bytes_read      := num_bytes;
     shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
@@ -286,8 +290,10 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := "gmii_read";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
   begin
-    gmii_read(VVCT, vvc_instance_idx, channel, num_bytes, NA, msg, scope, parent_msg_id_panel);
+    gmii_read(VVCT, vvc_instance_idx, channel, num_bytes, NA, msg, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   procedure gmii_read(
@@ -311,8 +317,10 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    constant C_PROC_NAME : string := "gmii_read";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
   begin
-    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, NA, msg, scope, parent_msg_id_panel);
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, NA, msg, scope, parent_msg_id_panel, C_PROC_CALL);
   end procedure;
 
   procedure gmii_expect(
@@ -325,14 +333,14 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name      : string         := "gmii_expect";
-    constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_exp'length) & " bytes)";
+    constant C_PROC_NAME    : string         := "gmii_expect";
+    constant C_PROC_CALL    : string         := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_exp'length) & " bytes)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, C_PROC_CALL, msg, QUEUED, EXPECT);
     shared_vvc_cmd.data_array(0 to data_exp'length - 1) := data_exp;
     shared_vvc_cmd.data_array_length                    := data_exp'length;
     shared_vvc_cmd.alert_level                          := alert_level;

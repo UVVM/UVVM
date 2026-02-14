@@ -49,14 +49,14 @@ package body uart_pkg is
     vector  : std_logic_vector;
     pattern : std_logic)
   return integer is
-    variable hitcount : natural := 0;
+    variable v_hitcount : natural := 0;
   begin
     for i in 0 to vector'length - 1 loop
       if (vector(i) = pattern) then
-        hitcount := hitcount + 1;
+        v_hitcount := v_hitcount + 1;
       end if;
     end loop;
-    return hitcount;
+    return v_hitcount;
   end function;
 
   function find_most_repeated_bit(
@@ -84,26 +84,26 @@ package body uart_pkg is
 
   function f_log2(x : positive)
   return natural is
-    variable i : natural;
+    variable v_i : natural;
   begin
-    i := 0;
-    while (2 ** i < x) and i < 31 loop
-      i := i + 1;
+    v_i := 0;
+    while (2 ** v_i < x) and v_i < 31 loop
+      v_i := v_i + 1;
     end loop;
-    return i;
+    return v_i;
   end function;
 
   function odd_parity(
     signal data : std_logic_vector)
   return std_logic is
-    variable odd : std_logic;
+    variable v_odd : std_logic;
   begin
-    odd := '1';
+    v_odd := '1';
     for i in data'range loop
-      odd := odd xor data(i);
+      v_odd := v_odd xor data(i);
     end loop;
-    return odd;
-  end odd_parity;
+    return v_odd;
+  end function odd_parity;
 
 end package body uart_pkg;
 

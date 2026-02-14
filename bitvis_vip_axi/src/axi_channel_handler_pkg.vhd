@@ -224,7 +224,7 @@ package body axi_channel_handler_pkg is
     constant msg_id_panel   : in t_msg_id_panel   := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                       := "write_address_channel_write(" & to_string(awaddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_CALL            : string                                       := "write_address_channel_write(" & to_string(awaddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_awready        : boolean                                      := true;
     -- Normalizing unconstrained inputs
     variable v_normalized_awid      : std_logic_vector(awid'length - 1 downto 0);
@@ -283,8 +283,8 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_address_channel_write;
 
   procedure write_data_channel_write(
@@ -304,7 +304,7 @@ package body axi_channel_handler_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                      := "write_data_channel_write(" & to_string(wdata_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(wstrb_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_CALL            : string                                      := "write_data_channel_write(" & to_string(wdata_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(wstrb_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_wready         : boolean                                     := true;
     variable v_normalized_wdata     : std_logic_vector(wdata'length - 1 downto 0) := normalize_and_check(wdata_value(0), wdata, ALLOW_NARROWER, "WDATA", "wdata", msg);
     variable v_normalized_wstrb     : std_logic_vector(wstrb'length - 1 downto 0) := normalize_and_check(wstrb_value(0), wstrb, ALLOW_EXACT_ONLY, "WSTRB", "wstrb", msg);
@@ -353,9 +353,9 @@ package body axi_channel_handler_pkg is
           exit;
         end if;
       end loop;
-      check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     end loop;
-    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_data_channel_write;
 
   procedure write_response_channel_receive(
@@ -375,8 +375,8 @@ package body axi_channel_handler_pkg is
     constant config        : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant local_proc_name        : string  := "write_response_channel_receive";
-    constant local_proc_call        : string  := local_proc_name & "()";
+    constant C_LOCAL_PROC_NAME      : string  := "write_response_channel_receive";
+    constant C_LOCAL_PROC_CALL      : string  := C_LOCAL_PROC_NAME & "()";
     variable v_proc_call            : line;
     variable v_await_bvalid         : boolean := true;
     variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
@@ -385,10 +385,10 @@ package body axi_channel_handler_pkg is
     -- Setting procedure name for logging
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'axi_read...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing axi_read...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     for cycle in 0 to config.max_wait_cycles loop
@@ -462,7 +462,7 @@ package body axi_channel_handler_pkg is
     constant msg_id_panel   : in t_msg_id_panel   := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call              : string                                       := "read_address_channel_write(" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_CALL            : string                                       := "read_address_channel_write(" & to_string(araddr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_await_arready        : boolean                                      := true;
     -- Normalizing unconstrained inputs
     variable v_normalized_arid      : std_logic_vector(arid'length - 1 downto 0);
@@ -521,8 +521,8 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
+    check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure read_address_channel_write;
 
   procedure read_data_channel_receive(
@@ -542,8 +542,8 @@ package body axi_channel_handler_pkg is
     constant config          : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call   : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant local_proc_name        : string  := "read_data_channel_receive"; -- Local proc_name; used if called from sequncer or VVC
-    constant local_proc_call        : string  := local_proc_name & "()"; -- Local proc_call; used if called from sequncer or VVC
+    constant C_LOCAL_PROC_NAME      : string  := "read_data_channel_receive"; -- Local proc_name; used if called from sequncer or VVC
+    constant C_LOCAL_PROC_CALL      : string  := C_LOCAL_PROC_NAME & "()"; -- Local proc_call; used if called from sequncer or VVC
     variable v_proc_call            : line;
     variable v_await_rvalid         : boolean := true;
     variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
@@ -554,10 +554,10 @@ package body axi_channel_handler_pkg is
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'axi_read...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing axi_read...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     loop

@@ -417,6 +417,7 @@ t_inter_bfm_delay
 | inter_bfm_delay_violation_severity | :ref:`t_alert_level`    |
 +------------------------------------+-------------------------+
 
+    RELEASE_LINE_BETWEEN_WORDS, HOLD_LINE_BETWEEN_WORDS
 
 .. _t_bfm_sync:
 
@@ -439,6 +440,21 @@ t_data_routing
 .. _t_transaction_status:
 
 t_transaction_status
+----------------------------------------------------------------------------------------------------------------------------------
++------------------------------------+-------------------------+
+| Record element                     | Type                    |
++====================================+=========================+
+| delay_type                         | :ref:`t_bfm_delay_type` |
++------------------------------------+-------------------------+
+| delay_in_time                      | time                    |
++------------------------------------+-------------------------+
+| inter_bfm_delay_violation_severity | :ref:`t_alert_level`    |
++------------------------------------+-------------------------+
+
+
+.. _t_bfm_sync:
+
+t_bfm_sync
 ----------------------------------------------------------------------------------------------------------------------------------
 .. code-block::
 
@@ -483,3 +499,24 @@ t_normalization_mode
 .. note::
 
     This type is defined in bfm_common_pkg.vhd
+
+
+.. _t_relational_operator:
+
+t_relational_operator
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+    LT, GT, EQ, LE, GE, NE
+
+LT=Less than, GT=Greater than, EQ=Equal, LE=Less than or equal, GE=Greater than or equal, NE=Not equal
+
+
+.. _t_arithmetic_operator:
+
+t_arithmetic_operator
+----------------------------------------------------------------------------------------------------------------------------------
+.. code-block::
+
+ADD, SUB, MULT, DIV
+

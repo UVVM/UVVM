@@ -344,21 +344,21 @@ package body td_vvc_entity_support_pkg is
     instance_idx : integer;
     channel      : t_channel
   ) return t_vvc_labels is
-    variable vvc_labels : t_vvc_labels;
+    variable v_vvc_labels : t_vvc_labels;
   begin
-    vvc_labels.scope        := pad_string(scope, NUL, vvc_labels.scope'length);
-    vvc_labels.vvc_name     := pad_string(vvc_name, NUL, vvc_labels.vvc_name'length);
-    vvc_labels.instance_idx := instance_idx;
-    vvc_labels.channel      := channel;
-    return vvc_labels;
-  end;
+    v_vvc_labels.scope        := pad_string(scope, NUL, v_vvc_labels.scope'length);
+    v_vvc_labels.vvc_name     := pad_string(vvc_name, NUL, v_vvc_labels.vvc_name'length);
+    v_vvc_labels.instance_idx := instance_idx;
+    v_vvc_labels.channel      := channel;
+    return v_vvc_labels;
+  end function;
 
   impure function format_msg(
     command : t_vvc_cmd_record
   ) return string is
   begin
     return add_msg_delimiter(to_string(command.msg)) & " " & format_command_idx(command);
-  end;
+  end function;
 
   procedure vvc_constructor(
     constant scope                                 : in string;
@@ -658,7 +658,7 @@ package body td_vvc_entity_support_pkg is
         -- await a SPECIFIC command in this VVC
         return (last_cmd_idx_executed >= wanted_idx);
       end if;
-    end;
+    end function;
 
   begin
 
@@ -746,7 +746,7 @@ package body td_vvc_entity_support_pkg is
     log(ID_IMMEDIATE_CMD, "Flushing command queue" & format_command_idx(shared_vvc_cmd), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
     command_queue.flush(VOID);
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
-  end;
+  end procedure;
 
   procedure interpreter_terminate_current_command(
     constant command               : in t_vvc_cmd_record;
@@ -992,7 +992,7 @@ package body td_vvc_entity_support_pkg is
       when FLUSH_COMMAND_QUEUE       => return IMMEDIATE;
       when TERMINATE_CURRENT_COMMAND => return IMMEDIATE;
       when INSERT_DELAY              => return QUEUED;
-      when others                    => return NO_command_type;
+      when others                    => return NO_COMMAND_TYPE;
     end case;
   end function;
 
@@ -1050,11 +1050,11 @@ package body td_vvc_entity_support_pkg is
     if v_activity = INACTIVE and not (command_queue_is_empty) then
       v_activity := ACTIVE;
     end if;
-    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx                => entry_num_in_vvc_activity_register,
-                                                          executor_id            => executor_id,
-                                                          activity               => v_activity,
-                                                          last_cmd_idx_executed  => last_cmd_idx_executed,
-                                                          cmd_completed          => activity = INACTIVE);
+    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
+                                                          executor_id           => executor_id,
+                                                          activity              => v_activity,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed,
+                                                          cmd_completed         => activity = INACTIVE);
     if global_trigger_vvc_activity_register /= 'L' then
       wait until global_trigger_vvc_activity_register = 'L';
     end if;

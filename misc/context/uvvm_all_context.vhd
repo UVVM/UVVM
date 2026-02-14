@@ -53,4 +53,6 @@ context uvvm_all_context is
   context bitvis_vip_uart.vvc_context;
   library bitvis_vip_wishbone;
   context bitvis_vip_wishbone.vvc_context;
+  library external_vip_apb;
+  context external_vip_apb.vvc_context;
 end context;

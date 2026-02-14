@@ -41,7 +41,7 @@ package vvc_cmd_pkg is
     addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     max_receptions      : integer;
-    -- Common VVC fields
+    -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation           : t_operation;
     proc_call           : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     msg                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -49,9 +49,9 @@ package vvc_cmd_pkg is
     cmd_idx             : natural;
     command_type        : t_immediate_or_queued;
     msg_id              : t_msg_id;
-    gen_integer_array   : t_integer_array(0 to 1); -- Increase array length if needed
-    gen_boolean         : boolean;      -- Generic boolean
-    timeout             : time;
+    gen_integer_array   : t_integer_array(0 to 1);
+    gen_boolean         : boolean; -- DEPRECATED: will be removed in v3
+    timeout             : time;    -- DEPRECATED: will be removed in v3
     alert_level         : t_alert_level;
     delay               : time;
     quietness           : t_quietness;
@@ -59,6 +59,7 @@ package vvc_cmd_pkg is
   end record t_vvc_cmd_record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
+    -- VVC dedicated fields
     addr                => (others => '0'),
     data                => (others => '0'),
     max_receptions      => 1,
@@ -73,7 +74,7 @@ package vvc_cmd_pkg is
     gen_integer_array   => (others => -1),
     gen_boolean         => false,
     timeout             => 0 ns,
-    alert_level         => FAILURE,
+    alert_level         => failure,
     delay               => 0 ns,
     quietness           => NON_QUIET,
     parent_msg_id_panel => C_UNUSED_MSG_ID_PANEL

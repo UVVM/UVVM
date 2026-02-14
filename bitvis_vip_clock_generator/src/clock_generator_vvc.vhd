@@ -63,9 +63,8 @@ architecture behave of clock_generator_vvc is
   signal queue_is_increasing                : boolean := false;
   signal last_cmd_idx_executed              : natural := 0;
   signal terminate_current_cmd              : t_flag_record;
-  signal clock_ena                          : boolean := false;
-  -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
+  signal clock_ena                          : boolean := false;
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -95,7 +94,7 @@ begin
   -- Config initializer
   -- - Set up the VVC specific config fields
   --========================================================================================================================
-  config_initializer : process
+  p_config_initializer : process is
   begin
     loop
       wait for 0 ns;
@@ -113,7 +112,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --========================================================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -188,7 +187,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --========================================================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID  : natural := 0;
     variable v_cmd          : t_vvc_cmd_record;
     variable v_msg_id_panel : t_msg_id_panel;
@@ -298,7 +297,7 @@ begin
   -- Clock Generator process
   -- - Process that generates the clock signal
   --========================================================================================================================
-  clock_generator : process
+  p_clock_generator : process is
     variable v_clock_period    : time;
     variable v_clock_high_time : time;
     variable v_clock_low_time  : time;
@@ -328,7 +327,7 @@ begin
       wait for v_clock_low_time;
     end loop;
   end process;
-  --========================================================================================================================
+--========================================================================================================================
 
 end architecture behave;
 

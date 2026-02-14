@@ -1270,7 +1270,7 @@ begin
     check_all_vvc_inactive(VOID);
 
     log(ID_LOG_HDR, "Check that pending data in SB will result in WARNING", C_SCOPE_K1);
-    UART_VVC_SB.add_expected(5, x"55");
+    uart_vvc_sb.add_expected(5, x"55");
     increment_expected_alerts(WARNING, 1, scope => C_SCOPE_K1);
     await_uvvm_completion(1 ns, WARNING, 1 us, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1); -- Should throw an alert since the RX-SB has pending data
     sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");

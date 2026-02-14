@@ -36,7 +36,7 @@ use work.vvc_sb_pkg.all;
 package vvc_methods_pkg is
 
   --===============================================================================================
-  -- Types and constants for the AXI VVC 
+  -- Types and constants for the AXI VVC
   --===============================================================================================
   constant C_VVC_NAME : string := "AXI_VVC";
 
@@ -56,7 +56,7 @@ package vvc_methods_pkg is
     cmd_queue_count_max                   : natural; -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural; -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level; -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural; -- Maximum number of unfetched results before result_queue is full. 
+    result_queue_count_max                : natural; -- Maximum number of unfetched results before result_queue is full.
     result_queue_count_threshold_severity : t_alert_level; -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
     result_queue_count_threshold          : natural; -- Severity of alert to be initiated if exceeding result_queue_count_threshold
     bfm_config                            : t_axi_bfm_config; -- Configuration for AXI4 BFM. See quick reference for AXI4 BFM
@@ -108,10 +108,10 @@ package vvc_methods_pkg is
 
   shared variable shared_axi_vvc_config : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_AXI_VVC_CONFIG_DEFAULT);
   shared variable shared_axi_vvc_status : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable AXI_VVC_SB            : t_generic_sb;
+  shared variable axi_vvc_sb            : t_generic_sb;
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -298,9 +298,9 @@ package body vvc_methods_pkg is
     constant scope               : in string                       := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel               := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(awaddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(awaddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_awid      : std_logic_vector(shared_vvc_cmd.id'length - 1 downto 0);
     variable v_normalised_awaddr    : unsigned(shared_vvc_cmd.addr'length - 1 downto 0);
     variable v_normalised_awuser    : std_logic_vector(shared_vvc_cmd.auser'length - 1 downto 0);
@@ -341,7 +341,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, WRITE);
     shared_vvc_cmd.id                  := v_normalised_awid;
     shared_vvc_cmd.addr                := v_normalised_awaddr;
     shared_vvc_cmd.len                 := awlen;
@@ -384,9 +384,9 @@ package body vvc_methods_pkg is
     constant scope               : in string                       := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel               := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(araddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME         : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL         : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                             & ", " & to_string(araddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_upper(to_string(data_routing)) & ")";
     variable v_normalised_arid   : std_logic_vector(shared_vvc_cmd.id'length - 1 downto 0);
     variable v_normalised_araddr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0);
     variable v_normalised_aruser : std_logic_vector(shared_vvc_cmd.user'length - 1 downto 0);
@@ -407,7 +407,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, READ);
     shared_vvc_cmd.id                  := v_normalised_arid;
     shared_vvc_cmd.addr                := v_normalised_araddr;
     shared_vvc_cmd.len                 := arlen;
@@ -449,9 +449,9 @@ package body vvc_methods_pkg is
     constant scope               : in string                       := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel               := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(araddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(araddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_arid   : std_logic_vector(shared_vvc_cmd.id'length - 1 downto 0);
     variable v_normalised_araddr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0);
     variable v_normalised_aruser : std_logic_vector(shared_vvc_cmd.auser'length - 1 downto 0);
@@ -492,7 +492,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, CHECK);
     shared_vvc_cmd.id                  := v_normalised_arid;
     shared_vvc_cmd.addr                := v_normalised_araddr;
     shared_vvc_cmd.len                 := arlen;

@@ -16,9 +16,9 @@
 -- Description   : See dedicated powerpoint presentation and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use work.irqc_pif_pkg.all;
 
 entity irqc_pif is
@@ -36,7 +36,7 @@ entity irqc_pif is
     p2c  : out t_p2c;
     c2p  : in  t_c2p
   );
-end irqc_pif;
+end entity irqc_pif;
 
 architecture rtl of irqc_pif is
   signal p2c_i  : t_p2c;                -- internal version of output
@@ -47,7 +47,7 @@ begin
   -- Assigning internally used signals to outputs
   p2c <= p2c_i;
 
-  p_read_reg : process(all)
+  p_read_reg : process(all) is
   begin
     -- default values
     dout_i <= (others => '0');
@@ -71,7 +71,7 @@ begin
   dout <= dout_i;
 
   -- Writing to registers that are not functionally manipulated
-  p_write_reg : process(clk, arst)
+  p_write_reg : process(clk, arst) is
   begin
     if arst = '1' then
       p2c_i.rw_ier <= (others => '0');
@@ -90,7 +90,7 @@ begin
   end process p_write_reg;
 
   -- Writing to registers that are functionally manipulated and/or located outside PIF (or dummy registers)
-  p_aux : process(all)
+  p_aux : process(all) is
   begin
     -- Note that arst is not considered here, but must be considered in any clocked process in the core
     -- Default - always to return to these values
@@ -115,4 +115,4 @@ begin
     end if;
   end process p_aux;
 
-end rtl;
+end architecture rtl;

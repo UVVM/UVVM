@@ -612,43 +612,43 @@ package body axistream_bfm_pkg is
     dest_width : natural;
     config     : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
   ) return t_axistream_if is
-    variable init_if : t_axistream_if(tdata(data_width - 1 downto 0),
-                                      tkeep(data_width / 8 - 1 downto 0),
-                                      tuser(user_width - 1 downto 0),
-                                      tstrb(data_width / 8 - 1 downto 0),
-                                      tid(id_width - 1 downto 0),
-                                      tdest(dest_width - 1 downto 0)
-                                     );
+    variable v_init_if : t_axistream_if(tdata(data_width - 1 downto 0),
+                                        tkeep(data_width / 8 - 1 downto 0),
+                                        tuser(user_width - 1 downto 0),
+                                        tstrb(data_width / 8 - 1 downto 0),
+                                        tid(id_width - 1 downto 0),
+                                        tdest(dest_width - 1 downto 0)
+                                       );
   begin
 
     if is_master then
       -- from slave to master
-      init_if.tready := 'Z';
+      v_init_if.tready := 'Z';
 
       -- from master to slave
-      init_if.tvalid := '0';
-      init_if.tdata  := (init_if.tdata'range => '0');
-      init_if.tkeep  := (init_if.tkeep'range => '0');
-      init_if.tuser  := (init_if.tuser'range => '0');
-      init_if.tstrb  := (init_if.tstrb'range => '0');
-      init_if.tid    := (init_if.tid'range => '0');
-      init_if.tdest  := (init_if.tdest'range => '0');
-      init_if.tlast  := '0';
+      v_init_if.tvalid := '0';
+      v_init_if.tdata  := (v_init_if.tdata'range => '0');
+      v_init_if.tkeep  := (v_init_if.tkeep'range => '0');
+      v_init_if.tuser  := (v_init_if.tuser'range => '0');
+      v_init_if.tstrb  := (v_init_if.tstrb'range => '0');
+      v_init_if.tid    := (v_init_if.tid'range => '0');
+      v_init_if.tdest  := (v_init_if.tdest'range => '0');
+      v_init_if.tlast  := '0';
     else
       -- from slave to master
-      init_if.tready := config.ready_default_value;
-      --init_if.tready := '0';
+      v_init_if.tready := config.ready_default_value;
+      --v_init_if.tready := '0';
       -- from master to slave
-      init_if.tvalid := 'Z';
-      init_if.tdata  := (init_if.tdata'range => 'Z');
-      init_if.tkeep  := (init_if.tkeep'range => 'Z');
-      init_if.tuser  := (init_if.tuser'range => 'Z');
-      init_if.tstrb  := (init_if.tstrb'range => 'Z');
-      init_if.tid    := (init_if.tid'range => 'Z');
-      init_if.tdest  := (init_if.tdest'range => 'Z');
-      init_if.tlast  := 'Z';
+      v_init_if.tvalid := 'Z';
+      v_init_if.tdata  := (v_init_if.tdata'range => 'Z');
+      v_init_if.tkeep  := (v_init_if.tkeep'range => 'Z');
+      v_init_if.tuser  := (v_init_if.tuser'range => 'Z');
+      v_init_if.tstrb  := (v_init_if.tstrb'range => 'Z');
+      v_init_if.tid    := (v_init_if.tid'range => 'Z');
+      v_init_if.tdest  := (v_init_if.tdest'range => 'Z');
+      v_init_if.tlast  := 'Z';
     end if;
-    return init_if;
+    return v_init_if;
   end function;
 
   --------------------------------------------------------
@@ -966,7 +966,7 @@ package body axistream_bfm_pkg is
       config              => config);
   end procedure axistream_transmit_bytes;
 
-    -----------------------
+  -----------------------
   -- t_slv_array overload
   -----------------------
   procedure axistream_transmit(
@@ -1014,7 +1014,7 @@ package body axistream_bfm_pkg is
       config              => config);
   end procedure axistream_transmit;
 
-    -----------------------
+  -----------------------
   -- std_logic_vector overload
   -----------------------
   procedure axistream_transmit(
@@ -1092,7 +1092,7 @@ package body axistream_bfm_pkg is
       config       => config);
   end procedure axistream_transmit_bytes;
 
-    -----------------------
+  -----------------------
   -- t_slv_array overload
   -----------------------
   procedure axistream_transmit(
@@ -1468,7 +1468,7 @@ package body axistream_bfm_pkg is
                 v_done     := true;
                 -- Check that tkeep for the remaining bytes in the last word are also '0'. (Only continous stream supported)
                 v_byte_idx := v_byte_in_word + 1;
-                l_check_remaining_TKEEP : loop
+                l_check_remaining_tkeep : loop
                   check_value(axistream_if.tkeep(v_byte_idx), '0', ERROR, "Check that tkeep doesn't go from '1' to '0' to '1' again within this last word. (The BFM supports only continuous stream)", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
                   if v_byte_idx < (axistream_if.tkeep'length - 1) then
                     v_byte_idx := v_byte_idx + 1;
@@ -1540,7 +1540,7 @@ package body axistream_bfm_pkg is
       if ext_proc_call = "" then
         log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(integer(ceil((real(v_byte_cnt) / real(C_DATA_ARRAY_BYTES_PER_WORD))))) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])." & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-        -- Log will be handled by calling procedure (e.g. axistream_expect)
+      -- Log will be handled by calling procedure (e.g. axistream_expect)
       end if;
     end if;
 
@@ -1861,53 +1861,53 @@ package body axistream_bfm_pkg is
         write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_data_array, v_alert_radix, KEEP_LEADING_0) & LF & "Expected:" & LF & to_string(exp_data_array, v_alert_radix, KEEP_LEADING_0) & LF));
       end if;
     end if;
-    
+
     if v_user_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_user_array(v_first_errored_word), exp_user_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      write(v_all_alerts_line,(LF & C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), 
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0),
         v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg)));
       if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tuser array to alert line when error report extent is set to EXTENDED
         write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_user_slv_array, v_alert_radix, KEEP_LEADING_0) & LF & "Expected:" & LF & to_string(v_exp_user_slv_array, v_alert_radix, KEEP_LEADING_0) & LF));
       end if;
     end if;
-    
+
     if v_strb_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_strb_array(v_first_errored_word), exp_strb_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_strb_slv_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), 
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_strb_slv_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0),
         v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg)));
       if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tstrb array to alert line when error report extent is set to EXTENDED
         write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_strb_slv_array, v_alert_radix, KEEP_LEADING_0) & LF & "Expected:" & LF & to_string(v_exp_strb_slv_array, v_alert_radix, KEEP_LEADING_0) & LF));
       end if;
     end if;
-    
+
     if v_id_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_id_array(v_first_errored_word), exp_id_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), 
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0),
         v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg)));
       if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tid array to alert line when error report extent is set to EXTENDED
         write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_id_slv_array, v_alert_radix, KEEP_LEADING_0) & LF & "Expected:" & LF & to_string(v_exp_id_slv_array, v_alert_radix, KEEP_LEADING_0) & LF));
       end if;
     end if;
-    
+
     if v_dest_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_dest_array(v_first_errored_word), exp_dest_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), 
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0),
         v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg)));
       if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tdest array to alert line when error report extent is set to EXTENDED
         write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_dest_slv_array, v_alert_radix, KEEP_LEADING_0) & LF & "Expected:" & LF & to_string(v_exp_dest_slv_array, v_alert_radix, KEEP_LEADING_0) & LF));
       end if;
     end if;
-    
+
     -- No more than one alert per packet
     if (v_data_error_cnt = 0) and (v_user_error_cnt = 0) and (v_strb_error_cnt = 0) and (v_id_error_cnt = 0) and (v_dest_error_cnt = 0) then -- Log OK when no errors present
       log(ID_PACKET_COMPLETE, C_PROC_CALL & "=> OK, received " & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
       if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append summary of amount of wrong bits to alert line when error report extent is EXTENDED
-        write(v_all_alerts_line, (LF & "Summary of errors in expected transaction. Failed in: " & LF & to_string(v_data_error_cnt) & " data bits." & LF & to_string(v_user_error_cnt) & " tuser bits." & LF & to_string(v_strb_error_cnt) & " tstrb bits." & LF & 
+        write(v_all_alerts_line, (LF & "Summary of errors in expected transaction. Failed in: " & LF & to_string(v_data_error_cnt) & " data bits." & LF & to_string(v_user_error_cnt) & " tuser bits." & LF & to_string(v_strb_error_cnt) & " tstrb bits." & LF &
           to_string(v_id_error_cnt) & " tid bits." & LF & to_string(v_dest_error_cnt) & " tdest bits." & LF));
       end if;
       alert(alert_level, v_all_alerts_line.all, scope);
@@ -2162,7 +2162,7 @@ package body axistream_bfm_pkg is
                            config);
   end procedure;
 
-    -----------------------
+  -----------------------
   -- t_slv_array overload
   -----------------------
   procedure axistream_expect(

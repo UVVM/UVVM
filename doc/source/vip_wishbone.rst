@@ -708,19 +708,19 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. wishbone_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when 
-the TO_SB parameter is applied. The Wishbone scoreboard is accessible from the testbench as a shared variable ``WISHBONE_VVC_SB``, 
+the TO_SB parameter is applied. The Wishbone scoreboard is accessible from the testbench as a shared variable ``wishbone_vvc_sb``, 
 located in the vvc_methods_pkg.vhd, e.g. ::
 
-    WISHBONE_VVC_SB.add_expected(C_WISHBONE_VVC_IDX, pad_wishbone_sb(v_expected), "Adding expected");
+    wishbone_vvc_sb.add_expected(C_WISHBONE_VVC_IDX, pad_wishbone_sb(v_expected), "Adding expected");
 
 The Wishbone scoreboard is per default a 1024 bits wide standard logic vector. When sending expected data to the scoreboard, where 
 the data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_wishbone_sb() 
 function, e.g. ::
 
-    WISHBONE_VVC_SB.add_expected(<Wishbone VVC instance number>, pad_wishbone_sb(<exp data>));
+    wishbone_vvc_sb.add_expected(<Wishbone VVC instance number>, pad_wishbone_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Wishbone VVC scoreboard using the ``WISHBONE_VVC_SB``.
+Scoreboard commands are available for the Wishbone VVC scoreboard using the ``wishbone_vvc_sb``.
 
 
 Unwanted Activity Detection

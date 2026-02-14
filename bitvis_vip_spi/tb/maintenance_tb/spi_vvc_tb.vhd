@@ -1366,18 +1366,18 @@ begin
 
       increment_expected_alerts(TB_WARNING, 1); -- Because of time stamp truncate warning
       tx_word := random(GC_DATA_WIDTH);
-      SPI_VVC_SB.add_expected(C_VVC_IDX_SLAVE_1, pad_spi_sb(tx_word));
+      spi_vvc_sb.add_expected(C_VVC_IDX_SLAVE_1, pad_spi_sb(tx_word));
       spi_slave_receive_only(SPI_VVCT, C_VVC_IDX_SLAVE_1, TO_SB, "SPI Slave receive data and send to SB");
       spi_master_transmit_only(SPI_VVCT, C_VVC_IDX_MASTER_1, tx_word, "SPI Master transmit");
       await_slave_rx_completion(50 ms);
 
       tx_word := random(GC_DATA_WIDTH);
-      SPI_VVC_SB.add_expected(C_VVC_IDX_MASTER_1, pad_spi_sb(tx_word));
+      spi_vvc_sb.add_expected(C_VVC_IDX_MASTER_1, pad_spi_sb(tx_word));
       spi_master_receive_only(SPI_VVCT, C_VVC_IDX_MASTER_1, TO_SB, "SPI Master receive data and send to SB");
       spi_slave_transmit_only(SPI_VVCT, C_VVC_IDX_SLAVE_1, tx_word, "SPI Slave transmit");
       await_master_rx_completion(50 ms);
 
-      SPI_VVC_SB.report_counters(ALL_INSTANCES);
+      spi_vvc_sb.report_counters(ALL_INSTANCES);
 
     elsif GC_TESTCASE = "test_unwanted_activity" then
       ----------------------------------------------------------------------------------------------------------------------------

@@ -2031,3 +2031,367 @@ probability distribution click :ref:`here <rand_pkg_distributions>`. ::
     -- Example 2:
     my_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
     rand_slv := my_rand.randm(rand_slv'length);
+
+
+.. _questa_rand_methods:
+
+Additional methods for Questa One
+==================================================================================================================================
+
+Questa One v. 2026.1 and newer includes support for some additional constraint methods for use with with the Multi-method approach.
+See :ref:`questa_enabling` for information about how to enable this functionality.
+
+
+excl_range()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing a range of values to be excluded from the randomized
+values. ::
+
+    excl_range(min, max, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min                | in     | integer                      | The minimum value in the range to exclude when generating the |
+|          |                    |        |                              | random number.                                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max                | in     | integer                      | The maximum value in the range to exclude when generating the |
+|          |                    |        |                              | random number.                                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.excl_range(10, 20);
+
+
+vector_sum_min()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing that the sum of all the integers in a randomized
+integer vector shall be greater than or equal to the given value. ::
+
+    vector_sum_min(min, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | min                | in     | integer                  | The minimum value for the sum of all the values in the        |
+|          |                    |        |                          | random integer vector.                                        |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.vector_sum_min(10);
+
+
+vector_sum_max()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing that the sum of all the integers in a randomized
+integer vector shall be less than or equal to the given value. ::
+
+    vector_sum_min(max, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | max                | in     | integer                  | The maximum value for the sum of all the values in the        |
+|          |                    |        |                          | random integer vector.                                        |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.vector_sum_max(1000);
+
+
+excl_range_real()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing a range of values to be excluded from the ranodmized values. ::
+
+    excl_range_real(min, max, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | min                | in     | real                     | The minimum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | max                | in     | real                     | The maximum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_real(0.0, 10.0);
+    my_rand.excl_range_real(1.0, 5.5);
+
+
+excl_range_time()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Adds a constraint specyfing a range of values to be excluded from the ranodmized values. ::
+
+    excl_range_time(min, max, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | min                | in     | time                     | The minimum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | max                | in     | time                     | The maximum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_time(0 ns, 100 ns);
+    my_rand.excl_range_time(5 ns, 10 ns);
+
+
+get_value()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Returns internal linked randomized value from an linked coverpoint. Must be
+called on secondary coverpoint after first calling link() and randm() on the primary coverpoint. ::
+
+    integer          := get_value(VOID)
+    real             := get_value(VOID)
+    time             := get_value(VOID)
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | VOID               | in     | t_void                   | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | length             | in     | positive                 | The length of the value to be returned                        |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+    :emphasize-lines: 7
+
+    -- Example 1:
+    my_rand1.add_range(0, 100);
+    my_rand2.add_range(0, 50);
+    handle_my_rand_2 := my_rand2.create_rand(VOID);
+    my_rand1.link(GT, handle_my_rand_2);   -- Define relationship rand1 > rand2
+    rand1_int := my_rand1.randm(VOID);     -- Randomize rand1 and rand2. Return rand1 value
+    rand2_int := my_rand2.get_value(VOID); -- Get rand2 value created by randm() call in previous step
+
+
+create_rand()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Creates internal randomisation object inside the t_rand object. This internal randomisation object is used for generation of linked
+randomised variables. The procedure call returns a handle to this ``t_rand`` object. This handle is used when calling the ``link()``
+procedure on another ``t_rand`` object to link it to this one. When ``randm()`` is called on the other t_rand object, a linked
+randomised value will be generated inside this ``t_rand`` object, which can be retrieved using the ``get_value()`` method. ::
+
+    integer := create_rand(VOID)
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | VOID               | in     | t_void                   | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+    :emphasize-lines: 2
+
+    -- Example 1:
+    handle_my_rand_2 := my_rand2.create_rand(VOID);
+    my_rand1.link(LT, handle_my_rand_2);   -- Define relationship rand1 < rand2
+    rand1_int := my_rand1.randm(VOID);     -- Randomize rand1 and rand2. Return rand1 value
+    rand2_int := my_rand2.get_value(VOID); -- Get rand2 value created by randm() call in previous step
+
+
+link()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Defines a relational link between the current (primary) coverpoint and another
+(secondary) coverpoint. Can either be a relational link to one other randomized value, or an arithmetic link to one other randomized
+value and a relational link to a third randomized or fixed value (e.g. "(A + B) > C" or "(A + B) > 10") ::
+
+    link(op, var2)
+    link(arith_op, var2, op, val_or_var_id_3, is_var_id_3)
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                               |
++==========+====================+========+==============================+===========================================================+
+| constant | op                 | in     | :ref:`t_relational_operator` | Defines relationship between linked values                |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | var2               | in     | integer                      | Handle to t_rand object of linked value. (Handle is       |
+|          |                    |        |                              | created using create_rand() procedure)                    |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | arith_op           | in     | :ref:`t_arithmetic_operator` | Arithmetic operation between two values that are          |
+|          |                    |        |                              | relationally linked to a third value *(e.g. (a + b) > c)* |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | val_or_var_id_3    | in     | integer                      | Value or handle to t_rand object of linked value          |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | is_var_id_3        | in     | boolean                      | Set to true when val_or_var_id_3 is a handle to a t_rand  |
+|          |                    |        |                              | object. Set to false when val_or_var_id_3 is a fixed      |
+|          |                    |        |                              | value. Default is false.                                  |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+
+.. code-block::
+    :emphasize-lines: 3
+
+    -- Example 1:
+    handle_my_rand_2 := my_rand2.create_rand(VOID);
+    my_rand1.link(LT, handle_my_rand_2);   -- Define relationship rand1 < rand2
+    rand1_int := my_rand1.randm(VOID);     -- Randomize rand1 and rand2. Return rand1 value
+    rand2_int := my_rand2.get_value(VOID); -- Get rand2 value created by randm() call in previous step
+
+    -- Example 2:
+    my_rand1.link(ADD, handle_my_rand_2, LT, handle_my_rand_3, TRUE); -- Define (value1 + value2) < value3
+
+    -- Example 3:
+    my_rand1.link(MULT, handle_my_rand_2, EQ, 20, FALSE); -- Define (value1 * value2 = 20)
+
+
+unlink()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Removes relational link between the current coverpont and all or given linked
+coverpoints. ::
+
+    unlink(VOID)
+    unlink(var2)
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                               |
++==========+====================+========+==============================+===========================================================+
+| constant | VOID               | in     | :ref:`t_relational_operator` | Defines relationship between linked values                |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | var2               | in     | integer                      | Handle to t_rand object to unlink.                        |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand1.unlink(VOID);
+
+
+nonzero_bitwise_and()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing that a bitwise AND-operation between the
+std_logic_vector-representation of the given value and the randomized std_logic_vector shall produce a nonzero result. ::
+
+    nonzero_bitwise_and(mask)
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | mask               | in     | integer                  | Integer representation of the mask which shall produce nonzero|
+|          |                    |        |                          | result when bitwise ANDed with the random number              |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.nonzero_bitwise_and(3);
+    rand_slv := my_rand.randm(8); -- Generates an 8-bit slv which must produce a nonzero result when ANDed with "00000011"
+
+
+zero_bitwise_and()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specifying that a bitwise AND-operation between the
+std_logic_vector-representation of the given value and the randomized std_logic_vector shall give result zero. ::
+
+    zero_bitwise_and(mask)
+
++----------+--------------------+--------+---------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                      | Description                                                   |
++==========+====================+========+===========================+===============================================================+
+| constant | mask               | in     | integer                   | Integer representation of the mask which shall produce result |
+|          |                    |        |                           | zero when bitwise ANDed with the random number                |
++----------+--------------------+--------+---------------------------+---------------------------------------------------------------+
+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.zero_bitwise_and(3);
+    rand_slv := my_rand.randm(8); -- Generates an 8-bit slv with value "------00", to give result zero when ANDed with "00000011"
+
+
+force_bits_to()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specifying the value of individual bits in the randomized std_logic_vector. Constraint is applied to bits set to
+``1`` or ``0`` in the input parameter. Bits set to ``-`` are treated as "don't care" and may have either value in the randomized
+std_logic_vector. ::
+
+    force_bits_to(mask)
+
++----------+--------------------+--------+------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                   | Description                                                   |
++==========+====================+========+========================+===============================================================+
+| constant | mask               | in     | string                 | String representation of the mask indicating bit value of     |
+|          |                    |        |                        | given bits in the random number. Bits marked with "-" means   |
+|          |                    |        |                        | bit can have any value                                        |
++----------+--------------------+--------+------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.force_bits_to("1100----");
+    rand_slv := my_rand.randm(8); -- Generates an 8-bit slv with value "1100----" ("-" means any value)
+
+
+one_hot()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specifying that the randomized std_logic_vector must have only one bit set to 1.::
+
+    one_hot(VOID)
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                               |
++==========+====================+========+==============================+===========================================================+
+| constant | VOID               | in     | :ref:`t_relational_operator` | Defines relationship between linked values                |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.one_hot();
+    rand_slv := my_rand.randm("3"); -- Generates a 3-bit slv with value either "100", "010" or "001"
+

@@ -91,6 +91,7 @@ architecture behave of axi_vvc is
   signal last_write_response_channel_idx_executed   : natural := 0;
   signal last_read_data_channel_idx_executed        : natural := 0;
   signal terminate_current_cmd                      : t_flag_record;
+  signal entry_num_in_vvc_activity_register         : integer;
   signal clock_period                               : time;
 
   -- Instantiation of the element dedicated Queue
@@ -107,8 +108,6 @@ architecture behave of axi_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_axi_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_axi_vvc_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -126,16 +125,16 @@ architecture behave of axi_vvc is
   end function;
 
   procedure peek_command_and_prepare_executor(
-    variable command             : inout t_vvc_cmd_record;
-    variable cmd_queue           : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant config              : in t_vvc_config;
-    variable status              : inout t_vvc_status;
-    signal   queue_increasing    : in boolean;
-    signal   executor_busy       : inout boolean;
-    constant vvc_labels          : in t_vvc_labels;
-    constant msg_id_panel        : in t_msg_id_panel := shared_msg_id_panel; --UVVM: unused, remove in v3.0
-    constant executor_id         : in t_msg_id       := ID_CMD_EXECUTOR;
-    constant executor_wait_id    : in t_msg_id       := ID_CMD_EXECUTOR_WAIT
+    variable command          : inout t_vvc_cmd_record;
+    variable cmd_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
+    constant config           : in t_vvc_config;
+    variable status           : inout t_vvc_status;
+    signal   queue_increasing : in boolean;
+    signal   executor_busy    : inout boolean;
+    constant vvc_labels       : in t_vvc_labels;
+    constant msg_id_panel     : in t_msg_id_panel := shared_msg_id_panel; --UVVM: unused, remove in v3.0
+    constant executor_id      : in t_msg_id       := ID_CMD_EXECUTOR;
+    constant executor_wait_id : in t_msg_id       := ID_CMD_EXECUTOR_WAIT
   ) is
     variable v_msg_id_panel : t_msg_id_panel;
   begin
@@ -163,7 +162,8 @@ architecture behave of axi_vvc is
 begin
 
   -- Remove vsim-8684 warning
-  p_initial_drivers : process begin
+  p_initial_drivers : process is
+  begin
     axi_vvc_master_if.write_address_channel.awready <= 'Z';
     axi_vvc_master_if.write_data_channel.wready     <= 'Z';
     axi_vvc_master_if.write_response_channel.bvalid <= 'Z';
@@ -200,7 +200,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -297,7 +297,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural                                      := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_timestamp_start_of_current_bfm_access : time                                         := 0 ns;
@@ -317,10 +317,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup AXI scoreboard
-    AXI_VVC_SB.set_scope("AXI_VVC_SB");
-    AXI_VVC_SB.enable(GC_INSTANCE_IDX, "AXI VVC SB Enabled");
-    AXI_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    AXI_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    axi_vvc_sb.set_scope("AXI_VVC_SB");
+    axi_vvc_sb.enable(GC_INSTANCE_IDX, "AXI VVC SB Enabled");
+    axi_vvc_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    axi_vvc_sb.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -442,21 +442,21 @@ begin
         shared_vvc_activity_register.priv_add_pending_cmd_idx(entry_num_in_vvc_activity_register, v_cmd.cmd_idx);
       end if;
 
-      -- In case we only allow a single pending transaction, wait here until every channel is finished. 
+      -- In case we only allow a single pending transaction, wait here until every channel is finished.
       -- Even though this wait doesn't have a timeout, each of the executors have timeouts.
       if vvc_config.force_single_pending_transaction and v_command_is_bfm_access then
         wait until not write_address_channel_executor_is_busy and not write_data_channel_executor_is_busy and not write_response_channel_executor_is_busy and not read_address_channel_executor_is_busy and not read_data_channel_executor_is_busy;
       end if;
 
     end loop;
-  end process cmd_executor;
+  end process p_cmd_executor;
   --===============================================================================================
 
   --===============================================================================================
   -- Read address channel executor
   -- - Fetch and execute the read address channel transactions
   --===============================================================================================
-  read_address_channel_executor : process
+  p_read_address_channel_executor : process is
     constant C_EXECUTOR_ID        : natural                                    := 1;
     variable v_cmd                : t_vvc_cmd_record;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -529,14 +529,14 @@ begin
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
-  end process read_address_channel_executor;
+  end process p_read_address_channel_executor;
   --===============================================================================================
 
   --===============================================================================================
   -- Read data channel executor
   -- - Fetch and execute the read data channel transactions
   --===============================================================================================
-  read_data_channel_executor : process
+  p_read_data_channel_executor : process is
     constant C_EXECUTOR_ID          : natural      := 2;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_result               : t_vvc_result := C_EMPTY_VVC_RESULT; -- See vvc_cmd_pkg
@@ -605,7 +605,7 @@ begin
                 exit;
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
-                alert(vvc_config.bfm_config.general_severity,"Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
+                alert(vvc_config.bfm_config.general_severity, "Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
               end if;
             end loop;
           else
@@ -616,7 +616,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            AXI_VVC_SB.check_received(GC_INSTANCE_IDX, v_result);
+            axi_vvc_sb.check_received(GC_INSTANCE_IDX, v_result);
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -659,7 +659,7 @@ begin
                 exit;
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
-                alert(vvc_config.bfm_config.general_severity,"Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
+                alert(vvc_config.bfm_config.general_severity, "Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
               end if;
             end loop;
           else
@@ -705,14 +705,14 @@ begin
       reset_r_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
-  end process read_data_channel_executor;
+  end process p_read_data_channel_executor;
   --===============================================================================================
 
   --===============================================================================================
   -- write address channel executor
   -- - Fetch and execute the write address channel transactions
   --===============================================================================================
-  write_address_channel_executor : process
+  p_write_address_channel_executor : process is
     constant C_EXECUTOR_ID        : natural                                    := 3;
     variable v_cmd                : t_vvc_cmd_record;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -785,14 +785,14 @@ begin
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
-  end process write_address_channel_executor;
+  end process p_write_address_channel_executor;
   --===============================================================================================
 
   --===============================================================================================
   -- write data channel executor
   -- - Fetch and execute the write data channel transactions
   --===============================================================================================
-  write_data_channel_executor : process
+  p_write_data_channel_executor : process is
     constant C_EXECUTOR_ID        : natural      := 4;
     variable v_cmd                : t_vvc_cmd_record;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -859,14 +859,14 @@ begin
       -- Set vvc transaction info back to default values
       reset_w_vvc_transaction_info(vvc_transaction_info);
     end loop;
-  end process write_data_channel_executor;
+  end process p_write_data_channel_executor;
   --===============================================================================================
 
   --===============================================================================================
   -- write response channel executor
   -- - Fetch and execute the write response channel transactions
   --===============================================================================================
-  write_response_channel_executor : process
+  p_write_response_channel_executor : process is
     constant C_EXECUTOR_ID          : natural      := 5;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
@@ -947,7 +947,7 @@ begin
         check_value(v_buser_value, v_normalized_buser, vvc_config.bfm_config.match_strictness, vvc_config.bfm_config.general_severity, "Checking BUSER value." & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, HEX, KEEP_LEADING_0, ID_POS_ACK, v_msg_id_panel);
       end if;
       if v_bresp_value /= v_cmd.resp then
-        alert(vvc_config.bfm_config.general_severity,"Unexpected BRESP value. Was " & to_string(v_bresp_value) & ". Expected " & to_string(v_cmd.resp) ,  C_CHANNEL_SCOPE);
+        alert(vvc_config.bfm_config.general_severity, "Unexpected BRESP value. Was " & to_string(v_bresp_value) & ". Expected " & to_string(v_cmd.resp),  C_CHANNEL_SCOPE);
       end if;
 
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
@@ -959,7 +959,7 @@ begin
       reset_b_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
-  end process write_response_channel_executor;
+  end process p_write_response_channel_executor;
   --===============================================================================================
 
   --===============================================================================================
@@ -973,7 +973,7 @@ begin
   -- Clock period
   -- - Finds the clock period
   --===============================================================================================
-  p_clock_period : process
+  p_clock_period : process is
   begin
     wait until rising_edge(clk);
     clock_period <= now;
@@ -987,7 +987,7 @@ begin
   -- Unwanted activity detection
   -- - Monitors unwanted activity from the DUT
   --===============================================================================================
-  p_unwanted_activity : process
+  p_unwanted_activity : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -1032,6 +1032,6 @@ begin
       end if;
     end loop;
   end process p_unwanted_activity;
-  --===============================================================================================
+--===============================================================================================
 
 end architecture behave;

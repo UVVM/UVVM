@@ -14,9 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use work.uart_pif_pkg.all;
 
@@ -45,30 +45,30 @@ begin
   assert GC_MIN_EQUAL_SAMPLES_PER_BIT > GC_CLOCKS_PER_BIT / 2 and GC_MIN_EQUAL_SAMPLES_PER_BIT < GC_CLOCKS_PER_BIT
   report "GC_MIN_EQUAL_SAMPLES_PER_BIT must be between GC_CLOCKS_PER_BIT/2 and GC_CLOCKS_PER_BIT"
   severity FAILURE;
-end uart;
+end entity uart;
 
 architecture rtl of uart is
 
   -- PIF-core interface
-  signal p2c : t_p2c;                   --
-  signal c2p : t_c2p;                   --
+  signal p2c : t_p2c;
+  signal c2p : t_c2p;
 
 begin
 
   i_uart_pif : entity work.uart_pif
     port map(
-      arst  => arst,                    --
-      clk   => clk,                     --
+      arst  => arst,
+      clk   => clk,
       -- CPU interface
-      cs    => cs,                      --
-      addr  => addr,                    --
-      wr    => wr,                      --
-      rd    => rd,                      --
-      wdata => wdata,                   --
-      rdata => rdata,                   --
+      cs    => cs,
+      addr  => addr,
+      wr    => wr,
+      rd    => rd,
+      wdata => wdata,
+      rdata => rdata,
       --
-      p2c   => p2c,                     --
-      c2p   => c2p                      --
+      p2c   => p2c,
+      c2p   => c2p
     );
 
   i_uart_core : entity work.uart_core
@@ -79,15 +79,15 @@ begin
       GC_MIN_EQUAL_SAMPLES_PER_BIT => GC_MIN_EQUAL_SAMPLES_PER_BIT
     )
     port map(
-      clk  => clk,                      --
-      arst => arst,                     --
+      clk  => clk,
+      arst => arst,
       -- PIF-core interface
-      p2c  => p2c,                      --
-      c2p  => c2p,                      --
+      p2c  => p2c,
+      c2p  => c2p,
       -- Interrupt related signals
-      rx_a => rx_a,                     --
+      rx_a => rx_a,
       tx   => tx
     );
 
-end rtl;
+end architecture rtl;
 

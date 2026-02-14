@@ -93,21 +93,42 @@ Available VVCs and BFMs
 These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC 
 to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.
 
-* Avalon MM
-* Avalon ST - master and slave
-* AXI4
-* AXI4-Lite
-* AXI-Stream - master and slave
-* Ethernet
-* GMII - transmit and receive
-* GPIO
-* I2C - master and slave
-* RGMII - transmit and receive
-* SBI (Simple Bus Interface - A single cycle simple parallel bus interface)
-* SPI - master and slave
-* UART
-* Wishbone
-* More are coming
++-------------------+---------------------------+----------------------------------------------------------+
+| Interface         | Interface Role            | Role Selection                                           |
++===================+===========================+==========================================================+
+| APB               | master                    | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+| Avalon MM         | master                    | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+| Avalon ST         | master and slave          | via VVC generic                                          |
++-------------------+---------------------------+----------------------------------------------------------+
+| AXI4              | master                    | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+| AXI4-Lite         | master                    | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+| AXI4-Stream       | master and slave          | via VVC generic                                          |
++-------------------+---------------------------+----------------------------------------------------------+
+| Ethernet          | transmit and receive      | via separate interfaces                                  |
++-------------------+---------------------------+----------------------------------------------------------+
+| GMII              | transmit and receive      | via separate interfaces                                  |
++-------------------+---------------------------+----------------------------------------------------------+
+| GPIO              | N/A                       | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+| I2C               | master and slave          | via VVC generic and separate procedures                  |
++-------------------+---------------------------+----------------------------------------------------------+
+| RGMII             | transmit and receive      | via separate interfaces                                  |
++-------------------+---------------------------+----------------------------------------------------------+
+| SBI               | master                    | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+| SPI               | master and slave          | via VVC generic and separate procedures                  |
++-------------------+---------------------------+----------------------------------------------------------+
+| UART              | transmit and receive      | via separate interfaces                                  |
++-------------------+---------------------------+----------------------------------------------------------+
+| Wishbone          | master                    | N/A                                                      |
++-------------------+---------------------------+----------------------------------------------------------+
+
+.. note::
+   The SBI (Simple Bus Interface) is a single cycle simple parallel bus interface.
 
 .. important::
 

@@ -228,17 +228,17 @@ package body bfm_common_pkg is
     constant msg         : string;
     constant val_type    : string := "slv"
   ) return std_logic_vector is
-    constant name               : string := "normalize_and_check(" & val_type & ": " & value_name & "=" & to_string(value, HEX, KEEP_LEADING_0) & ", " & target_name & "=" & to_string(target, HEX, KEEP_LEADING_0) & ")";
+    constant C_PROC_NAME        : string := "normalize_and_check(" & val_type & ": " & value_name & "=" & to_string(value, HEX, KEEP_LEADING_0) & ", " & target_name & "=" & to_string(target, HEX, KEEP_LEADING_0) & ")";
     alias a_value               : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_target              : std_logic_vector(target'length - 1 downto 0) is target;
     variable v_normalized_value : std_logic_vector(target'length - 1 downto 0);
   begin
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     end if;
     -- If value'length > target'length, remove leading zeros from value
@@ -246,10 +246,10 @@ package body bfm_common_pkg is
       v_normalized_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
       if not matching_widths(a_value, a_target) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     -- If value'length = target'length
     elsif (a_value'length = a_target'length) then
@@ -260,12 +260,12 @@ package body bfm_common_pkg is
       v_normalized_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
     return v_normalized_value;
-  end;
+  end function;
 
   impure function normalize_and_check(
     constant value       : in unsigned;
@@ -278,7 +278,7 @@ package body bfm_common_pkg is
   ) return unsigned is
   begin
     return unsigned(normalize_and_check(std_logic_vector(value), std_logic_vector(target), mode, value_name, target_name, msg, val_type));
-  end;
+  end function;
 
   impure function normalize_and_check(
     constant value       : in signed;
@@ -289,17 +289,17 @@ package body bfm_common_pkg is
     constant msg         : string;
     constant val_type    : string := "signed"
   ) return signed is
-    constant name               : string := "normalize_and_check(" & val_type & ": " & value_name & "=" & to_string(std_logic_vector(value)) & ", " & target_name & "=" & to_string(std_logic_vector(target)) & ")";
+    constant C_PROC_NAME        : string := "normalize_and_check(" & val_type & ": " & value_name & "=" & to_string(std_logic_vector(value)) & ", " & target_name & "=" & to_string(std_logic_vector(target)) & ")";
     alias a_value               : signed(value'length - 1 downto 0) is value;
     alias a_target              : signed(target'length - 1 downto 0) is target;
     variable v_normalized_value : signed(target'length - 1 downto 0);
   begin
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalized_value;
     end if;
     -- If value'length > target'length, remove leading zeros/ones from value
@@ -307,17 +307,17 @@ package body bfm_common_pkg is
       v_normalized_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
 
       if a_value(a_value'high) = '0' then -- positive value
         if not matching_widths(a_value, a_target) then
-          tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
+          tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
         end if;
       elsif a_value(a_value'high) = '1' then -- negative value
         for i in a_value'high downto a_target'length loop
           if a_value(i) = '0' then
-            tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
+            tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
           end if;
         end loop;
       end if;
@@ -334,12 +334,12 @@ package body bfm_common_pkg is
       v_normalized_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
     return v_normalized_value;
-  end;
+  end function;
 
   impure function normalize_and_check(
     constant value       : in t_slv_array;
@@ -387,7 +387,7 @@ package body bfm_common_pkg is
       return v_slv_array_descending;
 
     end if;
-  end;
+  end function;
 
   impure function normalize_and_check(
     constant value       : in t_signed_array;
@@ -418,7 +418,7 @@ package body bfm_common_pkg is
       end loop;
     end if;
     return v_signed_array;
-  end;
+  end function;
 
   impure function normalize_and_check(
     constant value       : in t_unsigned_array;
@@ -448,7 +448,7 @@ package body bfm_common_pkg is
       end loop;
     end if;
     return v_unsigned_array;
-  end;
+  end function;
 
   -- Normalise 'value' to the width given by 'target'.
   impure function normalise(
@@ -460,7 +460,7 @@ package body bfm_common_pkg is
     constant msg         : string;
     constant val_type    : string := "slv"
   ) return std_logic_vector is
-    constant name               : string := "normalise(" & val_type & ": " & value_name & "=" & to_string(value, HEX, KEEP_LEADING_0) & ", " & target_name & "=" & to_string(target, HEX, KEEP_LEADING_0) & ")";
+    constant C_PROC_NAME        : string := "normalise(" & val_type & ": " & value_name & "=" & to_string(value, HEX, KEEP_LEADING_0) & ", " & target_name & "=" & to_string(target, HEX, KEEP_LEADING_0) & ")";
     alias a_value               : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_target              : std_logic_vector(target'length - 1 downto 0) is target;
     variable v_normalised_value : std_logic_vector(target'length - 1 downto 0);
@@ -468,10 +468,10 @@ package body bfm_common_pkg is
     deprecate(get_procedure_name_from_instance_name(value'instance_name), "Use normalize_and_check().");
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     end if;
     -- If value'length > target'length, remove leading zeros from value
@@ -479,10 +479,10 @@ package body bfm_common_pkg is
       v_normalised_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
       if not matching_widths(a_value, a_target) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     -- If value'length = target'length
     elsif (a_value'length = a_target'length) then
@@ -493,12 +493,12 @@ package body bfm_common_pkg is
       v_normalised_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
     return v_normalised_value;
-  end;
+  end function;
 
   impure function normalise(
     constant value       : in unsigned;
@@ -511,7 +511,7 @@ package body bfm_common_pkg is
   ) return unsigned is
   begin
     return unsigned(normalise(std_logic_vector(value), std_logic_vector(target), mode, value_name, target_name, msg, val_type));
-  end;
+  end function;
 
   impure function normalise(
     constant value       : in signed;
@@ -522,7 +522,7 @@ package body bfm_common_pkg is
     constant msg         : string;
     constant val_type    : string := "signed"
   ) return signed is
-    constant name               : string := "normalise(" & val_type & ": " & value_name & "=" & to_string(std_logic_vector(value)) & ", " & target_name & "=" & to_string(std_logic_vector(target)) & ")";
+    constant C_PROC_NAME        : string := "normalise(" & val_type & ": " & value_name & "=" & to_string(std_logic_vector(value)) & ", " & target_name & "=" & to_string(std_logic_vector(target)) & ")";
     alias a_value               : signed(value'length - 1 downto 0) is value;
     alias a_target              : signed(target'length - 1 downto 0) is target;
     variable v_normalised_value : signed(target'length - 1 downto 0);
@@ -530,10 +530,10 @@ package body bfm_common_pkg is
     deprecate(get_procedure_name_from_instance_name(value'instance_name), "Use normalize_and_check().");
     -- Verify that value and target are not zero-length vectors
     if value'length = 0 then
-      tb_error(name & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Value length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     elsif target'length = 0 then
-      tb_error(name & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
+      tb_error(C_PROC_NAME & " => Target length is zero!" & add_msg_delimiter(msg), C_SCOPE);
       return v_normalised_value;
     end if;
     -- If value'length > target'length, remove leading zeros/ones from value
@@ -541,17 +541,17 @@ package body bfm_common_pkg is
       v_normalised_value := a_value(a_target'length - 1 downto 0);
       -- Sanity checks
       if not (mode = ALLOW_WIDER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " without using ALLOW_WIDER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
 
       if a_value(a_value'high) = '0' then -- positive value
         if not matching_widths(a_value, a_target) then
-          tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
+          tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " and has non-zeros in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
         end if;
       elsif a_value(a_value'high) = '1' then -- negative value
         for i in a_value'high downto a_target'length loop
           if a_value(i) = '0' then
-            tb_error(name & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
+            tb_error(C_PROC_NAME & " => " & value_name & " is wider than " & target_name & " and has non-sign bits in the extended MSB." & add_msg_delimiter(msg), C_SCOPE);
           end if;
         end loop;
       end if;
@@ -568,12 +568,12 @@ package body bfm_common_pkg is
       v_normalised_value(a_value'length - 1 downto 0) := a_value;
       -- Sanity check
       if not (mode = ALLOW_NARROWER or mode = ALLOW_WIDER_NARROWER) then
-        tb_error(name & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
+        tb_error(C_PROC_NAME & " => " & value_name & " is narrower than " & target_name & " without using ALLOW_NARROWER mode." & add_msg_delimiter(msg), C_SCOPE);
       end if;
     end if;
 
     return v_normalised_value;
-  end;
+  end function;
 
   impure function normalise(
     constant value       : in t_slv_array;
@@ -597,7 +597,7 @@ package body bfm_common_pkg is
       end loop;
     end if;
     return v_slv_array;
-  end;
+  end function;
 
   impure function normalise(
     constant value       : in t_signed_array;
@@ -621,7 +621,7 @@ package body bfm_common_pkg is
       end loop;
     end if;
     return v_signed_array;
-  end;
+  end function;
 
   impure function normalise(
     constant value       : in t_unsigned_array;
@@ -645,7 +645,7 @@ package body bfm_common_pkg is
       end loop;
     end if;
     return v_unsigned_array;
-  end;
+  end function;
 
   -- Wait until wait_time after rising_edge(clk)
   procedure wait_until_given_time_after_rising_edge(
@@ -670,7 +670,7 @@ package body bfm_common_pkg is
       v_remaining_wait_time := wait_time; -- Wait until wait_time after rising_edge
     end if;
     wait for v_remaining_wait_time;
-  end;
+  end procedure;
 
   -- Wait until time_to_edge before rising_edge(clk)
   procedure wait_until_given_time_before_rising_edge(
@@ -700,7 +700,7 @@ package body bfm_common_pkg is
     v_remaining_wait_time := maximum(v_remaining_wait_time, std.env.resolution_limit);
 
     wait for v_remaining_wait_time;
-  end;
+  end procedure;
 
   procedure wait_num_rising_edge(
     signal   clk             : in std_logic;

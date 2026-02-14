@@ -29,18 +29,18 @@ use work.support_pkg.all;
 library bitvis_vip_gmii;
 context bitvis_vip_gmii.vvc_context;
 
-architecture GMII of hvvc_to_vvc_bridge is
+architecture gmii of hvvc_to_vvc_bridge is
 begin
 
-  p_executor : process
-    constant c_data_words_width             : natural   := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
+  p_executor : process is
+    constant C_DATA_WORDS_WIDTH             : natural   := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
     variable v_byte_endianness              : t_byte_endianness;
     variable v_cmd_idx                      : integer;
     variable v_gmii_received_data           : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
     variable v_dut_data_width               : positive;
     variable v_num_transfers                : integer;
     variable v_num_data_bytes               : positive;
-    variable v_data_bytes                   : t_byte_array(0 to GC_MAX_NUM_WORDS * c_data_words_width / 8 - 1);
+    variable v_data_bytes                   : t_byte_array(0 to GC_MAX_NUM_WORDS * C_DATA_WORDS_WIDTH / 8 - 1);
     variable v_channel                      : t_channel := NA;
     variable v_dut_if_field_pos_is_first    : boolean;
     variable v_dut_if_field_pos_is_last     : boolean;
@@ -102,13 +102,13 @@ begin
       get_data_width_config(GC_DUT_IF_FIELD_CONFIG, hvvc_to_bridge, v_dut_data_width);
 
       -- Calculate number of transfers
-      v_num_transfers  := (hvvc_to_bridge.num_data_words * c_data_words_width) / v_dut_data_width;
+      v_num_transfers  := (hvvc_to_bridge.num_data_words * C_DATA_WORDS_WIDTH) / v_dut_data_width;
       -- Extra transfer if data bits remainder
-      if ((hvvc_to_bridge.num_data_words * c_data_words_width) rem v_dut_data_width) /= 0 then
+      if ((hvvc_to_bridge.num_data_words * C_DATA_WORDS_WIDTH) rem v_dut_data_width) /= 0 then
         v_num_transfers := v_num_transfers + 1;
       end if;
       -- Calculate number of bytes for this operation
-      v_num_data_bytes := hvvc_to_bridge.num_data_words * c_data_words_width / 8;
+      v_num_data_bytes := hvvc_to_bridge.num_data_words * C_DATA_WORDS_WIDTH / 8;
 
       -- Execute command
       case hvvc_to_bridge.operation is
@@ -144,7 +144,7 @@ begin
           fetch_result(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_gmii_received_data, "HVVC: Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
 
           -- Convert from t_byte_array back to t_slv_array
-          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words - 1) <= convert_byte_array_to_slv_array(v_gmii_received_data.data_array(0 to v_num_data_bytes - 1), c_data_words_width / 8, v_byte_endianness);
+          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words - 1) <= convert_byte_array_to_slv_array(v_gmii_received_data.data_array(0 to v_num_data_bytes - 1), C_DATA_WORDS_WIDTH / 8, v_byte_endianness);
 
       end case;
 
@@ -163,4 +163,4 @@ begin
 
   end process;
 
-end architecture GMII;
+end architecture gmii;

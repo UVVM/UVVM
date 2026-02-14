@@ -1659,18 +1659,18 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. spi_master_receive_only(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
-when the TO_SB parameter is applied. The SPI scoreboard is accessible from the testbench as a shared variable ``SPI_VVC_SB``, located 
+when the TO_SB parameter is applied. The SPI scoreboard is accessible from the testbench as a shared variable ``spi_vvc_sb``, located 
 in the vvc_methods_pkg.vhd, e.g. ::
 
-    SPI_VVC_SB.add_expected(C_SPI_VVC_IDX, pad_spi_sb(v_expected), "Adding expected");
+    spi_vvc_sb.add_expected(C_SPI_VVC_IDX, pad_spi_sb(v_expected), "Adding expected");
 
 The SPI scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the 
 data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_spi_sb() function, e.g. ::
 
-    SPI_VVC_SB.add_expected(<SPI VVC instance number>, pad_spi_sb(<exp data>));
+    spi_vvc_sb.add_expected(<SPI VVC instance number>, pad_spi_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the SPI VVC scoreboard using the ``SPI_VVC_SB``.
+Scoreboard commands are available for the SPI VVC scoreboard using the ``spi_vvc_sb``.
 
 
 Unwanted Activity Detection

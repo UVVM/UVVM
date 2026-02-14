@@ -64,8 +64,12 @@ if {[batch_mode]} {
 if {$argc == 2} {
   quietly set source_path "$1"
   quietly set target_path "$2"
+  quietly set uvvm_root [file normalize "$source_path/.."]
 } elseif {$argc == -1} {
   # Called from other script
+  if {![info exists uvvm_root]} {
+    quietly set uvvm_root [file normalize "$source_path/.."]
+  }
 } else {
   error "Needs two arguments: source path and target path"
 }
@@ -105,12 +109,21 @@ if {$lib_name != "uvvm_util" && $lib_name != "uvvm_assertions" && $lib_name != "
   if {[file exists $target_path/uvvm_util]} {
     quietly vmap uvvm_util $target_path/uvvm_util
   } else {
-    quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
+    quietly vmap uvvm_util $uvvm_root/uvvm_util/sim/uvvm_util
   }
   if {[file exists $target_path/uvvm_vvc_framework]} {
     quietly vmap uvvm_vvc_framework $target_path/uvvm_vvc_framework
   } else {
-    quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework
+    quietly vmap uvvm_vvc_framework $uvvm_root/uvvm_vvc_framework/sim/uvvm_vvc_framework
+  }
+}
+# uvvm_assertions only requires uvvm_util and therefore we dont compile uvvm_vvc_framework
+if {$lib_name == "uvvm_assertions"} {
+  echo "Mapping uvvm_util"
+  if {[file exists $target_path/uvvm_util]} {
+    quietly vmap uvvm_util $target_path/uvvm_util
+  } else {
+    quietly vmap uvvm_util $uvvm_root/uvvm_util/sim/uvvm_util
   }
 }
 # uvvm_assertions only requires uvvm_util and therefore we dont compile uvvm_vvc_framework

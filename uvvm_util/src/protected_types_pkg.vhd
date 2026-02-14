@@ -131,7 +131,7 @@ package body protected_types_pkg is
     ) is
     begin
       priv_alert_attention_counters(alert_level)(attention) := priv_alert_attention_counters(alert_level)(attention) + number;
-    end;
+    end procedure;
 
     impure function get(
       alert_level : t_alert_level;
@@ -139,7 +139,7 @@ package body protected_types_pkg is
     ) return natural is
     begin
       return priv_alert_attention_counters(alert_level)(attention);
-    end;
+    end function;
 
     procedure to_string(
       order : t_order
@@ -213,7 +213,7 @@ package body protected_types_pkg is
       -- Write the report to the log destination
       write_line_to_log_destination(v_line);
       deallocate(v_line);
-    end;
+    end procedure;
 
   end protected body t_protected_alert_attention_counters;
   --------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ package body protected_types_pkg is
         -- semaphore was not free
         return false;
       end if;
-    end;
+    end function;
 
     procedure release_semaphore is
     begin
@@ -254,12 +254,12 @@ package body protected_types_pkg is
         -- index was set by another vvc
         return false;
       end if;
-    end;
+    end function;
 
     impure function get_index return integer is
     begin
       return priv_idx;
-    end;
+    end function;
 
     procedure release_index is
     begin
@@ -951,7 +951,7 @@ package body protected_types_pkg is
       for i in 1 to C_STR_LEN / 2 loop
         seed1 := (seed1 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
       end loop;
-        seed2 := (seed2 + seed1) mod C_MAX_POS;
+      seed2 := (seed2 + seed1) mod C_MAX_POS;
       for i in C_STR_LEN / 2 + 1 to C_STR_LEN loop
         seed2 := (seed2 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
       end loop;
@@ -1020,6 +1020,6 @@ package body protected_types_pkg is
     end procedure;
 
   end protected body t_seeds;
-  --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 end package body protected_types_pkg;

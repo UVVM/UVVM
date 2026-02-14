@@ -89,7 +89,7 @@ package types_pkg is
   type t_from_point_in_time is (FROM_NOW, FROM_LAST_EVENT);
   type t_match_strictness is (MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT, MATCH_STD_INCL_ZXUW);
   type t_quietness is (NON_QUIET, QUIET);
-  type t_justify_center is (center); -- Addition to the standard left, side
+  type t_justify_center is (CENTER); -- Addition to the standard left, side
   type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT, FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT); -- FIRST_BYTE_LEFT and FIRST_BYTE_RIGHT are deprecated and will be removed in v3
   alias t_word_endianness is t_byte_endianness;
   type t_relational_operator is (LT, GT, EQ, LE, GE, NE);

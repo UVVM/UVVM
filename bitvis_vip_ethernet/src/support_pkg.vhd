@@ -161,9 +161,9 @@ package body support_pkg is
     constant ethernet_frame : in t_ethernet_frame;
     constant frame_field    : in t_frame_field
   ) return string is
-    variable payload_string : string(1 to 14 * ethernet_frame.payload_length); --[1500]:x"00",
-    variable v_line         : line;
-    variable v_line_width   : natural;
+    variable v_payload_string : string(1 to 14 * ethernet_frame.payload_length); --[1500]:x"00",
+    variable v_line           : line;
+    variable v_line_width     : natural;
   begin
     case frame_field is
       when HEADER =>
@@ -178,10 +178,10 @@ package body support_pkg is
             write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, KEEP_LEADING_0, INCL_RADIX)));
           end loop;
         end if;
-        v_line_width                      := v_line'length;
-        payload_string(1 to v_line_width) := v_line.all;
+        v_line_width                        := v_line'length;
+        v_payload_string(1 to v_line_width) := v_line.all;
         deallocate(v_line);
-        return LF & payload_string(1 to v_line_width);
+        return LF & v_payload_string(1 to v_line_width);
 
       when CHECKSUM =>
         return LF & "    FCS: " & to_string(ethernet_frame.fcs, HEX, KEEP_LEADING_0, INCL_RADIX);
@@ -209,21 +209,21 @@ package body support_pkg is
     constant scope        : in string;
     constant msg_id_panel : in t_msg_id_panel
   ) is
-    constant proc_call  : string  := "compare_ethernet_frames()";
-    variable v_check_ok : boolean := true;
+    constant C_PROC_CALL : string  := "compare_ethernet_frames()";
+    variable v_check_ok  : boolean := true;
   begin
-    v_check_ok := v_check_ok and check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
-    v_check_ok := v_check_ok and check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
-    v_check_ok := v_check_ok and check_value(actual.payload_length, expected.payload_length, alert_level, "Verify payload length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call);
+    v_check_ok := v_check_ok and check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    v_check_ok := v_check_ok and check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    v_check_ok := v_check_ok and check_value(actual.payload_length, expected.payload_length, alert_level, "Verify payload length" & LF & msg, scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     for i in 0 to actual.payload_length - 1 loop
-      v_check_ok := v_check_ok and check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+      v_check_ok := v_check_ok and check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL);
     end loop;
-    v_check_ok := v_check_ok and check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+    v_check_ok := v_check_ok and check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
     if v_check_ok then
-      log(msg_id, proc_call & "." & add_msg_delimiter(msg) & " => OK");
+      log(msg_id, C_PROC_CALL & "." & add_msg_delimiter(msg) & " => OK");
     else
-      log(msg_id, proc_call & "." & add_msg_delimiter(msg) & " => FAILED");
+      log(msg_id, C_PROC_CALL & "." & add_msg_delimiter(msg) & " => FAILED");
     end if;
   end procedure compare_ethernet_frames;
 

@@ -26,6 +26,7 @@ library bitvis_vip_scoreboard;
 use work.support_pkg.all;
 
 package vvc_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map(t_element         => t_ethernet_frame,
-              element_match     => ethernet_match,
-              to_string_element => to_string);
+  generic map(
+    t_element         => t_ethernet_frame,
+    element_match     => ethernet_match,
+    to_string_element => to_string);

@@ -65,7 +65,6 @@ begin
   assert (sbi_vvc_master_if.addr'length = GC_ADDR_WIDTH) report "sbi_vvc_master_if.addr'length =/ GC_ADDR_WIDTH" severity failure;
   assert (sbi_vvc_master_if.wdata'length = GC_DATA_WIDTH) report "sbi_vvc_master_if.wdata'length =/ GC_DATA_WIDTH" severity failure;
   assert (sbi_vvc_master_if.rdata'length = GC_DATA_WIDTH) report "sbi_vvc_master_if.rdata'length =/ GC_DATA_WIDTH" severity failure;
-
 end entity sbi_vvc;
 
 --=================================================================================================
@@ -76,10 +75,11 @@ architecture behave of sbi_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy      : boolean := false;
-  signal queue_is_increasing   : boolean := false;
-  signal last_cmd_idx_executed : natural := 0;
-  signal terminate_current_cmd : t_flag_record;
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -91,8 +91,6 @@ architecture behave of sbi_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_sbi_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_sbi_vvc_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity 
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -125,7 +123,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -217,7 +215,7 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural                                      := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
@@ -239,10 +237,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup SBI scoreboard
-    SBI_VVC_SB.set_scope("SBI_VVC_SB");
-    SBI_VVC_SB.enable(GC_INSTANCE_IDX, "SBI VVC SB Enabled");
-    SBI_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    SBI_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    sbi_vvc_sb.set_scope("SBI_VVC_SB");
+    sbi_vvc_sb.enable(GC_INSTANCE_IDX, "SBI VVC SB Enabled");
+    sbi_vvc_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    sbi_vvc_sb.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     -- Set the randomization seeds
     set_rand_seeds(C_VVC_LABELS.scope, v_seeds(0), v_seeds(1));
@@ -361,7 +359,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            SBI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sbi_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            sbi_vvc_sb.check_received(GC_INSTANCE_IDX, pad_sbi_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                         cmd_idx      => v_cmd.cmd_idx,
@@ -474,7 +472,7 @@ begin
   -- Unwanted activity detection
   -- - Monitors unwanted activity from the DUT
   --===============================================================================================
-  p_unwanted_activity : process
+  p_unwanted_activity : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -500,7 +498,7 @@ begin
       end if;
     end loop;
   end process p_unwanted_activity;
-  --===============================================================================================
+--===============================================================================================
 
-end behave;
+end architecture behave;
 

@@ -1580,14 +1580,14 @@ begin
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN, TRN), (7000, 7003, 7020), (7100, 7102, 7104), hits => 1, name => "transition_8");
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN, TRN), (7000, 7003, 7030), (7100, 7102, 7104), hits => 1, name => "transition_9");
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN, TRN), (7000, 7004, 7010), (7100, 7102, 7104), hits => 1, name => "transition_10");
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN, TRN), (7000, 7004, 7020), (7100, 7102, 7104), hits => 0, name => "transition_11");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN, TRN), (7000, 7004, 7020), (7100, 7102, 7104), hits => 1, name => "transition_11");
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN, TRN), (7000, 7004, 7030), (7100, 7102, 7104), hits => 1, name => "transition_12");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, TRN_IGNORE), (7000, 7001, 7010), (7100, 7102, 7104), hits => 1, name => "ignore_transition_1");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, TRN_IGNORE), (7000, 7001, 7020), (7100, 7102, 7105), hits => 0, name => "ignore_transition_2");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, TRN_IGNORE), (7000, 7002), (7100, 7102), hits => 3, name => "ignore_transition_3");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, TRN_IGNORE), (7003, 7010), (7102, 7104), hits => 1, name => "ignore_transition_4");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, VAL), (7000, 7004, 7010), (0 => 7100), hits => 0, name => "ignore_transition_5");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, VAL), (7000, 7004, 7020), (0 => 7104), hits => 1, name => "ignore_transition_6");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE, VAL), (7000, 7004, 7020), (0 => 7104), hits => 0, name => "ignore_transition_6");
 
       delete_coverpoint(v_cross_x2);
 

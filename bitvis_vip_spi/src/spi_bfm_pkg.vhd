@@ -891,6 +891,8 @@ package body spi_bfm_pkg is
   ) is
     constant C_LOCAL_PROC_NAME : string  := "spi_master_transmit_and_check";
     constant C_LOCAL_PROC_CALL : string  := C_LOCAL_PROC_NAME;
+    -- Normalize range
+    variable v_normalized_data_exp : std_logic_vector(data_exp'length - 1 downto 0) := data_exp;
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length - 1 downto 0);
     variable v_check_ok      : boolean := true;
@@ -898,9 +900,9 @@ package body spi_bfm_pkg is
   begin
     spi_master_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, action_when_transfer_is_done, scope, msg_id_panel, config, C_LOCAL_PROC_CALL);
 
-    for i in data_exp'range loop
+    for i in v_normalized_data_exp'range loop
       -- Allow don't care in expected value and use match strictness from config for comparison
-      if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
+      if v_normalized_data_exp(i) = '-' or check_value(v_rx_data(i), v_normalized_data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -910,8 +912,8 @@ package body spi_bfm_pkg is
 
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, v_normalized_data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, C_LOCAL_PROC_CALL & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
@@ -1080,6 +1082,8 @@ package body spi_bfm_pkg is
   ) is
     constant C_LOCAL_PROC_NAME : string                                         := "spi_master_check";
     constant C_LOCAL_PROC_CALL : string                                         := C_LOCAL_PROC_NAME;
+    -- Normalize range
+    variable v_normalized_data_exp : std_logic_vector(data_exp'length - 1 downto 0) := data_exp;
     -- Helper variables
     variable v_tx_data       : std_logic_vector(data_exp'length - 1 downto 0) := (others => '0');
     variable v_rx_data       : std_logic_vector(data_exp'length - 1 downto 0);
@@ -1088,9 +1092,9 @@ package body spi_bfm_pkg is
   begin
     spi_master_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, action_when_transfer_is_done, scope, msg_id_panel, config, C_LOCAL_PROC_CALL);
 
-    for i in data_exp'range loop
+    for i in v_normalized_data_exp'range loop
       -- Allow don't care in expected value and use match strictness from config for comparison
-      if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
+      if v_normalized_data_exp(i) = '-' or check_value(v_rx_data(i), v_normalized_data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -1100,8 +1104,8 @@ package body spi_bfm_pkg is
 
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, v_normalized_data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, C_LOCAL_PROC_CALL & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
@@ -1506,6 +1510,8 @@ package body spi_bfm_pkg is
   ) is
     constant C_LOCAL_PROC_NAME : string  := "spi_slave_transmit_and_check";
     constant C_LOCAL_PROC_CALL : string  := C_LOCAL_PROC_NAME & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    -- Normalize range
+    variable v_normalized_data_exp : std_logic_vector(data_exp'length - 1 downto 0) := data_exp;
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length - 1 downto 0);
     variable v_check_ok      : boolean := true;
@@ -1515,9 +1521,9 @@ package body spi_bfm_pkg is
     spi_slave_transmit_and_receive(tx_data, v_rx_data, v_aborted, msg, spi_if, terminate_access, ERROR, when_to_start_transfer, scope, msg_id_panel, config, C_LOCAL_PROC_CALL);
 
     if terminate_access = '0' then
-      for i in data_exp'range loop
+      for i in v_normalized_data_exp'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
+        if v_normalized_data_exp(i) = '-' or check_value(v_rx_data(i), v_normalized_data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_check_ok := true;
         else
           v_check_ok := false;
@@ -1529,8 +1535,8 @@ package body spi_bfm_pkg is
         alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. SPI transaction aborted." & add_msg_delimiter(msg), scope);
       elsif not v_check_ok then
         -- Use binary representation when mismatch is due to weak signals
-        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-        alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, v_normalized_data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+        alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
       else
         log(config.id_for_bfm, C_LOCAL_PROC_CALL & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
@@ -1805,6 +1811,8 @@ package body spi_bfm_pkg is
   ) is
     constant C_LOCAL_PROC_NAME : string                                         := "spi_slave_check";
     constant C_LOCAL_PROC_CALL : string                                         := C_LOCAL_PROC_NAME & "(" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    -- Normalize range
+    variable v_normalized_data_exp : std_logic_vector(data_exp'length - 1 downto 0) := data_exp;
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length - 1 downto 0) := (others => 'X');
     variable v_tx_data       : std_logic_vector(data_exp'length - 1 downto 0) := (others => '0');
@@ -1816,9 +1824,9 @@ package body spi_bfm_pkg is
 
     if terminate_access = '0' then
 
-      for i in data_exp'range loop
+      for i in v_normalized_data_exp'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
+        if v_normalized_data_exp(i) = '-' or check_value(v_rx_data(i), v_normalized_data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_check_ok := true;
         else
           v_check_ok := false;
@@ -1830,8 +1838,8 @@ package body spi_bfm_pkg is
         alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. SPI transaction aborted." & LF & add_msg_delimiter(msg), scope);
       elsif not v_check_ok then
         -- Use binary representation when mismatch is due to weak signals
-        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-        alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, v_normalized_data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+        alert(alert_level, C_LOCAL_PROC_CALL & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data_exp, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
       else
         log(config.id_for_bfm, C_LOCAL_PROC_CALL & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;

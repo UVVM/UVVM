@@ -32,6 +32,8 @@ package spi_bfm_pkg is
   --===============================================================================================
   constant C_BFM_SCOPE : string := "SPI BFM";
 
+  type t_bit_order is (MSB_FIRST, LSB_FIRST);
+
   type t_spi_if is record
     ss_n : std_logic;                   -- master to slave
     sclk : std_logic;                   -- master to slave
@@ -51,6 +53,7 @@ package spi_bfm_pkg is
     id_for_bfm               : t_msg_id;           -- The message ID used as a general message ID in the SPI BFM
     id_for_bfm_wait          : t_msg_id;           -- DEPRECATED: will be removed in v3
     id_for_bfm_poll          : t_msg_id;           -- DEPRECATED: will be removed in v3
+    bit_order                : t_bit_order;         -- Bit shift order: MSB_FIRST (default) or LSB_FIRST
   end record;
 
   constant C_SPI_BFM_CONFIG_DEFAULT : t_spi_bfm_config := (
@@ -63,7 +66,8 @@ package spi_bfm_pkg is
     match_strictness       => MATCH_EXACT,
     id_for_bfm             => ID_BFM,
     id_for_bfm_wait        => ID_BFM_WAIT,
-    id_for_bfm_poll        => ID_BFM_POLL
+    id_for_bfm_poll        => ID_BFM_POLL,
+    bit_order              => MSB_FIRST
   );
 
   -- Dummy signal to pass in procedure sub-calls in spi_slave method overloads without terminate_access parameter
@@ -651,6 +655,40 @@ end package spi_bfm_pkg;
 package body spi_bfm_pkg is
 
   ---------------------------------------------------------------------------------
+  -- Returns correct indexing in tx_data vector based on bit order configuration
+  ---------------------------------------------------------------------------------
+
+  function tx_bit_idx(
+    constant count : in integer;
+    constant size  : in integer;
+    constant order : in t_bit_order
+  ) return integer is
+  begin
+    if order = MSB_FIRST then
+      return size - count - 1;
+    else -- LSB_FIRST
+      return count;
+    end if;
+  end function;
+
+  ---------------------------------------------------------------------------------
+  -- Returns correct indexing in rx_data vector based on bit order configuration
+  ---------------------------------------------------------------------------------
+
+  function rx_bit_idx(
+    constant count : in integer;
+    constant size  : in integer;
+    constant order : in t_bit_order
+  ) return integer is
+  begin
+    if order = MSB_FIRST then
+      return size - count;
+    else -- LSB_FIRST
+      return count - 1;
+    end if;
+  end function;
+
+  ---------------------------------------------------------------------------------
   -- initialize spi to dut signals
   ---------------------------------------------------------------------------------
 
@@ -734,7 +772,7 @@ package body spi_bfm_pkg is
     if ss_n = '0' then
       -- set MOSI together with SS_N when CPHA=0
       if not config.CPHA then
-        mosi       <= v_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
+        mosi       <= v_tx_data(tx_bit_idx(v_tx_count, C_ACCESS_SIZE, config.bit_order));
         v_tx_count := v_tx_count + 1;
       end if;
 
@@ -751,15 +789,15 @@ package body spi_bfm_pkg is
       while ss_n = '0' and not v_access_done loop
 
         if not config.CPHA then
-          v_rx_data(C_ACCESS_SIZE - v_rx_count) := miso;
+          v_rx_data(rx_bit_idx(v_rx_count, C_ACCESS_SIZE, config.bit_order)) := miso;
           wait for config.spi_bit_time / 2;
           sclk                                  <= config.CPOL;
-          mosi                                  <= v_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
+          mosi                                  <= v_tx_data(tx_bit_idx(v_tx_count, C_ACCESS_SIZE, config.bit_order));
         else                            -- config.CPHA
-          mosi                                  <= v_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
+          mosi                                  <= v_tx_data(tx_bit_idx(v_tx_count, C_ACCESS_SIZE, config.bit_order));
           wait for config.spi_bit_time / 2;
           sclk                                  <= config.CPOL;
-          v_rx_data(C_ACCESS_SIZE - v_rx_count) := miso;
+          v_rx_data(rx_bit_idx(v_rx_count, C_ACCESS_SIZE, config.bit_order)) := miso;
         end if;
 
         if v_tx_count < C_ACCESS_SIZE - 1 then -- Not done
@@ -772,7 +810,7 @@ package body spi_bfm_pkg is
             v_rx_count                            := v_rx_count + 1;
             -- Sample Last bit on the second to last edge of SCLK (CPOL=0: last rising. CPOL=1: last falling)
             wait for config.spi_bit_time / 2;
-            v_rx_data(C_ACCESS_SIZE - v_rx_count) := miso;
+            v_rx_data(rx_bit_idx(v_rx_count, C_ACCESS_SIZE, config.bit_order)) := miso;
             sclk                                  <= not config.CPOL;
           end if;
           log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -1215,7 +1253,7 @@ package body spi_bfm_pkg is
     if ss_n = '0' and not v_terminated then
       -- set MISO together with SS_N when CPHA=0
       if not config.CPHA then
-        miso       <= v_bfm_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
+        miso       <= v_bfm_tx_data(tx_bit_idx(v_tx_count, C_ACCESS_SIZE, config.bit_order));
         v_tx_count := v_tx_count + 1;
       end if;
 
@@ -1237,13 +1275,13 @@ package body spi_bfm_pkg is
       while (ss_n = '0') and not(v_access_done) and not(v_terminated) loop
 
         if not config.CPHA then
-          v_rx_data(C_ACCESS_SIZE - v_rx_count) := mosi;
+          v_rx_data(rx_bit_idx(v_rx_count, C_ACCESS_SIZE, config.bit_order)) := mosi;
           wait until (sclk'event and sclk = config.CPOL) or (terminate_access = '1') or (ss_n = '1');
-          miso                                  <= v_bfm_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
+          miso                                  <= v_bfm_tx_data(tx_bit_idx(v_tx_count, C_ACCESS_SIZE, config.bit_order));
         else                            -- config.CPHA
-          miso                                  <= v_bfm_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
+          miso                                  <= v_bfm_tx_data(tx_bit_idx(v_tx_count, C_ACCESS_SIZE, config.bit_order));
           wait until (sclk'event and sclk = config.CPOL) or (terminate_access = '1') or (ss_n = '1');
-          v_rx_data(C_ACCESS_SIZE - v_rx_count) := mosi;
+          v_rx_data(rx_bit_idx(v_rx_count, C_ACCESS_SIZE, config.bit_order)) := mosi;
         end if;
 
         if terminate_access = '1' then
@@ -1284,7 +1322,7 @@ package body spi_bfm_pkg is
     -- Sample last bit
     if (config.CPHA = '0') and not (v_terminated) then
       v_rx_count                            := v_rx_count + 1;
-      v_rx_data(C_ACCESS_SIZE - v_rx_count) := mosi;
+      v_rx_data(rx_bit_idx(v_rx_count, C_ACCESS_SIZE, config.bit_order)) := mosi;
       wait until (sclk'event and sclk = config.CPOL) or (terminate_access = '1')  or (ss_n = '1');
     end if;
 

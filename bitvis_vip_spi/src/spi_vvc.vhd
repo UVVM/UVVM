@@ -304,7 +304,8 @@ begin
                                               action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                                               scope                        => C_SCOPE,
                                               msg_id_panel                 => v_msg_id_panel,
-                                              config                       => vvc_config.bfm_config);
+                                              config                       => vvc_config.bfm_config,
+                                              bit_order                    => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
@@ -316,7 +317,8 @@ begin
                                               action_between_words         => v_cmd.action_between_words,
                                               scope                        => C_SCOPE,
                                               msg_id_panel                 => v_msg_id_panel,
-                                              config                       => vvc_config.bfm_config);
+                                              config                       => vvc_config.bfm_config,
+                                              bit_order                    => v_cmd.bit_order);
               v_result          := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
 
@@ -354,7 +356,8 @@ begin
                                             action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                                             scope                        => C_SCOPE,
                                             msg_id_panel                 => v_msg_id_panel,
-                                            config                       => vvc_config.bfm_config);
+                                            config                       => vvc_config.bfm_config,
+                                            bit_order                    => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data     := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
@@ -368,7 +371,8 @@ begin
                                             action_between_words         => v_cmd.action_between_words,
                                             scope                        => C_SCOPE,
                                             msg_id_panel                 => v_msg_id_panel,
-                                            config                       => vvc_config.bfm_config);
+                                            config                       => vvc_config.bfm_config,
+                                            bit_order                    => v_cmd.bit_order);
             end if;
 
             -- Update vvc transaction info
@@ -391,7 +395,8 @@ begin
                                   action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                                   scope                        => C_SCOPE,
                                   msg_id_panel                 => v_msg_id_panel,
-                                  config                       => vvc_config.bfm_config);
+                                  config                       => vvc_config.bfm_config,
+                                  bit_order                    => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
@@ -403,7 +408,8 @@ begin
                                   action_between_words         => v_cmd.action_between_words,
                                   scope                        => C_SCOPE,
                                   msg_id_panel                 => v_msg_id_panel,
-                                  config                       => vvc_config.bfm_config);
+                                  config                       => vvc_config.bfm_config,
+                                  bit_order                    => v_cmd.bit_order);
             end if;
 
             -- Update vvc transaction info
@@ -425,7 +431,8 @@ begin
                                  action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                                  scope                        => C_SCOPE,
                                  msg_id_panel                 => v_msg_id_panel,
-                                 config                       => vvc_config.bfm_config);
+                                 config                       => vvc_config.bfm_config,
+                                 bit_order                    => v_cmd.bit_order);
             else
               spi_master_receive(rx_data                      => v_data_receive(v_num_words - 1 downto 0),
                                  msg                          => format_msg(v_cmd),
@@ -434,7 +441,8 @@ begin
                                  action_between_words         => v_cmd.action_between_words,
                                  scope                        => C_SCOPE,
                                  msg_id_panel                 => v_msg_id_panel,
-                                 config                       => vvc_config.bfm_config);
+                                 config                       => vvc_config.bfm_config,
+                                 bit_order                    => v_cmd.bit_order);
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
@@ -470,7 +478,8 @@ begin
                                action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                                scope                        => C_SCOPE,
                                msg_id_panel                 => v_msg_id_panel,
-                               config                       => vvc_config.bfm_config);
+                               config                       => vvc_config.bfm_config,
+                               bit_order                    => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
@@ -483,7 +492,8 @@ begin
                                action_between_words         => v_cmd.action_between_words,
                                scope                        => C_SCOPE,
                                msg_id_panel                 => v_msg_id_panel,
-                               config                       => vvc_config.bfm_config);
+                               config                       => vvc_config.bfm_config,
+                               bit_order                    => v_cmd.bit_order);
             end if;
 
             -- Update vvc transaction info
@@ -508,7 +518,8 @@ begin
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
                                              scope                  => C_SCOPE,
                                              msg_id_panel           => v_msg_id_panel,
-                                             config                 => vvc_config.bfm_config);
+                                             config                 => vvc_config.bfm_config,
+                                             bit_order              => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
@@ -521,7 +532,8 @@ begin
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
                                              scope                  => C_SCOPE,
                                              msg_id_panel           => v_msg_id_panel,
-                                             config                 => vvc_config.bfm_config);
+                                             config                 => vvc_config.bfm_config,
+                                             bit_order              => v_cmd.bit_order);
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
@@ -559,7 +571,8 @@ begin
                                            when_to_start_transfer => v_cmd.when_to_start_transfer,
                                            scope                  => C_SCOPE,
                                            msg_id_panel           => v_msg_id_panel,
-                                           config                 => vvc_config.bfm_config);
+                                           config                 => vvc_config.bfm_config,
+                                           bit_order              => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data     := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
@@ -574,7 +587,8 @@ begin
                                            when_to_start_transfer => v_cmd.when_to_start_transfer,
                                            scope                  => C_SCOPE,
                                            msg_id_panel           => v_msg_id_panel,
-                                           config                 => vvc_config.bfm_config);
+                                           config                 => vvc_config.bfm_config,
+                                           bit_order              => v_cmd.bit_order);
             end if;
 
             -- Update vvc transaction info
@@ -597,7 +611,8 @@ begin
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
                                  scope                  => C_SCOPE,
                                  msg_id_panel           => v_msg_id_panel,
-                                 config                 => vvc_config.bfm_config);
+                                 config                 => vvc_config.bfm_config,
+                                 bit_order              => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
@@ -609,7 +624,8 @@ begin
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
                                  scope                  => C_SCOPE,
                                  msg_id_panel           => v_msg_id_panel,
-                                 config                 => vvc_config.bfm_config);
+                                 config                 => vvc_config.bfm_config,
+                                 bit_order              => v_cmd.bit_order);
             end if;
 
             -- Update vvc transaction info
@@ -632,7 +648,8 @@ begin
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
                                 scope                  => C_SCOPE,
                                 msg_id_panel           => v_msg_id_panel,
-                                config                 => vvc_config.bfm_config);
+                                config                 => vvc_config.bfm_config,
+                                bit_order              => v_cmd.bit_order);
             else
               spi_slave_receive(rx_data                => v_data_receive(v_num_words - 1 downto 0),
                                 msg                    => format_msg(v_cmd),
@@ -641,7 +658,8 @@ begin
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
                                 scope                  => C_SCOPE,
                                 msg_id_panel           => v_msg_id_panel,
-                                config                 => vvc_config.bfm_config);
+                                config                 => vvc_config.bfm_config,
+                                bit_order              => v_cmd.bit_order);
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
@@ -678,7 +696,8 @@ begin
                               when_to_start_transfer => v_cmd.when_to_start_transfer,
                               scope                  => C_SCOPE,
                               msg_id_panel           => v_msg_id_panel,
-                              config                 => vvc_config.bfm_config);
+                              config                 => vvc_config.bfm_config,
+                              bit_order              => v_cmd.bit_order);
             else
               -- normalize
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
@@ -691,7 +710,8 @@ begin
                               when_to_start_transfer => v_cmd.when_to_start_transfer,
                               scope                  => C_SCOPE,
                               msg_id_panel           => v_msg_id_panel,
-                              config                 => vvc_config.bfm_config);
+                              config                 => vvc_config.bfm_config,
+                              bit_order              => v_cmd.bit_order);
             end if;
 
             -- Update vvc transaction info

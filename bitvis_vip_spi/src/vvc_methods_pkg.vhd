@@ -144,6 +144,7 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST;
     constant ext_proc_call                : in string                         := ""
   );
   procedure spi_master_transmit_and_receive(
@@ -153,7 +154,8 @@ package vvc_methods_pkg is
     constant msg                          : in string;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_master_transmit_and_receive(
@@ -166,6 +168,7 @@ package vvc_methods_pkg is
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST;
     constant ext_proc_call                : in string                         := ""
   );
   procedure spi_master_transmit_and_receive(
@@ -176,7 +179,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
 
   -- Single-word
@@ -189,7 +193,8 @@ package vvc_methods_pkg is
     constant alert_level                  : in t_alert_level                  := error;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_master_transmit_and_check(
@@ -202,7 +207,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
 
   -- Single-word
@@ -213,7 +219,8 @@ package vvc_methods_pkg is
     constant msg                          : in string;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_master_transmit_only(
@@ -224,7 +231,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
 
   procedure spi_master_receive_only(
@@ -237,6 +245,7 @@ package vvc_methods_pkg is
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST;
     constant ext_proc_call                : in string                         := ""
   );
 
@@ -248,7 +257,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
 
   -- Single-word
@@ -260,7 +270,8 @@ package vvc_methods_pkg is
     constant alert_level                  : in t_alert_level                  := error;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_master_check_only(
@@ -272,7 +283,8 @@ package vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   );
 
   ----------------------------------------------------------
@@ -288,6 +300,7 @@ package vvc_methods_pkg is
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call          : in string                   := ""
   );
   procedure spi_slave_transmit_and_receive(
@@ -297,7 +310,8 @@ package vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_slave_transmit_and_receive(
@@ -309,6 +323,7 @@ package vvc_methods_pkg is
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call          : in string                   := ""
   );
   procedure spi_slave_transmit_and_receive(
@@ -318,7 +333,8 @@ package vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
 
   -- Single-word
@@ -331,7 +347,8 @@ package vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_slave_transmit_and_check(
@@ -343,7 +360,8 @@ package vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
 
   -- Single-word
@@ -354,7 +372,8 @@ package vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_slave_transmit_only(
@@ -364,7 +383,8 @@ package vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
 
   procedure spi_slave_receive_only(
@@ -376,6 +396,7 @@ package vvc_methods_pkg is
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call          : in string                   := ""
   );
   procedure spi_slave_receive_only(
@@ -385,7 +406,8 @@ package vvc_methods_pkg is
     constant num_words              : in positive                 := 1;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
 
   -- Single-word
@@ -397,7 +419,8 @@ package vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
   -- Multi-word
   procedure spi_slave_check_only(
@@ -408,7 +431,8 @@ package vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   );
 
   --==============================================================================
@@ -457,6 +481,7 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST;
     constant ext_proc_call                : in string                         := ""
   ) is
     constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -483,6 +508,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_when_transfer_is_done        := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words                := RELEASE_LINE_BETWEEN_WORDS;
     shared_vvc_cmd.parent_msg_id_panel                 := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                           := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -496,12 +522,13 @@ package body vvc_methods_pkg is
     constant msg                          : in string;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, scope, parent_msg_id_panel, C_PROC_CALL);
+    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, scope, parent_msg_id_panel, bit_order, C_PROC_CALL);
   end procedure;
 
   -- Multi-word
@@ -515,6 +542,7 @@ package body vvc_methods_pkg is
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call                : in string                         := ""
   ) is
     constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -541,6 +569,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words         := action_between_words;
     shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                    := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -555,12 +584,13 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel, C_PROC_CALL);
+    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel, bit_order, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -573,7 +603,8 @@ package body vvc_methods_pkg is
     constant alert_level                  : in t_alert_level                  := error;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -600,6 +631,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_when_transfer_is_done            := action_when_transfer_is_done;
     shared_vvc_cmd.alert_level                             := alert_level;
     shared_vvc_cmd.parent_msg_id_panel                     := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                               := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -617,7 +649,8 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -644,6 +677,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_between_words         := action_between_words;
     shared_vvc_cmd.alert_level                  := alert_level;
     shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                    := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -658,7 +692,8 @@ package body vvc_methods_pkg is
     constant msg                          : in string;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -681,6 +716,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.word_length                         := v_word_length;
     shared_vvc_cmd.action_when_transfer_is_done        := action_when_transfer_is_done;
     shared_vvc_cmd.parent_msg_id_panel                 := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                           := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -696,7 +732,8 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -719,6 +756,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words         := action_between_words;
     shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                    := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -736,6 +774,7 @@ package body vvc_methods_pkg is
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST;
     constant ext_proc_call                : in string                         := ""
   ) is
     constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -754,6 +793,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words         := action_between_words;
     shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                    := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -768,12 +808,13 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_master_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel, C_PROC_CALL);
+    spi_master_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel, bit_order, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -785,7 +826,8 @@ package body vvc_methods_pkg is
     constant alert_level                  : in t_alert_level                  := error;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -809,6 +851,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_when_transfer_is_done            := action_when_transfer_is_done;
     shared_vvc_cmd.alert_level                             := alert_level;
     shared_vvc_cmd.parent_msg_id_panel                     := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                               := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -825,7 +868,8 @@ package body vvc_methods_pkg is
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
     constant scope                        : in string                         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel          : in t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order                    : in t_bit_order                    := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -849,6 +893,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.action_between_words         := action_between_words;
     shared_vvc_cmd.alert_level                  := alert_level;
     shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                    := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -868,6 +913,7 @@ package body vvc_methods_pkg is
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call          : in string                   := ""
   ) is
     constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -893,6 +939,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data_routing                        := data_routing;
     shared_vvc_cmd.when_to_start_transfer              := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel                 := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                           := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -906,12 +953,13 @@ package body vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel, C_PROC_CALL);
+    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel, bit_order, C_PROC_CALL);
   end procedure;
 
   -- Multi-word
@@ -924,6 +972,7 @@ package body vvc_methods_pkg is
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call          : in string                   := ""
   ) is
     constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -949,6 +998,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data_routing           := data_routing;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order              := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -962,12 +1012,13 @@ package body vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel, C_PROC_CALL);
+    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel, bit_order, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -980,7 +1031,8 @@ package body vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -1007,6 +1059,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.when_to_start_transfer                  := when_to_start_transfer;
     shared_vvc_cmd.alert_level                             := alert_level;
     shared_vvc_cmd.parent_msg_id_panel                     := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                               := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -1023,7 +1076,8 @@ package body vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -1049,6 +1103,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.alert_level            := alert_level;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order              := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -1063,7 +1118,8 @@ package body vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -1085,6 +1141,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.word_length                         := v_word_length;
     shared_vvc_cmd.when_to_start_transfer              := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel                 := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                           := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -1099,7 +1156,8 @@ package body vvc_methods_pkg is
     constant msg                    : in string;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME       : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL       : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -1122,6 +1180,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.word_length            := v_word_length;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order              := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -1138,6 +1197,7 @@ package body vvc_methods_pkg is
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST;
     constant ext_proc_call          : in string                   := ""
   ) is
     constant C_PROC_NAME       : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -1155,6 +1215,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.num_words              := num_words;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order              := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -1168,12 +1229,13 @@ package body vvc_methods_pkg is
     constant num_words              : in positive                 := 1;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
   begin
-    spi_slave_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, when_to_start_transfer, scope, parent_msg_id_panel, C_PROC_CALL);
+    spi_slave_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, when_to_start_transfer, scope, parent_msg_id_panel, bit_order, C_PROC_CALL);
   end procedure;
 
   -- Single-word
@@ -1185,7 +1247,8 @@ package body vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -1209,6 +1272,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.when_to_start_transfer                  := when_to_start_transfer;
     shared_vvc_cmd.alert_level                             := alert_level;
     shared_vvc_cmd.parent_msg_id_panel                     := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order                               := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
@@ -1224,7 +1288,8 @@ package body vvc_methods_pkg is
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    constant parent_msg_id_panel    : in t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant bit_order              : in t_bit_order              := MSB_FIRST -- Bit order for SPI transfers
   ) is
     constant C_PROC_NAME           : string                                                                                := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant C_PROC_CALL           : string                                                                                := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -1247,6 +1312,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.alert_level            := alert_level;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
+    shared_vvc_cmd.bit_order              := bit_order;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;

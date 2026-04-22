@@ -25,7 +25,6 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.transaction_pkg.all;
-use work.spi_bfm_pkg.all;
 
 --=================================================================================================
 --=================================================================================================
@@ -47,7 +46,6 @@ package vvc_cmd_pkg is
     when_to_start_transfer       : t_when_to_start_transfer;
     action_when_transfer_is_done : t_action_when_transfer_is_done;
     action_between_words         : t_action_between_words;
-    bit_order                    : t_bit_order;
     -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation                    : t_operation;
     proc_call                    : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -74,7 +72,6 @@ package vvc_cmd_pkg is
     when_to_start_transfer       => START_TRANSFER_IMMEDIATE,
     action_when_transfer_is_done => RELEASE_LINE_AFTER_TRANSFER,
     action_between_words         => HOLD_LINE_BETWEEN_WORDS,
-    bit_order                    => MSB_FIRST,
     -- Common VVC fields
     operation                    => NO_OPERATION,
     proc_call                    => (others => NUL),

@@ -3320,14 +3320,17 @@ package body func_cov_pkg is
       constant values        : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL        : string                                           := "sample_coverage(" & to_string(values) & ")";
-      variable v_proc_call         : line;
-      variable v_invalid_sample    : boolean                                          := false;
-      variable v_value_match       : std_logic_vector(0 to priv_num_bins_crossed - 1) := (others => '0');
-      variable v_illegal_match_idx : integer                                          := -1;
-      variable v_num_occurrences   : natural                                          := 0;
-      variable v_sample_shift_reg  : t_integer_vector_ptr;
-      variable v_bin_values        : t_integer_vector_ptr;
+      constant C_LOCAL_CALL         : string                                           := "sample_coverage(" & to_string(values) & ")";
+      variable v_proc_call          : line;
+      variable v_invalid_sample     : boolean                                          := false;
+      variable v_value_match        : std_logic_vector(0 to priv_num_bins_crossed - 1) := (others => '0');
+      variable v_illegal_match_idx  : integer                                          := -1;
+      variable v_num_occurrences    : natural                                          := 0;
+      variable v_sample_shift_reg   : t_integer_vector_ptr;
+      variable v_bin_values         : t_integer_vector_ptr;
+      variable v_bins_contains_tran : boolean := false;
+      variable v_num_of_transitions : integer := 0;
+      variable v_all_values_match   : boolean := false;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       if priv_num_bins_crossed = C_UNINITIALIZED then
@@ -3351,19 +3354,74 @@ package body func_cov_pkg is
       -- Check if the values should be ignored or are illegal
       for i in 0 to priv_invalid_bins_idx - 1 loop
         priv_invalid_bins(i).transition_mask := priv_invalid_bins(i).transition_mask(priv_invalid_bins(i).transition_mask'length - 2 downto 0) & '1';
+        v_bins_contains_tran := false;
         for j in 0 to priv_num_bins_crossed - 1 loop
+          -- check if cross contains transitions, if that is the case we need to comprare value/range matches across entire transition
+          for m in 0 to priv_num_bins_crossed - 1 loop
+            case priv_invalid_bins(i).cross_bins(m).contains is
+              when TRN | TRN_IGNORE | TRN_ILLEGAL =>
+                v_num_of_transitions := priv_invalid_bins(i).cross_bins(m).num_values - 1;
+                v_bins_contains_tran := true;
+              when others =>
+                null;
+            end case;
+          end loop;
+
           case priv_invalid_bins(i).cross_bins(j).contains is
             when VAL | VAL_IGNORE | VAL_ILLEGAL =>
-              for k in 0 to priv_invalid_bins(i).cross_bins(j).num_values - 1 loop
-                if values(j) = priv_invalid_bins(i).cross_bins(j).values(k) then
+            for k in 0 to priv_invalid_bins(i).cross_bins(j).num_values - 1 loop
+              if values(j) = priv_invalid_bins(i).cross_bins(j).values(k) then
+                if v_bins_contains_tran then
+                  -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+                  v_sample_shift_reg     := new integer_vector(v_num_of_transitions downto 0);
+                  v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(v_num_of_transitions downto 0);
+
+                  -- Check if there are enough valid values in the shift register to compare the transition
+                  if priv_invalid_bins(i).transition_mask(v_num_of_transitions) = '1' then
+                    for l in v_sample_shift_reg.all'range loop
+                      if v_sample_shift_reg.all(l) = priv_invalid_bins(i).cross_bins(j).values(k) then
+                        v_all_values_match := true;
+                      else
+                        v_all_values_match := false;
+                        exit;
+                      end if;
+                    end loop;
+                    if v_all_values_match then
+                      v_value_match(j)    := '1';
+                      v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = VAL_ILLEGAL;
+                    end if;
+                  end if;
+                else
                   v_value_match(j)    := '1';
                   v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = VAL_ILLEGAL;
+                end if;
                 end if;
               end loop;
             when RAN | RAN_IGNORE | RAN_ILLEGAL =>
               if values(j) >= priv_invalid_bins(i).cross_bins(j).values(0) and values(j) <= priv_invalid_bins(i).cross_bins(j).values(1) then
-                v_value_match(j)    := '1';
-                v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = RAN_ILLEGAL;
+                if v_bins_contains_tran then
+                  -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+                  v_sample_shift_reg     := new integer_vector(v_num_of_transitions downto 0);
+                  v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(v_num_of_transitions downto 0);
+                  -- Check if there are enough valid values in the shift register to compare the transition
+                  if priv_invalid_bins(i).transition_mask(v_num_of_transitions) = '1' then
+                    for l in v_sample_shift_reg.all'range loop
+                      if v_sample_shift_reg.all(l) >= priv_invalid_bins(i).cross_bins(j).values(0) and v_sample_shift_reg.all(l) <= priv_invalid_bins(i).cross_bins(j).values(1) then
+                        v_all_values_match := true;
+                      else
+                        v_all_values_match := false;
+                        exit;
+                      end if;
+                    end loop;
+                    if v_all_values_match then
+                      v_value_match(j)    := '1';
+                      v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = RAN_ILLEGAL;
+                    end if;
+                  end if;
+                else
+                  v_value_match(j)    := '1';
+                  v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = RAN_ILLEGAL;
+                end if;
               end if;
             when TRN | TRN_IGNORE | TRN_ILLEGAL =>
               -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
@@ -3399,17 +3457,69 @@ package body func_cov_pkg is
       if not (v_invalid_sample) then
         for i in 0 to priv_bins_idx - 1 loop
           priv_bins(i).transition_mask := priv_bins(i).transition_mask(priv_bins(i).transition_mask'length - 2 downto 0) & '1';
+          v_bins_contains_tran := false;
           for j in 0 to priv_num_bins_crossed - 1 loop
+            -- check if cross contains transitions, if that is the case we need to comprare value/range matches across entire transition
+            for m in 0 to priv_num_bins_crossed - 1 loop
+              case priv_bins(i).cross_bins(m).contains is
+                when TRN =>
+                  v_num_of_transitions := priv_bins(i).cross_bins(m).num_values - 1;
+                  v_bins_contains_tran := true;
+                when others =>
+                  null;
+              end case;
+            end loop;
+
             case priv_bins(i).cross_bins(j).contains is
               when VAL =>
-                for k in 0 to priv_bins(i).cross_bins(j).num_values - 1 loop
-                  if values(j) = priv_bins(i).cross_bins(j).values(k) then
-                    v_value_match(j) := '1';
+              for k in 0 to priv_bins(i).cross_bins(j).num_values - 1 loop
+                if values(j) = priv_bins(i).cross_bins(j).values(k) then
+                    if v_bins_contains_tran then
+                      -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+                      v_sample_shift_reg     := new integer_vector(v_num_of_transitions downto 0);
+                      v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(v_num_of_transitions downto 0);
+                      -- Check if there are enough valid values in the shift register to compare the transition
+                      if priv_bins(i).transition_mask(v_num_of_transitions) = '1' then
+                        for l in v_sample_shift_reg.all'range loop
+                          if v_sample_shift_reg.all(l) = priv_bins(i).cross_bins(j).values(k) then
+                            v_all_values_match := true;
+                          else
+                            v_all_values_match := false;
+                            exit;
+                          end if;
+                        end loop;
+                        if v_all_values_match then
+                          v_value_match(j)    := '1';
+                        end if;
+                      end if;
+                    else
+                      v_value_match(j) := '1';
+                    end if;
                   end if;
                 end loop;
               when RAN =>
-                if values(j) >= priv_bins(i).cross_bins(j).values(0) and values(j) <= priv_bins(i).cross_bins(j).values(1) then
-                  v_value_match(j) := '1';
+              if values(j) >= priv_bins(i).cross_bins(j).values(0) and values(j) <= priv_bins(i).cross_bins(j).values(1) then
+                  if v_bins_contains_tran then
+                    -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+                    v_sample_shift_reg     := new integer_vector(v_num_of_transitions downto 0);
+                    v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(v_num_of_transitions downto 0);
+                    -- Check if there are enough valid values in the shift register to compare the transition
+                    if priv_bins(i).transition_mask(priv_bins(i).cross_bins(j).num_values - 1) = '1' then
+                      for l in v_sample_shift_reg.all'range loop
+                        if v_sample_shift_reg.all(l) >= priv_bins(i).cross_bins(j).values(0) and v_sample_shift_reg.all(l) <= priv_bins(i).cross_bins(j).values(1) then
+                          v_all_values_match := true;
+                        else
+                          v_all_values_match := false;
+                          exit;
+                        end if;
+                      end loop;
+                      if v_all_values_match then
+                        v_value_match(j)    := '1';
+                      end if;
+                    end if;
+                  else
+                    v_value_match(j) := '1';
+                  end if;
                 end if;
               when TRN =>
                 -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.

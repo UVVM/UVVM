@@ -285,12 +285,12 @@ package body avalon_mm_bfm_pkg is
     if is_host then
       -- BFM to DUT signals
       v_result.reset         := '0';
-      v_result.address       := (v_result.address'range => '0');
+      v_result.address       := (v_result.address'range => 'U');
       v_result.begintransfer := '0';
       v_result.byte_enable   := (v_result.byte_enable'range => '1');
       v_result.chipselect    := '0';
       v_result.write         := '0';
-      v_result.writedata     := (v_result.writedata'range => '0');
+      v_result.writedata     := (v_result.writedata'range => 'U');
       v_result.read          := '0';
       v_result.lock          := lock_value;
 
@@ -313,8 +313,8 @@ package body avalon_mm_bfm_pkg is
       v_result.lock          := 'Z';
 
       -- BFM to DUT signals
-      v_result.readdata      := (v_result.readdata'range => '0');
-      v_result.response      := (v_result.response'range => '0');
+      v_result.readdata      := (v_result.readdata'range => 'U');
+      v_result.response      := (v_result.response'range => 'U');
       v_result.waitrequest   := '0';
       v_result.readdatavalid := '0';
       v_result.irq           := '0';

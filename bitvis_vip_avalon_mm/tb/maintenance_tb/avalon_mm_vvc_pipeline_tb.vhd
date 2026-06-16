@@ -26,6 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
+use bitvis_vip_avalon_mm.vvc_cmd_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
@@ -129,13 +130,14 @@ begin
   g_not_delta_delayed_vvc_clk : if not GC_DELTA_DELAYED_VVC_CLK generate
     i1_avalon_mm_vvc : entity work.avalon_mm_vvc
       generic map(
+        GC_VVC_IS_HOST  => true,
         GC_ADDR_WIDTH   => C_ADDR_WIDTH,
         GC_DATA_WIDTH   => C_DATA_WIDTH,
         GC_INSTANCE_IDX => 1
       )
       port map(
         clk                     => clk, -- Not delta delayed. Exact same clk as DUT
-        avalon_mm_vvc_master_if => avalon_mm_if_1
+        avalon_mm_vvc_if => avalon_mm_if_1
       );
   end generate;
 
@@ -148,13 +150,14 @@ begin
   g_delta_delayed_vvc_clk : if GC_DELTA_DELAYED_VVC_CLK generate
     i1_avalon_mm_vvc : entity work.avalon_mm_vvc
       generic map(
+        GC_VVC_IS_HOST  => true,
         GC_ADDR_WIDTH   => C_ADDR_WIDTH,
         GC_DATA_WIDTH   => C_DATA_WIDTH,
         GC_INSTANCE_IDX => 1
       )
       port map(
         clk                     => clk_delta_delayed_d1, -- Delta delayed wrt DUT, which can affect sampling of signals
-        avalon_mm_vvc_master_if => avalon_mm_if_1
+        avalon_mm_vvc_if => avalon_mm_if_1
       );
   end generate;
 
@@ -182,7 +185,7 @@ begin
     variable v_cmd_idx       : natural;
     variable v_data_int      : natural;
     variable v_prev_data_int : natural;
-    variable v_data          : std_logic_vector(1023 downto 0);
+    variable v_result        : t_vvc_result;
     variable v_is_ok         : boolean;
 
   begin
@@ -327,8 +330,8 @@ begin
       avalon_mm_read(AVALON_MM_VVCT, 1, x"0", "Reading i=" & to_string(i));
       v_cmd_idx       := get_last_received_cmd_idx(AVALON_MM_VVCT, 1); -- for last read
       await_completion(AVALON_MM_VVCT, 1, 100 us, "Wait for _read to finish");
-      fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_data, "Fetching read-result");
-      v_data_int      := to_integer(unsigned(v_data(29 downto 0)));
+      fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_result, "Fetching read-result");
+      v_data_int      := to_integer(unsigned(v_result.data(29 downto 0)));
       check_value_in_range(v_data_int, v_prev_data_int + 5, (2 ** 30) - 1, ERROR, "checking that read data has increased (i.e. not sampling the same readdata twice), Reading i=" & to_string(i));
       -- For Next iteration
       v_prev_data_int := v_data_int;
@@ -347,9 +350,9 @@ begin
     v_cmd_idx := get_last_received_cmd_idx(AVALON_MM_VVCT, 1); -- Retrieve the command index for the read
     avalon_mm_unlock(AVALON_MM_VVCT, 1, "Send a new command to VVC which executes faster than the read to increase the last_cmd_idx_executed");
     await_completion(AVALON_MM_VVCT, 1, v_cmd_idx, 100 us, "Wait for read to finish");
-    fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_data, v_is_ok, "Fetching read-result");
+    fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_result, v_is_ok, "Fetching read-result");
     check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
-    check_value(v_data(31 downto 0), x"10100011", ERROR, "Readback data via fetch_result()");
+    check_value(v_result.data(31 downto 0), x"10100011", ERROR, "Readback data via fetch_result()");
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

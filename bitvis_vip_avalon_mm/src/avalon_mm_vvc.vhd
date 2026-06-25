@@ -770,17 +770,20 @@ begin
         end loop;
       end if;
 
-      wait on avalon_mm_vvc_if.readdata, avalon_mm_vvc_if.response, avalon_mm_vvc_if.waitrequest, avalon_mm_vvc_if.readdatavalid, avalon_mm_vvc_if.irq, global_trigger_vvc_activity_register;
+      wait on avalon_mm_vvc_if.read, avalon_mm_vvc_if.write, avalon_mm_vvc_if.chipselect, avalon_mm_vvc_if.readdatavalid, avalon_mm_vvc_if.irq, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
+      -- Check the control signal changes only when the vvc is inactive
       if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
         -- Skip checking the changes if the readdatavalid signal goes low within one clock period after the VVC becomes inactive
         if not (falling_edge(avalon_mm_vvc_if.readdatavalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
           check_unwanted_activity(avalon_mm_vvc_if.readdatavalid, vvc_config.unwanted_activity_severity, "readdatavalid", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_if.readdata, vvc_config.unwanted_activity_severity, "readdata", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_if.response, vvc_config.unwanted_activity_severity, "response", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_if.waitrequest, vvc_config.unwanted_activity_severity, "waitrequest", C_SCOPE);
           check_unwanted_activity(avalon_mm_vvc_if.irq, vvc_config.unwanted_activity_severity, "irq", C_SCOPE);
+          check_unwanted_activity(avalon_mm_vvc_if.chipselect, vvc_config.unwanted_activity_severity, "chipselect", C_SCOPE);
+          -- read and write are qualified by chicpselect, agents may be selected all the time
+          if (avalon_mm_vvc_if.chipselect = '1') then
+            check_unwanted_activity(avalon_mm_vvc_if.read, vvc_config.unwanted_activity_severity, "read", C_SCOPE);
+            check_unwanted_activity(avalon_mm_vvc_if.write, vvc_config.unwanted_activity_severity, "write", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;

@@ -27,6 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
 use bitvis_vip_avalon_mm.vvc_sb_support_pkg.all;
+use bitvis_vip_avalon_mm.vvc_cmd_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
@@ -59,7 +60,7 @@ begin
     -- Sequencer constants and variables
     constant C_SCOPE       : string                       := C_TB_SCOPE_DEFAULT;
     variable v_cmd_idx     : natural;
-    variable v_data        : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    variable v_result      : t_vvc_result;
     variable v_data_8      : std_logic_vector(7 downto 0) := (others => '0');
     variable v_is_ok       : boolean;
     variable v_timestamp   : time;
@@ -199,12 +200,12 @@ begin
     v_data_8 := x"10";
 
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
-    avalon_mm_vvc_sb.add_expected(1, pad_avalon_mm_sb(v_data_8));
+    avalon_mm_vvc_sb.add_expected(1, pad_avalon_mm_data_sb(v_data_8));
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout using SB");
     await_completion(AVALON_MM_VVCT, 1, 10000 ns, "Wait for avalon_mm_read to finish");
 
     avalon_mm_write(AVALON_MM_VVCT, 2, "0", v_data_8, "Write to Avalon MM 2");
-    avalon_mm_vvc_sb.add_expected(2, pad_avalon_mm_sb(v_data_8));
+    avalon_mm_vvc_sb.add_expected(2, pad_avalon_mm_data_sb(v_data_8));
     avalon_mm_read(AVALON_MM_VVCT, 2, "0", TO_SB, "Reading without expected timeout using SB");
     await_completion(AVALON_MM_VVCT, 2, 10000 ns, "Wait for avalon_mm_read to finish");
 
@@ -215,9 +216,9 @@ begin
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout");
     v_cmd_idx := get_last_received_cmd_idx(AVALON_MM_VVCT, 1); -- for last read
     await_completion(AVALON_MM_VVCT, 1, v_cmd_idx, 100 ns, "Wait for sbi_read to finish");
-    fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_data, v_is_ok, "Fetching read-result");
+    fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_result, v_is_ok, "Fetching read-result");
     check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
-    check_value(v_data(31 downto 0), x"10", ERROR, "Readback data via fetch_result()");
+    check_value(v_result.data(31 downto 0), x"10", ERROR, "Readback data via fetch_result()");
 
     log("Do another read - should timeout");
     shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles_severity := WARNING;

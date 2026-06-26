@@ -39,6 +39,8 @@ use work.vvc_sb_support_pkg.all;
 --=================================================================================================
 entity avalon_mm_vvc is
   generic(
+    -- When true: This VVC is an Avalon-MM host, when false: This VVC is an Avalon-MM agent.
+    GC_VVC_IS_HOST                           : boolean;
     GC_ADDR_WIDTH                            : integer range 1 to C_VVC_CMD_ADDR_MAX_LENGTH := 8; -- Avalon MM address bus
     GC_DATA_WIDTH                            : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 32; -- Avalon MM data bus
     GC_INSTANCE_IDX                          : natural                                      := 1; -- Instance index for this AVALON_MM_VVCT instance
@@ -51,15 +53,15 @@ entity avalon_mm_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
-    clk                     : in    std_logic;
-    avalon_mm_vvc_master_if : inout t_avalon_mm_if := init_avalon_mm_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
+    clk              : in    std_logic;
+    avalon_mm_vvc_if : inout t_avalon_mm_if := init_avalon_mm_if_signals(GC_VVC_IS_HOST, GC_ADDR_WIDTH, GC_DATA_WIDTH)
   );
 begin
   -- Check the interface widths to assure that the interface was correctly set up
-  assert (avalon_mm_vvc_master_if.address'length = GC_ADDR_WIDTH) report "avalon_mm_vvc_master_if.address'length /= GC_ADDR_WIDTH" severity failure;
-  assert (avalon_mm_vvc_master_if.writedata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_master_if.writedata'length /= GC_DATA_WIDTH" severity failure;
-  assert (avalon_mm_vvc_master_if.readdata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_master_if.readdata'length /= GC_DATA_WIDTH" severity failure;
-  assert (avalon_mm_vvc_master_if.byte_enable'length = GC_DATA_WIDTH / 8) report "avalon_mm_vvc_master_if.byte_enable'length /= GC_DATA_WIDTH/8" severity failure;
+  assert (avalon_mm_vvc_if.address'length = GC_ADDR_WIDTH) report "avalon_mm_vvc_if.address'length /= GC_ADDR_WIDTH" severity failure;
+  assert (avalon_mm_vvc_if.writedata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_if.writedata'length /= GC_DATA_WIDTH" severity failure;
+  assert (avalon_mm_vvc_if.readdata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_if.readdata'length /= GC_DATA_WIDTH" severity failure;
+  assert (avalon_mm_vvc_if.byte_enable'length = GC_DATA_WIDTH / 8) report "avalon_mm_vvc_if.byte_enable'length /= GC_DATA_WIDTH/8" severity failure;
 end entity avalon_mm_vvc;
 
 --=================================================================================================
@@ -227,7 +229,7 @@ begin
   p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural                                            := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time                                               := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time                                               := 0 ns;
     variable v_timestamp_end_of_last_bfm_access      : time                                               := 0 ns;
@@ -274,7 +276,7 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for insert_bfm_delay
-      if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK or v_cmd.operation = RESET then
+      if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = RECEIVE or v_cmd.operation = RESPOND or v_cmd.operation = CHECK or v_cmd.operation = RESET then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -299,170 +301,280 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          if GC_VVC_IS_HOST then
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
-          -- Normalise address and data
-          v_normalised_addr                                              := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with too wide address. " & v_cmd.msg);
-          v_normalised_data                                              := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_write() called with too wide data. " & v_cmd.msg);
-          if (v_cmd.byte_enable = (0 to v_cmd.byte_enable'length - 1 => '1')) then
-            v_normalised_byte_ena := (others => '1');
-          else
-            v_normalised_byte_ena := normalize_and_check(v_cmd.byte_enable, v_normalised_byte_ena, ALLOW_WIDER_NARROWER, "v_cmd.byte_enable", "v_normalised_byte_ena", "avalon_mm_write() called with too wide byte_enable. " & v_cmd.msg);
-          end if;
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0)              := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0)              := v_normalised_addr;
-          transaction_info.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0) := v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0);
-
-          -- Call the corresponding procedure in the BFM package.
-          avalon_mm_write(addr_value   => v_normalised_addr,
-                          data_value   => v_normalised_data,
-                          msg          => format_msg(v_cmd),
-                          clk          => clk,
-                          avalon_mm_if => avalon_mm_vvc_master_if,
-                          byte_enable  => v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0),
-                          scope        => C_SCOPE,
-                          msg_id_panel => v_msg_id_panel,
-                          config       => vvc_config.bfm_config);
-
-          -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
-
-        when READ =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
-
-          -- Normalise address
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_read() called with too wide address. " & v_cmd.msg);
-
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-
-          -- Call the corresponding procedure in the BFM package.
-          if vvc_config.use_read_pipeline then
-            -- Stall until response command queue is no longer full
-            while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop
-              wait for vvc_config.bfm_config.clock_period;
-            end loop;
-            avalon_mm_read_request(addr_value   => v_normalised_addr,
-                                   msg          => format_msg(v_cmd),
-                                   clk          => clk,
-                                   avalon_mm_if => avalon_mm_vvc_master_if,
-                                   scope        => C_SCOPE,
-                                   msg_id_panel => v_msg_id_panel,
-                                   config       => vvc_config.bfm_config);
-            work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
-
-          else
-
-            avalon_mm_read(addr_value   => v_normalised_addr,
-                           data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
-                           msg          => format_msg(v_cmd),
-                           clk          => clk,
-                           avalon_mm_if => avalon_mm_vvc_master_if,
-                           scope        => C_SCOPE,
-                           msg_id_panel => v_msg_id_panel,
-                           config       => vvc_config.bfm_config);
-
-            -- Request SB check result
-            if v_cmd.data_routing = TO_SB then
-              -- call SB check_received
-              avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            -- Normalise address and data
+            v_normalised_addr                                              := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with too wide address. " & v_cmd.msg);
+            v_normalised_data                                              := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_write() called with too wide data. " & v_cmd.msg);
+            if (v_cmd.byte_enable = (0 to v_cmd.byte_enable'length - 1 => '1')) then
+              v_normalised_byte_ena := (others => '1');
             else
-              -- Store the result
-              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                          cmd_idx      => v_cmd.cmd_idx,
-                                                          result       => v_read_data);
+              v_normalised_byte_ena := normalize_and_check(v_cmd.byte_enable, v_normalised_byte_ena, ALLOW_WIDER_NARROWER, "v_cmd.byte_enable", "v_normalised_byte_ena", "avalon_mm_write() called with too wide byte_enable. " & v_cmd.msg);
             end if;
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0)              := v_normalised_data;
+            transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0)              := v_normalised_addr;
+            transaction_info.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0) := v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0);
 
-            -- Update vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_SCOPE);
-          end if;
-
-        when CHECK =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
-
-          -- Normalise address
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_check() called with too wide address. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_check() called with too wide data. " & v_cmd.msg);
-
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-          -- Call the corresponding procedure in the BFM package.
-          if vvc_config.use_read_pipeline then
-            -- Wait until response command queue is no longer full
-            while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop
-              wait for vvc_config.bfm_config.clock_period;
-            end loop;
-
-            avalon_mm_read_request(addr_value    => v_normalised_addr,
-                                   msg           => format_msg(v_cmd),
-                                   clk           => clk,
-                                   avalon_mm_if  => avalon_mm_vvc_master_if,
-                                   scope         => C_SCOPE,
-                                   msg_id_panel  => v_msg_id_panel,
-                                   config        => vvc_config.bfm_config,
-                                   ext_proc_call => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")"
-                                  );
-            work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
-          else
-            avalon_mm_check(addr_value   => v_normalised_addr,
-                            data_exp     => v_normalised_data,
-                            msg          => format_msg(v_cmd),
-                            clk          => clk,
-                            avalon_mm_if => avalon_mm_vvc_master_if,
-                            alert_level  => v_cmd.alert_level,
-                            scope        => C_SCOPE,
-                            msg_id_panel => v_msg_id_panel,
-                            config       => vvc_config.bfm_config);
+            -- Call the corresponding procedure in the BFM package.
+            avalon_mm_write(addr_value => v_normalised_addr,
+                         data_value    => v_normalised_data,
+                         msg           => format_msg(v_cmd),
+                         clk           => clk,
+                         avalon_mm_if  => avalon_mm_vvc_if,
+                         byte_enable   => v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0),
+                         scope         => C_SCOPE,
+                         msg_id_panel  => v_msg_id_panel,
+                         config        => vvc_config.bfm_config);
 
             -- Update vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for host VVC", C_SCOPE);
           end if;
 
-        when RESET =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+        when READ =>
+          if GC_VVC_IS_HOST then
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
-          -- Call the corresponding procedure in the BFM package.
-          avalon_mm_reset(clk            => clk,
-                          avalon_mm_if   => avalon_mm_vvc_master_if,
-                          num_rst_cycles => v_cmd.gen_integer_array(0),
+            -- Normalise address
+            v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_read() called with too wide address. " & v_cmd.msg);
+
+            transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
+
+            -- Call the corresponding procedure in the BFM package.
+            if vvc_config.use_read_pipeline then
+              -- Stall until response command queue is no longer full
+              while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop
+                wait for vvc_config.bfm_config.clock_period;
+              end loop;
+              avalon_mm_read_request(addr_value   => v_normalised_addr,
+                                     msg          => format_msg(v_cmd),
+                                     clk          => clk,
+                                     avalon_mm_if => avalon_mm_vvc_if,
+                                     scope        => C_SCOPE,
+                                     msg_id_panel => v_msg_id_panel,
+                                     config       => vvc_config.bfm_config);
+              work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
+
+            else
+
+              -- scoreboard needs proper init
+              v_result := (others => (others => '0'));
+
+              avalon_mm_read(addr_value   => v_normalised_addr,
+                             data_value   => v_result.data(GC_DATA_WIDTH - 1 downto 0),
+                             msg          => format_msg(v_cmd),
+                             clk          => clk,
+                             avalon_mm_if => avalon_mm_vvc_if,
+                             scope        => C_SCOPE,
+                             msg_id_panel => v_msg_id_panel,
+                             config       => vvc_config.bfm_config);
+
+              -- Request SB check result
+              if v_cmd.data_routing = TO_SB then
+                -- call SB check_received
+                avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, v_result);
+              else
+                -- Store the result
+                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                            cmd_idx      => v_cmd.cmd_idx,
+                                                            result       => v_result);
+              end if;
+
+              -- Update vvc transaction info
+              set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+            end if;
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for host VVC", C_SCOPE);
+          end if;
+
+        when RECEIVE =>
+          -- agent-receive is the counter part of host-write. so far it retrieves address and data, other host
+          -- controlled signals are not checked (like byteenable).
+          if not GC_VVC_IS_HOST then
+            -- sanity checks
+            check_value(not vvc_config.use_read_pipeline, TB_ERROR, "not implemented: read pipeline for agent vvc.", C_SCOPE, ID_NEVER, v_msg_id_panel);
+
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+            -- scoreboard needs proper init
+            v_result := (others => (others => '0'));
+
+            avalon_mm_receive(addr_value => v_result.addr(GC_ADDR_WIDTH - 1 downto 0),
+                          data_value     => v_result.data(GC_DATA_WIDTH - 1 downto 0),
                           msg            => format_msg(v_cmd),
+                          clk            => clk,
+                          avalon_mm_if   => avalon_mm_vvc_if,
                           scope          => C_SCOPE,
                           msg_id_panel   => v_msg_id_panel,
                           config         => vvc_config.bfm_config);
 
-          -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+            -- Request SB check result
+            if v_cmd.data_routing = TO_SB then
+              -- call SB check_received
+              avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, v_result);
+            else
+              -- Store the result
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result);
+            end if;
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for agent VVC", C_SCOPE);
+          end if;
+
+        when RESPOND =>
+          -- agent-respond is the counter part of host-read. so far it retrieves address and replies requested readdata
+          -- using readdatavalid. other host controlled signals are not checked (like byteenable).
+          if not GC_VVC_IS_HOST then
+            -- sanity checks
+            check_value(not vvc_config.use_read_pipeline, TB_ERROR, "not implemented: read pipeline for agent vvc.", C_SCOPE, ID_NEVER, v_msg_id_panel);
+
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+            -- Normalise data
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_respond() called with too wide data. " & v_cmd.msg);
+
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+
+            -- scoreboard needs proper init
+            v_result := (others => (others => '0'));
+
+            avalon_mm_respond(addr_value => v_result.addr(GC_ADDR_WIDTH - 1 downto 0),
+                           data_value    => v_normalised_data,
+                           msg           => format_msg(v_cmd),
+                           clk           => clk,
+                           avalon_mm_if  => avalon_mm_vvc_if,
+                           scope         => C_SCOPE,
+                           msg_id_panel  => v_msg_id_panel,
+                           config        => vvc_config.bfm_config);
+
+            -- Request SB check result
+            if v_cmd.data_routing = TO_SB then
+              -- call SB check_received
+              avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, v_result);
+            else
+              -- Store the result
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result);
+            end if;
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for agent VVC", C_SCOPE);
+          end if;
+
+        when CHECK =>
+          if GC_VVC_IS_HOST then
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+            -- Normalise address
+            v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_check() called with too wide address. " & v_cmd.msg);
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_check() called with too wide data. " & v_cmd.msg);
+
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
+            -- Call the corresponding procedure in the BFM package.
+            if vvc_config.use_read_pipeline then
+              -- Wait until response command queue is no longer full
+              while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop
+                wait for vvc_config.bfm_config.clock_period;
+              end loop;
+
+              avalon_mm_read_request(addr_value    => v_normalised_addr,
+                                     msg           => format_msg(v_cmd),
+                                     clk           => clk,
+                                     avalon_mm_if  => avalon_mm_vvc_if,
+                                     scope         => C_SCOPE,
+                                     msg_id_panel  => v_msg_id_panel,
+                                     config        => vvc_config.bfm_config,
+                                     ext_proc_call => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")"
+                                    );
+              work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
+            else
+              avalon_mm_check(addr_value   => v_normalised_addr,
+                              data_exp     => v_normalised_data,
+                              msg          => format_msg(v_cmd),
+                              clk          => clk,
+                              avalon_mm_if => avalon_mm_vvc_if,
+                              alert_level  => v_cmd.alert_level,
+                              scope        => C_SCOPE,
+                              msg_id_panel => v_msg_id_panel,
+                              config       => vvc_config.bfm_config);
+
+              -- Update vvc transaction info
+              set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+            end if;
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for host VVC", C_SCOPE);
+          end if;
+
+        when RESET =>
+          if GC_VVC_IS_HOST then
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+            -- Call the corresponding procedure in the BFM package.
+            avalon_mm_reset(clk            => clk,
+                            avalon_mm_if   => avalon_mm_vvc_if,
+                            num_rst_cycles => v_cmd.gen_integer_array(0),
+                            msg            => format_msg(v_cmd),
+                            scope          => C_SCOPE,
+                            msg_id_panel   => v_msg_id_panel,
+                            config         => vvc_config.bfm_config);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for host VVC", C_SCOPE);
+          end if;
 
         when LOCK =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          if GC_VVC_IS_HOST then
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
-          -- Call the corresponding procedure in the BFM package.
-          avalon_mm_lock(avalon_mm_if => avalon_mm_vvc_master_if,
-                         msg          => format_msg(v_cmd),
-                         scope        => C_SCOPE,
-                         msg_id_panel => v_msg_id_panel,
-                         config       => vvc_config.bfm_config);
-
-          -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
-
-        when UNLOCK =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
-
-          -- Call the corresponding procedure in the BFM package.
-          avalon_mm_unlock(avalon_mm_if => avalon_mm_vvc_master_if,
+            -- Call the corresponding procedure in the BFM package.
+            avalon_mm_lock(avalon_mm_if => avalon_mm_vvc_if,
                            msg          => format_msg(v_cmd),
                            scope        => C_SCOPE,
                            msg_id_panel => v_msg_id_panel,
                            config       => vvc_config.bfm_config);
 
-          -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for host VVC", C_SCOPE);
+          end if;
+
+        when UNLOCK =>
+          if GC_VVC_IS_HOST then
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+            -- Call the corresponding procedure in the BFM package.
+            avalon_mm_unlock(avalon_mm_if => avalon_mm_vvc_if,
+                             msg          => format_msg(v_cmd),
+                             scope        => C_SCOPE,
+                             msg_id_panel => v_msg_id_panel,
+                             config       => vvc_config.bfm_config);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          else
+            alert(TB_ERROR, "Sanity check: Method call only makes sense for host VVC", C_SCOPE);
+          end if;
 
         -- UVVM common operations
         --===================================
@@ -517,13 +629,13 @@ begin
   -- Read response command execution.
   -- - READ (and CHECK) data received from the slave after the command executor has issued an
   --   read request (or check).
-  -- - Note the use of propagation delayed avalon_mm_vv_master_if signal
+  -- - Note the use of propagation delayed avalon_mm_vvc_if signal
   --===============================================================================================
   p_read_response : process is
     constant C_EXECUTOR_ID          : natural                                      := 1;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
-    variable v_read_data            : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_result               : t_vvc_result; -- See vvc_cmd_pkg
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     constant C_READ_RESP_SCOPE      : string                                       := get_scope_for_log(C_VVC_NAME & "_RR", GC_INSTANCE_IDX);
@@ -561,27 +673,28 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_READ_RESP_SCOPE);
 
           -- Initiate read response
+          v_result := (others => (others => '0'));
           avalon_mm_read_response(addr_value   => v_normalised_addr,
-                                  data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
+                                  data_value   => v_result.data(GC_DATA_WIDTH - 1 downto 0),
                                   msg          => format_msg(v_cmd),
                                   clk          => clk,
-                                  avalon_mm_if => avalon_mm_vvc_master_if,
+                                  avalon_mm_if => avalon_mm_vvc_if,
                                   scope        => C_READ_RESP_SCOPE,
                                   msg_id_panel => v_msg_id_panel,
                                   config       => vvc_config.bfm_config);
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            avalon_mm_vvc_sb.check_received(GC_INSTANCE_IDX, v_result);
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                         cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_read_data);
+                                                        result       => v_result);
           end if;
 
           -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_READ_RESP_SCOPE);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_READ_RESP_SCOPE);
 
         when CHECK =>
           -- Set vvc transaction info
@@ -592,7 +705,7 @@ begin
                                    data_exp     => v_normalised_data,
                                    msg          => format_msg(v_cmd),
                                    clk          => clk,
-                                   avalon_mm_if => avalon_mm_vvc_master_if,
+                                   avalon_mm_if => avalon_mm_vvc_if,
                                    alert_level  => v_cmd.alert_level,
                                    scope        => C_READ_RESP_SCOPE,
                                    msg_id_panel => v_msg_id_panel,
@@ -657,17 +770,20 @@ begin
         end loop;
       end if;
 
-      wait on avalon_mm_vvc_master_if.readdata, avalon_mm_vvc_master_if.response, avalon_mm_vvc_master_if.waitrequest, avalon_mm_vvc_master_if.readdatavalid, avalon_mm_vvc_master_if.irq, global_trigger_vvc_activity_register;
+      wait on avalon_mm_vvc_if.read, avalon_mm_vvc_if.write, avalon_mm_vvc_if.chipselect, avalon_mm_vvc_if.readdatavalid, avalon_mm_vvc_if.irq, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
+      -- Check the control signal changes only when the vvc is inactive
       if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
         -- Skip checking the changes if the readdatavalid signal goes low within one clock period after the VVC becomes inactive
-        if not (falling_edge(avalon_mm_vvc_master_if.readdatavalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(avalon_mm_vvc_master_if.readdatavalid, vvc_config.unwanted_activity_severity, "readdatavalid", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.readdata, vvc_config.unwanted_activity_severity, "readdata", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.response, vvc_config.unwanted_activity_severity, "response", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.waitrequest, vvc_config.unwanted_activity_severity, "waitrequest", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.irq, vvc_config.unwanted_activity_severity, "irq", C_SCOPE);
+        if not (falling_edge(avalon_mm_vvc_if.readdatavalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_unwanted_activity(avalon_mm_vvc_if.readdatavalid, vvc_config.unwanted_activity_severity, "readdatavalid", C_SCOPE);
+          check_unwanted_activity(avalon_mm_vvc_if.irq, vvc_config.unwanted_activity_severity, "irq", C_SCOPE);
+          check_unwanted_activity(avalon_mm_vvc_if.chipselect, vvc_config.unwanted_activity_severity, "chipselect", C_SCOPE);
+          -- read and write are qualified by chicpselect, agents may be selected all the time
+          if (avalon_mm_vvc_if.chipselect = '1') then
+            check_unwanted_activity(avalon_mm_vvc_if.read, vvc_config.unwanted_activity_severity, "read", C_SCOPE);
+            check_unwanted_activity(avalon_mm_vvc_if.write, vvc_config.unwanted_activity_severity, "write", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;

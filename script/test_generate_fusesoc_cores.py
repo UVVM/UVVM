@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Unit tests for generate_fusesoc_cores.py pure functions.
+"""Unit tests for generate_fusesoc_cores.py.
 
 Run with:
     python3 script/test_generate_fusesoc_cores.py
 """
 
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -19,51 +21,67 @@ from generate_fusesoc_cores import (
 )
 
 
+def write_temp(content, suffix):
+    """Write content to a temp file, returning its Path. Auto-cleans up."""
+    f = tempfile.NamedTemporaryFile(mode='w', suffix=suffix, delete=False)
+    f.write(content)
+    f.flush()
+    f.close()
+    return Path(f.name)
+
+
 class TestParseVersion(unittest.TestCase):
+    def setUp(self):
+        self._files = []
+
+    def _write(self, content):
+        p = write_temp(content, '.txt')
+        self._files.append(p)
+        return p
+
+    def tearDown(self):
+        for p in self._files:
+            p.unlink(missing_ok=True)
+
     def test_plain(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write('1.2.3')
-            f.flush()
-            self.assertEqual(parse_version(Path(f.name)), '1.2.3')
+        self.assertEqual(parse_version(self._write('1.2.3')), '1.2.3')
 
     def test_v_prefix(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write('v2.21.4')
-            f.flush()
-            self.assertEqual(parse_version(Path(f.name)), '2.21.4')
+        self.assertEqual(parse_version(self._write('v2.21.4')), '2.21.4')
 
     def test_beta_suffix(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write('v0.1.1 BETA')
-            f.flush()
-            self.assertEqual(parse_version(Path(f.name)), '0.1.1')
+        self.assertEqual(parse_version(self._write('v0.1.1 BETA')), '0.1.1')
 
 
 class TestParseCompileOrder(unittest.TestCase):
+    def setUp(self):
+        self._files = []
+
+    def _write(self, content):
+        p = write_temp(content, '.txt')
+        self._files.append(p)
+        return p
+
+    def tearDown(self):
+        for p in self._files:
+            p.unlink(missing_ok=True)
+
     def test_basic(self):
-        content = (
+        name, files, toplevel = parse_compile_order(self._write(
             '# library bitvis_irqc\n'
             '../src/irqc_pif_pkg.vhd\n'
             '../src/irqc.vhd\n'
-        )
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write(content)
-            f.flush()
-            name, files, toplevel = parse_compile_order(Path(f.name))
+        ))
         self.assertEqual(name, 'bitvis_irqc')
         self.assertEqual(files, ['../src/irqc_pif_pkg.vhd', '../src/irqc.vhd'])
         self.assertIsNone(toplevel)
 
     def test_with_toplevel(self):
-        content = (
+        name, files, toplevel = parse_compile_order(self._write(
             '# library bitvis_irqc\n'
             '# toplevel: irqc_demo_tb\n'
             '../tb/irqc_demo_tb.vhd\n'
-        )
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write(content)
-            f.flush()
-            name, files, toplevel = parse_compile_order(Path(f.name))
+        ))
         self.assertEqual(toplevel, 'irqc_demo_tb')
 
 
@@ -92,26 +110,69 @@ class TestToCorePath(unittest.TestCase):
 
 
 class TestFindLibraryDeps(unittest.TestCase):
+    def setUp(self):
+        self._files = []
+
+    def _write(self, content):
+        p = write_temp(content, '.vhd')
+        self._files.append(p)
+        return p
+
+    def tearDown(self):
+        for p in self._files:
+            p.unlink(missing_ok=True)
+
     def test_single_library(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.vhd', delete=False) as f:
-            f.write('library ieee;\nlibrary uvvm_util;\n')
-            f.flush()
-            deps = find_library_deps(Path(f.name))
+        deps = find_library_deps(self._write('library ieee;\nlibrary uvvm_util;\n'))
         self.assertEqual(deps, {'ieee', 'uvvm_util'})
 
     def test_comma_separated(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.vhd', delete=False) as f:
-            f.write('library std, ieee;\nlibrary uvvm_util, uvvm_vvc_framework;\n')
-            f.flush()
-            deps = find_library_deps(Path(f.name))
+        deps = find_library_deps(self._write(
+            'library std, ieee;\nlibrary uvvm_util, uvvm_vvc_framework;\n'
+        ))
         self.assertEqual(deps, {'std', 'ieee', 'uvvm_util', 'uvvm_vvc_framework'})
 
+    def test_case_insensitive(self):
+        deps = find_library_deps(self._write('LIBRARY IEEE;\nLibrary Uvvm_Util;\n'))
+        self.assertEqual(deps, {'ieee', 'uvvm_util'})
+
     def test_ignores_comments(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.vhd', delete=False) as f:
-            f.write('-- library ieee;\nlibrary uvvm_util;\n')
-            f.flush()
-            deps = find_library_deps(Path(f.name))
+        deps = find_library_deps(self._write('-- library ieee;\nlibrary uvvm_util;\n'))
         self.assertEqual(deps, {'uvvm_util'})
+
+
+class TestIdempotency(unittest.TestCase):
+    """Verify that running the generator reproduces the checked-in files."""
+
+    def test_generator_matches_checked_in_files(self):
+        script_dir = Path(__file__).resolve().parent
+        uvvm_root = script_dir.parent
+
+        # Collect all .core files and fusesoc.conf (skip build/ and .git/)
+        files = [
+            f for f in uvvm_root.rglob('*')
+            if '.git' not in f.parts and 'build' not in f.parts
+            and (f.suffix == '.core' or f.name == 'fusesoc.conf')
+        ]
+        originals = {f: f.read_bytes() for f in files}
+
+        try:
+            result = subprocess.run(
+                [sys.executable, str(script_dir / 'generate_fusesoc_cores.py')],
+                capture_output=True, text=True, cwd=uvvm_root,
+            )
+            if result.returncode != 0:
+                self.fail(f'Generator failed: {result.stderr}')
+
+            for f, original in originals.items():
+                if f.read_bytes() != original:
+                    self.fail(
+                        f'{f.relative_to(uvvm_root)} would change. '
+                        f'Run: uv run script/generate_fusesoc_cores.py'
+                    )
+        finally:
+            for f, content in originals.items():
+                f.write_bytes(content)
 
 
 if __name__ == '__main__':

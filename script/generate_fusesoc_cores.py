@@ -91,7 +91,7 @@ def to_core_path(script_relative):
       ../src/foo.vhd                                    -> ./src/foo.vhd
       ../../uvvm_vvc_framework/src_target_dependent/x   -> {../uvvm_vvc_framework/src_target_dependent/x: {copyto: src/x}}
     """
-    if 'src_target_dependent/' in script_relative:
+    if 'src_target_dependent' in Path(script_relative).parts:
         source = script_relative[3:]  # strip one ../ -> core-relative
         filename = Path(script_relative).name
         return {source: {'copyto': f'src/{filename}'}}
@@ -111,7 +111,7 @@ def find_library_deps(vhd_path):
     """
     deps = set()
     text = vhd_path.read_text(errors='replace')
-    for m in re.finditer(r'^\s*library\s+([\w,\s]+);', text, re.MULTILINE):
+    for m in re.finditer(r'^\s*library\s+([\w,\s]+);', text, re.MULTILINE | re.IGNORECASE):
         for name in m.group(1).split(','):
             name = name.strip()
             if name:

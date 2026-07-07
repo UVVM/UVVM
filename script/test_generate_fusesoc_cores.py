@@ -49,9 +49,22 @@ class TestParseCompileOrder(unittest.TestCase):
         with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
             f.write(content)
             f.flush()
-            name, files = parse_compile_order(Path(f.name))
+            name, files, toplevel = parse_compile_order(Path(f.name))
         self.assertEqual(name, 'bitvis_irqc')
         self.assertEqual(files, ['../src/irqc_pif_pkg.vhd', '../src/irqc.vhd'])
+        self.assertIsNone(toplevel)
+
+    def test_with_toplevel(self):
+        content = (
+            '# library bitvis_irqc\n'
+            '# toplevel: irqc_demo_tb\n'
+            '../tb/irqc_demo_tb.vhd\n'
+        )
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+            f.write(content)
+            f.flush()
+            name, files, toplevel = parse_compile_order(Path(f.name))
+        self.assertEqual(toplevel, 'irqc_demo_tb')
 
 
 class TestToCorePath(unittest.TestCase):

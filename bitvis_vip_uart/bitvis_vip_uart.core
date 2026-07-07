@@ -28,7 +28,30 @@ filesets:
     - uvvm:uvvm:bitvis_vip_scoreboard:2.3.4
     - uvvm:uvvm:uvvm_util:2.21.4
     - uvvm:uvvm:uvvm_vvc_framework:2.12.15
+  tb:
+    files:
+    - ./tb/uvvm_demo_th.vhd
+    - ./tb/uvvm_demo_tb.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_vip_uart
+    depend:
+    - uvvm:uvvm:bitvis_uart:1.1.9
+    - uvvm:uvvm:bitvis_vip_clock_generator:1.6.3
+    - uvvm:uvvm:bitvis_vip_sbi:4.1.3
+    - uvvm:uvvm:bitvis_vip_scoreboard:2.3.4
+    - uvvm:uvvm:uvvm_util:2.21.4
+    - uvvm:uvvm:uvvm_vvc_framework:2.12.15
 targets:
   default:
     filesets:
     - rtl
+  sim:
+    filesets:
+    - rtl
+    - tb
+    toplevel: bitvis_vip_uart.uvvm_demo_tb
+    default_tool: ghdl
+    tools:
+      ghdl:
+        analyze_options:
+        - -frelaxed

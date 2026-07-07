@@ -8,9 +8,10 @@
 """Generate FuseSoC CAPI2 .core files for UVVM from existing metadata.
 
 Sources of truth:
-  - script/component_list.txt       : ordered list of UVVM sub-libraries
-  - <lib>/VERSION.TXT               : version string
-  - <lib>/script/compile_order.txt  : file list (ordered) + library name
+  - script/component_list.txt            : ordered list of UVVM sub-libraries
+  - <lib>/VERSION.TXT                    : version string
+  - <lib>/script/compile_order.txt       : RTL file list (ordered) + library name
+  - <lib>/script/compile_order_demo_tb.txt : demo TB file list + toplevel (optional)
 
 For each sub-library, VHDL source files are scanned for `library X;`
 statements to discover dependencies on other UVVM libraries.
@@ -50,11 +51,13 @@ def parse_version(path):
 
 
 def parse_compile_order(path):
-    """Parse compile_order.txt -> (logical_name, [file_paths]).
+    """Parse compile_order*.txt -> (logical_name, [file_paths], toplevel).
 
     File paths are relative to the script/ directory of the component.
+    Toplevel is extracted from '# toplevel: X' comment (demo TB only).
     """
     logical_name = None
+    toplevel = None
     files = []
     for line in path.read_text().splitlines():
         line = line.strip()
@@ -64,9 +67,12 @@ def parse_compile_order(path):
             m = re.match(r'#\s*library\s+(\S+)', line)
             if m:
                 logical_name = m.group(1)
+            m = re.match(r'#\s*toplevel\s*:\s*(\S+)', line)
+            if m:
+                toplevel = m.group(1)
             continue
         files.append(line)
-    return logical_name, files
+    return logical_name, files, toplevel
 
 
 def to_core_path(script_relative):
@@ -134,8 +140,12 @@ def generate_fusesoc_conf_content():
     )
 
 
-def build_core_dict(comp_name, version, logical_name, files, deps):
-    """Build the dict structure for a per-component .core file."""
+def build_core_dict(comp_name, version, logical_name, files, deps,
+                    tb_files=None, tb_logical_name=None, tb_deps=None, toplevel=None):
+    """Build the dict structure for a per-component .core file.
+
+    If tb_files and toplevel are provided, adds a 'tb' fileset and 'sim' target.
+    """
     fileset = {
         'files': [to_core_path(f) for f in files],
         'file_type': 'vhdlSource-2008',
@@ -144,16 +154,38 @@ def build_core_dict(comp_name, version, logical_name, files, deps):
     if deps:
         fileset['depend'] = sorted(deps)
 
+    filesets = {'rtl': fileset}
+    targets = {
+        'default': {
+            'filesets': ['rtl'],
+        },
+    }
+
+    if tb_files and toplevel:
+        tb_fileset = {
+            'files': [to_core_path(f) for f in tb_files],
+            'file_type': 'vhdlSource-2008',
+            'logical_name': tb_logical_name or logical_name,
+        }
+        if tb_deps:
+            tb_fileset['depend'] = sorted(tb_deps)
+        filesets['tb'] = tb_fileset
+
+        targets['sim'] = {
+            'filesets': ['rtl', 'tb'],
+            'toplevel': f'{tb_logical_name or logical_name}.{toplevel}',
+            'default_tool': 'ghdl',
+            'tools': {
+                'ghdl': {
+                    'analyze_options': ['-frelaxed'],
+                },
+            },
+        }
+
     return {
         'name': f'uvvm:uvvm:{comp_name}:{version}',
-        'filesets': {
-            'rtl': fileset,
-        },
-        'targets': {
-            'default': {
-                'filesets': ['rtl'],
-            },
-        },
+        'filesets': filesets,
+        'targets': targets,
     }
 
 
@@ -214,12 +246,12 @@ def main():
             print(f'  SKIP {comp} (no compile_order.txt)')
             continue
 
-        logical_name, files = parse_compile_order(co_path)
+        logical_name, files, _ = parse_compile_order(co_path)
         if not logical_name:
             print(f'  WARNING: no library name in {co_path}', file=sys.stderr)
             continue
 
-        # Scan .vhd files for library dependencies
+        # Scan RTL .vhd files for library dependencies
         deps = set()
         for f in files:
             vhd_path = (uvvm_root / comp / 'script' / f).resolve()
@@ -231,10 +263,41 @@ def main():
             vlnv_map[d] for d in deps if d in vlnv_map and d != logical_name.lower()
         }
 
+        # Parse demo TB metadata if available
+        tb_files = None
+        tb_logical_name = None
+        tb_deps = None
+        toplevel = None
+        tb_path = uvvm_root / comp / 'script' / 'compile_order_demo_tb.txt'
+        if tb_path.exists():
+            tb_logical_name, tb_files, toplevel = parse_compile_order(tb_path)
+            if not toplevel:
+                print(f'  WARNING: no toplevel in {tb_path}', file=sys.stderr)
+                tb_files = None
+            elif tb_files:
+                # Scan TB .vhd files for library dependencies
+                tb_dep_set = set()
+                for f in tb_files:
+                    vhd_path = (uvvm_root / comp / 'script' / f).resolve()
+                    if vhd_path.suffix == '.vhd' and vhd_path.exists():
+                        tb_dep_set.update(find_library_deps(vhd_path))
+                # Filter to UVVM libraries, excluding the TB's own library
+                # and the component's own library (RTL is in the same core)
+                tb_deps = {
+                    vlnv_map[d] for d in tb_dep_set
+                    if d in vlnv_map
+                    and d != (tb_logical_name or logical_name).lower()
+                    and d != comp.lower()
+                }
+
         vlnv = f'uvvm:uvvm:{comp}:{versions[comp]}'
         all_vlnvs.append(vlnv)
 
-        core_dict = build_core_dict(comp, versions[comp], logical_name, files, uvvm_deps)
+        core_dict = build_core_dict(
+            comp, versions[comp], logical_name, files, uvvm_deps,
+            tb_files=tb_files, tb_logical_name=tb_logical_name,
+            tb_deps=tb_deps, toplevel=toplevel,
+        )
         core_path = uvvm_root / comp / f'{comp}.core'
         core_path.write_text(dump_core(core_dict))
         print(f'  Wrote {core_path.relative_to(uvvm_root)}')

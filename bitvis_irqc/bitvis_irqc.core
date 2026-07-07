@@ -9,7 +9,25 @@ filesets:
     - ./src/irqc.vhd
     file_type: vhdlSource-2008
     logical_name: bitvis_irqc
+  tb:
+    files:
+    - ./tb/irqc_demo_tb.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_irqc
+    depend:
+    - uvvm:uvvm:bitvis_vip_sbi:4.1.3
+    - uvvm:uvvm:uvvm_util:2.21.4
 targets:
   default:
     filesets:
     - rtl
+  sim:
+    filesets:
+    - rtl
+    - tb
+    toplevel: bitvis_irqc.irqc_demo_tb
+    default_tool: ghdl
+    tools:
+      ghdl:
+        analyze_options:
+        - -frelaxed

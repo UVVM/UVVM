@@ -1,0 +1,5 @@
+# library uvvm_assertions
+# toplevel: uvvm_assertions_demo_tb
+../tb/demo_entities.vhd
+../tb/uvvm_assertions_demo_th.vhd
+../tb/uvvm_assertions_demo_tb.vhd

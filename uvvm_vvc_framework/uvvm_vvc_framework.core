@@ -1,0 +1,21 @@
+CAPI=2:
+name: uvvm:uvvm:uvvm_vvc_framework:2.12.15
+filesets:
+  rtl:
+    files:
+    - ./src/ti_protected_types_pkg.vhd
+    - ./src/ti_vvc_framework_support_pkg.vhd
+    - ./src/ti_generic_queue_pkg.vhd
+    - ./src/ti_data_queue_pkg.vhd
+    - ./src/ti_data_fifo_pkg.vhd
+    - ./src/ti_data_stack_pkg.vhd
+    - ./src/ti_uvvm_engine.vhd
+    - ./src/ti_vvc_framework_context.vhd
+    file_type: vhdlSource-2008
+    logical_name: uvvm_vvc_framework
+    depend:
+    - uvvm:uvvm:uvvm_util:2.21.4
+targets:
+  default:
+    filesets:
+    - rtl

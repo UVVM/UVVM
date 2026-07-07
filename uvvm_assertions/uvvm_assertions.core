@@ -1,0 +1,14 @@
+CAPI=2:
+name: uvvm:uvvm:uvvm_assertions:0.1.1
+filesets:
+  rtl:
+    files:
+    - ./src/uvvm_assertions_pkg.vhd
+    file_type: vhdlSource-2008
+    logical_name: uvvm_assertions
+    depend:
+    - uvvm:uvvm:uvvm_util:2.21.4
+targets:
+  default:
+    filesets:
+    - rtl

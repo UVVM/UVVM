@@ -1,0 +1,15 @@
+CAPI=2:
+name: uvvm:uvvm:bitvis_irqc:1.0.14
+filesets:
+  rtl:
+    files:
+    - ./src/irqc_pif_pkg.vhd
+    - ./src/irqc_pif.vhd
+    - ./src/irqc_core.vhd
+    - ./src/irqc.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_irqc
+targets:
+  default:
+    filesets:
+    - rtl

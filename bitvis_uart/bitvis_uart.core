@@ -1,0 +1,16 @@
+CAPI=2:
+name: uvvm:uvvm:bitvis_uart:1.1.9
+filesets:
+  rtl:
+    files:
+    - ./src/uart_pkg.vhd
+    - ./src/uart_pif_pkg.vhd
+    - ./src/uart_pif.vhd
+    - ./src/uart_core.vhd
+    - ./src/uart.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_uart
+targets:
+  default:
+    filesets:
+    - rtl

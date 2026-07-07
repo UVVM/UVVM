@@ -15,6 +15,11 @@ Sources of truth:
 For each sub-library, VHDL source files are scanned for `library X;`
 statements to discover dependencies on other UVVM libraries.
 
+Target-dependent (td_) files from uvvm_vvc_framework/src_target_dependent/
+are referenced via FuseSoC's `copyto` file property, which copies them
+into each VIP's work directory at build time. This avoids committing
+duplicate copies while keeping per-VIP .core files self-contained.
+
 Output:
   - <lib>/<lib>.core   : one core file per sub-library
   - uvvm.core          : aggregate core depending on all sub-libraries
@@ -65,20 +70,30 @@ def parse_compile_order(path):
 
 
 def to_core_path(script_relative):
-    """Convert a path relative to script/ to one relative to the component root.
+    """Convert a path relative to script/ to a .core file path entry.
 
     compile_order.txt paths are relative to <lib>/script/.
     .core file paths are relative to <lib>/.
 
+    Paths into uvvm_vvc_framework/src_target_dependent/ are emitted as
+    copyto entries so FuseSoC copies them into the work directory at
+    build time, avoiding committed duplicates.
+
+    Returns a string for regular files, or a dict for copyto entries.
+
     Examples:
       ../src/foo.vhd                                    -> ./src/foo.vhd
-      ../../uvvm_vvc_framework/src_target_dependent/x   -> ../uvvm_vvc_framework/src_target_dependent/x
+      ../../uvvm_vvc_framework/src_target_dependent/x   -> {../uvvm_vvc_framework/src_target_dependent/x: {copyto: src/x}}
     """
+    if 'src_target_dependent/' in script_relative:
+        source = script_relative[3:]  # strip one ../ -> core-relative
+        filename = Path(script_relative).name
+        return {source: {'copyto': f'src/{filename}'}}
     if not script_relative.startswith('../'):
         return './' + script_relative
     stripped = script_relative[3:]
     if stripped.startswith('..'):
-        return stripped
+        raise ValueError(f'Path escapes core directory: {script_relative}')
     return './' + stripped
 
 

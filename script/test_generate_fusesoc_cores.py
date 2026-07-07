@@ -64,6 +64,19 @@ class TestToCorePath(unittest.TestCase):
     def test_bare_path(self):
         self.assertEqual(to_core_path('foo.vhd'), './foo.vhd')
 
+    def test_td_path_emits_copyto(self):
+        result = to_core_path(
+            '../../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd'
+        )
+        self.assertEqual(result, {
+            '../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd':
+                {'copyto': 'src/td_queue_pkg.vhd'}
+        })
+
+    def test_escaping_path_raises(self):
+        with self.assertRaises(ValueError):
+            to_core_path('../../../etc/passwd')
+
 
 class TestFindLibraryDeps(unittest.TestCase):
     def test_single_library(self):

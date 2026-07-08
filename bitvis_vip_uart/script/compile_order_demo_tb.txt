@@ -1,0 +1,4 @@
+# library bitvis_vip_uart
+# toplevel: uvvm_demo_tb
+../tb/uvvm_demo_th.vhd
+../tb/uvvm_demo_tb.vhd

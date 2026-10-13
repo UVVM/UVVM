@@ -571,6 +571,7 @@ package body axi_bfm_pkg is
     variable v_time_of_falling_edge : time                                                                      := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_wready               : std_logic;
     variable v_awready              : std_logic;
+    variable v_aw_cycle             : natural                                                                   := 0;
   begin
     -- Setting default values
     if awid_value'length = 0 then
@@ -620,7 +621,7 @@ package body axi_bfm_pkg is
           end if;
         end if;
 
-        if cycle = config.num_aw_pipe_stages and write_transfer_num = 0 then
+        if v_aw_cycle = config.num_aw_pipe_stages then
           axi_if.write_address_channel.awid     <= v_awid_value;
           axi_if.write_address_channel.awaddr   <= v_normalized_addr;
           axi_if.write_address_channel.awlen    <= std_logic_vector(awlen_value);
@@ -647,7 +648,7 @@ package body axi_bfm_pkg is
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
-        if v_wready = '1' and cycle >= config.num_w_pipe_stages then
+        if v_await_wready and v_wready = '1' and cycle >= config.num_w_pipe_stages then
           axi_if.write_data_channel.wdata  <= (axi_if.write_data_channel.wdata'range => '0');
           axi_if.write_data_channel.wstrb  <= (axi_if.write_data_channel.wstrb'range => '0');
           axi_if.write_data_channel.wlast  <= '0';
@@ -656,7 +657,7 @@ package body axi_bfm_pkg is
           v_await_wready                   := false;
         end if;
 
-        if v_awready = '1' and cycle >= config.num_aw_pipe_stages then
+        if v_await_awready and v_awready = '1' and v_aw_cycle >= config.num_aw_pipe_stages then
           axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0');
           axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0');
           axi_if.write_address_channel.awlen    <= (others => '0');
@@ -672,13 +673,18 @@ package body axi_bfm_pkg is
           v_await_awready                       := false;
         end if;
 
-        if not v_await_awready and not v_await_wready then
+        -- Track AW across the burst while each W beat advances independently.
+        if v_aw_cycle = config.max_wait_cycles then
+          check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+        end if;
+        v_aw_cycle := v_aw_cycle + 1;
+
+        if not v_await_wready and (write_transfer_num < to_integer(awlen_value) or not v_await_awready) then
           exit;
         end if;
       end loop;
 
       check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
-      check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
       v_await_wready := true;
     end loop;

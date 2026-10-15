@@ -24,3 +24,4 @@ This project uses the following versions:
   bitvis_vip_uart, version v5.0.1
   bitvis_vip_wishbone, version v1.0.1
   external_vip_apb, version v1.0.0
+  p2l2_vip_mdio, version v1.0.0

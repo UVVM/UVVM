@@ -606,6 +606,8 @@ begin
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
                 alert(vvc_config.bfm_config.general_severity, "Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
+                log(vvc_config.bfm_config.id_for_bfm, "Flushing read_data_channel_queue." & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, v_msg_id_panel);
+                read_data_channel_queue.flush(VOID);
               end if;
             end loop;
           else
@@ -660,6 +662,8 @@ begin
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
                 alert(vvc_config.bfm_config.general_severity, "Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
+                log(vvc_config.bfm_config.id_for_bfm, "Flushing read_data_channel_queue." & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, v_msg_id_panel);
+                read_data_channel_queue.flush(VOID);
               end if;
             end loop;
           else
@@ -931,6 +935,8 @@ begin
           elsif i = v_queue_count then
             -- We didn't find the correct BID
             alert(vvc_config.bfm_config.general_severity, "Unexpected write response with BID: " & to_string(v_bid_value), C_CHANNEL_SCOPE);
+            log(vvc_config.bfm_config.id_for_bfm, "Flushing write_response_channel_queue." & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, v_msg_id_panel);
+            write_response_channel_queue.flush(VOID);
           end if;
         end loop;
       else

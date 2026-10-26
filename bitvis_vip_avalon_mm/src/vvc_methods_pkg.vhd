@@ -211,6 +211,25 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  procedure avalon_mm_receive(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_routing        : in t_data_routing;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure avalon_mm_respond(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data                : in std_logic_vector;
+    constant data_routing        : in t_data_routing;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
   --==============================================================================
   -- Transactino info methods
   --==============================================================================
@@ -452,6 +471,59 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
+  procedure avalon_mm_receive(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_routing        : in t_data_routing;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant C_PROC_NAME : string := "avalon_mm_receive";
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_upper(to_string(data_routing)) & ")";
+    variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, RECEIVE);
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure avalon_mm_respond(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data                : in std_logic_vector;
+    constant data_routing        : in t_data_routing;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant C_PROC_NAME : string := "avalon_mm_respond";
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                           & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_upper(to_string(data_routing)) & ")";
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
+    variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, RESPOND);
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
   --==============================================================================
   -- Transaction info methods
   --==============================================================================
@@ -474,7 +546,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
-      when READ | CHECK =>
+      when READ | CHECK | RECEIVE | RESPOND =>
         vvc_transaction_info_group.st.operation          := vvc_cmd.operation;
         vvc_transaction_info_group.st.addr               := vvc_cmd.addr;
         vvc_transaction_info_group.st.data               := vvc_cmd.data;
@@ -500,7 +572,18 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when READ =>
-        vvc_transaction_info_group.st.data               := vvc_result;
+        vvc_transaction_info_group.st.data               := vvc_result.data;
+        vvc_transaction_info_group.st.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when RECEIVE =>
+        vvc_transaction_info_group.st.addr               := unsigned(vvc_result.addr);
+        vvc_transaction_info_group.st.data               := vvc_result.data;
+        vvc_transaction_info_group.st.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when RESPOND =>
+        vvc_transaction_info_group.st.addr               := unsigned(vvc_result.addr);
         vvc_transaction_info_group.st.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
@@ -519,7 +602,7 @@ package body vvc_methods_pkg is
       when WRITE | RESET | LOCK | UNLOCK =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
-      when READ | CHECK =>
+      when READ | CHECK | RECEIVE | RESPOND =>
         vvc_transaction_info_group.st := C_SUB_TRANSACTION_SET_DEFAULT;
 
       when others =>

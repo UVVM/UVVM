@@ -42,6 +42,9 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
+    -- agent side
+    RECEIVE, RESPOND,
+    -- host side
     WRITE, READ, CHECK, RESET, LOCK, UNLOCK
   );
 

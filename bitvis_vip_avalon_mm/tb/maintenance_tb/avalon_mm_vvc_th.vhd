@@ -142,24 +142,26 @@ begin
   -----------------------------
   i1_avalon_mm_vvc : entity work.avalon_mm_vvc
     generic map(
+      GC_VVC_IS_HOST  => true,
       GC_ADDR_WIDTH   => C_ADDR_WIDTH,
       GC_DATA_WIDTH   => C_DATA_WIDTH,
       GC_INSTANCE_IDX => 1
     )
     port map(
       clk                     => clk,
-      avalon_mm_vvc_master_if => avalon_mm_if_1
+      avalon_mm_vvc_if => avalon_mm_if_1
     );
 
   i2_avalon_mm_vvc : entity work.avalon_mm_vvc
     generic map(
+      GC_VVC_IS_HOST  => true,
       GC_ADDR_WIDTH   => C_ADDR_WIDTH,
       GC_DATA_WIDTH   => C_DATA_WIDTH,
       GC_INSTANCE_IDX => 2
     )
     port map(
       clk                     => clk,
-      avalon_mm_vvc_master_if => avalon_mm_if_2
+      avalon_mm_vvc_if => avalon_mm_if_2
     );
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);

@@ -99,7 +99,10 @@ package vvc_cmd_pkg is
   -- - t_vvc_result includes the return value of the procedure in the BFM.
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --===============================================================================================
-  subtype t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+  type t_vvc_result is record
+    addr : std_logic_vector(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
+    data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+  end record;
 
   type t_vvc_result_queue_element is record
     cmd_idx : natural;                  -- from UVVM handshake mechanism
@@ -126,4 +129,37 @@ package vvc_cmd_pkg is
   --===============================================================================================
   shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => -1));
 
+  --==========================================================================================
+  -- Procedures
+  --==========================================================================================
+  function to_string(
+    result : t_vvc_result
+  ) return string;
+
+  function vvc_result_match(
+    received_result : t_vvc_result;
+    expected_result : t_vvc_result
+  ) return boolean;
+
 end package vvc_cmd_pkg;
+
+package body vvc_cmd_pkg is
+
+  -- Custom to_string overload needed when result is of a record type, ref: vvc_cmd_pkg.vhd in bitvis_vip_rgmii
+  function to_string(
+    result : t_vvc_result
+  ) return string is
+  begin
+    return "addr: " & to_string(result.addr, HEX_BIN_IF_INVALID) & ", data: " & to_string(result.data, HEX_BIN_IF_INVALID);
+  end function;
+
+  function vvc_result_match(
+    received_result : t_vvc_result;
+    expected_result : t_vvc_result
+  ) return boolean is
+  begin
+    return std_match(received_result.addr, expected_result.addr) and
+           std_match(received_result.data, expected_result.data);
+  end function;
+
+end package body;

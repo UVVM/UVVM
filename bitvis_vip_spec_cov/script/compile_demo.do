@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -22,12 +22,13 @@ proc quietly { args } {
   }
 }
 
+# Set simulator compile directives
 if { [info exists ::env(SIMULATOR)] } {
   set simulator $::env(SIMULATOR)
   puts "Simulator: $simulator"
 
   if [string equal $simulator "MODELSIM"] {
-    set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
+    set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
   } elseif [string equal $simulator "RIVIERAPRO"] {
     set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   } else {
@@ -36,7 +37,20 @@ if { [info exists ::env(SIMULATOR)] } {
   }
 } else {
   puts "No simulator! Trying with modelsim"
+  quietly set simulator "MODELSIM"
   quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
+}
+
+# End the simulations if there's an error or when run from terminal.
+if {[batch_mode]} {
+  if { [string equal -nocase $simulator "rivierapro"] } {
+    # Special for Riviera-PRO
+    onerror {quit -code 1 -force}
+   } else {
+    onerror {abort all; exit -f -code 1}
+  }
+} else {
+  onerror {abort all}
 }
 
 #-----------------------------------------------------------------------
@@ -61,10 +75,10 @@ if { [info exists 1] } {
 
 if { [string equal -nocase $demo_version "basic"] } {
   echo "\n\n=== Compiling Basic Demo TB\n"
-  quietly set demo_path "$root_path/bitvis_vip_spec_cov/demo/basic_usage"
+  quietly set demo_path "$root_path/bitvis_vip_spec_cov/tb/basic_demo"
 } else {
   echo "\n\n=== Compiling Advanced Demo TB\n"
-  quietly set demo_path "$root_path/bitvis_vip_spec_cov/demo/advanced_usage"
+  quietly set demo_path "$root_path/bitvis_vip_spec_cov/tb/advanced_demo"
 }
 
 echo "eval vcom  $compdirectives  $demo_path/uart_vvc_th.vhd"

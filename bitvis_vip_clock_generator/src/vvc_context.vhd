@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library bitvis_vip_clock_generator;
+library bitvis_vip_clock_generator;
   use bitvis_vip_clock_generator.vvc_cmd_pkg.all;
   use bitvis_vip_clock_generator.vvc_methods_pkg.all;
   use bitvis_vip_clock_generator.td_vvc_framework_common_methods_pkg.all;

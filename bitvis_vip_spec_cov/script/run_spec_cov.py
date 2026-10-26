@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -23,18 +23,17 @@ import glob
 # Settings
 #==========================================================================
 # Predefined arguments and run parameters
-def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-file",   "help" : "-r              Path/requirements.csv contains requirements", "default" : "NA"},
-            {"short" : "-p", "long" : "--partial_cov",          "type" : "in-file",   "help" : "-p              Path/testcase_result.csv partial coverage file from VHDL simulations", "default" : "NA"},
-            {"short" : "-m", "long" : "--requirement_map_list", "type" : "in-file",   "help" : "-m              Optional: path/subrequirements.csv requirement map file", "default" : "NA"},
-            {"short" : "-s", "long" : "--spec_cov",             "type" : "out-file",  "help" : "-s              Path/spec_cov.csv specification coverage file", "default" : "NA"},
-            {"short" : "",   "long" : "--strictness",           "type" : "setting",   "help" : "--strictness N  Optional: will set specification coverage to strictness (1-2) (0=default)", "default" : "X"},
-            {"short" : "",   "long" : "--config",               "type" : "config",    "help" : "--config        Optional: configuration file with all arguments", "default" : "NA"},
-            {"short" : "",   "long" : "--clean",                "type" : "household", "help" : "--clean         Will clean any/all partial coverage file(s)", "default" : "NA"},
-            {"short" : "-h", "long" : "--help",                 "type" : "help",      "help" : "--help          This help screen", "default" : "NA"} 
-            ]
+def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-file",   "help" : "-r                  Path/requirements.csv contains requirements", "default" : "NA"},
+            {"short" : "-p", "long" : "--partial_cov",          "type" : "in-file",   "help" : "-p                  Path/testcase_result.csv partial coverage file from VHDL simulations", "default" : "NA"},
+            {"short" : "-m", "long" : "--requirement_map_list", "type" : "in-file",   "help" : "-m                  Optional: path/subrequirements.csv requirement map file", "default" : "NA"},
+            {"short" : "-s", "long" : "--spec_cov",             "type" : "out-file",  "help" : "-s                  Path/spec_cov.csv specification coverage file", "default" : "NA"},
+            {"short" : "",   "long" : "--strictness",           "type" : "setting",   "help" : "--strictness N      Optional: will set specification coverage to strictness (1-2) (0=default)", "default" : "X"},
+            {"short" : "",   "long" : "--config",               "type" : "config",    "help" : "--config            Optional: configuration file with all arguments", "default" : "NA"},
+            {"short" : "",   "long" : "--clean",                "type" : "household", "help" : "--clean (DIR)       Will clean any/all partial coverage file(s) (default=current directory)", "default" : "NA"},
+            {"short" : "-h", "long" : "--help",                 "type" : "help",      "help" : "--help              This help screen", "default" : "NA"}]
 
 # Default, non-configured run
-run_parameter_default = {"requirement_list" : None, "partial_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : 'X', "config" : None}
+run_parameter_default = {"requirement_list" : None, "partial_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : None, "strictness" : 'X', "config" : None}
 
 
 #==========================================================================
@@ -50,18 +49,23 @@ class Requirement():
         name (str) : name of the requirement.
     """
 
-    def __init__(self, req_name = None):
+    VALID_REQ_TYPES = {'NONCOMPOUND', 'COMPOUND', 'SUB'}
+    VALID_PC_STATUSES = {'PASS', 'FAIL', 'NONE'}
+
+    def __init__(self, req_name = None, req_type = 'NONCOMPOUND'):
         self.__req_name                   = req_name
         self.__expected_testcase_list     = []
         self.__actual_testcase_list       = []
         self.__sub_requirement_list       = []
-        self.__super_requirement_list     = []
+        self.__compound_requirement_list  = []
         self.__requirement_description    = None
         self.__req_compliance             = not_tested_compliant_string
-        self.__testcases_are_or_listed    = False
         self.__req_is_defined_in_req_file = False
+        self.__req_is_defined_in_map_file = False
         self.__req_file_idx               = 0
-        self.__req_is_user_omitted        = False
+        self.__req_type                   = req_type
+        self.__explicitly_failed          = False
+        self.__partial_coverage_status    = 'NONE'
 
 
     @property
@@ -84,15 +88,6 @@ class Requirement():
         # Add if not already in list
         if not(testcase in self.__expected_testcase_list):
            self.__expected_testcase_list.append(testcase)
-        # Update testcase result if testcase already exists
-        else:
-            for actual_testcase in self.__actual_testcase_list:
-                if actual_testcase.name.upper() == testcase.name.upper():
-                    actual_testcase.result = testcase.result
-
-        # Update for any super-requirement
-        for super_requirement in self.__super_requirement_list:
-            super_requirement.add_expected_testcase(testcase)
 
 
     def get_expected_testcase_list(self) -> list :
@@ -108,9 +103,6 @@ class Requirement():
             for actual_testcase in self.__actual_testcase_list:
                 if actual_testcase.name.upper() == testcase.name.upper():
                     actual_testcase.result = testcase.result
-        # Update for any super-requirement
-        for super_requirement in self.__super_requirement_list:
-            super_requirement.add_actual_testcase(testcase)
 
 
     def get_actual_testcase_list(self) -> list :
@@ -136,7 +128,18 @@ class Requirement():
         failing_testcase_list = []
         not_run_testcase_list = []
 
-        testcase_list = self.__actual_testcase_list + self.__expected_testcase_list
+        # Make one-dimensional version of expected_testcase_list
+        expected_testcase_list_local = []
+        for expected_testcase in self.__expected_testcase_list:
+            if isinstance(expected_testcase, list): # Check if the element is a list of or-listed testcases
+                for or_listed_testcase in expected_testcase:
+                    if not(or_listed_testcase in expected_testcase_list_local):
+                        expected_testcase_list_local.append(or_listed_testcase)
+            else:
+                if not(expected_testcase in expected_testcase_list_local):
+                    expected_testcase_list_local.append(expected_testcase)
+
+        testcase_list = self.__actual_testcase_list + expected_testcase_list_local
         for testcase in testcase_list:
             if (testcase.result == testcase_pass_string) and not(testcase in passing_testcase_list):
                 passing_testcase_list.append(testcase)
@@ -149,20 +152,16 @@ class Requirement():
         return all_testcase_list
 
         
-    def add_super_requirement(self, super_requirement) -> None :
-        if self.is_user_omitted: return
-        
-        if not(super_requirement in self.__super_requirement_list):
-            self.__super_requirement_list.append(super_requirement)
+    def add_compound_requirement(self, compound_requirement) -> None :
+        if not(compound_requirement in self.__compound_requirement_list):
+            self.__compound_requirement_list.append(compound_requirement)
 
 
-    def get_supert_requirement_list(self) -> list :
-        return self.__super_requirement_list
+    def get_compound_requirement_list(self) -> list :
+        return self.__compound_requirement_list
 
 
     def add_sub_requirement(self, sub_requirement) -> None :
-        if self.is_user_omitted: return
-
         if not(sub_requirement in self.__sub_requirement_list):
             self.__sub_requirement_list.append(sub_requirement)
 
@@ -172,55 +171,42 @@ class Requirement():
 
 
     @property
-    def is_user_omitted(self) -> bool:
-        return self.__req_is_user_omitted
-    @is_user_omitted.setter
-    def is_user_omitted(self, is_omitted):
-        self.__req_is_user_omitted = is_omitted
-
-    @property
     def compliance(self) -> str :
-        # Update if dependent on any sub-requirements
-        for sub_requirement in self.__sub_requirement_list:
-            # Do not overwrite NON_COMPLIANT
-            if not(self.__req_compliance == non_compliant_string):
-                if not(sub_requirement.is_user_omitted):
-                    if sub_requirement.compliance == not_tested_compliant_string:
-                        self.__req_compliance = non_compliant_string
-                    else:    
-                        self.__req_compliance = sub_requirement.compliance
         return self.__req_compliance
 
     @compliance.setter
     def compliance(self, req_compliance) -> None :
-        if self.is_user_omitted: return
-
         # COMPLIANT should not be allowed to overwrite a NON_COMPLIANT
         if not(self.__req_compliance == non_compliant_string):
             self.__req_compliance = req_compliance
-        # Update any super-requirements
-        for requirement in self.__super_requirement_list:
-            requirement.compliance = req_compliance
 
+    def is_noncompound_requirement(self) -> bool :
+        if self.__req_type == 'NONCOMPOUND':
+            return True
+        return False
 
-    @property
-    def is_or_listed(self) -> bool :
-        return self.__testcases_are_or_listed
-
-    @is_or_listed.setter
-    def is_or_listed(self, set) -> None :
-        self.__testcases_are_or_listed = set
-
-
-    def is_super_requirement(self) -> bool :
-        if self.__sub_requirement_list:
+    def is_compound_requirement(self) -> bool :
+        if self.__req_type == 'COMPOUND':
             return True
         return False
     
     def is_sub_requirement(self) -> bool :
-        if self.__super_requirement_list:
+        if self.__req_type == 'SUB':
             return True
         return False
+    
+    def is_listed(self) -> bool :
+        if self.__req_is_defined_in_req_file or self.__req_is_defined_in_map_file:
+            return True
+        return False
+
+    @property
+    def found_in_map_file(self) -> bool :
+        return self.__req_is_defined_in_map_file
+
+    @found_in_map_file.setter
+    def found_in_map_file(self, found) -> None :
+        self.__req_is_defined_in_map_file = found
 
     @property
     def found_in_requirement_file(self) -> bool :
@@ -237,6 +223,35 @@ class Requirement():
     @requirement_file_idx.setter
     def requirement_file_idx(self, idx) -> None : 
         self.__req_file_idx = idx
+
+    @property
+    def requirement_type(self) -> str :
+        return self.__req_type
+
+    @requirement_type.setter
+    def requirement_type(self, type) -> str :
+        if type not in Requirement.VALID_REQ_TYPES:
+            raise Exception("Invalid req_type. Must be one of: {', '.join(Requirement.VALID_REQ_TYPES)}")
+        self.__req_type = type
+
+    @property
+    def explicitly_failed(self) -> bool :
+        return self.__explicitly_failed
+
+    @explicitly_failed.setter
+    def explicitly_failed(self, failed) -> None :
+        self.__explicitly_failed = failed
+
+    @property
+    def partial_coverage_status(self) -> str :
+        return self.__partial_coverage_status
+
+    @partial_coverage_status.setter
+    def partial_coverage_status(self, status) -> str :
+        if status not in Requirement.VALID_PC_STATUSES:
+            raise Exception("Invalid partial coverage status. Must be one of: {', '.join(Requirement.VALID_PC_STATUSES)}")
+        self.__partial_coverage_status = status
+
 
 
 class Testcase():
@@ -274,7 +289,8 @@ class Testcase():
             self.__tc_result = result.upper()
 
     def add_expected_requirement(self, requirement) -> None :
-        self.__expected_requirement_list.append(requirement)
+        if not(requirement in self.__expected_requirement_list):
+            self.__expected_requirement_list.append(requirement)
 
 
     def get_expected_requirement_list(self) -> list :
@@ -282,7 +298,8 @@ class Testcase():
 
 
     def add_actual_requirement(self, requirement) -> None :
-        self.__actual_requirement_list.append(requirement)
+        if not(requirement in self.__actual_requirement_list):
+            self.__actual_requirement_list.append(requirement)
 
 
     def get_actual_requirement_list(self) -> list :
@@ -318,7 +335,7 @@ class Container():
             if requirement.name.upper() == name.upper():
                 return requirement
         # Not found, create new, add to list and return object
-        requirement = Requirement(name)
+        requirement = Requirement(name, 'NONCOMPOUND')
         self.add_requirement(requirement)
         return requirement
 
@@ -380,71 +397,514 @@ testcase_not_run_string             = "NOT_EXECUTED"
 compliant_string                    = "COMPLIANT"
 non_compliant_string                = "NON_COMPLIANT"
 not_tested_compliant_string         = "NOT_TESTED"
+parsed_string                       = "Has been parsed by run_spec_cov.py script for total coverage"
 delimiter                           = "," # Default delimiter - will be updated from partial coverage file
 
 
 reporting_dict = {}
+previously_executed_coverage_list = []
+messages_in_warnings_file = False
+reqs_in_non_compliance_file = False
 
 
+#----------------------------------------------------------------------------------------------
+# Write warning file
+# ---------------------------------------------------------------------------------------------
+# The warning file will contain warnings about the following:
+#  - Tickoff of requirements that are not listed in the requirement- or map files.
+#  - In strictness 1 or 2: Requirement tickoff in a testcase not specified for that requirement
 
-def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
-    """
-    Write minimalistic specification coverage files, i.e each requirement and each testcase once. 
-    """
-    
+def write_warning_file(run_configuration,container):
     filename = run_configuration.get("spec_cov")
-    spec_cov_single_req_vs_single_tc_filename = filename[: filename.rfind(".")] + ".single_req_vs_single_tc.csv"
-    spec_cov_single_tc_vs_single_req_filename = filename[: filename.rfind(".")] + ".single_tc_vs_single_req.csv"
-
-    run_req_list     = []
-    not_run_req_list = []
-    for req in container.get_requirement_list():
-        tc_list = req.get_sorted_testcase_list()
-        tc = None
-        if tc_list: tc = tc_list[0]
-        if tc and not(tc.result == testcase_not_run_string):
-            run_req_list.append([req, tc])
-        else:
-            not_run_req_list.append([req, None])
-
-    run_test_case_list     = []
-    not_run_test_case_list = []
-    for tc in container.get_testcase_list():
-        req_list = tc.get_all_requirement_list()
-        req = None
-        if req_list: req = req_list[0]
-        if req and not(req.compliance == not_tested_compliant_string):
-            run_test_case_list.append([tc, req])
-        else:
-            not_run_test_case_list.append([tc, None])
+    strictness = run_configuration.get("strictness")
+    warnings_filename = filename[: filename.rfind(".")] + ".warnings.csv"
+    file_empty = True
+    global messages_in_warnings_file
 
     try:
-        with open(spec_cov_single_req_vs_single_tc_filename, mode='w', newline='') as to_file:
+        with open(warnings_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
-            csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
-            for req, tc in (run_req_list + not_run_req_list):
-                if tc:
-                    csv_writer.writerow([req.name, tc.name, req.compliance])
-                else:
-                    csv_writer.writerow([req.name, "", not_tested_compliant_string])
+            # Write lines for reqs ticked off in non-specified testcase(s)
+            for requirement in container.get_requirement_list():
+                # Don't list this type of warning for non-listed reqs. These will be covered by a separate warning.
+                if not (requirement in reporting_dict.get("not_listed_requirements")):
+                    expected_tc_list = requirement.get_expected_testcase_list()
+                    actual_tc_list = requirement.get_actual_testcase_list()
+                    # Write warning for tickoff of compound requirement
+                    if actual_tc_list and requirement.is_compound_requirement():
+                        for actual_tc in actual_tc_list:
+                            csv_writer.writerow([requirement.name + " specified for testing through sub-requirements. Ticked off directly in " + actual_tc.name])
+                            file_empty = False
+                    # If strictness 0 or strictness 1 with no expected_tc_list, tickoff in non-speced TC is ok, so no warning.
+                    # Otherwise, for each actual tc, check if it is in expected tc list
+                    if not (strictness == "0" or (strictness=="1" and not expected_tc_list)):
+                        for actual_tc in actual_tc_list:
+                            # "if actual_tc not in expected_tc_list"
+                            if not any(actual_tc in element if isinstance(element, list) else actual_tc == element for element in expected_tc_list):
+                                # Requirement ticked off in non-specified tc. Write warning line
+                                csv_writer.writerow([requirement.name + " ticked off in non-specified testcase (" + actual_tc.name + ")"])
+                                file_empty = False
+
+                    # Strictness 2: Write warning if req defined without testcases
+                    if strictness == "2" and not expected_tc_list:
+                        if not requirement.is_compound_requirement():
+                            csv_writer.writerow(["No testcases specified for requirement " + requirement.name + ". At least one testcase must be specified per requirement in strictness 2"])
+                            file_empty = False
+
+            # Write lines for non-listed requirements ticked off
+            if reporting_dict.get("not_listed_requirements"):
+                for requirement in reporting_dict.get("not_listed_requirements"):
+                    # Make a string containing testcases where the requirement was ticked off
+                    actual_tc_list = requirement.get_actual_testcase_list()
+                    actual_tc_string = ""
+                    first_item = True
+                    for actual_tc in actual_tc_list:
+                        if not first_item:
+                            actual_tc_string += " & "
+                        first_item = False
+                        actual_tc_string += actual_tc.name
+                    # Write line to warnings file
+                    csv_writer.writerow([requirement.name + " not found in input requirement list (ticked off in " + actual_tc_string + ")"])
+                    file_empty = False
+
+            if file_empty:
+                csv_writer.writerow(["<No warnings to report>"])
+
+        if not file_empty:
+            messages_in_warnings_file = True
+
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_req_vs_single_tc_filename))
-        abort(error_code = 1, msg = error_msg)
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], warnings_filename))
+        abort(error_code = 26, msg = error_msg)
+
+
+## Helper function. Write name of items in a list as a string, with each item separated by "&".
+def tc_list_to_string(input_list, approved_list, separator = " & "):
+    output_string = ""
+    for item in input_list:
+        if item in approved_list: # Only write items that are found in approved_list (will list all items if equal to input_list)
+            if output_string == "": # First item in list
+                output_string += item.name
+            else:
+                output_string += separator + item.name
+    return output_string
+
+def append_to_tc_string(tc_string, tc_name):
+    if tc_string == "":
+        tc_string = tc_name
+    else:
+        tc_string += " & " + tc_name
+    return tc_string
+
+## Helper function which writes line(s) with minimal testcase listing and compliance for a requirement
+## For use when writing minimal compliance file
+def write_minimal_req_entry(requirement, compound_req_name, run_configuration, csv_writer, req_type):
+    strictness = run_configuration.get("strictness")
+
+    if requirement.requirement_type == req_type: # Write all requirements of the given type to output CSV file
+
+        # Requirement listed in req file: List in CSV file according to compliance status
+        if requirement.is_listed():
+
+            # COMPLIANT requirements: List with testcases
+            if requirement.compliance == compliant_string:
+                expected_tc_list = requirement.get_expected_testcase_list()
+                actual_tc_list   = requirement.get_actual_testcase_list()
+
+                # If strictness 0 and/or no expected testcases, list all actual testcases
+                if strictness == "0" or not expected_tc_list: # No expected testcases
+                        # For strictness 0, or with strictness 1 when no expected TCs, any actual TC is covering.
+                        # Write single testcase, since that is the minimum of covering TCs in this case
+                        testcase_string = actual_tc_list[0].name # Use first entry in list of actual testcases
+
+                # If strictness 1 or 2, list minimum of covering testcases
+                # Minimum means that if several OR-listed testcases are ticked off, only one of them is listed.
+                # Single line per requirement
+                else:
+                    testcase_string = ""
+                    for tc_entry in expected_tc_list:
+                        # Check if the entry is a list of OR-listed testcases or a single, AND-listed testcase
+                        if isinstance(tc_entry, list): # OR-listed testcases
+                            for or_listed_tc in tc_entry:
+                                if or_listed_tc in actual_tc_list:
+                                    testcase_string = append_to_tc_string(testcase_string, or_listed_tc.name)
+                                    break # Write only the first OR-listed TC that was ticked off
+                        else: # AND-listed testcase
+                            if tc_entry in actual_tc_list:
+                                testcase_string = append_to_tc_string(testcase_string, tc_entry.name)
+
+                # Write requirement line to CSV file
+                if req_type == "NONCOMPOUND":
+                    csv_writer.writerow([requirement.name, testcase_string, requirement.compliance]) 
+                elif req_type == "SUB":
+                    csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
+
+            # NON-COMPLIANT or NOT_TESTED requirements: List without testcases, and instead with a reference to non-compliance CSV file
+            else:
+                if req_type == "NONCOMPOUND":
+                    csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+                elif req_type == "SUB":
+                    csv_writer.writerow([compound_req_name, requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+
+        # Requirements not listed in req file: List with UNLISTED_REQ_PASS/FAIL status from PC files
+        else: 
+            # Write requirement line to CSV file
+            if requirement.partial_coverage_status == 'PASS':
+                actual_tc_list   = requirement.get_actual_testcase_list()
+                testcase_string = actual_tc_list[0].name # Use first entry in list of actual testcases
+                csv_writer.writerow([requirement.name, testcase_string, "UNLISTED_REQ_PASS"])
+            else:
+                csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_FAIL"])
+
+
+## Helper function which writes line(s) with extended testcase listing and compliance for a requirement
+## For use when writing extended compliance file
+def write_extended_req_entry(requirement, compound_req_name, run_configuration, csv_writer, req_type):
+    strictness = run_configuration.get("strictness")
+
+    if requirement.requirement_type == req_type:
+
+        # Requirement listed in req file: List in CSV file according to compliance status
+        #------------------------------------------------------------------------------------
+        if requirement.is_listed():
+
+            # COMPLIANT reqs. List with all covering testcases
+            if requirement.compliance == compliant_string:
+                expected_tc_list = requirement.get_expected_testcase_list()
+                actual_tc_list = requirement.get_actual_testcase_list()
+
+                # If strictness 0 and/or no expected testcases, list all actual testcases
+                # (In strictness 1, when no expected testcases, any actual testcase is covering)
+                if strictness == "0" or not expected_tc_list: # No expected testcases
+                    testcase_string = tc_list_to_string(actual_tc_list, actual_tc_list)
+                    if req_type == "NONCOMPOUND":
+                        csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
+                    elif req_type == "SUB":
+                        csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
+
+                # If expected testcases and strictness 1/2, list according to AND/OR-listing.
+                # One line per AND-listed testcase, and one line per group of OR-listed testcases
+                # (i.e. one line per entry in expected_tc_list)
+                else:
+                    for tc_entry in expected_tc_list:
+                        if isinstance(tc_entry, list): # OR-listed requirements
+                            # For OR-listed TCs, write all where the req was actually tested
+                            testcase_string = tc_list_to_string(tc_entry, actual_tc_list)
+
+                        else: # AND-listed requirement. Write if found in actual TC list
+                            if tc_entry in actual_tc_list:
+                                testcase_string = tc_entry.name
+
+                        # Check that testcase_string isn't empty. Will only occur if tc_entry was not found in actual_tc_list, which should
+                        # never occur, since all expected_tc_list entries must be covered by actual_tc_list for the req to be compliant.
+                        # If this check fails, it means there is a bug somewhere.
+                        if testcase_string == "":
+                            error_msg = ("Bug alert: Error in write_extended_req_entry. Empty testcase_string. Shouldn't occur for compliant req.")
+                            abort(error_code = 10, msg = error_msg)
+
+                        # Write line to CSV file
+                        if req_type == "NONCOMPOUND":
+                            csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
+                        elif req_type == "SUB":
+                            csv_writer.writerow([compound_req_name, requirement.name, testcase_string, requirement.compliance])
+
+            # NON-COMPLIANT or NOT_TESTED reqs. List without testcases
+            else:
+                # Write line to CSV file
+                if req_type == "NONCOMPOUND":
+                    if requirement.is_listed():
+                        csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+                    else: # For unlisted requirements, list PASS/FAIL status from partial coverage file
+                        if requirement.partial_coverage_status == 'PASS':
+                            csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_PASS"])
+                        else:
+                            csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_FAIL"])
+                elif req_type == "SUB":
+                    csv_writer.writerow([compound_req_name, requirement.name, "check *.req_non_compliance.csv", requirement.compliance])
+
+
+        # Requirements not listed in req file: List with UNLISTED_REQ_PASS/FAIL status from PC files
+        #------------------------------------------------------------------------------------
+        else:
+            if requirement.partial_coverage_status == 'PASS':
+                actual_tc_list = requirement.get_actual_testcase_list()
+                testcase_string = tc_list_to_string(actual_tc_list, actual_tc_list)
+                csv_writer.writerow([requirement.name, testcase_string, "UNLISTED_REQ_PASS"])
+            else:
+                csv_writer.writerow([requirement.name, "check *.req_non_compliance.csv", "UNLISTED_REQ_FAIL"])
+
+
+def write_req_compliance_files(run_configuration, container, delimiter):
+
+    filename = run_configuration.get("spec_cov")
+    req_compliance_minimal_filename = filename[: filename.rfind(".")] + ".req_compliance_minimal.csv"
+    req_compliance_extended_filename = filename[: filename.rfind(".")] + ".req_compliance_extended.csv"
+
+
+    #----------------------------------------------------------------------------------------------
+    # Write minimal compliance file - one requirement per line, only minimum covering TCs listed
+    # ---------------------------------------------------------------------------------------------
+    # This file will list one requirement per line, with just the testcases that qualifies the 
+    # requirement to be compliant. For requirements that are not compliant, no testcases will be listed.
 
     try:
-        with open(spec_cov_single_tc_vs_single_req_filename, mode='w', newline='') as to_file:
+        with open(req_compliance_minimal_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
-            csv_writer.writerow(["Testcase", "Requirement", "Result"])
-            for tc, req in (run_test_case_list + not_run_test_case_list):
-                if req:
-                    csv_writer.writerow([tc.name, req.name, tc.result])
-                else:
-                    csv_writer.writerow([tc.name, "", testcase_not_run_string])
+            csv_writer.writerow(["Requirement", "Covering testcases(minimum)", "Compliance"])
+
+            # Write one line for each listed main level requirement requirement (not sub-reqs)
+            for requirement in container.get_requirement_list():
+                if requirement.is_noncompound_requirement():
+                    write_minimal_req_entry(requirement, "", run_configuration, csv_writer, "NONCOMPOUND")
+                elif requirement.is_compound_requirement() and requirement.is_listed():
+                    csv_writer.writerow([requirement.name, "tested through sub-requirement(s)", requirement.compliance])
+
+
+            if not container.get_requirement_list():
+                csv_writer.writerow(["<No requirements found>"])
+
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+
+            # Write sub requirement section 
+            first_subreq_line = True
+            for requirement in container.get_requirement_list():
+                if requirement.is_compound_requirement():
+                    # Write header before first line
+                    if first_subreq_line:
+                        csv_writer.writerow(["Requirement", "Sub-requirement", "Covering testcases(minimum)", "Sub-req compliance"])
+                        first_subreq_line = False
+                    for sub_requirement in requirement.get_sub_requirement_list():
+                        write_minimal_req_entry(sub_requirement, requirement.name, run_configuration, csv_writer, "SUB")
+
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_tc_vs_single_req_filename))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_compliance_minimal_filename))
+        abort(error_code = 27, msg = error_msg)
+
+
+    #----------------------------------------------------------------------------------------------
+    # Write extended compliance file - requirements listed as in requirement file, all covering testcases
+    # ---------------------------------------------------------------------------------------------
+    # This file will list the requirements with all testcases that are both expected and have req tickoff.
+    # AND-listed testcases will be listed on a separate line, while OR-listed testcases are listed on the same line. 
+
+    try:
+        with open(req_compliance_extended_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
+            csv_writer.writerow(["Requirement", "Covering testcases(all)", "Compliance"])
+
+            # Write one line for each listed main level requirement requirement (not sub-reqs)
+            for requirement in container.get_requirement_list():
+                if requirement.requirement_type == "NONCOMPOUND":
+                    write_extended_req_entry(requirement, "", run_configuration, csv_writer, "NONCOMPOUND")
+
+                # Compound requirements: Write single line per req, with text indicating testing through sub-requirements
+                elif requirement.is_listed() and requirement.is_compound_requirement():
+                    csv_writer.writerow([requirement.name, "tested through sub-requirement(s)", requirement.compliance])
+
+
+            if not container.get_requirement_list():
+                csv_writer.writerow(["<No requirements found>"])
+
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+
+            # Write sub-requirement section
+            first_subreq_line = True
+            for requirement in container.get_requirement_list():
+                if requirement.is_compound_requirement():
+                    for sub_requirement in requirement.get_sub_requirement_list():
+                        if first_subreq_line:
+                            csv_writer.writerow(["Requirement", "Sub-requirement", "Covering testcases(all)", "Sub-req compliance"])
+                            first_subreq_line = False
+                        write_extended_req_entry(sub_requirement, requirement.name, run_configuration, csv_writer, "SUB")
+
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_compliance_extended_filename))
+        abort(error_code = 9, msg = error_msg)
+
+def write_non_compliance_file(run_configuration, container, delimiter):
+    # For each NON-COMPLIANT or NOT_TESTED requirement, write a line with status and reason for lack of compliance
+    filename = run_configuration.get("spec_cov")
+    strictness = run_configuration.get("strictness")
+    non_compliance_filename = filename[: filename.rfind(".")] + ".req_non_compliance.csv"
+
+    try:
+        with open(non_compliance_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
+            csv_writer.writerow(["Requirement", "Compliance status", "Reason"])
+            list_empty = True
+            global reqs_in_non_compliance_file
+
+            #########################################
+            ## Write main section - noncompliance
+            #########################################
+            for requirement in container.get_requirement_list():
+                if requirement.is_listed() and not (requirement.compliance == compliant_string):
+                    expected_tc_list = requirement.get_expected_testcase_list()
+                    actual_tc_list = requirement.get_actual_testcase_list()
+
+                    #------------
+                    # NOT_TESTED
+                    #------------
+                    if requirement.compliance == not_tested_compliant_string:
+                        # NONCOMPOUND: List missing tickoffs
+                        if requirement.is_noncompound_requirement():
+                            # Report which testcases are missing (unless strictness 0 or no expected TCs)
+                            if expected_tc_list and not strictness == "0":
+                                for tc_entry in expected_tc_list:
+                                    if isinstance(tc_entry, list): # OR-listed testcases
+                                        # Check if any of the OR-listed testcases are in actual_tc_list
+                                        if not any(or_listed_tc in actual_tc_list for or_listed_tc in tc_entry):
+                                            testcase_string = tc_list_to_string(tc_entry, tc_entry, " or ")
+                                            csv_writer.writerow([requirement.name, requirement.compliance, "Missing tickoff in " + testcase_string])
+                                            list_empty = False
+                                    else: # AND-listed testcase
+                                        if tc_entry not in actual_tc_list:
+                                            csv_writer.writerow([requirement.name, requirement.compliance, "Missing tickoff in " + tc_entry.name])
+                                            list_empty = False
+                            # No expected TC list -> NOT_TESTED status must mean that there are no tickoffs.
+                            # If strictness 0, any TC would be covering, so just report that there are no tickoffs.
+                            else: 
+                                if not actual_tc_list:
+                                    csv_writer.writerow([requirement.name, requirement.compliance, "No requirement tickoffs"])
+                                    list_empty = False
+                                else:
+                                    print("ERROR: This shouldn't occur! (NOT_TESTED, expected_tc_list empty, but actual_tc_list not empty)")                            
+
+                        # COMPOUND: list subreqs with NOT_TESTED status
+                        if requirement.is_compound_requirement():
+                            for sub_requirement in requirement.get_sub_requirement_list():
+                                if sub_requirement.compliance == not_tested_compliant_string:
+                                    csv_writer.writerow([requirement.name, requirement.compliance, "Sub-req " + sub_requirement.name + " not tested"])
+                                    list_empty = False
+
+                    #---------------
+                    # NON-COMPLIANT
+                    #---------------
+                    if (not requirement.is_sub_requirement()) and requirement.compliance == non_compliant_string:
+                        # Check for tickoff in failed TC
+                        for actual_tc in actual_tc_list:
+                            if actual_tc.result == testcase_fail_string:
+                                csv_writer.writerow([requirement.name, requirement.compliance, actual_tc.name + " failed"])
+                                list_empty = False
+
+                        # Check for explicit fail of requirement at tickoff
+                        if requirement.explicitly_failed:
+                            csv_writer.writerow([requirement.name, requirement.compliance, "Requirement explicitly failed at tickoff"])
+                            list_empty = False
+
+
+                        # Strictness 2: Check for tickoff in non-speced TC or no TCs in req listing
+                        if strictness == "2":
+                            for actual_tc in actual_tc_list:
+                                # Check if actual_tc is in expected_tc_list
+                                if not any(actual_tc in element if isinstance(element, list) else actual_tc == element for element in expected_tc_list):
+                                    csv_writer.writerow([requirement.name, requirement.compliance, "Ticked off in non-specified testcase (" + actual_tc.name + ")"])
+                                    list_empty = False
+                            if not expected_tc_list and not requirement.is_compound_requirement():
+                                csv_writer.writerow([requirement.name, requirement.compliance, "No testcases specified for requirement (mandatory in strictness 2)"])
+                                list_empty = False
+
+                        # COMPOUND: Check for failing subreq
+                        if requirement.is_compound_requirement():
+                            for sub_requirement in requirement.get_sub_requirement_list():
+                                if sub_requirement.compliance == non_compliant_string:
+                                    csv_writer.writerow([requirement.name, requirement.compliance, "Sub-req " + sub_requirement.name + " failed"])
+                                    list_empty = False
+
+            if list_empty:
+                csv_writer.writerow(["<No non-compliant requirements>"])
+            else:
+                reqs_in_non_compliance_file = True
+
+            ##################################################
+            ## Write sub requirement section - noncompliance
+            ##################################################
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            first_subreq_line = True
+            for requirement in container.get_requirement_list():
+                if requirement.is_listed() and not (requirement.compliance == compliant_string):
+                    # Write line(s) for each non-compliant or not tested sub-requirement 
+                    if requirement.is_sub_requirement():
+                        expected_tc_list = requirement.get_expected_testcase_list()
+                        actual_tc_list = requirement.get_actual_testcase_list()
+                        # Write header before first line
+                        if first_subreq_line:
+                            csv_writer.writerow(["Sub-requirement", "Compliance status", "Reason"])
+                            first_subreq_line = False
+
+                        #---------------------
+                        # Sub-req NOT_TESTED
+                        #---------------------
+                        if requirement.compliance == not_tested_compliant_string:
+                            if expected_tc_list: # Check which TCs are missing
+                                for tc_entry in expected_tc_list:
+                                    if isinstance(tc_entry, list): # OR-listed testcases
+                                        # Check if any of the OR-listed testcases are in actual_tc_list
+                                        if not any(or_listed_tc in actual_tc_list for or_listed_tc in tc_entry):
+                                            testcase_string = tc_list_to_string(tc_entry, tc_entry, " or ")
+                                            csv_writer.writerow([requirement.name, requirement.compliance, "Missing tickoff in " + testcase_string])
+                                    else: # AND-listed testcase
+                                        if tc_entry not in actual_tc_list:
+                                            csv_writer.writerow([requirement.name, requirement.compliance, "Missing tickoff in " + tc_entry.name])
+                            else: # No expected TCs -> NOT_TESTED status must mean that there are no tickoffs at all. 
+                                if not actual_tc_list:
+                                    csv_writer.writerow([requirement.name, requirement.compliance, "No requirement tickoffs"])
+                                else:
+                                    print("ERROR: This shouldn't occur! (NOT_TESTED, expected_tc_list empty, but actual_tc_list not empty)") 
+
+                        #-----------------------
+                        # Sub-req NON-COMPLIANT
+                        #-----------------------
+                        elif requirement.compliance == non_compliant_string:
+                            # Check for tickoff in failed TC
+                            for actual_tc in actual_tc_list:
+                                if actual_tc.result == testcase_fail_string:
+                                    csv_writer.writerow([requirement.name, requirement.compliance, actual_tc.name + " failed"])
+                            if not expected_tc_list:
+                                csv_writer.writerow([requirement.name, requirement.compliance, "No testcases specified for requirement (mandatory in strictness 2)"])
+
+                            # Check for explicit fail of requirement at tickoff
+                            if requirement.explicitly_failed:
+                                csv_writer.writerow([requirement.name, requirement.compliance, "Requirement explicitly failed at tickoff"])
+
+                            # Strictness 2: Check for tickoff in non-speced TC
+                            if strictness == "2":
+                                for actual_tc in actual_tc_list:
+                                    # Check if actual_tc is in expected_tc_list
+                                    if not any(actual_tc in element if isinstance(element, list) else actual_tc == element for element in expected_tc_list):
+                                        csv_writer.writerow([requirement.name, requirement.compliance, "Ticked off in non-specified TC (" + actual_tc.name + ")"])
+
+
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], non_compliance_filename))
         abort(error_code = 1, msg = error_msg)
 
+def write_testcase_list_file(run_configuration, container, delimiter):
+    filename = run_configuration.get("spec_cov")
+    testcase_list_filename = filename[: filename.rfind(".")] + ".testcase_list.csv"
 
+    try:
+        with open(testcase_list_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
+            csv_writer.writerow(["Testcase", "Testcase status", "Actual tickoffs", "Missing tickoffs"])
+
+            for testcase in container.get_testcase_list():
+                actual_requirement_list = testcase.get_actual_requirement_list()
+                expected_requirement_list = testcase.get_expected_requirement_list()
+                actual_req_string = tc_list_to_string(actual_requirement_list, actual_requirement_list)
+                missing_req_string = ""
+                for expected_req in expected_requirement_list:
+                    if expected_req not in actual_requirement_list:
+                        missing_req_string = append_to_tc_string(missing_req_string, expected_req.name)
+
+                csv_writer.writerow([testcase.name, testcase.result, actual_req_string, missing_req_string])
+
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], testcase_list_filename))
+        abort(error_code = 1, msg = error_msg)
 
 def terminal_present_results(container, delimiter) -> dict:
     testcase_pass_list = []
@@ -454,7 +914,6 @@ def terminal_present_results(container, delimiter) -> dict:
     requirement_compliant_list = []
     requirement_non_compliant_list = []
     requirement_not_run_list = []
-    requirement_omitted_list = []
     requirement_not_listed_list = []
 
     # Build testcase lists
@@ -471,17 +930,18 @@ def terminal_present_results(container, delimiter) -> dict:
 
     # Build requirement lists
     for requirement in container.get_requirement_list():
-        if requirement.compliance == not_tested_compliant_string:
-            if requirement.is_user_omitted: requirement_omitted_list.append(requirement)
-            else: requirement_not_run_list.append(requirement)
-        elif requirement.compliance == non_compliant_string:
-            requirement_non_compliant_list.append(requirement)
-        elif requirement.compliance == compliant_string:
-            requirement_compliant_list.append(requirement)
-        else:
-            print("WARNING! Unknown result for requirement : %s." %(requirement.name))
-            requirement_non_compliant_list.append(requirement)
-        if not(requirement.found_in_requirement_file) or not(requirement.is_sub_requirement):
+        # Include listed requirements only in compliant, non-compliant and not tested lists
+        if requirement.found_in_requirement_file or requirement.found_in_map_file:
+            if requirement.compliance == not_tested_compliant_string:
+                requirement_not_run_list.append(requirement)
+            elif requirement.compliance == non_compliant_string:
+                requirement_non_compliant_list.append(requirement)
+            elif requirement.compliance == compliant_string:
+                requirement_compliant_list.append(requirement)
+            else:
+                print("WARNING! Unknown result for requirement : %s." %(requirement.name))
+                requirement_non_compliant_list.append(requirement)
+        else: # Add non-listed requirements to separate list
             requirement_not_listed_list.append(requirement)
 
 
@@ -492,8 +952,6 @@ def terminal_present_results(container, delimiter) -> dict:
     reporting_dict["non_compliant_requirements"] = requirement_non_compliant_list
     reporting_dict["num_non_verified_requirements"] = str(len(requirement_not_run_list))
     reporting_dict["non_verified_requirements"] = requirement_not_run_list
-    reporting_dict["num_omitted_requirements"] = str(len(requirement_omitted_list))
-    reporting_dict["omitted_requirements"] = requirement_omitted_list
     reporting_dict["num_not_listed_requirements"] = str(len(requirement_not_listed_list))
     reporting_dict["not_listed_requirements"] = requirement_not_listed_list
 
@@ -513,7 +971,6 @@ def terminal_present_results(container, delimiter) -> dict:
     print("Number of non compliant requirements : %d" %(len(requirement_non_compliant_list)))
     print("Number of non verified requirements  : %d" %(len(requirement_not_run_list)))
     print("Number of not listed requirements    : %s" %(len(requirement_not_listed_list)))
-    print("Number of user omitted requirements  : %s" %(len(requirement_omitted_list)))
     print("Number of passing testcases : %d" %(len(testcase_pass_list)))
     print("Number of failing testcases : %d" %(len(testcase_fail_list)))
     print("Number of not run testcases : %d" %(len(testcase_not_run_list)))
@@ -532,11 +989,6 @@ def terminal_present_results(container, delimiter) -> dict:
     if requirement_not_run_list:
         print("Not verified requirement(s) :")
         for item in requirement_not_run_list:
-            print("%s%s " %(item.name, delimiter), end='')
-        print("\n")
-    if requirement_omitted_list:
-        print("User omitted requirement(s) :")
-        for item in requirement_omitted_list:
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
     if requirement_not_listed_list:
@@ -561,136 +1013,11 @@ def terminal_present_results(container, delimiter) -> dict:
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
 
-
-
-
-def write_spec_cov_files(run_configuration, container, delimiter):
-    """
-    This method will write all the results to the specification coverage CSV files.
-    The specification coverage file will have suffix : 
-        .req_vs_single_tc : requirement(s) listed with a testcase and compliance
-        .req_vs_tcs       : requirement(s) listed with testcase(s) and compliance
-        .tc_vs_reqs       : testcase(s) listed with requirement(s) and result
-
-
-    Parameters:
-        
-        run_configuration (dict) : selected configuration for this run.
-
-        requirement_container (Containter()) : container for requirement objects
-    
-        testcase_container (Container()) : container for testcase objects
-
-        delimiter (char) : CSV delimiter
-    """
-    # Grab the global reporting dictionary
-    global reporting_dict
-
-
-    #==========================================================================
-    # Write the results to CSVs
-    #==========================================================================
-    filename = run_configuration.get("spec_cov")
-    spec_cov_req_vs_single_tc_filename = filename[: filename.rfind(".")] + ".req_vs_single_tc.csv"
-    spec_cov_tc_vs_req_filename = filename[: filename.rfind(".")] + ".tc_vs_reqs.csv"
-    spec_cov_req_vs_tc_filename = filename[: filename.rfind(".")] + ".req_vs_tcs.csv"
-
-    # Write one requirement with one testcase per line
-    try:
-        with open(spec_cov_req_vs_single_tc_filename, mode='w', newline='') as to_file:
-            csv_writer = csv.writer(to_file, delimiter=delimiter)
-
-            csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
-            for requirement in container.get_requirement_list():
-                for testcase in requirement.get_sorted_testcase_list():
-                    csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
-            # Create a table with the super-requirement mapping to sub-requirements
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
-            for requirement in container.get_requirement_list():
-                sub_requirement_string = ""
-                for sub_requirement in requirement.get_sub_requirement_list():
-                    sub_requirement_string += " " + sub_requirement.name
-                if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, sub_requirement_string])
-            if reporting_dict.get("not_listed_requirements"):
-                csv_writer.writerow(["Not listed requirement(s)"])
-                for requirement in reporting_dict.get("not_listed_requirements"):
-                    csv_writer.writerow([requirement.name])
-
-            if reporting_dict.get("omitted_requirements"):
-                csv_writer.writerow(["User omitted requirement(s)"])
-                for requirement in reporting_dict.get("omitted_requirements"):
-                    csv_writer.writerow([requirement.name])
-
-    except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
-        abort(error_code = 1, msg = error_msg)
-
-
-    # Write one requirement with all testcases per line
-    try:
-        with open(spec_cov_req_vs_tc_filename, mode='w', newline='') as to_file:
-            csv_writer = csv.writer(to_file, delimiter=delimiter)
-
-            csv_writer.writerow(["Requirement", "Testcase(s)", "Compliance"])
-            for requirement in container.get_requirement_list():
-                testcase_string = ""
-                for testcase in requirement.get_sorted_testcase_list():
-                    testcase_string += testcase.name + " "
-
-                if not(testcase_string) and requirement.is_super_requirement():
-                    for sub_requirement in requirement.get_sub_requirement_list():
-                        for testcase in sub_requirement.get_sorted_testcase_list():
-                            if not testcase.name in testcase_string:
-                                testcase_string += testcase.name + " "
-
-                csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
-
-            # Create a table with the super-requirement mapping to sub-requirements
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
-            for requirement in container.get_requirement_list():
-                sub_requirement_string = ""
-                for sub_requirement in requirement.get_sub_requirement_list():
-                    sub_requirement_string += " " + sub_requirement.name
-                if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, sub_requirement_string])
-            if reporting_dict.get("not_listed_requirements"):
-                csv_writer.writerow(["Not listed requirement(s)"])
-                for requirement in reporting_dict.get("not_listed_requirements"):
-                    csv_writer.writerow([requirement.name])
-            if reporting_dict.get("omitted_requirements"):
-                csv_writer.writerow(["User omitted requirement(s)"])
-                for requirement in reporting_dict.get("omitted_requirements"):
-                    csv_writer.writerow([requirement.name])
-
-    except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
-        abort(error_code = 1, msg = error_msg)
-
-
-    # Write one testcase with all requirements per line
-    try:
-        with open(spec_cov_tc_vs_req_filename, mode='w', newline='') as to_file:
-            csv_writer = csv.writer(to_file, delimiter=delimiter)
-
-            csv_writer.writerow(["Testcase", "Requirement(s)", "Result"])
-
-            for testcase in container.get_testcase_list():
-                requirement_string = ""
-                for requirement in testcase.get_all_requirement_list():
-                    requirement_string += requirement.name + " "
-                csv_writer.writerow([testcase.name, requirement_string, testcase.result])
-                
-    except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_vs_req_filename))
-        abort(error_code = 1, msg = error_msg)
-
+    if previously_executed_coverage_list:
+        print("Following %d partial coverage file(s) have been previously executed :" %len(previously_executed_coverage_list))
+        for item in previously_executed_coverage_list:
+            print(item)
+        print("\n")
 
 
 
@@ -704,7 +1031,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -713,88 +1040,117 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     # Get the configured strictness level
     strictness = run_configuration.get("strictness")
 
-    #==========================================================================
-    # Strictness = 0 : testcase can be run with any requirement
-    #==========================================================================
-    if strictness == '0':
-        for requirement in container.get_requirement_list():
-            if requirement.is_user_omitted:
-                continue
-
-            for testcase in requirement.get_actual_testcase_list():
-                if testcase.result == testcase_fail_string:
-                    requirement.compliance = non_compliant_string
-
-            for sub_requirement in requirement.get_sub_requirement_list():
-                requirement.compliance = sub_requirement.compliance
-
-    #==========================================================================
-    # Strictness = 1 : testcase has to be run with specified requirement,
-    #                  any other requirement is also OK.
-    #==========================================================================
-    elif strictness == '1':
-
-        for requirement in container.get_requirement_list():
-            if requirement.is_user_omitted:
-                continue
-
-            if requirement.is_or_listed:
-                # One of the listed testcases for the requirement has been run
-                ok = any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
-            else:
-                # All of the listed testcases for the requirement has been run
-                ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
-            if not(ok):
+    # All strictnesses: Update requirement compliance based on testcase result
+    for requirement in container.get_requirement_list():
+        for testcase in requirement.get_actual_testcase_list():
+            if testcase.result == testcase_fail_string:
                 requirement.compliance = non_compliant_string
+                requirement.partial_coverage_status = 'FAIL'
+
+    #==========================================================================
+    # Strictness = 1 : Requirement has to be tested in specified testcase(s).
+    #                  Any other testcase is also OK.
+    #==========================================================================
+    if strictness == '1':
+
+        for requirement in container.get_requirement_list():
+
+            # Check each element in the list of expected testcases.
+            # If the element is a single testcase, that testcase must be run for the requirement ot be compliant.
+            # If the element is a list of testcases, at least one of them must be run for the requirement to be compliant.
+            ok = True
+            for tc_element in requirement.get_expected_testcase_list():
+                if isinstance(tc_element, list): # Or-listed testcases. On of them must be in actual-list
+                    if not(any(or_listed_tc in requirement.get_actual_testcase_list() for or_listed_tc in tc_element)):
+                        ok = False
+                else: # Single testcase
+                    if not(tc_element in requirement.get_actual_testcase_list()):
+                        ok = False
+
+            if not(ok):
+                requirement.compliance = not_tested_compliant_string
 
             # Super/sub-requirement(s) are updated automatically in the Requirement Object
 
 
 
     #==========================================================================
-    # Strictness = 2 : all expected testcase should only be run, and
-    #                  only with specified requirement.
+    # Strictness = 2 : Requirement is non-compliant if tested in a testcase
+    #                  that is not specified for that requirement.
     #==========================================================================
     elif strictness == '2':
         for requirement in container.get_requirement_list():
-            if requirement.is_user_omitted:
-                continue
 
-            # Verify that required testcases have been run
-            if requirement.is_or_listed:
-                # One of the listed testcases for the requirement has been run
-                ok =  any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
-            else:
-                # All of the listed testcases for the requirement has been run
-                ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            # Check each element in the list of expected testcases.
+            # If the element is a single testcase, that testcase must be run for the requirement ot be compliant.
+            # If the element is a list of testcases, at least one of them must be run for the requirement to be compliant.
+            ok = True
+            for tc_element in requirement.get_expected_testcase_list():
+                if isinstance(tc_element, list): # Or-listed testcases. On of them must be in actual-list
+                    if not(any(or_listed_tc in requirement.get_actual_testcase_list()) for or_listed_tc in tc_element):
+                        ok = False
+                else: # Single testcase
+                    if not(tc_element in requirement.get_actual_testcase_list()):
+                        ok = False
+
             if not(ok):
+                requirement.compliance = not_tested_compliant_string
+
+            # Verify that requirement hasn't been tested in non-specified testcase
+            # Go through all testcases that have ticked off this requirement
+            for actual_testcase in requirement.get_actual_testcase_list():
+                ok = False # Initial value. Will be set to true if tested TC found in expected TC list.
+                # Check if actual testcase is in list of specified testcases
+                for expected_testcase in requirement.get_expected_testcase_list():
+                    if isinstance(expected_testcase, list): # Element is list of or-listed TCs
+                        for or_listed_tc in expected_testcase: # Check each testcase
+                            if actual_testcase.name.upper() == or_listed_tc.name.upper():
+                                ok = True # Testcase found in list of expected testcases
+                    else: # Element is single testcase
+                        if actual_testcase.name.upper() == expected_testcase.name.upper():
+                            ok = True # Testcase found in list of expected testcases
+                if not(ok): # Set as non-compliant if tested testcase not found in list of expected testcases
+                    requirement.compliance = non_compliant_string
+            
+            # Force requirement to NON-COMPLIANT if listed without any testcases
+            if (not requirement.get_expected_testcase_list()) and (not requirement.is_compound_requirement()):
                 requirement.compliance = non_compliant_string
 
-            # Verify that only this requirement has run this testcase
-            for testcase in requirement.get_expected_testcase_list():               
-                # All requirements that have been run with this testcase
-                for testcase_requirement in testcase.get_actual_requirement_list():
-                    # Check if any other requirements have been run with this testcase
-                    if not(requirement.name.upper() == testcase_requirement.name.upper()):
-                        requirement.compliance = non_compliant_string
 
             # Super/sub-requirement(s) are updated automatically in the Requirement Object
 
-    else:
-        msg = ("strictness level %d outside limits 0-2" %(strictness))
-        abort(error_code = 1, msg = msg)
+    elif not strictness == '0': # Strictness neither 0, 1 or 2
+        msg = ("strictness level %s outside limits 0-2" %(strictness))
+        abort(error_code = 7, msg = msg)
+
+    # Set requirement status based on sub-requirements
+    for requirement in container.get_requirement_list():
+        not_tested_subreq_found = False
+        for sub_requirement in requirement.get_sub_requirement_list():
+            if sub_requirement.compliance == not_tested_compliant_string:
+                not_tested_subreq_found = True
+            # If requirement is already non-compliant, no subreq status can overwrite it. This is handled by the compliance setter.
+            # If any sub-requirement is NOT_TESTED, requirement status will also be NOT_TESTED (unless NON_COMPLIANT)
+            # If requirement is COMPLIANT, any subreq status can overwrite it
+            if not_tested_subreq_found:
+                if sub_requirement.compliance == non_compliant_string:
+                    requirement.compliance = non_compliant_string # NON_COMPLIANT can overwrite all other statuses
+                else:
+                    requirement.compliance = not_tested_compliant_string
+            else:
+                requirement.compliance = sub_requirement.compliance
 
 
 def build_mapping_req_list(run_configuration, container, delimiter):
     """
-    This method will create super-requirement(s) and connect super-requirement(s) with
+    This method will create compound requirement(s) and connect compound requirement(s) with
     sub-requirement(s) as defined in the mapping requirement file.
 
     Parameters:
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -812,45 +1168,99 @@ def build_mapping_req_list(run_configuration, container, delimiter):
 
     # Read the requirement mapping file and create a list
     try:
-        with open(requirement_map_file) as csv_map_file:
+        # When opening the CSV file for reading, use utf-8-sig encoding, to ensure that any BOM character at the beginning of the file
+        # is ignored (BOM will often be present in CSV files created by Excel)
+        with open(requirement_map_file, encoding="utf-8-sig") as csv_map_file:
             csv_reader = csv.reader(csv_map_file, delimiter=delimiter)
 
             for row in csv_reader:
+                or_listed_testcases = False
+                or_listed_tc_list = []
                 for idx, cell_item in enumerate(row):
-
-                    # Firs cell is the super-requirement
                     if idx == 0:
-                        super_requirement_name = cell_item.strip()
-                        
-                        super_requirement = container.get_requirement(super_requirement_name)
-                        super_requirement.found_in_requirement_file = True
+                        requirement_name = cell_item.strip()
+                        if requirement_name.startswith('#'): # Comment
+                            break # Ignore row if it starts with comment symbol (#)
 
-                    # Rest of the cells are sub-requirements
+                        requirement = container.get_requirement(requirement_name)
+                        requirement.found_in_map_file = True
+
+                        if requirement.found_in_requirement_file:
+                            # Mapping line. Super requirement defined in req list.
+                            requirement.requirement_type = 'COMPOUND'
+
+
+
+                    # The rest of the cells are either sub-requirements (if mapping line) or
+                    # sub-requirement details (if subreq definition line)
                     else:
-                        # Get the requirement (if it exists)
-                        sub_requirement_name = cell_item.strip()
-                        sub_requirement = container.get_requirement(sub_requirement_name)
+                        if requirement.requirement_type == 'SUB': # Subreq definition line
 
-                        super_requirement.add_sub_requirement(sub_requirement)
-                        sub_requirement.add_super_requirement(super_requirement)
+                            # Check if TCs are OR-listed
+                            if len(row) > 3: # Two or more TCs listed
+                                or_listed_testcases = True
+                            # AND-listed requirements
+                            elif len(row) == 3: # Single TC listed
+                                or_listed_testcases = False
+                            else: # No TCs listed
+                                or_listed_testcases = False
+
+
+                            # Requirement description
+                            if idx == 1:
+                                requirement.description = row[idx]
+
+                            # Testcase(s)
+                            elif idx >= 2:
+                                # Get testcase name
+                                testcase_name = row[idx].strip()
+                                if testcase_name == "": # Empty TC column
+                                    break
+
+                                # Will get an existing or a new testcase object
+                                testcase = container.get_testcase(testcase_name)
+
+                                # Connect: requirement <-> testcase
+                                testcase.add_expected_requirement(requirement)
+                                if or_listed_testcases == True:
+                                    # Add to or_listed_tc_list. This list will be added to expected_testcase_list later
+                                    or_listed_tc_list.append(testcase)
+                                else:
+                                    # Add testcase to TC list
+                                    requirement.add_expected_testcase(testcase)
+                        else: # Mapping line
+                            # Get the sub-requirement if it exists. Otherwise, a new one will be created.
+                            sub_requirement_name = cell_item.strip()
+                            sub_requirement = container.get_requirement(sub_requirement_name)
+
+                            requirement.requirement_type = 'COMPOUND'
+                            sub_requirement.requirement_type = 'SUB'
+                            sub_requirement.found_in_map_file = True
+                            requirement.add_sub_requirement(sub_requirement)
+                            sub_requirement.add_compound_requirement(requirement)
+
+
+                # If requirement line had or-listed TCs, add list of these TCs to expected_testcase_list
+                if (or_listed_testcases == True):
+                    requirement.add_expected_testcase(or_listed_tc_list.copy())
             
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
-        abort(error_code = 1, msg = error_msg)
+        abort(error_code = 8, msg = error_msg)
 
 
 def build_req_list(run_configuration, container, delimiter):
     """
     This method will create any requirement and testcase objects which have not been 
     created when reading the partial coverage file(s).
-    Requirement objects are defined as OR listed or AND listed, dependening on how 
+    Requirement objects are defined as OR listed or AND listed, depending on how
     the testcases are listed with the requirements.
 
     Parameters:
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -866,32 +1276,43 @@ def build_req_list(run_configuration, container, delimiter):
     #==========================================================================
     # Read the requirements and save to requirement_list
     #==========================================================================
-    try:    
-        with open(req_file) as req_file:
+    try:
+        # When opening the CSV file for reading, use utf-8-sig encoding, to ensure that any BOM character at the beginning of the file
+        # is ignored (BOM will often be present in CSV files created by Excel)
+        with open(req_file, encoding="utf-8-sig") as req_file:
             csv_reader = csv.reader(req_file, delimiter=delimiter)
             
             num_req_found = 0
+            or_listed_tc_list = []
+            or_listed_testcases = False
 
             for row in csv_reader:
                 num_req_found += 1
+                or_listed_tc_list.clear()
+                comment_line = False
+
+                # OR-listed requirements
+                if len(row) > 3: # Two or more TCs listed
+                    or_listed_testcases = True
+                # AND-listed requirements
+                elif len(row) == 3: # Single TC listed
+                    or_listed_testcases = False
+                else: # No TCs listed
+                    or_listed_testcases = False
+
                 for idx, cell in enumerate(row):
-                    user_omitted = False
 
                     # Requirement name
                     if idx == 0:
                         requirement_name = cell.strip()
-                        if requirement_name.startswith('#'): 
-                            user_omitted = True
-                            requirement_name = requirement_name.replace('#', '')
+                        if requirement_name.startswith('#'): # Comment
+                            comment_line = True
+                            break # Ignore row if it starts with comment symbol (--)
 
                         # Will get an existing or a new requirement object
                         requirement = container.get_requirement(requirement_name)
                         requirement.found_in_requirement_file = True
                         requirement.requirement_file_idx = row
-
-                        # Check, and mark, if user has chosen to omitt this requirement.
-                        if user_omitted: 
-                            requirement.is_user_omitted = True
 
                         # Add requirement to the container
                         container.add_requirement_to_organized_list(requirement)
@@ -904,26 +1325,33 @@ def build_req_list(run_configuration, container, delimiter):
                     elif idx >= 2:
                         # Get testcase name
                         testcase_name = row[idx].strip()
+                        if testcase_name == "sub-requirement" or testcase_name == "":
+                            # Requirement is tested through sub-reqs. No TCs defined for compound req.
+                            # or testcase field is empty (e.g. "REQ_1, Requirement 1,")
+                            break 
 
                         # Will get an existing or a new testcase object
-                        testcase = container.get_testcase(testcase_name)            
-
-                        # OR-listed requirements
-                        if len(row) > 3:
-                            requirement.is_or_listed = False
-                        # AND-listed requirements
-                        else:
-                            requirement.is_or_listed = True
+                        testcase = container.get_testcase(testcase_name)
 
                         # Connect: requirement <-> testcase
-                        if not(requirement.is_user_omitted):
+                        testcase.add_expected_requirement(requirement)
+                        if or_listed_testcases == True:
+                            # Add to or_listed_tc_list. This list will be added to expected_testcase_list later
+                            or_listed_tc_list.append(testcase)
+                        else:
+                            # Add testcase to TC list
                             requirement.add_expected_testcase(testcase)
-                            testcase.add_expected_requirement(requirement)
+
+                # If requirement line had or-listed TCs, add list of these TCs to expected_testcase_list
+                if not(comment_line): # Need to check first is line is a comment line. Otherwise, there is no requirement object to check
+                    if (or_listed_testcases == True):
+                        requirement.add_expected_testcase(or_listed_tc_list.copy())
+
 
         container.organize_requirements()
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_file))
-        abort(error_code = 1, msg = error_msg)
+        abort(error_code = 10, msg = error_msg)
 
 
 
@@ -952,10 +1380,10 @@ def find_testcase_in_pc_header(partial_coverage_file, container):
                         testcase_name = testcase.strip()
                         # This will create a new testcase object and add to container list
                         testcase_object = container.get_testcase(testcase_name)
-                    return 
+                    return testcase_object
     except:
         error_msg = ("Error %s occurred with file %s while collection testcase names from PC header" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 1, msg = error_msg)
+        abort(error_code = 11, msg = error_msg)
     return
 
 
@@ -981,30 +1409,56 @@ def find_pc_summary(partial_coverage_file, container):
             csv_reader = csv.reader(csv_file, delimiter=delimiter)
             for idx, row in enumerate(csv_reader):
                 # Get the testcase summary
-                if (idx > 3) and (row[0].upper() == "SUMMARY"):
+                if (idx > 3) and (row != []) and (row[0].upper() == "SUMMARY"):
                     result = row[2].strip().upper()
                     if result == testcase_pass_string:
                         return True
                 else:
                     continue
     except:
-        error_msg = ("Error %s occurred with file %s when searchin for PC summary line" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 1, msg = error_msg)
+        error_msg = ("Error %s occurred with file %s when searching for PC summary line" %(sys.exc_info()[0], partial_coverage_file))
+        abort(error_code = 12, msg = error_msg)
     return False
 
+def find_parsed_string(partial_coverage_file):
+    """
+    This method will search for the parsed string in the
+    partial coverage file and return True if found.
 
-def build_parial_cov_list(run_configuration, container):
+    Parameters:
+
+    partial_coverage_file (str) : name of the partial coverage file
+
+    Return:
+
+    Boolean : True if the parsed string is found, else False is returned.
+    """
+    try:
+        with open(partial_coverage_file) as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for idx, row in enumerate(csv_reader):
+                # Find the parsed string
+                if (idx > 3) and (row != []) and (row[0] == parsed_string):
+                    return True
+                else:
+                    continue
+    except:
+        error_msg = ("Error %s occurred with file %s when searching for the parsed string" %(sys.exc_info()[0], partial_coverage_file))
+        abort(error_code = 13, msg = error_msg)
+    return False
+
+def build_partial_cov_list(run_configuration, container):
     """
     This method will read the delimiter written by the spec_cov_pkg.vhd to 
     the partial_coverage CSV files, and updated the global delimiter.
-    The method will create requirement and testcase objects, setrequirement compliance 
+    The method will create requirement and testcase objects, set requirement compliance
     and testcase results.
     The objects are stored in the requirement and testcase containers.
 
     Parameters:
 
         run_configuration (dict) : selected configuration for this run.
-        containter (Container()) : container for requirement objects and testcase objects
+        container (Container()) : container for requirement objects and testcase objects
     """
     # For setting the global defined delimiter setting for CSV files.
     global delimiter
@@ -1015,9 +1469,21 @@ def build_parial_cov_list(run_configuration, container):
     # Get the partial coverage file - note: can be a txt file with
     # a list of partial coverage files.
     partial_coverage_file_name = run_configuration.get("partial_cov")
+
+    # Check if partial coverage file has been specified
     if not(partial_coverage_file_name):
-        msg = "partial coverage file missing: " + partial_coverage_file_name
-        abort(error_code = 1, msg = msg)
+        msg = "Error partial coverage file not specified"
+        abort(error_code = 14, msg = msg)
+
+    # Check if partial coverage file is missing
+    if not(os.path.isfile(partial_coverage_file_name)):
+        msg = "Error partial coverage file not found: " + partial_coverage_file_name
+        abort(error_code = 15, msg = msg)
+
+    # Check if partial coverage file is empty
+    if (os.path.getsize(partial_coverage_file_name) == 0):
+        msg = "Error partial coverage file empty: " + partial_coverage_file_name
+        abort(error_code = 16, msg = msg)
 
     #==========================================================================
     # Create a list of partial_cov_files to read
@@ -1035,21 +1501,21 @@ def build_parial_cov_list(run_configuration, container):
             partial_coverage_files.append(partial_coverage_file_name)
     except:
         error_msg = ("Error %s occurred with file %s when creating list of PC files" %(sys.exc_info()[0], partial_coverage_file_name))
-        abort(error_code = 1, msg = error_msg)
+        abort(error_code = 17, msg = error_msg)
 
     #==========================================================================
     # Check if listed files are files, i.e. files listed using wildcards,
     # and add any wildcard matches.
     #==========================================================================
     not_found_pc_file_list = []
-    for pc_file in partial_coverage_files:
+    for pc_file in partial_coverage_files[:]:
         if not(os.path.isfile(pc_file)):
             # Remove the wildcard item from list
             partial_coverage_files.remove(pc_file)
             not_found_pc_file_list.append(pc_file)
             # Search for files matching wildcard
             for wildcard_file in glob.glob(pc_file):
-                # Add any mathing files if not already in list
+                # Add any matching files if not already in list
                 if os.path.isfile(wildcard_file) and not(wildcard_file in partial_coverage_files):
                     # Adjust path for windows and add to list
                     wildcard_file = wildcard_file.replace('\\', '/')
@@ -1063,7 +1529,15 @@ def build_parial_cov_list(run_configuration, container):
     # Get the delimiter from the partial_cov file
     #==========================================================================
     partial_coverage_pass = False
+    pc_file_name = ""
     try:
+        if len(partial_coverage_files) == 0:
+            pc_file_name = "NO_FILE_FOUND"
+            msg = "Error: No valid partial coverage files found"
+            abort(error_code = 15, msg = msg)
+
+        pc_file = partial_coverage_files[0]
+
         with open(partial_coverage_files[0]) as partial_coverage_file:
             lines = partial_coverage_file.readlines()
 
@@ -1076,8 +1550,8 @@ def build_parial_cov_list(run_configuration, container):
                 continue
 
     except:
-        error_msg = ("Error %s occurred with file %s when searchin for CSV delimiter in PC file" %(sys.exc_info()[0], partial_coverage_file_name))
-        abort(error_code = 1, msg = error_msg)
+        error_msg = ("Error %s occurred with file %s when searching for CSV delimiter in PC file %s" %(sys.exc_info()[0], partial_coverage_file_name, pc_file_name))
+        abort(error_code = 18, msg = error_msg)
 
     #==========================================================================
     # Read requirements, testcases and results
@@ -1089,7 +1563,11 @@ def build_parial_cov_list(run_configuration, container):
             partial_coverage_pass = find_pc_summary(partial_coverage_file, container)
 
             # Create testcase objects of all testcases in PC file header
-            find_testcase_in_pc_header(partial_coverage_file, container)
+            header_testcase = find_testcase_in_pc_header(partial_coverage_file, container)
+            if partial_coverage_pass:
+                header_testcase.result = testcase_pass_string
+            else:
+                header_testcase.result = testcase_fail_string
 
 
             with open(partial_coverage_file) as csv_file:
@@ -1097,29 +1575,29 @@ def build_parial_cov_list(run_configuration, container):
 
                 for idx, row in enumerate(csv_reader):
 
-                    # Skip partial_coveage_file header info on the 4 first lines and
-                    # summary line at the end (if it exists)
-                    if (idx > 3) and (row[0].upper() != "SUMMARY"):
+                    # Skip partial_coverage_file header info on the 4 first lines,
+                    # empty line, summary line, and parsed string (if these exist)
+                    if (idx > 3) and (row != []) and (row[0].upper() != "SUMMARY") and (row[0] != parsed_string):
 
-                        # Read 3 cells: requirement name, testcase name, testcase result
+                        # Read 3 cells: requirement name, testcase name, tickoff result
                         requirement_name = row[0]
                         testcase_name    = row[1]
-                        testcase_result  = row[2]
+                        tickoff_result   = row[2]
 
                         # Will get an existing or a new requirement object
                         requirement = container.get_requirement(requirement_name)
                         # Set the requirement intermediate compliance.
-                        if partial_coverage_pass:
+                        if tickoff_result == testcase_pass_string:
                             requirement.compliance = compliant_string
+                            requirement.partial_coverage_status = 'PASS'
                         else:
                             requirement.compliance = non_compliant_string
+                            requirement.partial_coverage_status = 'FAIL'
+                            if partial_coverage_pass: # If TC passed, but tickoff_result is FAIL, req must have been explicitly failed at tickoff
+                                requirement.explicitly_failed = True
 
                         # Will get an existing or a new testcase object
                         testcase = container.get_testcase(testcase_name)
-                        if partial_coverage_pass:
-                            testcase.result = testcase_result
-                        else:
-                            testcase.result = testcase_fail_string
                         
                         # Connect: requirement <-> testcase
                         testcase.add_actual_requirement(requirement)
@@ -1129,9 +1607,28 @@ def build_parial_cov_list(run_configuration, container):
 
     except:
         error_msg = ("Error %s occurred with file %s when reading PC file" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 1, msg = error_msg)
+        abort(error_code = 19, msg = error_msg)
 
+    #==========================================================================
+    # Write the parsed string at the bottom of the partial_cov files
+    #==========================================================================
+    try:
+        for partial_coverage_file in partial_coverage_files:
 
+            # Find the parsed string
+            if not(find_parsed_string(partial_coverage_file)):
+                # Write the parsed string if not found
+                with open(partial_coverage_file, mode='a', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file, delimiter=delimiter)
+                    csv_writer.writerow([])
+                    csv_writer.writerow([parsed_string])
+            # Put the partial_cov file name in a list if the parsed string already exists
+            else:
+                previously_executed_coverage_list.append(partial_coverage_file)
+
+    except:
+        error_msg = ("Error %s occurred with file %s when writing a parsed message to PC file" %(sys.exc_info()[0], partial_coverage_file))
+        abort(error_code = 20, msg = error_msg)
 
 def abort(error_code = 0, msg = ""):
     """
@@ -1205,7 +1702,17 @@ def arg_parser(arguments):
                         run_configuration[key_word] = arguments[idx + 1]
 
                 elif argument[1] == "household":
-                    run_configuration[key_word] = True
+
+                    # Check if a next argument exists
+                    if (idx + 1) >= len(arguments):
+                        arg_value = "."
+                    # and is not a possible keyword
+                    elif arguments[idx+1][0] == '-':
+                        arg_value = "."
+                    else:
+                        arg_value = arguments[idx + 1]
+
+                    run_configuration[key_word] = arg_value
 
                 elif argument[1] == "help":
                     abort(error_code = 0)
@@ -1239,7 +1746,7 @@ def set_run_config_from_file(run_configuration):
             lines = config_file.readlines()
     except:
         error_msg = ("Error %s occurred with configuration file %s" %(sys.exc_info()[0], config_file_name))
-        abort(error_code = 1, msg = error_msg)
+        abort(error_code = 21, msg = error_msg)
 
     # Add each line in the config file as a list to the arguments_lists
     for line in lines:
@@ -1263,19 +1770,25 @@ def validate_run_configuration(run_configuration):
     i.e. check that required files are given and that 
     a requirement file is set when strictness level is > 0. 
     """
-    # Validate 
-    if run_configuration.get("strictness") > 0:
+    # Validate
+    strictness = run_configuration.get("strictness")
+    if not (strictness in ["0", "1", "2"]):
+        msg = ("Strictness level %s is outside the valid range 0-2" %(strictness))
+        abort(error_code = 28, msg = msg)
+
+    if run_configuration.get("strictness") != "0":
         if run_configuration.get("requirement_list") == None:
-            msg = ("Strictness level %d require a requirement file" %(run_configuration.get("strictness")))
-            abort(error_code = 1, msg = msg)
+            msg = ("Strictness level %s requires a requirement file" %(run_configuration.get("strictness")))
+            abort(error_code = 22, msg = msg)
 
     if run_configuration.get("partial_cov") == None:
         msg = ("Missing argument for partial coverage file")
-        abort(error_code = 1, msg = msg)
+        abort(error_code = 23, msg = msg)
 
     if run_configuration.get("spec_cov") == None:
         msg = ("Missing argument for specification coverage file")
-        abort(error_code = 1, msg = msg)
+        abort(error_code = 24, msg = msg)
+
     return
 
 def run_housekeeping(run_configuration):
@@ -1301,14 +1814,16 @@ def run_housekeeping(run_configuration):
         run_configuration.get("config")
         ):
        error_msg = ("ERROR! --clean argument used in combination with other arguments.")
-       abort(error_code = 1, msg = error_msg)
+       abort(error_code = 25, msg = error_msg)
 
     else:
+        clean_dir = run_configuration.get("clean")
         try:
             num_files_removed = 0
-            for filename in os.listdir("."):
+            for filename in os.listdir(clean_dir):
                 if filename.endswith(".csv"):
-                    os.remove(filename)
+                    file_path = os.path.join(clean_dir, filename)
+                    os.remove(file_path)
                     num_files_removed += 1
                 
             msg = ("Successfully removed %d CSV files." %(num_files_removed))
@@ -1358,12 +1873,14 @@ def main():
     run_configuration = arg_parser(sys.argv[1:])
 
     # If --clean parameter is applied
-    if run_configuration.get("clean"):
+    if run_configuration.get("clean") is not None:
         run_housekeeping(run_configuration)
 
     # If --config parameter is applied
     if run_configuration.get("config"):
         run_configuration = set_run_config_from_file(run_configuration)
+
+    validate_run_configuration(run_configuration)
 
 
     #==========================================================================
@@ -1385,9 +1902,9 @@ def main():
     #   that the CSV delimiter can be determined.
     #==========================================================================
 
-    build_parial_cov_list(run_configuration, container)
+    build_partial_cov_list(run_configuration, container)
     build_req_list(run_configuration, container, delimiter)
-    build_mapping_req_list(run_configuration, container, delimiter)
+    build_mapping_req_list(run_configuration, container, delimiter) # build_req_list() must be run first!
     build_spec_compliance_list(run_configuration, container, delimiter)
 
 
@@ -1396,10 +1913,17 @@ def main():
     #==========================================================================
     terminal_present_results(container, delimiter)
 
-    write_spec_cov_files(run_configuration, container, delimiter)
-    write_single_listed_spec_cov_files(run_configuration, container, delimiter)
+    write_req_compliance_files(run_configuration, container, delimiter)
+    write_warning_file(run_configuration, container)
+    write_non_compliance_file(run_configuration, container, delimiter)
+    write_testcase_list_file(run_configuration, container, delimiter)
 
-
+    file_name, extension = os.path.splitext(run_configuration.get("spec_cov"))
+    if messages_in_warnings_file:
+        print("Potential problems found. Please see " + file_name + ".warnings.csv.")
+    if reqs_in_non_compliance_file:
+        print("Non-compliant or not verified requirements found. Please see " + file_name + ".req_non_compliance.csv for details.")
 
 if __name__ == "__main__":
     main()
+    

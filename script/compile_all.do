@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -29,9 +29,33 @@ proc quietly { args } {
   }
 }
 
+# Detect simulator
+if {[catch {eval "vsim -version"} message] == 0} {
+  quietly set simulator_version [eval "vsim -version"]
+  # puts "Version is: $simulator_version"
+  if {[regexp -nocase {modelsim} $simulator_version]} {
+    quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {questasim} $simulator_version]} {
+    quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {aldec} $simulator_version]} {
+    quietly set simulator "rivierapro"
+  } else {
+    puts "Unknown simulator. Attempting to use Modelsim commands."
+    quietly set simulator "modelsim"
+  }
+} else {
+    puts "vsim -version failed with the following message:\n $message"
+    abort all
+}
+
 # End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
+  if { [string equal -nocase $simulator "rivierapro"] } {
+    # Special for Riviera-PRO
+    onerror {quit -code 1 -force}
+   } else {
+    onerror {abort all; exit -f -code 1}
+  }
 } else {
   onerror {abort all}
 }
@@ -43,16 +67,19 @@ variable source_path
 variable component_path
 variable target_path
 variable component_list_path
+variable uvvm_root
 
 # Default values
 # assume we stand in script folder if no source argument is given
 quietly set source_path [pwd]
 quietly set component_list_path "$source_path/component_list.txt"
+quietly set uvvm_root [file normalize "$source_path/.."]
 quietly set default_target 0
 
 if { [info exists 1] } {
   quietly set source_path "$1"
   quietly set component_list_path "$source_path/component_list.txt"
+  quietly set uvvm_root [file normalize "$source_path/.."]
 
   if {$argc >= 2} {
     quietly set target_path "$2"
@@ -84,6 +111,7 @@ foreach item $file_data {
     variable local_source_path $source_path
     variable source_path $component_path
     variable target_path $target_path
+    variable uvvm_root $uvvm_root
 
     variable argc -1
 

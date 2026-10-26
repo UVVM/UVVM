@@ -1,11 +1,12 @@
 -----------------------------------------------------------
--- Directory structure                                   -- 
+-- Directory structure                                   --
 -----------------------------------------------------------
 
 - bitvis_vip_gpio   : A VIP that uses UVVM
   - doc             : Quick Reference for BFM and VVC
   - script          : Compile scripts
-  - src             : GPIO BFM and VVC source code
+  - src             : GPIO VIP BFM and VVC source code
+  - tb              : GPIO VIP testbenches
 
 IMPORTANT
 This is a simplified Verification IP (VIP) for GPIO.

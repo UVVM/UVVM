@@ -1,0 +1,1 @@
+This folder contains copies of VVCs used to test the old await_completion & await_any_completion mechanism.

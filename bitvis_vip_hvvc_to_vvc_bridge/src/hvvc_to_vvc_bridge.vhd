@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -26,12 +26,12 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 entity hvvc_to_vvc_bridge is
   generic(
-    GC_INSTANCE_IDX        : integer;                               -- Instance index of the VVC
+    GC_INSTANCE_IDX        : integer;   -- Instance index of the VVC
     GC_DUT_IF_FIELD_CONFIG : t_dut_if_field_config_direction_array; -- Array of IF field configurations
-    GC_MAX_NUM_WORDS       : positive;                              -- Max number of data words transferred in one operation
-    GC_PHY_MAX_ACCESS_TIME : time;                                  -- Maximum time that the PHY interface takes to execute an access
-    GC_SCOPE               : string;                                -- Scope of the HVVC-to-VVC Bridge
-    GC_WORD_ENDIANNESS     : t_word_endianness := LOWER_WORD_LEFT   -- Word endianness
+    GC_MAX_NUM_WORDS       : positive;  -- Max number of data words transferred in one operation
+    GC_PHY_MAX_ACCESS_TIME : time;      -- Maximum time that the PHY interface takes to execute an access
+    GC_SCOPE               : string;    -- Scope of the HVVC-to-VVC Bridge
+    GC_WORD_ENDIANNESS     : t_word_endianness := LOWER_WORD_LEFT -- Word endianness
   );
   port(
     hvvc_to_bridge : in  t_hvvc_to_bridge;

@@ -1,13 +1,104 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v6.1.4
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+- Fixed inconsistency in axistream_expect-log messages in vvc_methods_pkg.vhd
+
+v6.1.3
+----------
+Released: 2025-11-28
+- Added missing deprecate() calls to some procedures.
+- Updated timeout alert message with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+- Increased max_wait_cycles default value to 1000.
+- Updated BFM procedures to only call check_clock_period_margin() once.
+- Removed extra sampling of rising_edge inside BFM procedures.
+
+v6.1.2
+----------
+Released: 2025-09-17
+- Added checks to make sure input arrays to axistream_transmit() and axistream_expect() have ascending range.
+
+v6.1.1
+----------
+Released: 2025-03-25
+- Updated methods for generating random values to control randomization seeds in axistream_bfm_pkg.
+- Moved the random configuration constants to bfm_common_pkg.
+
+v6.1.0
+----------
+Released: 2024-09-19
+- Removed old await_completion code from VVC.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+
+v6.0.1
+----------
+Released: 2024-08-16
+- Fixed ready_default_value not having the initial value from the GC_AXISTREAM_BFM_CONFIG VVC generic.
+- Converted documentation to RST format.
+
+v6.0.0
+----------
+Released: 2024-07-03
+- Changed max constants used in BFM and VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Decreased C_MAX_TUSER_BITS to 32 which allows GHDL to run without storage errors.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
+
+v5.0.0
+----------
+Released: 2024-03-08
+- Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure.
+- Moved t_transaction_status type to types_pkg (common for all VVCs) and added COMPLETED.
+- Fixed incorrect logging of ID_PACKET_PAYLOAD and ID_PACKET_COMPLETE in axistream_receive.
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Fixed data length typo in Axistream BFM- and VVC Quick Reference.
+- Added functionality for extended error mismatch message for data.
+- Increased C_MAX_TUSER_BITS to 64 in BFM. (allows for higher GC_USER_WIDTH)
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
+
+v4.7.8
+----------
+Released: 2023-09-16
+- Updated BFM documentation on byte_endianness config.
+- Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
+- Changed back to full record mapping in AXI-Stream VVC to BFM call.
+- Replaced the default values in VVC generics related to the cmd/results queues with
+  the constants from adaptations_pkg.
+
+v4.7.7
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+- In axistream_vvc: When calling a BFM procedure,
+  always use the non-record version to avoid fatal error: (SIGSEGV) Bad handle or reference 
+
+v4.7.6
+----------
+Released: 2023-03-10
+- Fixed wrong log msg_id used in BFM axistream_expect() procedure.
+- Changed transmit and expect "main" procedures to use t_slv_array instead of t_byte_array.
+  The former procedures using t_byte_array are now overloads of the ones using t_slv_array.
+
+v4.7.5
+----------
+Released: 2022-05-05
+- t_vvc_config, t_vvc_status, t_transaction_info and t_axistream_bfm_config record declaration formatting.
+- Fixed typo and wrong examples in VVC QuickRef.
 
 v4.7.4
 ----------
 Released: 2021-05-26
 - Corrected message ID for check_value() in BFM.
 - Fixed incorrected VIP name in compile_bfm.do
-
 
 v4.7.3
 ----------

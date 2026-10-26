@@ -1,0 +1,12 @@
+REQ_NO_TCS ticked off in non-specified testcase (TC_1)
+No testcases specified for requirement REQ_NO_TCS. At least one testcase must be specified per requirement in strictness 2
+No testcases specified for requirement REQ_NO_TCS_NO_TICKOFFS. At least one testcase must be specified per requirement in strictness 2
+REQ_EXTRA_TICKOFFS ticked off in non-specified testcase (TC_2)
+REQ_EXTRA_TICKOFFS ticked off in non-specified testcase (TC_3)
+REQ_WRONG_TC ticked off in non-specified testcase (TC_1)
+REQ_COMPOUND_TICKOFF specified for testing through sub-requirements. Ticked off directly in TC_1
+REQ_COMPOUND_TICKOFF ticked off in non-specified testcase (TC_1)
+REQ_UNLISTED_PASS not found in input requirement list (ticked off in TC_1)
+REQ_BASIC2 not found in input requirement list (ticked off in TC_1)
+REQ_BASI not found in input requirement list (ticked off in TC_1)
+REQ_UNLISTED_FAIL not found in input requirement list (ticked off in TC_FAIL)

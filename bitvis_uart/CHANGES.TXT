@@ -1,6 +1,28 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.9
+----------
+Released: 2025-09-17
+- Updated .sh scripts to use bash shebang.
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util packages.
+
+v1.1.8
+----------
+Released: 2025-03-25
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+
+v1.1.7
+----------
+Released: 2024-03-08
+- Added functionality for 7-bit UART data
+
+v1.1.6
+----------
+Released: 2021-10-22
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+  packages.
+
 v1.1.5
 ----------
 Released: 2019-11-21

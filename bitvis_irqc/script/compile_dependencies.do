@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -25,4 +25,4 @@ proc quietly { args } {
 #-----------------------------------------------------------------------
 quietly set root_path "../.."
 do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
-do compile_sbi_bfm.do $root_path/bitvis_vip_sbi $root_path/bitvis_irqc/sim
+do ../script/compile_sbi_bfm.do $root_path/bitvis_vip_sbi $root_path/bitvis_irqc/sim

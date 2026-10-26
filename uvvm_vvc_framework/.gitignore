@@ -1,0 +1,10 @@
+script/vvc_generator/output/*
+script/vvc_name_modifier/vvc_to_be_modified/src/*.vhd
+script/vvc_name_modifier/vvc_to_be_modified/script/*.do
+script/vvc_name_modifier/vvc_to_be_modified/script/*.tcl
+# Modelsim files
+sim/*
+# Sigasi files
+.library_mapping.xml
+.project
+.settings/*

@@ -1,0 +1,5 @@
+Testcase,Testcase status,Actual tickoffs,Missing tickoffs
+TC_1,PASS,REQ_1 & REQ_1A & REQ_1B & REQ_2A & REQ_2B & REQ_3 & REQ_4A & REQ_4B & REQ_5A,
+TC_2,PASS,REQ_2A & REQ_2B,
+TC_3,NOT_EXECUTED,,REQ_3
+TC_1B,NOT_EXECUTED,,REQ_1B

@@ -1,6 +1,59 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.6.3
+----------
+Released: 2025-11-28
+- Fixed use of await_completion with set_clock_period() and set_clock_high_time() procedures.
+
+v1.6.2
+----------
+Released: 2025-09-17
+- Fixed bug where the initial configuration for the clock_name, clock_period and clock_high_time given by the VVC generics is not 
+  assigned when using Riviera-PRO simulator.
+
+v1.6.1
+----------
+Released: 2025-03-25
+- Converted documentation to RST format.
+
+v1.6.0
+----------
+Released: 2024-09-19
+- Removed old await_completion code from VVC.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+
+v1.5.5
+----------
+Released: 2024-07-03
+- Changed max constants used in VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+
+v1.5.4
+----------
+Released: 2024-03-08
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
+
+v1.5.3
+----------
+Released: 2023-09-16
+- Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
+- Replaced the default values in VVC generics related to the cmd/results queues with
+  the constants from adaptations_pkg.
+
+v1.5.2
+----------
+Released: 2023-03-10
+- Added missing constraint to clock_name in VVC.
+
+v1.5.1
+----------
+Released: 2022-05-05
+- t_vvc_config, t_vvc_status and t_transaction_info record declaration formatting.
+
 v1.5.0
 ----------
 Released: 2021-04-08

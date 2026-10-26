@@ -6,3 +6,4 @@
 ../src/ti_data_fifo_pkg.vhd
 ../src/ti_data_stack_pkg.vhd
 ../src/ti_uvvm_engine.vhd
+../src/ti_vvc_framework_context.vhd

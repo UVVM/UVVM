@@ -1,0 +1,8 @@
+REQ_EXTRA_TICKOFFS ticked off in non-specified testcase (TC_2)
+REQ_EXTRA_TICKOFFS ticked off in non-specified testcase (TC_3)
+REQ_WRONG_TC ticked off in non-specified testcase (TC_1)
+REQ_COMPOUND_TICKOFF specified for testing through sub-requirements. Ticked off directly in TC_1
+REQ_UNLISTED_PASS not found in input requirement list (ticked off in TC_1)
+REQ_BASIC2 not found in input requirement list (ticked off in TC_1)
+REQ_BASI not found in input requirement list (ticked off in TC_1)
+REQ_UNLISTED_FAIL not found in input requirement list (ticked off in TC_FAIL)

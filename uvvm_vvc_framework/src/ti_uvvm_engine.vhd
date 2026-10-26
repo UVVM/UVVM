@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -21,8 +21,7 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+use work.ti_vvc_framework_support_pkg.all;
 
 entity ti_uvvm_engine is
 end entity ti_uvvm_engine;
@@ -33,20 +32,20 @@ begin
   --------------------------------------------------------
   -- Initializes the UVVM VVC Framework
   --------------------------------------------------------
-  p_initialize_uvvm : process
+  p_initialize_uvvm : process is
   begin
     -- shared_uvvm_state is initialized to IDLE. Hence it will stay in IDLE if this procedure is not included in the TB
     shared_uvvm_state := PHASE_A;
-    wait for 0 ns;  -- A single delta cycle
-    wait for 0 ns;  -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
     if (shared_uvvm_state = PHASE_B) then
       tb_failure("ti_uvvm_engine seems to have been instantiated more than once in this testbench system", C_SCOPE);
     end if;
     shared_uvvm_state := PHASE_B;
-    wait for 0 ns;  -- A single delta cycle
-    wait for 0 ns;  -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
     shared_uvvm_state := INIT_COMPLETED;
     wait;
   end process p_initialize_uvvm;
 
-end func;
+end architecture func;

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -18,20 +18,20 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
-
 library std;
 use std.textio.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
 
 --================================================================================================================================
 --================================================================================================================================
 package gmii_bfm_pkg is
 
   --==========================================================================================
-  -- Types and constants for GMII BFM 
+  -- Types and constants for GMII BFM
   --==========================================================================================
-  constant C_SCOPE : string := "GMII BFM";
+  constant C_BFM_SCOPE : string := "GMII BFM";
 
   -- Interface record for BFM signals to DUT
   type t_gmii_tx_if is record
@@ -41,16 +41,14 @@ package gmii_bfm_pkg is
   end record;
   -- Interface record for BFM signals from DUT
   type t_gmii_rx_if is record
-    rxclk  : std_logic;
-    rxd    : std_logic_vector(7 downto 0);
-    rxdv   : std_logic;
+    rxclk : std_logic;
+    rxd   : std_logic_vector(7 downto 0);
+    rxdv  : std_logic;
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_gmii_bfm_config is
-  record
-    max_wait_cycles          : integer;            -- Used for setting the maximum cycles to wait before an alert is issued when
-                                                   -- waiting for signals from the DUT.
+  type t_gmii_bfm_config is record
+    max_wait_cycles          : natural;            -- Used for setting the maximum cycles to wait before an alert is issued when waiting for signals from the DUT.
     max_wait_cycles_severity : t_alert_level;      -- Severity if max_wait_cycles expires.
     clock_period             : time;               -- Period of the clock signal.
     clock_period_margin      : time;               -- Input clock period margin to specified clock_period
@@ -64,96 +62,105 @@ package gmii_bfm_pkg is
 
   -- Define the default value for the BFM config
   constant C_GMII_BFM_CONFIG_DEFAULT : t_gmii_bfm_config := (
-    max_wait_cycles          => 12, -- Standard minimum interpacket gap (Gigabith Ethernet)
+    max_wait_cycles          => 1000,
     max_wait_cycles_severity => ERROR,
-    clock_period             => -1 ns,
+    clock_period             => C_UNDEFINED_TIME,
     clock_period_margin      => 0 ns,
     clock_margin_severity    => TB_ERROR,
-    setup_time               => -1 ns,
-    hold_time                => -1 ns,
+    setup_time               => C_UNDEFINED_TIME,
+    hold_time                => C_UNDEFINED_TIME,
     bfm_sync                 => SYNC_ON_CLOCK_ONLY,
     match_strictness         => MATCH_EXACT,
     id_for_bfm               => ID_BFM
   );
 
   --==========================================================================================
-  -- BFM procedures 
+  -- BFM procedures
   --==========================================================================================
-  -- This function returns a GMII interface with initialized signals.
-  -- All input signals are initialized to 0
-  -- All output signals are initialized to Z
+  -- This function returns an GMII interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_gmii_if_signals
-    return t_gmii_tx_if;
+  return t_gmii_tx_if;
 
   function init_gmii_if_signals
-    return t_gmii_rx_if;
+  return t_gmii_rx_if;
 
   ---------------------------------------------------------------------------------------------
   -- GMII Write
   -- BFM -> DUT
   ---------------------------------------------------------------------------------------------
-  procedure gmii_write (
-    constant data_array   : in    t_slv_array;
-    constant msg          : in    string            := "";
+  procedure gmii_write(
+    constant data_array   : in t_slv_array;
+    constant msg          : in string            := "";
     signal   gmii_tx_if   : inout t_gmii_tx_if;
-    constant scope        : in    string            := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+    constant scope        : in string            := C_BFM_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+  );
+
+  procedure gmii_write(
+    constant data_array                   : in t_slv_array;
+    constant msg                          : in string            := "";
+    signal   gmii_tx_if                   : inout t_gmii_tx_if;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant scope                        : in string            := C_BFM_SCOPE;
+    constant msg_id_panel                 : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config                       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   );
 
   ---------------------------------------------------------------------------------------------
   -- GMII Read
   -- DUT -> BFM
   ---------------------------------------------------------------------------------------------
-  procedure gmii_read (
-    variable data_array    : out   t_slv_array;
-    variable data_len      : out   natural;
-    constant msg           : in    string            := "";
+  procedure gmii_read(
+    variable data_array    : out t_slv_array;
+    variable data_len      : out natural;
+    constant msg           : in string            := "";
     signal   gmii_rx_if    : inout t_gmii_rx_if;
-    constant scope         : in    string            := C_SCOPE;
-    constant msg_id_panel  : in    t_msg_id_panel    := shared_msg_id_panel;
-    constant config        : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    constant scope         : in string            := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config        : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string            := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ---------------------------------------------------------------------------------------------
   -- GMII Expect
   ---------------------------------------------------------------------------------------------
-  procedure gmii_expect (
-    constant data_exp     : in    t_slv_array;
-    constant msg          : in    string            := "";
+  procedure gmii_expect(
+    constant data_exp     : in t_slv_array;
+    constant msg          : in string            := "";
     signal   gmii_rx_if   : inout t_gmii_rx_if;
-    constant alert_level  : in    t_alert_level     := ERROR;
-    constant scope        : in    string            := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+    constant alert_level  : in t_alert_level     := ERROR;
+    constant scope        : in string            := C_BFM_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   );
 
 end package gmii_bfm_pkg;
-
 
 --================================================================================================================================
 --================================================================================================================================
 package body gmii_bfm_pkg is
 
   function init_gmii_if_signals
-      return t_gmii_tx_if is
-    variable init_if : t_gmii_tx_if;
+  return t_gmii_tx_if is
+    variable v_init_if : t_gmii_tx_if;
   begin
-    init_if.gtxclk := 'Z';
-    init_if.txd    := (init_if.txd'range => '0');
-    init_if.txen   := '0';
-    return init_if;
+    v_init_if.gtxclk := 'Z';
+    v_init_if.txd    := (v_init_if.txd'range => '0');
+    v_init_if.txen   := '0';
+    return v_init_if;
   end function;
 
   function init_gmii_if_signals
-      return t_gmii_rx_if is
-    variable init_if : t_gmii_rx_if;
+  return t_gmii_rx_if is
+    variable v_init_if : t_gmii_rx_if;
   begin
-    init_if.rxclk := 'Z';
-    init_if.rxd   := (init_if.rxd'range => 'Z');
-    init_if.rxdv  := 'Z';
-    return init_if;
+    v_init_if.rxclk := 'Z';
+    v_init_if.rxd   := (v_init_if.rxd'range => 'Z');
+    v_init_if.rxdv  := 'Z';
+    return v_init_if;
   end function;
 
   ---------------------------------------------------------------------------------------------
@@ -161,49 +168,64 @@ package body gmii_bfm_pkg is
   -- BFM -> DUT
   ---------------------------------------------------------------------------------------------
   procedure gmii_write(
-    constant data_array   : in    t_slv_array;
-    constant msg          : in    string            := "";
+    constant data_array   : in t_slv_array;
+    constant msg          : in string            := "";
     signal   gmii_tx_if   : inout t_gmii_tx_if;
-    constant scope        : in    string            := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+    constant scope        : in string            := C_BFM_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name              : string := "gmii_write";
-    constant proc_call              : string := proc_name & "(" & to_string(data_array'length) & " bytes)";
-    variable v_time_of_rising_edge  : time := -1 ns;  -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time := -1 ns;  -- time stamp for clk period checking
+  begin
+    gmii_write(data_array, msg, gmii_tx_if, RELEASE_LINE_AFTER_TRANSFER, scope, msg_id_panel, config);
+  end procedure;
+
+  procedure gmii_write(
+    constant data_array                   : in t_slv_array;
+    constant msg                          : in string            := "";
+    signal   gmii_tx_if                   : inout t_gmii_tx_if;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant scope                        : in string            := C_BFM_SCOPE;
+    constant msg_id_panel                 : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config                       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+  ) is
+    constant C_PROC_NAME            : string := "gmii_write";
+    constant C_PROC_CALL            : string := C_PROC_NAME & "(" & to_string(data_array'length) & " bytes)";
+    variable v_normalized_data      : t_slv_array(0 to data_array'length - 1)(7 downto 0) := data_array;
+    variable v_time_of_rising_edge  : time   := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time   := C_UNDEFINED_TIME; -- time stamp for clk period checking
 
   begin
-    check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     end if;
 
-    gmii_tx_if <= init_gmii_if_signals;
+    gmii_tx_if.gtxclk <= 'Z';
 
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(gmii_tx_if.gtxclk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-    log(config.id_for_bfm, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "=>" & add_msg_delimiter(msg), scope, msg_id_panel);
 
     -- Write all the bytes in the data_array
-    for i in data_array'range loop
-      gmii_tx_if.txd  <= data_array(i);
+    for i in 0 to v_normalized_data'length - 1 loop
+      gmii_tx_if.txd  <= v_normalized_data(i);
       gmii_tx_if.txen <= '1';
       -- Check the clock margin
       wait until rising_edge(gmii_tx_if.gtxclk);
-      if v_time_of_rising_edge < 0 ns then
-        v_time_of_rising_edge := now;
+      if i = 0 then -- Only check once
+        check_clock_period_margin(gmii_tx_if.gtxclk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
-      check_clock_period_margin(gmii_tx_if.gtxclk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Wait according to config.bfm_sync setup
       wait_on_bfm_exit(gmii_tx_if.gtxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     end loop;
 
-    gmii_tx_if <= init_gmii_if_signals;
-    log(config.id_for_bfm, proc_call & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    -- Only release the line after a single transfer or the end of a multi-field transfer, e.g. Ethernet
+    if action_when_transfer_is_done = RELEASE_LINE_AFTER_TRANSFER then
+      gmii_tx_if <= init_gmii_if_signals;
+    end if;
+    log(config.id_for_bfm, C_PROC_CALL & " DONE." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -211,21 +233,21 @@ package body gmii_bfm_pkg is
   -- DUT -> BFM
   ---------------------------------------------------------------------------------------------
   procedure gmii_read(
-    variable data_array    : out   t_slv_array;
-    variable data_len      : out   natural;
-    constant msg           : in    string            := "";
+    variable data_array    : out t_slv_array;
+    variable data_len      : out natural;
+    constant msg           : in string            := "";
     signal   gmii_rx_if    : inout t_gmii_rx_if;
-    constant scope         : in    string            := C_SCOPE;
-    constant msg_id_panel  : in    t_msg_id_panel    := shared_msg_id_panel;
-    constant config        : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    constant scope         : in string            := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config        : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string            := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant local_proc_name        : string := "gmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call        : string := local_proc_name & "(" & to_string(data_array'length) & " bytes)";
+    constant C_LOCAL_PROC_NAME      : string  := "gmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
+    constant C_LOCAL_PROC_CALL      : string  := C_LOCAL_PROC_NAME & "(" & to_string(data_array'length) & " bytes)";
     variable v_proc_call            : line; -- Current proc_call, external or local
-    variable v_normalized_data      : t_slv_array(0 to data_array'length-1)(7 downto 0);
-    variable v_time_of_rising_edge  : time := -1 ns;  -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time := -1 ns;  -- time stamp for clk period checking
+    variable v_normalized_data      : t_slv_array(0 to data_array'length - 1)(7 downto 0);
+    variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_byte_cnt             : natural := 0;
     variable v_done                 : boolean := false;
     variable v_timeout              : boolean := false;
@@ -234,30 +256,28 @@ package body gmii_bfm_pkg is
   begin
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'gmii_read...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing gmii_read...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     end if;
 
     gmii_rx_if <= init_gmii_if_signals;
 
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(gmii_rx_if.rxclk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-    log(config.id_for_bfm, v_proc_call.all & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, v_proc_call.all & "=>" & add_msg_delimiter(msg), scope, msg_id_panel);
 
     -- Wait for the first rising edge to sample the data and check the clock margin
     wait until rising_edge(gmii_rx_if.rxclk);
-    v_time_of_rising_edge := now;
-    check_clock_period_margin(gmii_rx_if.rxclk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                              config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+    check_clock_period_margin(gmii_rx_if.rxclk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
     -- Wait for data valid to be active
     while gmii_rx_if.rxdv /= '1' and v_wait_cycles < config.max_wait_cycles loop
@@ -271,11 +291,11 @@ package body gmii_bfm_pkg is
     end if;
 
     -- Sample the data
-    while not(v_done) loop
+    while not (v_done) loop
       if gmii_rx_if.rxdv = '1' then
         v_normalized_data(v_byte_cnt) := gmii_rx_if.rxd;
 
-        if v_byte_cnt = v_normalized_data'length-1 then
+        if v_byte_cnt = v_normalized_data'length - 1 then
           v_done := true;
         else
           wait_on_bfm_exit(gmii_rx_if.rxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -292,19 +312,18 @@ package body gmii_bfm_pkg is
     data_len   := v_byte_cnt;
 
     -- Wait according to bfm_sync config
-    if not(v_timeout) then
+    if not (v_timeout) then
       wait_on_bfm_exit(gmii_rx_if.rxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     end if;
 
     -- Done. Check if there was a timeout or it was successful
     if v_timeout then
-      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " &
-        add_msg_delimiter(msg), scope);
+      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope);
     else
       if ext_proc_call = "" then
-        log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(config.id_for_bfm, v_proc_call.all & " DONE." & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-        -- Log will be handled by calling procedure (e.g. gmii_expect)
+      -- Log will be handled by calling procedure (e.g. gmii_expect)
       end if;
     end if;
 
@@ -314,30 +333,30 @@ package body gmii_bfm_pkg is
   ---------------------------------------------------------------------------------------------
   -- GMII Expect
   ---------------------------------------------------------------------------------------------
-  procedure gmii_expect (
-    constant data_exp     : in    t_slv_array;
-    constant msg          : in    string             := "";
+  procedure gmii_expect(
+    constant data_exp     : in t_slv_array;
+    constant msg          : in string            := "";
     signal   gmii_rx_if   : inout t_gmii_rx_if;
-    constant alert_level  : in    t_alert_level      := ERROR;
-    constant scope        : in    string             := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
-    constant config       : in    t_gmii_bfm_config  := C_GMII_BFM_CONFIG_DEFAULT
+    constant alert_level  : in t_alert_level     := ERROR;
+    constant scope        : in string            := C_BFM_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name          : string := "gmii_expect";
-    constant proc_call          : string := proc_name & "(" & to_string(data_exp'length) & " bytes)";
-    variable v_normalized_data  : t_slv_array(0 to data_exp'length-1)(7 downto 0) := data_exp;
+    constant C_PROC_NAME        : string                                            := "gmii_expect";
+    constant C_PROC_CALL        : string                                            := C_PROC_NAME & "(" & to_string(data_exp'length) & " bytes)";
+    variable v_normalized_data  : t_slv_array(0 to data_exp'length - 1)(7 downto 0) := data_exp;
     variable v_rx_data_array    : t_slv_array(v_normalized_data'range)(7 downto 0);
     variable v_rx_data_len      : natural;
-    variable v_length_error     : boolean := false;
-    variable v_data_error_cnt   : natural := 0;
+    variable v_length_error     : boolean                                           := false;
+    variable v_data_error_cnt   : natural                                           := 0;
     variable v_first_wrong_byte : natural;
     variable v_alert_radix      : t_radix;
   begin
 
-    check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
     -- Read data
-    gmii_read(v_rx_data_array, v_rx_data_len, msg, gmii_rx_if, scope, msg_id_panel, config, proc_call);
+    gmii_read(v_rx_data_array, v_rx_data_len, msg, gmii_rx_if, scope, msg_id_panel, config, C_PROC_CALL);
 
     -- Check the length of the received data
     if v_rx_data_len /= v_normalized_data'length then
@@ -350,7 +369,7 @@ package body gmii_bfm_pkg is
       for i in v_rx_data_array(byte)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
         if v_normalized_data(byte)(i) = '-' or check_value(v_rx_data_array(byte)(i), v_normalized_data(byte)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
-          -- Check is OK
+        -- Check is OK
         else
           -- Received byte doesn't match
           v_data_error_cnt   := v_data_error_cnt + 1;
@@ -361,17 +380,24 @@ package body gmii_bfm_pkg is
 
     -- Done. Report result
     if v_length_error then
-      alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) &
-        ". Expected " & to_string(v_normalized_data'length) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) & ". Expected " & to_string(v_normalized_data'length)
+        & "." & add_msg_delimiter(msg), scope);
     elsif v_data_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " &
-        to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD,
+        NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      if C_ERROR_REPORT_EXTENT = EXTENDED then
+        alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " &
+          to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix,
+          KEEP_LEADING_0, INCL_RADIX) & "." & LF & "Was:" & LF & to_string(v_rx_data_array, v_alert_radix, KEEP_LEADING_0) & LF & "Expected:" & LF &
+          to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
+      elsif C_ERROR_REPORT_EXTENT = BRIEF then
+        alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " &
+          to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix,
+          KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
+      end if;
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " &
-        add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 

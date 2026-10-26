@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -43,22 +43,18 @@ package transaction_pkg is
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
     SET, GET, CHECK, CHECK_STABLE, EXPECT, EXPECT_STABLE
-    );
+  );
 
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  alias C_VVC_CMD_DATA_MAX_LENGTH   is C_GPIO_VVC_CMD_DATA_MAX_LENGTH;
+  alias C_VVC_CMD_STRING_MAX_LENGTH is C_GPIO_VVC_CMD_STRING_MAX_LENGTH;
+  alias C_VVC_MAX_INSTANCE_NUM      is C_GPIO_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
   -- Transaction info types, constants and global signal
   --
   --==========================================================================================
-
-  -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
-
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
   -- VVC Meta
   type t_vvc_meta is record
@@ -69,24 +65,24 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
+  );
 
   -- Base transaction
   type t_base_transaction is record
-    operation           : t_operation;
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    data_exp            : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    data_exp           : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
-    operation           => NO_OPERATION,
-    data                => (others => '0'),
-    data_exp            => (others => '0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    );
+    operation          => NO_OPERATION,
+    data               => (others => '0'),
+    data_exp           => (others => '0'),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => INACTIVE
+  );
 
   -- Transaction group
   type t_transaction_group is record
@@ -95,17 +91,15 @@ package transaction_pkg is
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+  );
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_gpio_transaction_trigger_array is array (natural range <>) of std_logic;
   -- Global transaction info trigger signal
-  signal global_gpio_vvc_transaction_trigger  : t_gpio_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                (others => '0');
-  
+  signal global_gpio_vvc_transaction_trigger : t_gpio_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
+
   -- Shared transaction info variable
   type t_gpio_transaction_group_array is array (natural range <>) of t_transaction_group;
-  shared variable shared_gpio_vvc_transaction_info  : t_gpio_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                      (others => C_TRANSACTION_GROUP_DEFAULT);
-    
+  shared variable shared_gpio_vvc_transaction_info : t_gpio_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+
 end package transaction_pkg;

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -34,7 +34,6 @@ library bitvis_vip_ethernet;
 
 use work.ethernet_mac_pkg.all;
 
-
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
@@ -55,27 +54,26 @@ architecture struct of ethernet_sbi_gmii_demo_th is
   constant C_VVC_GMII     : natural := 2;
 
   signal clk            : std_logic;
-  signal sbi_if         : t_sbi_if(addr(C_SBI_ADDR_WIDTH-1 downto 0),
-                                   wdata(C_SBI_DATA_WIDTH-1 downto 0),
-                                   rdata(C_SBI_DATA_WIDTH-1 downto 0));
+  signal sbi_if         : t_sbi_if(addr(C_SBI_ADDR_WIDTH - 1 downto 0),
+                                   wdata(C_SBI_DATA_WIDTH - 1 downto 0),
+                                   rdata(C_SBI_DATA_WIDTH - 1 downto 0));
   signal gmii_vvc_tx_if : t_gmii_tx_if;
   signal gmii_vvc_rx_if : t_gmii_rx_if;
 
   -- Configuration for the Ethernet MAC field addresses (only applicable for SBI, use default for GMII).
-  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) :=
-    (TRANSMIT => (0 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => false, field_description => "TX Preamble and SFD"),
-                  1 => (dut_address => C_ETH_ADDR_MAC_DEST, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC destination "),
-                  2 => (dut_address => C_ETH_ADDR_MAC_SRC,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC source      "),
-                  3 => (dut_address => C_ETH_ADDR_PAY_LEN,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload length  "),
-                  4 => (dut_address => C_ETH_ADDR_PAYLOAD,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload         "),
-                  5 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => false, field_description => "TX FCS             ")),
-    RECEIVE =>   (0 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  1 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  2 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  3 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  4 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  5 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "))
-    );
+  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) := (TRANSMIT => (0 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => false, field_description => "TX Preamble and SFD"),
+                                                                                                                                       1 => (dut_address => C_ETH_ADDR_MAC_DEST, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "TX MAC destination "),
+                                                                                                                                       2 => (dut_address => C_ETH_ADDR_MAC_SRC, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "TX MAC source      "),
+                                                                                                                                       3 => (dut_address => C_ETH_ADDR_PAY_LEN, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "TX payload length  "),
+                                                                                                                                       4 => (dut_address => C_ETH_ADDR_PAYLOAD, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "TX payload         "),
+                                                                                                                                       5 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => false, field_description => "TX FCS             ")),
+                                                                                                                          RECEIVE  => (0 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "RX NOT USING ADDR  "),
+                                                                                                                                       1 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "RX NOT USING ADDR  "),
+                                                                                                                                       2 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "RX NOT USING ADDR  "),
+                                                                                                                                       3 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "RX NOT USING ADDR  "),
+                                                                                                                                       4 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "RX NOT USING ADDR  "),
+                                                                                                                                       5 => (dut_address => C_ETH_ADDR_INVALID, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true, field_description => "RX NOT USING ADDR  "))
+                                                                                                                         );
 
 begin
 
@@ -92,7 +90,7 @@ begin
       GC_INSTANCE_IDX         => C_VVC_ETH_SBI,
       GC_PHY_INTERFACE        => SBI,
       GC_PHY_VVC_INSTANCE_IDX => C_VVC_SBI,
-      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2, -- add some margin in case of SBI ready low
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD * 2, -- add some margin in case of SBI ready low
       GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
@@ -111,7 +109,7 @@ begin
   -- Ethernet MAC
   ------------------------------------------
   i_ethernet_mac : entity work.ethernet_mac
-    port map (
+    port map(
       -- SBI interface
       clk       => clk,
       sbi_cs    => sbi_if.cs,
@@ -135,15 +133,15 @@ begin
       GC_INSTANCE_IDX         => C_VVC_ETH_GMII,
       GC_PHY_INTERFACE        => GMII,
       GC_PHY_VVC_INSTANCE_IDX => C_VVC_GMII,
-      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*4, -- add some margin
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD * 4, -- add some margin
       GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
   i2_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
-    generic map (
+    generic map(
       GC_INSTANCE_IDX => C_VVC_GMII
     )
-    port map (
+    port map(
       gmii_vvc_tx_if => gmii_vvc_tx_if,
       gmii_vvc_rx_if => gmii_vvc_rx_if
     );

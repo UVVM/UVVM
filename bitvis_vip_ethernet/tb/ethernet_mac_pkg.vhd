@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -33,6 +33,3 @@ package ethernet_mac_pkg is
   constant C_SBI_DATA_WIDTH : integer := 8;
 
 end package ethernet_mac_pkg;
-
-package body ethernet_mac_pkg is
-end package body ethernet_mac_pkg;

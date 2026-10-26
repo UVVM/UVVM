@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -9,15 +9,15 @@
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
---========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
---========================================================================================================================
 
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.math_real.all;    -- for uniform & trunc functions
+use ieee.math_real.all;                 -- for uniform & trunc functions
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -34,20 +34,20 @@ use work.td_result_queue_pkg.all;
 
 --========================================================================================================================
 entity clock_generator_vvc is
-  generic (
+  generic(
     GC_INSTANCE_IDX                          : natural       := 1;
     GC_CLOCK_NAME                            : string        := "clk";
     GC_CLOCK_PERIOD                          : time          := 10 ns;
     GC_CLOCK_HIGH_TIME                       : time          := 5 ns;
     GC_CLOCK_MAX_JITTER                      : time          := 0 ns;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural       := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural       := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural       := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural       := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
-  port (
+  port(
     clk : out std_logic
   );
 begin
@@ -58,101 +58,92 @@ end entity clock_generator_vvc;
 --========================================================================================================================
 architecture behave of clock_generator_vvc is
 
-  constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
-  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
+  constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
+  constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy       : boolean        := false;
-  signal queue_is_increasing    : boolean        := false;
-  signal last_cmd_idx_executed  : natural        := 0;
-  signal terminate_current_cmd  : t_flag_record;
-  signal clock_ena              : boolean        := false;
-  -- VVC Activity 
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
   signal entry_num_in_vvc_activity_register : integer;
+  signal clock_ena                          : boolean := false;
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config : t_vvc_config is shared_clock_generator_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status : t_vvc_status is shared_clock_generator_vvc_status(GC_INSTANCE_IDX);
+  alias vvc_config       : t_vvc_config is shared_clock_generator_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status       : t_vvc_status is shared_clock_generator_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_clock_generator_transaction_info(GC_INSTANCE_IDX);
 
-  alias clock_name        : string is vvc_config.clock_name;
-  alias clock_period      : time   is vvc_config.clock_period;
-  alias clock_high_time   : time   is vvc_config.clock_high_time;
-  alias clock_max_jitter  : time   is vvc_config.clock_max_jitter;
-
-  impure function get_clock_name
-  return string is
-  begin
-    return clock_name(1 to pos_of_leftmost(NUL, clock_name, clock_name'length));
-  end function;
+  alias clock_name      : string is vvc_config.clock_name;
+  alias clock_period    : time is vvc_config.clock_period;
+  alias clock_high_time : time is vvc_config.clock_high_time;
+  alias clock_max_jitter : time is vvc_config.clock_max_jitter;
 
 begin
 
---========================================================================================================================
--- Constructor
--- - Set up the defaults and show constructor if enabled
---========================================================================================================================
+  --========================================================================================================================
+  -- Constructor
+  -- - Set up the defaults and show constructor if enabled
+  --========================================================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, C_VOID_BFM_CONFIG,
-                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---========================================================================================================================
+                                                 GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 C_VVC_MAX_INSTANCE_NUM);
+  --========================================================================================================================
 
-
---========================================================================================================================
--- Config initializer
--- - Set up the VVC specific config fields
---========================================================================================================================
-  config_initializer : process
+  --========================================================================================================================
+  -- Config initializer
+  -- - Set up the VVC specific config fields
+  --========================================================================================================================
+  p_config_initializer : process is
   begin
     loop
       wait for 0 ns;
       exit when shared_uvvm_state = PHASE_B;
     end loop;
-    clock_name        := (others => NUL);
-    clock_name(1 to GC_CLOCK_NAME'length) := GC_CLOCK_NAME;
-    clock_period      := GC_CLOCK_PERIOD;
-    clock_high_time   := GC_CLOCK_HIGH_TIME;
-    clock_max_jitter  := GC_CLOCK_MAX_JITTER;
+    clock_name(1 to vvc_config.clock_name'length) := (others => NUL);
+    clock_name(1 to GC_CLOCK_NAME'length)         := GC_CLOCK_NAME;
+    clock_period                                  := GC_CLOCK_PERIOD;
+    shared_clock_generator_vvc_config(GC_INSTANCE_IDX).clock_high_time := GC_CLOCK_HIGH_TIME; -- Use the shared variable directly to avoid an issue with Riviera-PRO 2025.04
+    clock_max_jitter                              := GC_CLOCK_MAX_JITTER;
     wait;
   end process;
---========================================================================================================================
+  --========================================================================================================================
 
-
---========================================================================================================================
--- Command interpreter
--- - Interpret, decode and acknowledge commands from the central sequencer
---========================================================================================================================
-  cmd_interpreter : process
-     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
-     variable v_msg_id_panel       : t_msg_id_panel;
+  --========================================================================================================================
+  -- Command interpreter
+  -- - Interpret, decode and acknowledge commands from the central sequencer
+  --========================================================================================================================
+  p_cmd_interpreter : process is
+    variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+    variable v_msg_id_panel       : t_msg_id_panel;
   begin
-
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,
-                                                                                         instance  => GC_INSTANCE_IDX);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                                            instance => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel := vvc_config.msg_id_panel;
+    v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
-    loop  -- basically as long as new commands are received
+    loop                                -- basically as long as new commands are received
 
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
-      v_cmd_has_been_acked := false; -- Clear flag
+      v_cmd_has_been_acked                                  := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
+      v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
@@ -164,9 +155,6 @@ begin
       elsif v_local_vvc_cmd.command_type = IMMEDIATE then
         case v_local_vvc_cmd.operation is
 
-          when AWAIT_COMPLETION =>
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
-
           when DISABLE_LOG_MSG =>
             uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
 
@@ -177,7 +165,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
@@ -191,25 +179,24 @@ begin
       -- 3. Acknowledge command after runing or queuing the command
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
-        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
       end if;
 
     end loop;
+    wait;
   end process;
---========================================================================================================================
+  --========================================================================================================================
 
-
-
---========================================================================================================================
--- Command executor
--- - Fetch and execute the commands
---========================================================================================================================
-  cmd_executor : process
+  --========================================================================================================================
+  -- Command executor
+  -- - Fetch and execute the commands
+  --========================================================================================================================
+  p_cmd_executor : process is
+    constant C_EXECUTOR_ID  : natural := 0;
     variable v_cmd          : t_vvc_cmd_record;
     variable v_msg_id_panel : t_msg_id_panel;
-  
-  begin
 
+  begin
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
@@ -218,15 +205,15 @@ begin
 
     loop
 
-      -- update vvc activity. Note that clock generator VVC activity is not included in the resetting of the VVC activity register!
-      -- update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      -- update vvc activity
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
-      -- update vvc activity. Note that clock generator VVC activity is not included in the resetting of the VVC activity register!
-      -- update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      -- update vvc activity
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -234,7 +221,7 @@ begin
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
-      case v_cmd.operation is  -- Only operations in the dedicated record are relevant
+      case v_cmd.operation is           -- Only operations in the dedicated record are relevant
 
         -- VVC dedicated operations
         --===================================
@@ -261,10 +248,16 @@ begin
 
         when SET_CLOCK_PERIOD =>
           clock_period := v_cmd.clock_period;
+          if clock_ena then
+            wait until clk = '1';
+          end if;
           log(ID_CLOCK_GEN, "Clock '" & clock_name & "' period set to " & to_string(clock_period), C_SCOPE);
 
         when SET_CLOCK_HIGH_TIME =>
           clock_high_time := v_cmd.clock_high_time;
+          if clock_ena then
+            wait until clk = '1';
+          end if;
           log(ID_CLOCK_GEN, "Clock '" & clock_name & "' high time set to " & to_string(clock_high_time), C_SCOPE);
 
         when SET_CLOCK_MAX_JITTER =>
@@ -295,41 +288,38 @@ begin
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
-      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
+      transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
     end loop;
   end process;
---========================================================================================================================
+  --========================================================================================================================
 
+  --========================================================================================================================
+  -- Command termination handler
+  -- - Handles the termination request record (sets and resets terminate flag on request)
+  --========================================================================================================================
+  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --========================================================================================================================
 
-
---========================================================================================================================
--- Command termination handler
--- - Handles the termination request record (sets and resets terminate flag on request)
---========================================================================================================================
-  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---========================================================================================================================
-
-
-
---========================================================================================================================
--- Clock Generator process
--- - Process that generates the clock signal
---========================================================================================================================
-  clock_generator : process
-    variable v_clock_period     : time;
-    variable v_clock_high_time  : time;
+  --========================================================================================================================
+  -- Clock Generator process
+  -- - Process that generates the clock signal
+  --========================================================================================================================
+  p_clock_generator : process is
+    variable v_clock_period    : time;
+    variable v_clock_high_time : time;
+    variable v_clock_low_time  : time;
     variable v_clock_max_jitter : time;
 
     variable v_seed1, v_seed2 : positive;
-    variable v_rand           : real       := 0.0;
+    variable v_rand           : real := 0.0;
 
     variable v_clock_rising_edge  : time;
     variable v_clock_falling_edge : time;
   begin
-    wait for 0 ns; -- wait for clock_ena to be set
+    wait for 0 ns;                      -- wait for clock_ena to be set
     loop
-      
+
       if not clock_ena then
         clk <= '0';
         wait until clock_ena;
@@ -337,18 +327,20 @@ begin
 
       -- Clock period is sampled so it won't change during a clock cycle and potentialy introduce negative time in
       -- last wait statement
-      v_clock_period     := clock_period;
-      v_clock_high_time  := clock_high_time;
+      v_clock_period    := clock_period;
+      v_clock_high_time := clock_high_time;
+      v_clock_low_time  := v_clock_period - v_clock_high_time;
       v_clock_max_jitter := clock_max_jitter;
 
       if v_clock_high_time >= v_clock_period then
-        tb_error(clock_name & ": clock period must be larger than clock high time; clock period: " & to_string(v_clock_period) & ", clock high time: " & to_string(v_clock_high_time), C_SCOPE);
+        tb_error(clock_name & ": clock period must be larger than clock high time; clock period: " & to_string(v_clock_period) & ", clock high time: " & to_string(clock_high_time), C_SCOPE);
+        v_clock_low_time := 0 ns; -- Avoid failure from waiting a negative time
       end if;
- 
+
       if v_clock_max_jitter > v_clock_high_time then
         tb_error(clock_name & ": max jitter can't be larger than the clock high time ; clock high time: " & to_string(v_clock_high_time) & ", clock max jitter: " & to_string(v_clock_max_jitter), C_SCOPE);
       end if;
- 
+
       uniform(v_seed1, v_seed2, v_rand);
       v_clock_rising_edge  := (((v_clock_period - v_clock_high_time) - v_clock_max_jitter) / 2) + (v_rand * v_clock_max_jitter);
 
@@ -365,5 +357,4 @@ begin
 --========================================================================================================================
 
 end architecture behave;
-
 

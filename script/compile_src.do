@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -27,18 +27,13 @@ proc quietly { args } {
   }
 }
 
-# End the simulations if there's an error or when run from terminal.
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
   # puts "Version is: $simulator_version"
   if {[regexp -nocase {modelsim} $simulator_version]} {
+    quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {questasim} $simulator_version]} {
     quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
@@ -51,14 +46,30 @@ if {[catch {eval "vsim -version"} message] == 0} {
     abort all
 }
 
+# End the simulations if there's an error or when run from terminal.
+if {[batch_mode]} {
+  if { [string equal -nocase $simulator "rivierapro"] } {
+    # Special for Riviera-PRO
+    onerror {quit -code 1 -force}
+   } else {
+    onerror {abort all; exit -f -code 1}
+  }
+} else {
+  onerror {abort all}
+}
+
 #------------------------------------------------------
 # Set up source_path and target_path
 #------------------------------------------------------
 if {$argc == 2} {
   quietly set source_path "$1"
   quietly set target_path "$2"
+  quietly set uvvm_root [file normalize "$source_path/.."]
 } elseif {$argc == -1} {
   # Called from other script
+  if {![info exists uvvm_root]} {
+    quietly set uvvm_root [file normalize "$source_path/.."]
+  }
 } else {
   error "Needs two arguments: source path and target path"
 }
@@ -82,33 +93,51 @@ if {[file exists $target_path/$lib_name]} {
   file delete -force $target_path/$lib_name
 }
 if {![file exists $target_path]} {
-  file mkdir $target_path/$lib_name
+  file mkdir $target_path
 }
 
 quietly vlib $target_path/$lib_name
 quietly vmap $lib_name $target_path/$lib_name
 
-# These two core libraries are needed by every VIP (except the IRQC and UART demos),
+# These two core libraries are needed by every VIP (except the IRQC and UART demos, and specification coverage),
 # therefore we should map them in case they were compiled from different directories
 # which would cause the references to be in a different file.
 # First check if the libraries are in the specified target path, if not, then look
 # in the default UVVM structure.
-if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart" && $lib_name != "bitvis_vip_spec_cov"} {
+if {$lib_name != "uvvm_util" && $lib_name != "uvvm_assertions" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart" && $lib_name != "bitvis_vip_spec_cov"} {
   echo "Mapping uvvm_util and uvvm_vvc_framework"
+  if {[file exists $target_path/uvvm_util]} {
+    quietly vmap uvvm_util $target_path/uvvm_util
+  } else {
+    quietly vmap uvvm_util $uvvm_root/uvvm_util/sim/uvvm_util
+  }
+  if {[file exists $target_path/uvvm_vvc_framework]} {
+    quietly vmap uvvm_vvc_framework $target_path/uvvm_vvc_framework
+  } else {
+    quietly vmap uvvm_vvc_framework $uvvm_root/uvvm_vvc_framework/sim/uvvm_vvc_framework
+  }
+}
+# uvvm_assertions only requires uvvm_util and therefore we dont compile uvvm_vvc_framework
+if {$lib_name == "uvvm_assertions"} {
+  echo "Mapping uvvm_util"
+  if {[file exists $target_path/uvvm_util]} {
+    quietly vmap uvvm_util $target_path/uvvm_util
+  } else {
+    quietly vmap uvvm_util $uvvm_root/uvvm_util/sim/uvvm_util
+  }
+}
+# uvvm_assertions only requires uvvm_util and therefore we dont compile uvvm_vvc_framework
+if {$lib_name == "uvvm_assertions"} {
+  echo "Mapping uvvm_util"
   if {[file exists $target_path/uvvm_util]} {
     quietly vmap uvvm_util $target_path/uvvm_util
   } else {
     quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
   }
-  if {[file exists $target_path/uvvm_vvc_framework]} {
-    quietly vmap uvvm_vvc_framework $target_path/uvvm_vvc_framework
-  } else {
-    quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework
-  }
 }
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  quietly set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
+  quietly set compdirectives "-quiet -suppress 1346,1246,1236 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
@@ -120,8 +149,8 @@ echo "\nCompiling $lib_name source\n"
 quietly set idx 0
 foreach item $file_data {
   if {$idx > 2} {
-    echo "eval vcom  $compdirectives  $source_path/script/$item"
-    eval vcom  $compdirectives  $source_path/script/$item
+    echo "eval vcom $compdirectives $source_path/script/$item"
+    eval vcom $compdirectives [list "$source_path/script/$item"]
   }
   incr idx 1
 }

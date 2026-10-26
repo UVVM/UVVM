@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -15,11 +15,9 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library bitvis_vip_axilite;
+library bitvis_vip_axilite;
   use bitvis_vip_axilite.transaction_pkg.all;
   use bitvis_vip_axilite.vvc_methods_pkg.all;
   use bitvis_vip_axilite.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_axilite.axilite_bfm_pkg.t_axilite_if;
-  use bitvis_vip_axilite.axilite_bfm_pkg.t_axilite_bfm_config;
-  use bitvis_vip_axilite.axilite_bfm_pkg.C_AXILITE_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_axilite.axilite_bfm_pkg.all;
 end context;

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -14,101 +14,96 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 package uart_pkg is
- 
+
   function find_num_hits(
-    vector    : std_logic_vector;
-    pattern   : std_logic)
-    return integer;
+    vector  : std_logic_vector;
+    pattern : std_logic)
+  return integer;
 
   function find_most_repeated_bit(
-    vector    : std_logic_vector)
-    return std_logic;
-  
+    vector : std_logic_vector)
+  return std_logic;
+
   function transient_error(
     vector    : std_logic_vector;
-    limit     : integer)
-    return boolean;
-    
-  function f_log2 (x : positive)
-    return natural;
-    
-  function odd_parity (
-    signal data : std_logic_vector(7 downto 0))
-    return std_logic;
-  
+    err_limit : integer)
+  return boolean;
+
+  function f_log2(x : positive)
+  return natural;
+
+  function odd_parity(
+    signal data : std_logic_vector)
+  return std_logic;
+
 end package uart_pkg;
 
 package body uart_pkg is
 
   function find_num_hits(
-    vector    : std_logic_vector;
-    pattern   : std_logic)
-    return integer is
-    variable hitcount : natural := 0;
+    vector  : std_logic_vector;
+    pattern : std_logic)
+  return integer is
+    variable v_hitcount : natural := 0;
   begin
-    for i in 0 to vector'length-1 loop
+    for i in 0 to vector'length - 1 loop
       if (vector(i) = pattern) then
-        hitcount := hitcount+1;
+        v_hitcount := v_hitcount + 1;
       end if;
     end loop;
-    return hitcount;
+    return v_hitcount;
   end function;
 
   function find_most_repeated_bit(
-    vector    : std_logic_vector)
-    return std_logic is
+    vector : std_logic_vector)
+  return std_logic is
   begin
-    if (find_num_hits(vector,'1') >
-        find_num_hits(vector,'0')) then
+    if (find_num_hits(vector, '1') > find_num_hits(vector, '0')) then
       return '1';
     else
       return '0';
     end if;
   end function;
-  
+
   function transient_error(
     vector    : std_logic_vector;
-    limit     : integer)
-    return boolean is
+    err_limit : integer)
+  return boolean is
   begin
-    if ((find_num_hits(vector,'1') < limit) and
-        (find_num_hits(vector,'0') < limit)) then
+    if ((find_num_hits(vector, '1') < err_limit) and (find_num_hits(vector, '0') < err_limit)) then
       return true;
     else
       return false;
     end if;
   end function;
-  
-  function f_log2 (x : positive)
-     return natural is
-     variable i : natural;
-   begin
-      i := 0;  
-      while (2**i < x) and i < 31 loop
-         i := i + 1;
-      end loop;
-      return i;
-   end function;
-   
-  function odd_parity (
-    signal data : std_logic_vector(7 downto 0))
-    return std_logic is
-    variable odd : std_logic;
-  begin
-    odd := '1';
-    for i in data'range loop
-      odd := odd xor data(i);
-    end loop;
-    return odd;
-  end odd_parity;
 
-  
+  function f_log2(x : positive)
+  return natural is
+    variable v_i : natural;
+  begin
+    v_i := 0;
+    while (2 ** v_i < x) and v_i < 31 loop
+      v_i := v_i + 1;
+    end loop;
+    return v_i;
+  end function;
+
+  function odd_parity(
+    signal data : std_logic_vector)
+  return std_logic is
+    variable v_odd : std_logic;
+  begin
+    v_odd := '1';
+    for i in data'range loop
+      v_odd := v_odd xor data(i);
+    end loop;
+    return v_odd;
+  end function odd_parity;
+
 end package body uart_pkg;
 

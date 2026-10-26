@@ -1,11 +1,84 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v5.1.4
+----------
+Released: 2026-02-14
+- Print data_routing parameter in corresponding VVC procedure.
+
+v5.1.3
+----------
+Released: 2025-11-28
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME.
+
+v5.1.2
+----------
+Released: 2025-09-17
+- Added constraints to VVC generics to make sure they cannot be set to a higher value than what is allowed in the adaptations_pkg.
+- Updated the examples in the SPI VVC documentation.
+
+v5.1.1
+----------
+Released: 2025-08-18
+- Updated wait statement in spi_slave_transmit_and_receive() which allows NVC to run without errors.
+- Converted documentation to RST format.
+
+v5.1.0
+----------
+Released: 2024-09-19
+- Removed old await_completion code from VVC.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+- Fixed bug where slave BFM exited too late for multi-word transfers in some configurations.
+
+v5.0.0
+----------
+Released: 2024-07-03
+- Changed max constants used in VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
+
+v4.0.0
+----------
+Released: 2024-03-08
+- Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure.
+- Moved t_transaction_status type to types_pkg (common for all VVCs) and added COMPLETED.
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Moved sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
+
+v3.9.6
+----------
+Released: 2023-09-16
+- Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
+- Replaced the default values in VVC generics related to the cmd/results queues with
+  the constants from adaptations_pkg.
+- Added terminate_access functionality description to BFM QuickRef.
+
+v3.9.5
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+
+v3.9.4
+----------
+Released: 2022-10-07
+- Added PR from @m-kru fixing miso direction in one of spi_master_transmit_and_receive procedures.
+
+v3.9.3
+----------
+Released: 2022-05-05
+- Fixed wrong example in VVC QuickRef.
+- t_vvc_config, t_vvc_status, t_transaction_info and t_spi_bfm_config record declaration formatting.
+
 v3.9.2
 ----------
 Released: 2021-05-26
 - Corrected message ID for check_value() in BFM.
-
 
 v3.9.1
 ----------

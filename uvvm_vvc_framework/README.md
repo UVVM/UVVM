@@ -36,7 +36,7 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 *	Allows VVCs to be included anywhere in the test harness - or even inside the Design itself
 *	A logging and alert system that supports full verbosity control of functionality and hierarchy
 *	A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through the execution queue - until it is executed and completed towards the DUT
-*	Allows OSVVM randomisation and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
+*	Allows randomization and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
 *	Simple integration with regression test tools like Jenkins
 *	Quick references are available for UVVM Utility Library, VVC System and all the BFMs/VVCs
 
@@ -44,7 +44,7 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 See [UVVM](./../README.md)
 
 ## Prerequisites
-UVVM is tool and library independent, but it must be compiled with VHDL 2008.
+UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 See the overall [UVVM](./../README.md) documentation for prerequisites, license, maintainers, etc.
 Python is required **if** you want to execute the VVC generation scripts
 

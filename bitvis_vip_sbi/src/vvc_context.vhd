@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -15,11 +15,9 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_context is
-  library bitvis_vip_sbi;
+library bitvis_vip_sbi;
   use bitvis_vip_sbi.transaction_pkg.all;
   use bitvis_vip_sbi.vvc_methods_pkg.all;
   use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_sbi.sbi_bfm_pkg.t_sbi_if;
-  use bitvis_vip_sbi.sbi_bfm_pkg.t_sbi_bfm_config;
-  use bitvis_vip_sbi.sbi_bfm_pkg.C_SBI_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_sbi.sbi_bfm_pkg.all;
 end context;

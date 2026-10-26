@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context uvvm_util_context is
-  library uvvm_util;
+library uvvm_util;
   use uvvm_util.types_pkg.all;
   use uvvm_util.global_signals_and_shared_variables_pkg.all;
   use uvvm_util.hierarchy_linked_list_pkg.all;
@@ -26,4 +26,7 @@ context uvvm_util_context is
   use uvvm_util.alert_hierarchy_pkg.all;
   use uvvm_util.license_pkg.all;
   use uvvm_util.protected_types_pkg.all;
+  use uvvm_util.vendor_rand_extension_pkg.all;
+  use uvvm_util.rand_pkg.all;
+  use uvvm_util.func_cov_pkg.all;
 end context;

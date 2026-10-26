@@ -1,0 +1,514 @@
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                 100.0 ns  TB seq.(uvvm)                  Testing the assertion: assert_value_from_min_to_max_cycles_after_trigger
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       140.0 ns  TB seq.                        Testing Normal Operation (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        Testing tracked_value equal to exp_value = "1111" within the window
+UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                     190.0 ns  TB seq.                        Hold "1111" from 7-cycles to 10-cycles
+UVVM: ID_UVVM_ASSERTION                290.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 100 ns. 
+UVVM: ID_SEQUENCER                     340.0 ns  TB seq.                        Testing tracked_value equal to exp_value = "0000" within the window
+UVVM: ID_SEQUENCER                     340.0 ns  TB seq.                        Setting exp_value = "0000"
+UVVM: ID_SEQUENCER                     390.0 ns  TB seq.                        Hold "0000" from 7-cycles to 10-cycles
+UVVM: ID_UVVM_ASSERTION                490.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 100 ns. 
+UVVM: ID_SEQUENCER                     540.0 ns  TB seq.                        Testing tracked_value equal to exp_value = "1111" within the window /w min_cycles = 0
+UVVM: ID_SEQUENCER                     540.0 ns  TB seq.                        Setting exp_value = "1111"
+UVVM: ID_SEQUENCER                     590.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 4
+UVVM: ID_SEQUENCER                     640.0 ns  TB seq.                        Hold "1111" from 0-cycles to 4-cycles
+UVVM: ID_UVVM_ASSERTION                680.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 40 ns. 
+UVVM: ID_SEQUENCER                     740.0 ns  TB seq.                        Testing tracked_value equal to exp_value = "1111" within the window /w min_cycles = max_cycles
+UVVM: ID_SEQUENCER                     740.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 0
+UVVM: ID_SEQUENCER                     790.0 ns  TB seq.                        Hold "1111" from 0-cycles to 0-cycles
+UVVM: ID_UVVM_ASSERTION                790.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 0 ns. 
+UVVM: ID_SEQUENCER                     840.0 ns  TB seq.                        Testing multiple triggers within the window
+UVVM: ID_SEQUENCER                     840.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: ID_UVVM_ASSERTION                930.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 40 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        Testing Triggering Assertion (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    1000.0 ns  TB seq.                        Testing triggering assert in each cycle within the window
+UVVM: ID_SEQUENCER                    1000.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:          1120 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1110) was not equal to 1111 after 70 ns(7-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:          1280 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1110) was not equal to 1111 after 80 ns(8-cycles). pipe: (1). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:          1440 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1110) was not equal to 1111 after 90 ns(9-cycles). pipe: (2). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:          1600 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1110) was not equal to 1111 after 100 ns(10-cycles). pipe: (3). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UVVM_ASSERTION               1600.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 100 ns. 
+UVVM: ID_SEQUENCER                    1650.0 ns  TB seq.                        Testing invalid values within the window
+UVVM: ID_SEQUENCER                    1650.0 ns  TB seq.                        Hold "HHHH" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:          1720 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (HHHH) was not equal to 1111 after 70 ns(7-cycles). pipe: (4). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1800.0 ns  TB seq.                        Hold "LLLL" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:          1870 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (LLLL) was not equal to 1111 after 70 ns(7-cycles). pipe: (5). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    1950.0 ns  TB seq.                        Hold "WWWW" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:          2020 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (WWWW) was not equal to 1111 after 70 ns(7-cycles). pipe: (6). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2100.0 ns  TB seq.                        Hold "ZZZZ" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:          2170 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (ZZZZ) was not equal to 1111 after 70 ns(7-cycles). pipe: (7). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2250.0 ns  TB seq.                        Hold "0000" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:          2320 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0000) was not equal to 1111 after 70 ns(7-cycles). pipe: (8). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2400.0 ns  TB seq.                        Hold "1111" from 7-cycles to 10-cycles
+UVVM: ID_SEQUENCER                    2550.0 ns  TB seq.                        Hold "XXXX" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #10  ***
+UVVM:          2620 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (XXXX) was not equal to 1111 after 70 ns(7-cycles). pipe: (10). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2700.0 ns  TB seq.                        Hold "UUUU" from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:          2770 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) was not equal to 1111 after 70 ns(7-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    2850.0 ns  TB seq.                        Testing triggering assert /w multiple triggers within the window
+UVVM: ID_SEQUENCER                    2850.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #12  ***
+UVVM:          2910 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0000) was not equal to 1111 after 10 ns(1-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #13  ***
+UVVM:          2930 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0000) was not equal to 1111 after 10 ns(1-cycles). pipe: (1). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      2970.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic_vector)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    2970.0 ns  TB seq.                        Expecting a positive acknowledge on each successful window sequence
+UVVM: ID_SEQUENCER                    2970.0 ns  TB seq.                        Setting min_cycles = 10, max_cycles = 20
+UVVM: ID_SEQUENCER                    3020.0 ns  TB seq.                        Hold "1111" from 10-cycles to 20-cycles
+UVVM: ID_UVVM_ASSERTION               3220.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 200 ns. 
+UVVM: ID_SEQUENCER                    3270.0 ns  TB seq.                        Setting min_cycles = 20, max_cycles = 30
+UVVM: ID_SEQUENCER                    3320.0 ns  TB seq.                        Hold "1111" from 20-cycles to 30-cycles
+UVVM: ID_UVVM_ASSERTION               3620.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 300 ns. 
+UVVM: ID_SEQUENCER                    3670.0 ns  TB seq.                        Setting min_cycles = 30, max_cycles = 40
+UVVM: ID_SEQUENCER                    3720.0 ns  TB seq.                        Hold "1111" from 30-cycles to 40-cycles
+UVVM: ID_UVVM_ASSERTION               4120.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 400 ns. 
+UVVM: ID_SEQUENCER                    4170.0 ns  TB seq.                        Setting min_cycles = 40, max_cycles = 50
+UVVM: ID_SEQUENCER                    4220.0 ns  TB seq.                        Hold "1111" from 40-cycles to 50-cycles
+UVVM: ID_UVVM_ASSERTION               4720.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 500 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      4850.0 ns  TB seq.                        Testing Normal Operation (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    4850.0 ns  TB seq.                        Testing tracked_value equal to exp_value = '1' within the window
+UVVM: ID_SEQUENCER                    4850.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                    4900.0 ns  TB seq.                        Hold '1' from 7-cycles to 10-cycles
+UVVM: ID_UVVM_ASSERTION               5000.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 100 ns. 
+UVVM: ID_SEQUENCER                    5050.0 ns  TB seq.                        Testing tracked_value equal to exp_value = '0' within the window
+UVVM: ID_SEQUENCER                    5050.0 ns  TB seq.                        Setting exp_value = '0'
+UVVM: ID_SEQUENCER                    5100.0 ns  TB seq.                        Hold '0' from 7-cycles to 10-cycles
+UVVM: ID_UVVM_ASSERTION               5200.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 100 ns. 
+UVVM: ID_SEQUENCER                    5250.0 ns  TB seq.                        Testing tracked_value equal to exp_value = '1' within the window /w min_cycles = 0
+UVVM: ID_SEQUENCER                    5250.0 ns  TB seq.                        Setting exp_value = '1'
+UVVM: ID_SEQUENCER                    5300.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 4
+UVVM: ID_SEQUENCER                    5350.0 ns  TB seq.                        Hold '1' from 0-cycles to 4-cycles
+UVVM: ID_UVVM_ASSERTION               5390.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 40 ns. 
+UVVM: ID_SEQUENCER                    5450.0 ns  TB seq.                        Testing tracked_value equal to exp_value = '1' within the window /w min_cycles = max_cycles
+UVVM: ID_SEQUENCER                    5450.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 0
+UVVM: ID_SEQUENCER                    5500.0 ns  TB seq.                        Hold '1' from 0-cycles to 0-cycles
+UVVM: ID_UVVM_ASSERTION               5500.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 0 ns. 
+UVVM: ID_SEQUENCER                    5550.0 ns  TB seq.                        Testing multiple triggers within the window
+UVVM: ID_SEQUENCER                    5550.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: ID_UVVM_ASSERTION               5640.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 40 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5710.0 ns  TB seq.                        Testing Triggering Assertion (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    5710.0 ns  TB seq.                        Testing all invalid bit patterns (containing at least one '0') within the window
+UVVM: ID_SEQUENCER                    5710.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
+UVVM: ID_SEQUENCER                    5760.0 ns  TB seq.                        Testing the window, 7-cycles to 10-cycles
+UVVM: ID_SEQUENCER                    5760.0 ns  TB seq.                        Bit pattern: 0000
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #14  ***
+UVVM:          5830 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    5910.0 ns  TB seq.                        Bit pattern: 0001
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #15  ***
+UVVM:          5980 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (1). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6060.0 ns  TB seq.                        Bit pattern: 0010
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #16  ***
+UVVM:          6130 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (2). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6210.0 ns  TB seq.                        Bit pattern: 0011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #17  ***
+UVVM:          6280 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (3). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6360.0 ns  TB seq.                        Bit pattern: 0100
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #18  ***
+UVVM:          6430 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (4). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6510.0 ns  TB seq.                        Bit pattern: 0101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #19  ***
+UVVM:          6580 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (5). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6660.0 ns  TB seq.                        Bit pattern: 0110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #20  ***
+UVVM:          6730 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (6). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6810.0 ns  TB seq.                        Bit pattern: 0111
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #21  ***
+UVVM:          6880 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (7). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    6960.0 ns  TB seq.                        Bit pattern: 1000
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #22  ***
+UVVM:          7040 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 80 ns(8-cycles). pipe: (8). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    7110.0 ns  TB seq.                        Bit pattern: 1001
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #23  ***
+UVVM:          7190 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 80 ns(8-cycles). pipe: (9). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    7260.0 ns  TB seq.                        Bit pattern: 1010
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #24  ***
+UVVM:          7340 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 80 ns(8-cycles). pipe: (10). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    7410.0 ns  TB seq.                        Bit pattern: 1011
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #25  ***
+UVVM:          7490 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 80 ns(8-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    7560.0 ns  TB seq.                        Bit pattern: 1100
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #26  ***
+UVVM:          7650 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 90 ns(9-cycles). pipe: (1). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    7710.0 ns  TB seq.                        Bit pattern: 1101
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #27  ***
+UVVM:          7800 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 90 ns(9-cycles). pipe: (2). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    7860.0 ns  TB seq.                        Bit pattern: 1110
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #28  ***
+UVVM:          7960 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 100 ns(10-cycles). pipe: (3). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UVVM_ASSERTION               7960.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value was equal to
+UVVM:                                                                           expected value in entire window. OK after 100 ns. 
+UVVM: ID_SEQUENCER                    8010.0 ns  TB seq.                        Testing all invalid values within the window
+UVVM: ID_SEQUENCER                    8010.0 ns  TB seq.                        Hold 'U' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #29  ***
+UVVM:          8080 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) was not equal to 1 after 70 ns(7-cycles). pipe: (4). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    8160.0 ns  TB seq.                        Hold 'X' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #30  ***
+UVVM:          8230 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (X) was not equal to 1 after 70 ns(7-cycles). pipe: (5). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    8310.0 ns  TB seq.                        Hold '1' from 7-cycles to 10-cycles
+UVVM: ID_SEQUENCER                    8460.0 ns  TB seq.                        Hold '0' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #31  ***
+UVVM:          8530 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 70 ns(7-cycles). pipe: (7). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    8610.0 ns  TB seq.                        Hold 'Z' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #32  ***
+UVVM:          8680 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (Z) was not equal to 1 after 70 ns(7-cycles). pipe: (8). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    8760.0 ns  TB seq.                        Hold 'W' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #33  ***
+UVVM:          8830 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (W) was not equal to 1 after 70 ns(7-cycles). pipe: (9). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    8910.0 ns  TB seq.                        Hold 'L' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #34  ***
+UVVM:          8980 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (L) was not equal to 1 after 70 ns(7-cycles). pipe: (10). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    9060.0 ns  TB seq.                        Hold 'H' from 7-cycles to 10-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #35  ***
+UVVM:          9130 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (H) was not equal to 1 after 70 ns(7-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                    9210.0 ns  TB seq.                        Testing triggering assert /w multiple triggers within the window
+UVVM: ID_SEQUENCER                    9210.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #36  ***
+UVVM:          9270 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 10 ns(1-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #37  ***
+UVVM:          9290 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 10 ns(1-cycles). pipe: (1). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      9330.0 ns  TB seq.                        Testing pos_ack_kind: EVERY (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    9330.0 ns  TB seq.                        Expecting a positive acknowledge on each successful window sequence
+UVVM: ID_SEQUENCER                    9330.0 ns  TB seq.                        Setting min_cycles = 10, max_cycles = 20
+UVVM: ID_SEQUENCER                    9380.0 ns  TB seq.                        Hold '1' from 10-cycles to 20-cycles
+UVVM: ID_UVVM_ASSERTION               9580.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 200 ns. 
+UVVM: ID_SEQUENCER                    9630.0 ns  TB seq.                        Setting min_cycles = 20, max_cycles = 30
+UVVM: ID_SEQUENCER                    9680.0 ns  TB seq.                        Hold '1' from 20-cycles to 30-cycles
+UVVM: ID_UVVM_ASSERTION               9980.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 300 ns. 
+UVVM: ID_SEQUENCER                   10030.0 ns  TB seq.                        Setting min_cycles = 30, max_cycles = 40
+UVVM: ID_SEQUENCER                   10080.0 ns  TB seq.                        Hold '1' from 30-cycles to 40-cycles
+UVVM: ID_UVVM_ASSERTION              10480.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 400 ns. 
+UVVM: ID_SEQUENCER                   10530.0 ns  TB seq.                        Setting min_cycles = 40, max_cycles = 50
+UVVM: ID_SEQUENCER                   10580.0 ns  TB seq.                        Hold '1' from 40-cycles to 50-cycles
+UVVM: ID_UVVM_ASSERTION              11080.0 ns  TB seq.(uvvm)                  assert_value_from_min_to_max_cycles_after_trigger() => OK. tracked_value was equal to expected
+UVVM:                                                                           value in entire window. OK after 500 ns. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     11170.0 ns  TB seq.                        Testing Assertion Enable (std_logic)
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   11170.0 ns  TB seq.                        Assertion enabled as trigger is assigned, expecting alert when triggering assert
+UVVM: ID_SEQUENCER                   11170.0 ns  TB seq.                        Hold '0' from 40-cycles to 50-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #38  ***
+UVVM:         11570 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 400 ns(40-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                   11760.0 ns  TB seq.                        Assertion enabled prior to trigger, expecting alert when triggering assert
+UVVM: ID_SEQUENCER                   11770.0 ns  TB seq.                        Hold '0' from 40-cycles to 50-cycles
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #39  ***
+UVVM:         12170 ns   TB seq.(uvvm)
+UVVM:                    assert_value_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) was not equal to 1 after 400 ns(40-cycles). 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     12320.0 ns  TB seq.                        Testing CLK Disabled
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                   12320.0 ns  TB seq.                        Clock deactivated
+UVVM: ID_SEQUENCER                   12360.0 ns  TB seq.                        Triggering assertion while clk is disabled, expecting no behavior
+UVVM: ID_SEQUENCER                   12400.0 ns  TB seq.                        Hold '0' from 40-cycles to 50-cycles
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :     39        39         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     12960.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

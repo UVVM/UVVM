@@ -1,7 +1,26 @@
 Bitvis VIP Error Injection - Overview on Versions and Changes
 ==============================================================
 
+v2.0.0
+----------
+Released: 2025-03-25
+- Converted documentation to RST format.
+- Updated the method for generating random values to control randomization seeds in error_injection_slv.
+- Removed the randomization seed elements from the config in error_injection_pkg.
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+
+v1.0.1
+----------
+Released: 2024-07-03
+- Changed max constants used in VIP to be adjustable from adaptations_pkg.
+
+v1.0.0
+----------
+Released: 2023-03-10
+- Initial version of Error Injection VIP.
+- Corrected version in 0.1.0.
+
 v0.1.0
 ----------
 Released: 2019-12-04
-- Initial version of Error Injection VIP
+- Beta version of Error Injection VIP.

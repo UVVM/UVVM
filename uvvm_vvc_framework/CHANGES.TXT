@@ -1,6 +1,108 @@
 UVVM VVC Framework - Overview on Versions and Changes
+==============================================================
 
-----------------------------------------------------------------------
+v2.12.15
+----------
+Released: 2026-02-14
+- Updated await_uvvm_completion() to check first that scoreboards are empty and then VVCs are inactive.
+
+v2.12.14
+----------
+Released: 2025-11-28
+- Replaced constant C_VVC_NAME_MAX_LENGTH for C_MAX_VVC_NAME_LENGTH.
+- Added missing deprecate() calls to some procedures.
+- Updated log messages from await_completion().
+
+v2.12.13
+----------
+Released: 2025-09-17
+- Fixed vvc_generator.py where v_msg_id_panel was not being used correctly in cmd_interpreter.
+
+v2.12.12
+----------
+Released: 2025-08-18
+- Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
+- Updated check_unwanted_activity() procedures to ignore signal transitions from 'X' to '0'/'1'.
+
+v2.12.11
+----------
+Released: 2025-03-25
+- Updated vvc_generator.py to add missing delta cycle needed to update the last_cmd_idx_executed when not using transaction info.
+
+v2.12.10
+----------
+Released: 2024-10-08
+- Updated vvc_generator.py with fixes for runtime errors in the VVCs.
+
+v2.12.9
+----------
+Released: 2024-09-19
+- Updated vvc_generator.py with fixes for VVCs with multiple executors.
+- Added a common procedure, check_unwanted_activity(), so that VVCs can call it to check for unwanted activity.
+- Added a mechanism in the check_unwanted_activity() procedure to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+- Updated vvc_generator.py to use the check_unwanted_activity() procedure.
+
+v2.12.8
+----------
+Released: 2024-08-16
+- Converted VVC generator documentation to RST format.
+
+v2.12.7
+----------
+Released: 2024-07-03
+- Added ti_vvc_framework_context.vhd to compile_order.txt
+- Added completion detection functionality to wait for all the VVCs to be inactive with no pending commands to be executed, and
+  for all the enabled scoreboards to be empty: await_uvvm_completion().
+- Updated vvc_generator.py to add unwanted activity detection.
+
+v2.12.6
+----------
+Released: 2024-03-08
+- Updated vvc_generator.py with vvc_transaction_info updates.
+- Updated vvc_generator.py to fix compilation warning vcom-1090.
+- Updated vvc_generator.py to use the function get_scope_for_log() to generate VVC scope.
+- Updated vvc_generator.py to add an assertion to check that the GC_CHANNEL generic is used correctly.
+- Updated vvc_generator.py to add missing scoreboard support in multiple executors.
+- Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
+- Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
+- Updated vvc_generator.py generation of vvc_context file.
+- Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Updated vvc_generator.py to use an individual constant to configure the VVC max instance number.
+
+v2.12.5
+----------
+Released: 2023-09-16
+- Improved vvc_generator.py script to automatically generate compilable
+  code without requiring any user inputs.
+- Updated vvc_generator.py so that all queue setups now come directly from the VVC generics
+  and removed delta cycle wait in VVC multiple executors.
+- Updated vvc_generator.py so that the default values related to the cmd/results queues use
+  the constants from adaptations_pkg.
+
+v2.12.4
+----------
+Released: 2023-03-10
+- vvc_generator.py prompts related to the order of RX and TX channels are changed.
+  There is also added a check for which order RX and TX channels have been added.
+  If not in the order RX (first) then TX (second) a message is given to the user
+- Updated bfm_config record example in vvc_generator.py.
+- Added clear_list(VOID) argument to protected type t_prot_vvc_list.
+- Added add_to_vvc_list() method to VVCs for use with await_completion().
+- Added ti_vvc_framework_context.vhd
+- Removed cmd_idx from add() method in t_prot_vvc_list (t_vvc_info_list).
+
+v2.12.3
+----------
+Released: 2022-05-05
+- t_element record declaration formatting.
+
+v2.12.2
+----------
+Released: 2021-10-22
+- Fixed generic_queue deleting wrong element when position is different from entry_num.
+- Fixed generic_queue print_queue() crashing when queue is empty.
+- Fixed issue where GHDL reported that the operator "&" is overloaded in the
+  ti_protected_types_pkg.
 
 v2.12.1
 ----------
@@ -9,13 +111,11 @@ Released: 2021-05-26
 - Fixed issue where calling the same VVC at the same time from different processes 
   could lead to a timeout.
 
-
 v2.12.0
 ----------
 Released: 2021-04-08
 - vvc_generator now includes activity watchdog by default.
 - Added missing result in log message for fetch_result() method.
-
 
 v2.11.1
 ----------
@@ -26,7 +126,6 @@ Released: 2020-08-18
 - Fixed wrongly commented code generated from vvc_generator.
 - Generated code from vvc_generator.py will now compile without user editing.
 - Removed VVC_Framework_Documentation_Overview.txt from /doc
-
 
 v2.11.0
 ----------

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -28,7 +28,7 @@ package transaction_pkg is
 
   --===============================================================================================
   -- t_operation
-  -- - Bitvis defined BFM operations
+  -- - VVC and BFM operations
   --===============================================================================================
   type t_operation is (
     -- UVVM common
@@ -42,23 +42,21 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE, READ, CHECK, RESET, LOCK, UNLOCK);
+    WRITE, READ, CHECK, RESET, LOCK, UNLOCK
+  );
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := 1024;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := 64;
-  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 128;
-  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  alias C_VVC_CMD_DATA_MAX_LENGTH        is C_AVALON_MM_VVC_CMD_DATA_MAX_LENGTH;
+  alias C_VVC_CMD_ADDR_MAX_LENGTH        is C_AVALON_MM_VVC_CMD_ADDR_MAX_LENGTH;
+  alias C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH is C_AVALON_MM_VVC_CMD_BYTE_ENABLE_MAX_LENGTH;
+  alias C_VVC_CMD_STRING_MAX_LENGTH      is C_AVALON_MM_VVC_CMD_STRING_MAX_LENGTH;
+  alias C_VVC_MAX_INSTANCE_NUM           is C_AVALON_MM_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
   -- Transaction info types, constants and global signal
   --
   --==========================================================================================
-
-  -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
-
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
   -- VVC Meta
   type t_vvc_meta is record
@@ -69,44 +67,43 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
+  );
 
   -- Base transaction
   type t_base_transaction is record
-    operation           : t_operation;
-    addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    byte_enable         : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    addr               : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0); -- Max width may be increased if required
+    data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    byte_enable        : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
-    operation           => NO_OPERATION,
-    addr                => (others => '0'),
-    data                => (others => '0'),
-    byte_enable         => (others => '0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    );
+    operation          => NO_OPERATION,
+    addr               => (others => '0'),
+    data               => (others => '0'),
+    byte_enable        => (others => '0'),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => INACTIVE
+  );
 
   -- Sub transaction
   type t_sub_transaction is record
-    operation           : t_operation;
-    addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    addr               : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0); -- Max width may be increased if required
+    data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record;
 
   constant C_SUB_TRANSACTION_SET_DEFAULT : t_sub_transaction := (
-    operation           => NO_OPERATION,
-    addr                => (others => '0'),
-    data                => (others => '0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    );
-
+    operation          => NO_OPERATION,
+    addr               => (others => '0'),
+    data               => (others => '0'),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => INACTIVE
+  );
 
   -- Transaction group
   type t_transaction_group is record
@@ -117,16 +114,14 @@ package transaction_pkg is
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT,
     st => C_SUB_TRANSACTION_SET_DEFAULT
-    );
+  );
 
   -- Global transaction info trigger signal
   type t_avalon_mm_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_mm_vvc_transaction_trigger : t_avalon_mm_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                    (others => '0');
+  signal global_avalon_mm_vvc_transaction_trigger       : t_avalon_mm_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
   -- Type is defined as array to coincide with channel based VVCs
   type t_avalon_mm_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_avalon_mm_vvc_transaction_info : t_avalon_mm_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                          (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_avalon_mm_vvc_transaction_info : t_avalon_mm_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)   := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

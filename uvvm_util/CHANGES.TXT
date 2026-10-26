@@ -1,8 +1,187 @@
 UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
-----------------------------------------------------------------------
+v2.21.4
+----------
+Released: 2026-02-14
+- Fixed a fatal error in await_sb_completion() when waiting for a sb_poll_time equal or greater than the timeout.
+- Fixed typos in string_methods_pkg.vhd. From pull request by user JHertz5.
+- Extended randomization and functional coverage functionality for Questa One is now supported. 
 
+v2.21.3
+----------
+Released: 2025-11-28
+- Moved spec cov section to a more correct location in adaptations_pkg.
+- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg.
+- Updated comments and reorganized some constants in adaptations_pkg.
+- Removed unused constants C_EMPTY_NODE and C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH from adaptations_pkg.
+- Reorganized types_pkg. Removed unused types t_info_target and t_global_ctrl.
+- Fixed bug where a log message of one character is not displayed. From pull request by user jorkrohn.
+- Removed unused utility library release info function and constant.
+- Added uvvm_stack_is_full() and uvvm_stack_deallocate() methods to data_stack_pkg.
+- Replaced shared buffer between instances of t_data_queue to avoid overwritting data between data fifo and data stack.
+- Moved shared_default_log_destination to string_methods_pkg and added a constant to set the default value in adaptations_pkg.
+- Added missing deprecate() calls to some functions and procedures.
+- Changed deprecate message from log message to tb_note alert.
+- Moved C_DEPRECATE_SETTING to adaptations_pkg.
+- Updated check_clock_period_margin() documentation.
+- Added missing timeouts to BFM common procedures and updated log messages.
+- Updated wait_on_bfm_sync_start to always return time_of_rising_edge.
+- Fixed the error message for check_value() using signed values and radix "DEC".
+- Added comments to alert_hierarchy_pkg procedures which are for internal use. Updated hierarchical alerts documentation.
+- Modified the log messages of most checks/awaits to be consistent.
+- Use normalized value alias in string_contains_char and to_string functions.
+- Fixed bug in await_change_to_value for std_logic_vector. From pull request by user MartinBoberTecmata.
+
+
+v2.21.2
+----------
+Released: 2025-09-17
+- Added a generic association list data structure.
+- Made default bin names 1-indexed.
+- Changed bin naming so that each resulting bin from a call to add_bin() or add_cross() gets an index (1 to the
+  number of resulting bins) in square brackets appended to the given name if the call results in more than one bin.
+- Added the constant C_FC_BIN_NAME_DUPLICATE_WARNING to the adaptations_pkg to enable warnings on duplicate bin names.
+- Added the constant C_FC_DEFAULT_BIN_NAME to the adaptations_pkg that sets the default bin name.
+- Moved UVVM assertions to its own folder (any new changes will be tracked there).
+- Fixed functional coverage reports not being written to log/console when written also to a separate file.
+- Fixed some report methods not being written to the correct shared_default_log_destination.
+- Fixed some report methods crashing the simulation when used at the very start of the simulation due to an unopened log file.
+- Moved vendor extensions packages for Questa to the misc directory.
+- Fixed bin_vector() not supporting sizes of 31 bits. Added a note to the documentation that it is the maximum supported size.
+- Fixed bin_range() not handling correctly a range of 0 to 2**31-1.
+- Merged func_cov related vendor extension packages into single package. Other minor modifications to test version of Questa vendor
+  extensions.
+- Updated .sh script to use bash shebang.
+
+v2.21.1
+----------
+Released: 2025-08-18
+- Fixed TB_WARNING when calling clear_rand_cyclic() in enhanced randomization.
+- Minor modifications to Siemens test-version of upcoming rand and functional coverage extensions for Questa.
+- Added UVVM assertions and demo testbench.
+
+v2.21.0
+----------
+Released: 2025-05-11
+- Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
+- Added preliminary test version of upcoming rand and functional coverage extensions for Questa.
+
+v2.20.0
+----------
+Released: 2025-03-25
+- Fixed set_rand_seeds(string) procedure being dependent on previous seed values.
+- Modified alert text for mode_error in check_file_open_status.
+- Added t_seeds type for controlling randomization seeds in protected_types_pkg.
+- Added shared_rand_seeds_register, a shared variable for controlling randomization seeds in global_signals_and_shared_variables_pkg.
+- Added C_RAND_MAX_INSTANCE_NAME_LENGTH, a constant for controlling randomization seeds in adaptations_pkg.
+- Added set_rand_seeds(string) procedure in methods_pkg to control randomization seeds from VVCs.
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+- Print an alert and reduce the resolution in the random(time) functions whenever the resolution parameter is bigger than the range.
+- Use the lowest time unit among the range parameters instead of the simulator resolution limit for the random(time) functions.
+- Added time_resolution parameter to rand(), rand_range_weight() and rand_range_weight_mode() time functions for single-method approach.
+- Added time_resolution parameter to add_range_time() and added new procedure set_range_weight_time_resolution() for multi-method approach.
+- Fixed logging and distribution of range values in randm() when using time values.
+- Fixed issue with multiple subsequent calls to the clocked gen_pulse procedure.
+- Removed unused type t_pulse_continuation.
+- Added radix and prefix parameters to the integer, signed, and unsigned versions of check_value_in_range and await_change_to_value.
+- Removed the deallocate call from tee. The user should take care of memory management.
+- Added get_basename(string) to the string_methods package to get the file name from a path string.
+- Added scalable time units in check_stable().
+
+v2.19.7
+----------
+Released: 2024-09-19
+- Changed default names for log and alert files to UVVM_Log.txt and UVVM_Alert.txt
+
+v2.19.6
+----------
+Released: 2024-07-03
+- Fixed bug in .single_tc_vs_single_req listed output files in spec cov.
+
+v2.19.5
+----------
+Released: 2024-07-03
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+- Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the enabled scoreboards to be empty: await_sb_completion(), check_sb_completion().
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
+
+v2.19.4
+----------
+Released: 2024-03-08
+- Moved t_transaction_status type to types_pkg and added COMPLETED.
+- Added function for extracting closest time unit for time type.
+- Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
+- Added for latest version of Modelsim.
+- Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+- Added function to check_value to properly display signed values
+
+v2.19.3
+----------
+Released: 2023-09-16
+- Fixed compilation warning on rand_pkg regarding a truncated value.
+- Fixed optimization warning on methods_pkg regarding a string comparison.
+- Updated the constant default values related to the cmd/results queues in adaptations_pkg.
+- Added filter for (vcom-1246) warning in TCL compile script.
+
+v2.19.2
+----------
+Released: 2023-03-10
+- C_MAX_VVC_INSTANCE_NUM in adaptions_pkg.vhd had to be increased from 8 to 10.
+- Fixed compilation warnings on rand_pkg regarding a truncated value.
+- Fixed compilation warnings on string_methods_pkg regarding using an attribute on a function call.
+- Fixed random() time function and procedure overflowing when default time resolution was too small for a given range.
+- Added an overload for the random() time function and procedure with a parameter to select the time resolution.
+- Fixed possible overflow when randomizing with multiple ranges.
+
+v2.19.1
+----------
+Released: 2022-10-07
+- Fixed to_string() function not calculating the max size correctly.
+
+v2.19.0
+----------
+Released: 2022-05-05
+- FC: Generate an alert when adding bins to a coverpoint which has been sampled.
+- FC: Major updates in the coverage database accumulation mechanism.
+- FC: Added a python script to merge coverage database files.
+- FC: Fixed a bug in set_num_allocated_bins() not allowing to reduce size.
+- FC: Disabled extra randomization log messages when using optimized randomization.
+- FC: Fixed bins not being added when concatenated after ignore or illegal bins.
+- Added demo for advanced randomization and functional coverage.
+- Moved RST documentation for rand_pkg and func_cov_pkg to uvvm/doc.
+- t_element record declaration formatting.
+
+v2.18.1
+----------
+Released: 2021-11-12
+- Added support for multi-method time, real_vector, time_vector, signed and std_logic_vector randomization constraints.
+- Fixed a bug where using exclude constraints to remove all valid constraints would cause a deadlock in randomization.
+- Fixed duplicated alert messages in randomization vector types.
+- Added parameters to F.C. report procedures to write to a separate file.
+- Print the F.C. coverage report when loading a coverpoint's database.
+
+v2.18.0
+----------
+Released: 2021-10-22
+- Fixed generic_queue deleting wrong element when position is different from entry_num.
+- Fixed generic_queue print_queue() crashing when queue is empty.
+- Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()
+  and matching_values().
+- Fixed issue when using don't care in SLVs with check_value() and match strictness
+  set to MATCH_STD_INCL_Z.
+- Added rand_pkg (advanced randomization).
+- Added func_cov_pkg (functional coverage).
+- Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
+  See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
+  documentation.
 
 v2.17.0
 ----------
@@ -33,9 +212,6 @@ Released: 2020-12-08
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.
-- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
-- Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
-- Added C_SPI_VVC_DATA_ARRAY_WIDTH to adaptation_pkg.
 
 v2.15.0
 ----------

@@ -191,7 +191,7 @@
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_name</span><span class="p">(</span><span class="s">&quot;ADDR_COVPT&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_name</span><span class="p">(</span><span class="s">"ADDR_COVPT"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -220,7 +220,7 @@
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Coverpoint: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_name</span><span class="p">(</span><span class="n">VOID</span><span class="p">));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Coverpoint: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_name</span><span class="p">(</span><span class="n">VOID</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
@@ -250,7 +250,7 @@ in adaptations_pkg.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">&quot;MY_SCOPE&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">"MY_SCOPE"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -348,7 +348,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Coverage Weight: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_overall_coverage_weight</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Coverage Weight: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_overall_coverage_weight</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
 </pre></div>
 </div>
 </section>
@@ -415,7 +415,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bins Goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_bins_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Bins Goal: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_bins_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
 </pre></div>
 </div>
 </section>
@@ -483,7 +483,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hits Goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_hits_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Hits Goal: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_hits_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
 </pre></div>
 </div>
 </section>
@@ -549,7 +549,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Illegal bin alert level: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_upper</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_illegal_bin_alert_level</span><span class="p">(</span><span class="n">VOID</span><span class="p">))));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Illegal bin alert level: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_upper</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_illegal_bin_alert_level</span><span class="p">(</span><span class="n">VOID</span><span class="p">))));</span>
 </pre></div>
 </div>
 </section>
@@ -615,7 +615,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bin overlap alert level: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_upper</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_bin_overlap_alert_level</span><span class="p">(</span><span class="n">VOID</span><span class="p">))));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Bin overlap alert level: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_upper</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_bin_overlap_alert_level</span><span class="p">(</span><span class="n">VOID</span><span class="p">))));</span>
 </pre></div>
 </div>
 </section>
@@ -652,7 +652,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">write_coverage_db</span><span class="p">(</span><span class="s">&quot;my_coverpoint_db.txt&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">write_coverage_db</span><span class="p">(</span><span class="s">"my_coverpoint_db.txt"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -712,9 +712,9 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">&quot;my_coverpoint_db.txt&quot;</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">&quot;my_coverpoint_db.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR_ON_NEW_BINS</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">&quot;my_coverpoint_db.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NO_ALERT_ON_NEW_BINS</span><span class="p">,</span><span class="w"> </span><span class="n">TB_NOTE</span><span class="p">,</span><span class="w"> </span><span class="n">VERBOSE</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">"my_coverpoint_db.txt"</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">"my_coverpoint_db.txt"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR_ON_NEW_BINS</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">"my_coverpoint_db.txt"</span><span class="p">,</span><span class="w"> </span><span class="n">NO_ALERT_ON_NEW_BINS</span><span class="p">,</span><span class="w"> </span><span class="n">TB_NOTE</span><span class="p">,</span><span class="w"> </span><span class="n">VERBOSE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -929,11 +929,11 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;ignore_value&quot;</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;low_value&quot;</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;middle_value&quot;</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;high_values&quot;</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;illegal_value&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="s">"ignore_value"</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"low_value"</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">"middle_value"</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w"> </span><span class="s">"high_values"</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">"illegal_value"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1002,11 +1002,11 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">63</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;ignore_values&quot;</span><span class="p">);</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;low_values&quot;</span><span class="p">);</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">31</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;middle_values&quot;</span><span class="p">);</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">63</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;high_values&quot;</span><span class="p">);</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)),</span><span class="w"> </span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">95</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">96</span><span class="p">,</span><span class="mi">127</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;illegal_values&quot;</span><span class="p">);</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">63</span><span class="p">),</span><span class="w"> </span><span class="s">"ignore_values"</span><span class="p">);</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"low_values"</span><span class="p">);</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">31</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">"middle_values"</span><span class="p">);</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">63</span><span class="p">),</span><span class="w"> </span><span class="s">"high_values"</span><span class="p">);</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)),</span><span class="w"> </span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">95</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">96</span><span class="p">,</span><span class="mi">127</span><span class="p">),</span><span class="w"> </span><span class="s">"illegal_values"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>This procedure has overloads which support crossing up to 5 t_new_bin_array elements.</p>
@@ -1090,7 +1090,7 @@ value is shared_msg_id_panel. For more information see
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
 <span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">));</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span><span class="w"> </span><span class="n">my_coverpoint_size</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cross_addr_size&quot;</span><span class="p">);</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span><span class="w"> </span><span class="n">my_coverpoint_size</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"cross_addr_size"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>This procedure has overloads which support crossing up to 16 coverpoints. <strong>Beta release only supports up to 5 crossed elements.</strong></p>
@@ -1221,10 +1221,10 @@ returned instead. Default value is false.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bins Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hits Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bins % of Goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">,</span><span class="w"> </span><span class="n">percentage_of_goal</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">true</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hits % of Goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">,</span><span class="w"> </span><span class="n">percentage_of_goal</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">true</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Bins Coverage: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Hits Coverage: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Bins % of Goal: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">,</span><span class="w"> </span><span class="n">percentage_of_goal</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">true</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Hits % of Goal: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">,</span><span class="w"> </span><span class="n">percentage_of_goal</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">true</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1321,7 +1321,7 @@ Default value is HIDE_RAND_WEIGHT.</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;coverage_report.txt&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">,</span><span class="w"> </span><span class="s">"coverage_report.txt"</span><span class="p">);</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">,</span><span class="w"> </span><span class="n">rand_weight_col</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">SHOW_RAND_WEIGHT</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1371,7 +1371,7 @@ append_mode.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="s">&quot;config_report.txt&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="s">"config_report.txt"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1549,7 +1549,7 @@ value is shared_msg_id_panel.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">enable_auto_sampling</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Sample &quot;value&quot; signal each time it changes</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">enable_auto_sampling</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Sample "value" signal each time it changes</span>
 </pre></div>
 </div>
 </section>

@@ -511,11 +511,11 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_write</span><span class="p">(</span><span class="mh">x&quot;11005500&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAFF0055&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing test to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
-<span class="n">avalon_mm_write</span><span class="p">(</span><span class="mh">x&quot;11005500&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAFF0055&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing test to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1111&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_write</span><span class="p">(</span><span class="mh">x"11005500"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AAFF0055"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing test to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_write</span><span class="p">(</span><span class="mh">x"11005500"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AAFF0055"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing test to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="s">"1111"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAFF0055&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to DMA&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AAFF0055"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to DMA"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -608,10 +608,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_read</span><span class="p">(</span><span class="mh">x&quot;11005500&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_read</span><span class="p">(</span><span class="mh">x"11005500"</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading from IO device&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Reading from IO device"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -696,10 +696,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_check</span><span class="p">(</span><span class="mh">x&quot;11AA5100&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;5500133B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_check</span><span class="p">(</span><span class="mh">x"11AA5100"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"5500133B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX buffer&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check data from UART RX buffer"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -770,10 +770,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_reset</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Resetting Avalon-MM Interface&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_reset</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">"Resetting Avalon-MM Interface"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_reset</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Resetting Avalon-MM Interface&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_reset</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">"Resetting Avalon-MM Interface"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -831,10 +831,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_lock</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Locking Avalon-MM Interface&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_lock</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="s">"Locking Avalon-MM Interface"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_lock</span><span class="p">(</span><span class="s">&quot;Locking Avalon-MM Interface&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_lock</span><span class="p">(</span><span class="s">"Locking Avalon-MM Interface"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -891,10 +891,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_unlock</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Unlocking Avalon-MM Interface&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_unlock</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="s">"Unlocking Avalon-MM Interface"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_unlock</span><span class="p">(</span><span class="s">&quot;Unlocking Avalon-MM Interface&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_unlock</span><span class="p">(</span><span class="s">"Unlocking Avalon-MM Interface"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -936,8 +936,8 @@ signal can be specified in the lock_value argument.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_avalon_mm_if_signals</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">address</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">writedata</span><span class="na">&#39;length</span><span class="p">);</span>
-<span class="n">avalon_mm_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_avalon_mm_if_signals</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">address</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">writedata</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">);</span>
+<span class="n">avalon_mm_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_avalon_mm_if_signals</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">address</span><span class="na">'length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">writedata</span><span class="na">'length</span><span class="p">);</span>
+<span class="n">avalon_mm_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_avalon_mm_if_signals</span><span class="p">(</span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">address</span><span class="na">'length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">.</span><span class="n">writedata</span><span class="na">'length</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1011,10 +1011,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_read_request</span><span class="p">(</span><span class="mh">x&quot;5A001120&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Initiating read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_read_request</span><span class="p">(</span><span class="mh">x"5A001120"</span><span class="p">,</span><span class="w"> </span><span class="s">"Initiating read from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_read_request</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Initiating read from IO device&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_read_request</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="s">"Initiating read from IO device"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1093,10 +1093,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_read_response</span><span class="p">(</span><span class="mh">x&quot;5A001120&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read response from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_read_response</span><span class="p">(</span><span class="mh">x"5A001120"</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Read response from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_read_response</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading response from IO device&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_read_response</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Reading response from IO device"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1182,10 +1182,10 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_check_response</span><span class="p">(</span><span class="mh">x&quot;5A001120&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;5500133B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check response from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">avalon_mm_check_response</span><span class="p">(</span><span class="mh">x"5A001120"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"5500133B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check response from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">avalon_mm_check_response</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;5500133B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking response from IO device&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">avalon_mm_check_response</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="mh">x"5500133B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking response from IO device"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1194,11 +1194,11 @@ value is C_AVALON_MM_BFM_CONFIG_DEFAULT.</p></td>
 <h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
 <p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
 process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>rather than</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_mm_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_MM_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>By defining the local overload as e.g.</p>
@@ -1617,8 +1617,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;11221100&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0000F102&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F102&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1111&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing to DMA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"11221100"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"0000F102"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_write</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"F102"</span><span class="p">,</span><span class="w"> </span><span class="s">"1111"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing to DMA"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1692,17 +1692,17 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;112252AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;112252AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from source and sending to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"112252AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Receiving data from source"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"112252AA"</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">"Receiving data from source and sending to Scoreboard"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last read</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read (data and metadata)</span>
 <span class="p">...</span>
-<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;112252AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_read</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"112252AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 <span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
-<span class="n">fetch_result</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from read operation&quot;</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for receive to finish"</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching result from read operation"</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition hint">
@@ -1782,7 +1782,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_check</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;11A49800&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0000393B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_check</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"11A49800"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"0000393B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1839,7 +1839,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_reset</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Resetting Avalon-MM Interface&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_reset</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">"Resetting Avalon-MM Interface"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1890,7 +1890,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_lock</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Locking Avalon-MM Interface&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_lock</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">"Locking Avalon-MM Interface"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1941,7 +1941,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">avalon_mm_unlock</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Unlocking Avalon-MM Interface&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">avalon_mm_unlock</span><span class="p">(</span><span class="n">AVALON_MM_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">"Unlocking Avalon-MM Interface"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2079,7 +2079,7 @@ SUCCEEDED during a transaction</p></td>
 i.e. avalon_mm_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when
 the TO_SB parameter is applied. The Avalon-MM scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">avalon_mm_vvc_sb</span></code>,
 located in the vvc_methods_pkg.vhd, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_mm_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AVALON_MM_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_avalon_mm_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_mm_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AVALON_MM_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_avalon_mm_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">"Adding expected"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The Avalon-MM scoreboard is per default a 1024 bits wide standard logic vector. When sending expected data to the scoreboard, where the

@@ -260,7 +260,7 @@ fitting alert_level for any given check or await.</p>
 <p class="admonition-title">Hint</p>
 <p>Checking that a value is not equal to another value is possible by using a boolean expression as the [value] parameter.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">--Example:</span>
-<span class="n">check_value</span><span class="p">((</span><span class="n">value_1</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">value_2</span><span class="p">),</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking that value_1 is not equal value_2&quot;</span><span class="p">);</span>
+<span class="n">check_value</span><span class="p">((</span><span class="n">value_1</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">value_2</span><span class="p">),</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking that value_1 is not equal value_2"</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -360,8 +360,8 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">check_value</span><span class="p">(</span><span class="n">v_int_a</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking the integer&quot;</span><span class="p">);</span>
-<span class="n">v_check</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">check_value</span><span class="p">(</span><span class="n">v_slv5_a</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;11100&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_EXACT</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking the SLV&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My Scope&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">HEX</span><span class="p">,</span><span class="w"> </span><span class="n">SKIP_LEADING_0</span><span class="p">,</span><span class="w"> </span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">v_int_a</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking the integer"</span><span class="p">);</span>
+<span class="n">v_check</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">check_value</span><span class="p">(</span><span class="n">v_slv5_a</span><span class="p">,</span><span class="w"> </span><span class="s">"11100"</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_EXACT</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking the SLV"</span><span class="p">,</span><span class="w"> </span><span class="s">"My Scope"</span><span class="p">,</span><span class="w"> </span><span class="n">HEX</span><span class="p">,</span><span class="w"> </span><span class="n">SKIP_LEADING_0</span><span class="p">,</span><span class="w"> </span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -463,7 +463,7 @@ signed and unsigned.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">check_value_in_range</span><span class="p">(</span><span class="n">v_int_a</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking that integer is in range&quot;</span><span class="p">);</span>
+<span class="n">check_value_in_range</span><span class="p">(</span><span class="n">v_int_a</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking that integer is in range"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -539,7 +539,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">check_stable</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking if SLV is stable&quot;</span><span class="p">);</span>
+<span class="n">check_stable</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking if SLV is stable"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -693,7 +693,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">await_change</span><span class="p">(</span><span class="n">bool</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Awaiting change on bool signal&quot;</span><span class="p">);</span>
+<span class="n">await_change</span><span class="p">(</span><span class="n">bool</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Awaiting change on bool signal"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -806,8 +806,8 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">await_value</span><span class="p">(</span><span class="n">bool</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for bool to become true&quot;</span><span class="p">);</span>
-<span class="n">await_value</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;10101010&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for slv8 value&quot;</span><span class="p">);</span>
+<span class="n">await_value</span><span class="p">(</span><span class="n">bool</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for bool to become true"</span><span class="p">);</span>
+<span class="n">await_value</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="s">"10101010"</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for slv8 value"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -925,8 +925,8 @@ unsigned.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">bool</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for bool to change to true for min 10 ns and max 20 ns&quot;</span><span class="p">);</span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;10101010&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for slv8 to change to value&quot;</span><span class="p">);</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">bool</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for bool to change to true for min 10 ns and max 20 ns"</span><span class="p">);</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="s">"10101010"</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for slv8 to change to value"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1022,7 +1022,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">await_stable</span><span class="p">(</span><span class="n">u8</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_LAST_EVENT</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for u8 to stabilize&quot;</span><span class="p">);</span>
+<span class="n">await_stable</span><span class="p">(</span><span class="n">u8</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_LAST_EVENT</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for u8 to stabilize"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1119,10 +1119,10 @@ can debug in a very efficient way without the need for inspecting the waveform.<
 of some log messages:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;1&gt;     &lt;2&gt;                       &lt;3&gt;     &lt;4&gt;                 &lt;5&gt;                                                           &lt;6&gt;
 # UVVM: ID_SEQUENCER              0.0 ns  TB seq.             Sending and receiving data via UART
-# UVVM: ID_UVVM_SEND_CMD          0.0 ns  TB seq.(uvvm)       -&gt;uart_transmit(UART_VVC,0,TX, x&quot;AF&quot;): &#39;Send data to UART 0&#39;. [1]
-# UVVM: ID_CMD_INTERPRETER        0.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x&quot;AF&quot;). Command received  [1]
-# UVVM: ID_CMD_EXECUTOR          10.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x&quot;AF&quot;) - Will be executed  [1]
-# UVVM: ID_UVVM_SEND_CMD         10.0 ns  TB seq.(uvvm)       -&gt;uart_receive(UART_VVC,1,RX): &#39;Receive data from UART 1&#39;. [2]
+# UVVM: ID_UVVM_SEND_CMD          0.0 ns  TB seq.(uvvm)       -&gt;uart_transmit(UART_VVC,0,TX, x"AF"): 'Send data to UART 0'. [1]
+# UVVM: ID_CMD_INTERPRETER        0.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x"AF"). Command received  [1]
+# UVVM: ID_CMD_EXECUTOR          10.0 ns  UART_VVC,0,TX         uart_transmit(UART_VVC,0,TX, x"AF") - Will be executed  [1]
+# UVVM: ID_UVVM_SEND_CMD         10.0 ns  TB seq.(uvvm)       -&gt;uart_receive(UART_VVC,1,RX): 'Receive data from UART 1'. [2]
 </pre></div>
 </div>
 <ol class="arabic">
@@ -1193,7 +1193,7 @@ defined in adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_log_file_name</span><span class="p">(</span><span class="s">&quot;new_log_file_name.txt&quot;</span><span class="p">);</span>
+<span class="n">set_log_file_name</span><span class="p">(</span><span class="s">"new_log_file_name.txt"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1276,8 +1276,8 @@ append_mode). Default value is append_mode.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;message to log&quot;</span><span class="p">);</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MyScope&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">local_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">LOG_ONLY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_log.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">write_mode</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"message to log"</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">"Msg"</span><span class="p">,</span><span class="w"> </span><span class="s">"MyScope"</span><span class="p">,</span><span class="w"> </span><span class="n">local_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">LOG_ONLY</span><span class="p">,</span><span class="w"> </span><span class="s">"new_log.txt"</span><span class="p">,</span><span class="w"> </span><span class="n">write_mode</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1372,7 +1372,7 @@ append_mode). Default value is append_mode.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">log_text_block</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="n">v_line</span><span class="p">,</span><span class="w"> </span><span class="n">UNFORMATTED</span><span class="p">);</span>
-<span class="n">log_text_block</span><span class="p">(</span><span class="n">ID_BFM</span><span class="p">,</span><span class="w"> </span><span class="n">v_line</span><span class="p">,</span><span class="w"> </span><span class="n">FORMATTED</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Header&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MyScope&quot;</span><span class="p">);</span>
+<span class="n">log_text_block</span><span class="p">(</span><span class="n">ID_BFM</span><span class="p">,</span><span class="w"> </span><span class="n">v_line</span><span class="p">,</span><span class="w"> </span><span class="n">FORMATTED</span><span class="p">,</span><span class="w"> </span><span class="s">"Header"</span><span class="p">,</span><span class="w"> </span><span class="s">"MyScope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1615,7 +1615,7 @@ C_ALERT_FILE_NAME defined in adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_alert_file_name</span><span class="p">(</span><span class="s">&quot;new_alert_log_file.txt&quot;</span><span class="p">);</span>
+<span class="n">set_alert_file_name</span><span class="p">(</span><span class="s">"new_alert_log_file.txt"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1662,7 +1662,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">alert</span><span class="p">(</span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This is a TB warning&quot;</span><span class="p">);</span>
+<span class="n">alert</span><span class="p">(</span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">"This is a TB warning"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1703,8 +1703,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">note</span><span class="p">(</span><span class="s">&quot;This is a note&quot;</span><span class="p">);</span>
-<span class="n">tb_failure</span><span class="p">(</span><span class="s">&quot;This is a TB failure&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tb_scope&quot;</span><span class="p">);</span>
+<span class="n">note</span><span class="p">(</span><span class="s">"This is a note"</span><span class="p">);</span>
+<span class="n">tb_failure</span><span class="p">(</span><span class="s">"This is a TB failure"</span><span class="p">,</span><span class="w"> </span><span class="s">"tb_scope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1754,7 +1754,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">increment_expected_alerts_and_stop_limit</span><span class="p">(</span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting two more warnings&quot;</span><span class="p">);</span>
+<span class="n">increment_expected_alerts_and_stop_limit</span><span class="p">(</span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"Expecting two more warnings"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1839,7 +1839,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">increment_expected_alerts_and_stop_limit</span><span class="p">(</span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting two more warnings&quot;</span><span class="p">);</span>
+<span class="n">increment_expected_alerts_and_stop_limit</span><span class="p">(</span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"Expecting two more warnings"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1910,7 +1910,7 @@ Default value is “”.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_alert_attention</span><span class="p">(</span><span class="n">NOTE</span><span class="p">,</span><span class="w"> </span><span class="n">IGNORE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Ignoring all note-alerts&quot;</span><span class="p">);</span>
+<span class="n">set_alert_attention</span><span class="p">(</span><span class="n">NOTE</span><span class="p">,</span><span class="w"> </span><span class="n">IGNORE</span><span class="p">,</span><span class="w"> </span><span class="s">"Ignoring all note-alerts"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2038,7 +2038,7 @@ value is (others =&gt; ‘0’).</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">add_to_alert_hierarchy</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tier_1&quot;</span><span class="p">);</span>
+<span class="n">add_to_alert_hierarchy</span><span class="p">(</span><span class="s">"tier_2"</span><span class="p">,</span><span class="w"> </span><span class="s">"tier_1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2086,7 +2086,7 @@ Default value is 1.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">increment_expected_alerts</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">increment_expected_alerts</span><span class="p">(</span><span class="s">"tier_2"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2128,7 +2128,7 @@ updated</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_expected_alerts</span><span class="p">(</span><span class="s">&quot;tier_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="n">set_expected_alerts</span><span class="p">(</span><span class="s">"tier_2"</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2170,7 +2170,7 @@ Default value is 1.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">increment_stop_limit</span><span class="p">(</span><span class="s">&quot;tier_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">);</span>
+<span class="n">increment_stop_limit</span><span class="p">(</span><span class="s">"tier_1"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2220,7 +2220,7 @@ will be used.</p></li>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">set_stop_limit</span><span class="p">(</span><span class="s">&quot;tier_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="n">set_stop_limit</span><span class="p">(</span><span class="s">"tier_1"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2467,7 +2467,7 @@ and max parameters.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">v_sl</span><span class="w">   </span><span class="o">:=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
-<span class="n">v_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="n">v_slv</span><span class="na">&#39;length</span><span class="p">);</span>
+<span class="n">v_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="n">v_slv</span><span class="na">'length</span><span class="p">);</span>
 <span class="n">v_int</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
 <span class="n">v_real</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">03</span><span class="p">);</span>
 <span class="n">v_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">);</span><span class="w">         </span><span class="c1">-- Generates random values with a resolution of 1 us</span>
@@ -2595,7 +2595,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">randomize</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Setting global seeds&quot;</span><span class="p">);</span>
+<span class="n">randomize</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w"> </span><span class="s">"Setting global seeds"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2739,7 +2739,7 @@ it is printable.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_char</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ascii_to_char</span><span class="p">(</span><span class="mi">65</span><span class="p">);</span><span class="w"> </span><span class="c1">-- ASCII &#39;A&#39;</span>
+<span class="n">v_char</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ascii_to_char</span><span class="p">(</span><span class="mi">65</span><span class="p">);</span><span class="w"> </span><span class="c1">-- ASCII 'A'</span>
 </pre></div>
 </div>
 </section>
@@ -2768,7 +2768,7 @@ it is printable.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">char_to_ascii</span><span class="p">(</span><span class="na">&#39;A</span><span class="p">&#39;);</span><span class="w"> </span><span class="c1">-- Returns 65</span>
+<span class="n">v_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">char_to_ascii</span><span class="p">(</span><span class="na">'A</span><span class="p">');</span><span class="w"> </span><span class="c1">-- Returns 65</span>
 </pre></div>
 </div>
 </section>
@@ -2797,7 +2797,7 @@ it is printable.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_upper</span><span class="p">(</span><span class="s">&quot;lowercase string&quot;</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_upper</span><span class="p">(</span><span class="s">"lowercase string"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2890,7 +2890,7 @@ can be removed with ‘format_spaces’.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">justify</span><span class="p">(</span><span class="s">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">C_STRING_LENGTH</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_TRUNCATE</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LEADING_SPACE</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">justify</span><span class="p">(</span><span class="s">"string"</span><span class="p">,</span><span class="w"> </span><span class="n">RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">C_STRING_LENGTH</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_TRUNCATE</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LEADING_SPACE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2925,7 +2925,7 @@ can be removed with ‘format_spaces’.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fill_string</span><span class="p">(</span><span class="sc">&#39;X&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fill_string</span><span class="p">(</span><span class="sc">'X'</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2974,7 +2974,7 @@ value is LEFT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">pad_string</span><span class="p">(</span><span class="s">&quot;abcde&quot;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">LEFT</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Returns &quot;abcde-----&quot;</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">pad_string</span><span class="p">(</span><span class="s">"abcde"</span><span class="p">,</span><span class="w"> </span><span class="sc">'-'</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">LEFT</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Returns "abcde-----"</span>
 </pre></div>
 </div>
 </section>
@@ -3009,7 +3009,7 @@ value is LEFT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">remove_initial_chars</span><span class="p">(</span><span class="s">&quot;abcde&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Returns &quot;bcde&quot;</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">remove_initial_chars</span><span class="p">(</span><span class="s">"abcde"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Returns "bcde"</span>
 </pre></div>
 </div>
 </section>
@@ -3050,7 +3050,7 @@ value is LEFT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;string_x&quot;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;x&#39;</span><span class="p">,</span><span class="w"> </span><span class="na">&#39;y</span><span class="p">&#39;);</span><span class="w"> </span><span class="c1">-- Returns &quot;string_y&quot;</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">replace</span><span class="p">(</span><span class="s">"string_x"</span><span class="p">,</span><span class="w"> </span><span class="sc">'x'</span><span class="p">,</span><span class="w"> </span><span class="na">'y</span><span class="p">');</span><span class="w"> </span><span class="c1">-- Returns "string_y"</span>
 </pre></div>
 </div>
 </section>
@@ -3092,7 +3092,7 @@ replaced by the exchange character.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">replace</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="na">&#39;a</span><span class="p">&#39;,</span><span class="w"> </span><span class="na">&#39;b</span><span class="p">&#39;);</span>
+<span class="n">replace</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="na">'a</span><span class="p">',</span><span class="w"> </span><span class="na">'b</span><span class="p">');</span>
 </pre></div>
 </div>
 </section>
@@ -3133,7 +3133,7 @@ replaced by the exchange character.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">pos_of_leftmost</span><span class="p">(</span><span class="sc">&#39;x&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">v_string</span><span class="p">);</span>
+<span class="n">v_natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">pos_of_leftmost</span><span class="p">(</span><span class="sc">'x'</span><span class="p">,</span><span class="w"> </span><span class="n">v_string</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3210,7 +3210,7 @@ replaced by the exchange character.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">pos_of_rightmost</span><span class="p">(</span><span class="na">&#39;A</span><span class="p">&#39;,</span><span class="w"> </span><span class="n">v_string</span><span class="p">);</span>
+<span class="n">v_natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">pos_of_rightmost</span><span class="p">(</span><span class="na">'A</span><span class="p">',</span><span class="w"> </span><span class="n">v_string</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3277,9 +3277,9 @@ replaced by the exchange character.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_procedure_name_from_instance_name</span><span class="p">(</span><span class="n">C_INT</span><span class="na">&#39;instance_name</span><span class="p">);</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_process_name_from_instance_name</span><span class="p">(</span><span class="n">C_INT</span><span class="na">&#39;instance_name</span><span class="p">);</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_entity_name_from_instance_name</span><span class="p">(</span><span class="n">C_INT</span><span class="na">&#39;instance_name</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_procedure_name_from_instance_name</span><span class="p">(</span><span class="n">C_INT</span><span class="na">'instance_name</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_process_name_from_instance_name</span><span class="p">(</span><span class="n">C_INT</span><span class="na">'instance_name</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_entity_name_from_instance_name</span><span class="p">(</span><span class="n">C_INT</span><span class="na">'instance_name</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3314,7 +3314,7 @@ replaced by the exchange character.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">return_string_if_true</span><span class="p">(</span><span class="s">&quot;abcde&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_print_txt</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">return_string_if_true</span><span class="p">(</span><span class="s">"abcde"</span><span class="p">,</span><span class="w"> </span><span class="n">v_print_txt</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3355,7 +3355,7 @@ replaced by the exchange character.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">return_string1_if_true_otherwise_string2</span><span class="p">(</span><span class="s">&quot;abcde&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fghij&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_print_first</span><span class="p">);</span>
+<span class="n">v_string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">return_string1_if_true_otherwise_string2</span><span class="p">(</span><span class="s">"abcde"</span><span class="p">,</span><span class="w"> </span><span class="s">"fghij"</span><span class="p">,</span><span class="w"> </span><span class="n">v_print_first</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3429,8 +3429,8 @@ when reaching max value of natural type.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">clock_generator</span><span class="p">(</span><span class="n">clk50M</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
-<span class="n">clock_generator</span><span class="p">(</span><span class="n">clk100M</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M_ena</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100 MHz with 60% duty cycle&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
-<span class="n">clock_generator</span><span class="p">(</span><span class="n">clk100M</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M_ena</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M_cnt</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100 MHz with 60% duty cycle&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
+<span class="n">clock_generator</span><span class="p">(</span><span class="n">clk100M</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M_ena</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"100 MHz with 60% duty cycle"</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
+<span class="n">clock_generator</span><span class="p">(</span><span class="n">clk100M</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M_ena</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M_cnt</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"100 MHz with 60% duty cycle"</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3494,8 +3494,8 @@ when reaching max value of natural type.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">adjustable_clock_generator</span><span class="p">(</span><span class="n">clk50M</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_ena</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
-<span class="n">adjustable_clock_generator</span><span class="p">(</span><span class="n">clk50M</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_ena</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100MHz clock with 50% duty cycle&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
-<span class="n">adjustable_clock_generator</span><span class="p">(</span><span class="n">clk50M</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_ena</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_cnt</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100MHz clock with 60% duty cycle&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
+<span class="n">adjustable_clock_generator</span><span class="p">(</span><span class="n">clk50M</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_ena</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"100MHz clock with 50% duty cycle"</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">adjustable_clock_generator</span><span class="p">(</span><span class="n">clk50M</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_ena</span><span class="p">,</span><span class="w"> </span><span class="n">clk50M_cnt</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"100MHz clock with 60% duty cycle"</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3596,9 +3596,9 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">gen_pulse</span><span class="p">(</span><span class="n">sl_1</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">BLOCKING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Pulsing for 50 ns&quot;</span><span class="p">);</span>
-<span class="n">gen_pulse</span><span class="p">(</span><span class="n">sl_1</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">BLOCKING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Pulsing for 50 ns&quot;</span><span class="p">);</span>
-<span class="n">gen_pulse</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AB&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Pulsing SLV for 2 clock periods&quot;</span><span class="p">);</span>
+<span class="n">gen_pulse</span><span class="p">(</span><span class="n">sl_1</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">BLOCKING</span><span class="p">,</span><span class="w"> </span><span class="s">"Pulsing for 50 ns"</span><span class="p">);</span>
+<span class="n">gen_pulse</span><span class="p">(</span><span class="n">sl_1</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">BLOCKING</span><span class="p">,</span><span class="w"> </span><span class="s">"Pulsing for 50 ns"</span><span class="p">);</span>
+<span class="n">gen_pulse</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AB"</span><span class="p">,</span><span class="w"> </span><span class="n">clk100M</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"Pulsing SLV for 2 clock periods"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3658,8 +3658,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">block_flag</span><span class="p">(</span><span class="s">&quot;my_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blocking my flag&quot;</span><span class="p">);</span>
-<span class="n">block_flag</span><span class="p">(</span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blocking &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My Scope&quot;</span><span class="p">);</span>
+<span class="n">block_flag</span><span class="p">(</span><span class="s">"my_flag"</span><span class="p">,</span><span class="w"> </span><span class="s">"blocking my flag"</span><span class="p">);</span>
+<span class="n">block_flag</span><span class="p">(</span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="s">"blocking "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">"My Scope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3710,8 +3710,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">unblock_flag</span><span class="p">(</span><span class="s">&quot;my_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;unblocking my flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">global_trigger</span><span class="p">);</span>
-<span class="n">unblock_flag</span><span class="p">(</span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;unblocking &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="n">global_trigger</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My Scope&quot;</span><span class="p">);</span>
+<span class="n">unblock_flag</span><span class="p">(</span><span class="s">"my_flag"</span><span class="p">,</span><span class="w"> </span><span class="s">"unblocking my flag"</span><span class="p">,</span><span class="w"> </span><span class="n">global_trigger</span><span class="p">);</span>
+<span class="n">unblock_flag</span><span class="p">(</span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="s">"unblocking "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="n">global_trigger</span><span class="p">,</span><span class="w"> </span><span class="s">"My Scope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3778,9 +3778,9 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">await_unblock_flag</span><span class="p">(</span><span class="s">&quot;my_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;waiting for my_flag to be unblocked&quot;</span><span class="p">);</span>
-<span class="n">await_unblock_flag</span><span class="p">(</span><span class="s">&quot;my_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;waiting for my_flag to be unblocked&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
-<span class="n">await_unblock_flag</span><span class="p">(</span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;waiting for &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">C_MY_FLAG_1</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot; to be unblocked&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My Scope&quot;</span><span class="p">);</span>
+<span class="n">await_unblock_flag</span><span class="p">(</span><span class="s">"my_flag"</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"waiting for my_flag to be unblocked"</span><span class="p">);</span>
+<span class="n">await_unblock_flag</span><span class="p">(</span><span class="s">"my_flag"</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">"waiting for my_flag to be unblocked"</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
+<span class="n">await_unblock_flag</span><span class="p">(</span><span class="n">C_MY_FLAG_1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">"waiting for "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">C_MY_FLAG_1</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">" to be unblocked"</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">"My Scope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3840,7 +3840,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">await_barrier</span><span class="p">(</span><span class="n">global_barrier</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;waiting for global barrier&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My Scope&quot;</span><span class="p">);</span>
+<span class="n">await_barrier</span><span class="p">(</span><span class="n">global_barrier</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">"waiting for global barrier"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">"My Scope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -3917,7 +3917,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_slv8</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">normalize_and_check</span><span class="p">(</span><span class="n">v_slv5</span><span class="p">,</span><span class="w"> </span><span class="n">v_slv8</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_NARROWER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;8bit slv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;5bit slv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Normalizing and checking slv&quot;</span><span class="p">);</span>
+<span class="n">v_slv8</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">normalize_and_check</span><span class="p">(</span><span class="n">v_slv5</span><span class="p">,</span><span class="w"> </span><span class="n">v_slv8</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_NARROWER</span><span class="p">,</span><span class="w"> </span><span class="s">"8bit slv"</span><span class="p">,</span><span class="w"> </span><span class="s">"5bit slv"</span><span class="p">,</span><span class="w"> </span><span class="s">"Normalizing and checking slv"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -4334,7 +4334,7 @@ Default value is “”.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">watchdog_timer</span><span class="p">(</span><span class="n">watchdog_ctrl</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Watchdog timer&quot;</span><span class="p">);</span>
+<span class="n">watchdog_timer</span><span class="p">(</span><span class="n">watchdog_ctrl</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">"Watchdog timer"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -4818,7 +4818,7 @@ limitations)</p></td>
 <p>Message IDs are used for verbosity control in many of the procedures and functions in UVVM-Util, and are toggled by using the
 procedures <a class="reference internal" href="#util-enable-log-msg"><span class="std std-ref">enable_log_msg()</span></a> and <a class="reference internal" href="#util-disable-log-msg"><span class="std std-ref">disable_log_msg()</span></a>.</p>
 <p><strong>Example:</strong> A check is performed each clock cycle</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">check_value</span><span class="p">(</span><span class="n">my_boolean_condition</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Verifying condition&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">ID_POS_ACK</span><span class="p">,</span><span class="w"> </span><span class="n">my_msg_id_panel</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">check_value</span><span class="p">(</span><span class="n">my_boolean_condition</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="s">"Verifying condition"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">ID_POS_ACK</span><span class="p">,</span><span class="w"> </span><span class="n">my_msg_id_panel</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The message ID ‘ID_POS_ACK’ is enabled by default, and will report a positive acknowledge if the check passes. Since the check is

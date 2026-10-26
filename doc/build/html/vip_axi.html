@@ -556,23 +556,23 @@ value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">axi_write</span><span class="p">(</span>
-<span class="w">  </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"F"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"F"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"01"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">),</span>
 <span class="w">  </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
 <span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
@@ -580,15 +580,15 @@ value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
 <span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
 <span class="n">axi_write</span><span class="p">(</span>
-<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
 <span class="w">  </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAAA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to DMA&quot;</span><span class="p">);</span>
-<span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing 256 data words to MEMORY&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AAAA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to DMA"</span><span class="p">);</span>
+<span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x"FF"</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing 256 data words to MEMORY"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -760,21 +760,21 @@ value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">axi_read</span><span class="p">(</span>
-<span class="w">  </span><span class="n">arid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">aruser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">rdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rdata_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">rresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rresp_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ruser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_ruser_value</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
 <span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
@@ -782,17 +782,17 @@ value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
 <span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
 <span class="n">axi_read</span><span class="p">(</span>
-<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">rdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rdata_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">rresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rresp_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ruser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_ruser_value</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">axi_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading from IO device&quot;</span><span class="p">);</span>
-<span class="n">axi_read</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading 256 data words from MEMORY&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">axi_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Reading from IO device"</span><span class="p">);</span>
+<span class="n">axi_read</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x"FF"</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Reading 256 data words from MEMORY"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -966,21 +966,21 @@ value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">axi_check</span><span class="p">(</span>
-<span class="w">  </span><span class="n">arid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">aruser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">rdata_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">rresp_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_xresp_array</span><span class="p">&#39;(</span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">OKAY</span><span class="p">),</span>
-<span class="w">  </span><span class="n">ruser_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">rresp_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_xresp_array</span><span class="p">'(</span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">OKAY</span><span class="p">),</span>
+<span class="w">  </span><span class="n">ruser_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"00"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"00"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
@@ -989,15 +989,15 @@ value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
 <span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
 <span class="n">axi_check</span><span class="p">(</span>
-<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">rdata_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rdata_exp</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">axi_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking data in UART RX register&quot;</span><span class="p">);</span>
-<span class="n">axi_check</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_rdata_exp_array</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking 256 data words from MEMORY&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">axi_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x"3B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking data in UART RX register"</span><span class="p">);</span>
+<span class="n">axi_check</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x"FF"</span><span class="p">,</span><span class="w"> </span><span class="n">v_rdata_exp_array</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking 256 data words from MEMORY"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1280,28 +1280,28 @@ bid, arid and rid shares a common width (id_width) and that awuser, buser, aruse
 <h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
 <p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
 process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending data to Peripheral 1&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">"Sending data to Peripheral 1"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>rather than</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span>
-<span class="w">  </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"F"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"F"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"01"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">),</span>
 <span class="w">  </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span>
 <span class="w">  </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
 <span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
@@ -1319,20 +1319,20 @@ process. This allows calling the BFM procedures with the key parameters only, e.
 <span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_xresp</span><span class="p">;</span>
 <span class="k">begin</span>
 <span class="w">  </span><span class="n">axi_write</span><span class="p">(</span>
-<span class="w">    </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00"</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
 <span class="w">    </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">addr_value</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
-<span class="w">    </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Set to length=1</span>
+<span class="w">    </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00"</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Set to length=1</span>
 <span class="w">    </span><span class="n">awsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">                           </span><span class="c1">-- Setting a default value</span>
 <span class="w">    </span><span class="n">awburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span><span class="w">                        </span><span class="c1">-- Setting a default value</span>
 <span class="w">    </span><span class="n">awlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
-<span class="w">    </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
 <span class="w">    </span><span class="n">awprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Setting a default value</span>
-<span class="w">    </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
-<span class="w">    </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
-<span class="w">    </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
 <span class="w">    </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_value</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
-<span class="w">    </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;f&quot;</span><span class="w">                         </span><span class="c1">-- Setting a default value</span>
-<span class="w">    </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"f"</span><span class="w">                         </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
 <span class="w">    </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span><span class="w">               </span><span class="c1">-- Assigning to a local variable</span>
 <span class="w">    </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span><span class="w">               </span><span class="c1">-- Assigning to a local variable</span>
 <span class="w">    </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w">                         </span><span class="c1">-- Keep as is</span>
@@ -1866,30 +1866,30 @@ adaptations_pkg.</p></td>
 <span class="n">axi_write</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awaddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awsize</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awburst</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awlock</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">awprot</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awuser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">wdata</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">wstrb</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">wuser</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">awqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awuser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wstrb</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"F"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"F"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wuser</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"01"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">),</span>
 <span class="w">  </span><span class="n">bresp_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">OKAY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">buser_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">buser_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">);</span>
 
 <span class="n">axi_write</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">awaddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">wdata</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">awaddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2031,26 +2031,26 @@ adaptations_pkg.</p></td>
 <span class="n">axi_read</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arsize</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arburst</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arlock</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arprot</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">aruser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">data_routing</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1 and send result to scoreboard&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Read from Peripheral 1 and send result to scoreboard"</span><span class="p">);</span>
 
 <span class="n">axi_read</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">data_routing</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1 and send result to read buffer&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Read from Peripheral 1 and send result to read buffer"</span><span class="p">);</span>
 
 <span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last read</span>
@@ -2059,12 +2059,12 @@ adaptations_pkg.</p></td>
 <span class="n">axi_read</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">data_routing</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1 and send result to read buffer&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Read from Peripheral 1 and send result to read buffer"</span><span class="p">);</span>
 <span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for read to finish&quot;</span><span class="p">);</span>
-<span class="n">fetch_result</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from read operation&quot;</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for read to finish"</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching result from read operation"</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition hint">
@@ -2231,28 +2231,28 @@ adaptations_pkg.</p></td>
 <span class="n">axi_check</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arsize</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arburst</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arlock</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">arprot</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">arregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">aruser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">rdata_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">rresp_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_xresp_array</span><span class="p">&#39;(</span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">OKAY</span><span class="p">),</span>
-<span class="w">  </span><span class="n">ruser_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">arqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"0000"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"01"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">rresp_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_xresp_array</span><span class="p">'(</span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">OKAY</span><span class="p">),</span>
+<span class="w">  </span><span class="n">ruser_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"00"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"00"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">);</span>
 
 <span class="n">axi_check</span><span class="p">(</span>
 <span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
 <span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">rdata_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x"00000004"</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">'(</span><span class="mh">x"12345678"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"33333333"</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2586,7 +2586,7 @@ SUCCEEDED during a transaction</p></td>
 i.e. axi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
 TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">axi_vvc_sb</span></code>, located in
 the vvc_methods_pkg.vhd, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AXI_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AXI_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">"Adding expected"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The AXI4 scoreboard is per default the maximum width of rid, rdata, rresp and ruser. When sending expected result to the scoreboard,

@@ -201,13 +201,13 @@ a few mandatory steps:</p>
 <span class="p">...</span>
 <span class="n">slv_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_SB_CONFIG_DEFAULT</span><span class="p">);</span><span class="w"> </span><span class="c1">-- initialize scoreboard</span>
 <span class="n">slv_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w">                </span><span class="c1">-- enable scoreboard</span>
-<span class="n">slv_sb</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">&quot;SLV SB&quot;</span><span class="p">);</span><span class="w">         </span><span class="c1">-- set name of scoreboard</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">"SLV SB"</span><span class="p">);</span><span class="w">         </span><span class="c1">-- set name of scoreboard</span>
 <span class="p">...</span>
-<span class="n">slv_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">"Adding expected"</span><span class="p">);</span>
 <span class="p">...</span>
-<span class="n">slv_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">v_output</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking DUT output&quot;</span><span class="p">);</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">v_output</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking DUT output"</span><span class="p">);</span>
 <span class="p">...</span>
-<span class="n">check_value</span><span class="p">(</span><span class="n">slv_sb</span><span class="p">.</span><span class="n">is_empty</span><span class="p">(</span><span class="n">VOID</span><span class="p">),</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check that scoreboard is empty&quot;</span><span class="p">);</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">slv_sb</span><span class="p">.</span><span class="n">is_empty</span><span class="p">(</span><span class="n">VOID</span><span class="p">),</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">"Check that scoreboard is empty"</span><span class="p">);</span>
 <span class="p">...</span>
 <span class="n">slv_sb</span><span class="p">.</span><span class="n">report_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
@@ -391,8 +391,8 @@ scoreboard</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_UART_SB_CONFIG</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_SB_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Initialize config on instance 2&quot;</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_UART_SB_CONFIG_ARRAY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Initialize config on instances 1-5&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_SB_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="s">"Initialize config on instance 2"</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_UART_SB_CONFIG_ARRAY</span><span class="p">,</span><span class="w"> </span><span class="s">"Initialize config on instances 1-5"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -445,8 +445,8 @@ index 1 is default.</p>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enable instance 2&quot;</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enable all instances&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"Enable instance 2"</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">"Enable all instances"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -499,8 +499,8 @@ index 1 is default.</p>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disable instance 2&quot;</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disable all instances&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"Disable instance 2"</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">"Disable all instances"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -574,9 +574,9 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert byte 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;A&quot;</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert byte 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;A&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mh">x"AA"</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Insert byte 1"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"A"</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">,</span><span class="w"> </span><span class="s">"Insert byte 1"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"A"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -647,8 +647,8 @@ C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">v_received_byte</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">v_received_byte</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check byte1&quot;</span><span class="p">);</span><span class="w">                </span><span class="c1">-- Check received data against scoreboard elements in instance 2</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">v_received_byte</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check byte 1&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Check received data against scoreboard elements with the TAG &quot;byte1&quot; in instance 3</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">v_received_byte</span><span class="p">,</span><span class="w"> </span><span class="s">"Check byte1"</span><span class="p">);</span><span class="w">                </span><span class="c1">-- Check received data against scoreboard elements in instance 2</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">v_received_byte</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check byte 1"</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Check received data against scoreboard elements with the TAG "byte1" in instance 3</span>
 </pre></div>
 </div>
 </section>
@@ -702,7 +702,7 @@ index 1 is default.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Flushing all instances&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">"Flushing all instances"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -756,7 +756,7 @@ index 1 is default.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Resetting all instances&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">"Resetting all instances"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1141,7 +1141,7 @@ scoreboard originate</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">&quot;UART_SB&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">"UART_SB"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1403,8 +1403,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">insert_expected</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span><span class="w">                                           </span><span class="c1">-- Insert element with value x&quot;AA&quot; at position 5</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">insert_expected</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert byte 4&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;A&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Insert element with value x&quot;AA&quot;, tag &quot;byte3&quot; and source element x&quot;A&quot; after element with entry number 23</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">insert_expected</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">);</span><span class="w">                                           </span><span class="c1">-- Insert element with value x"AA" at position 5</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">insert_expected</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte3"</span><span class="p">,</span><span class="w"> </span><span class="s">"Insert byte 4"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"A"</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Insert element with value x"AA", tag "byte3" and source element x"A" after element with entry number 23</span>
 </pre></div>
 </div>
 </section>
@@ -1501,9 +1501,9 @@ options: SINGLE, AND_HIGHER, AND_LOWER.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="n">v_received_data</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">);</span>
 <span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">);</span>
-<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">,</span><span class="w"> </span><span class="n">AND_LOWER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Delete entry in specified position and positions lower&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">,</span><span class="w"> </span><span class="n">AND_LOWER</span><span class="p">,</span><span class="w"> </span><span class="s">"Delete entry in specified position and positions lower"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1563,9 +1563,9 @@ C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span>
-<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
-<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">);</span>
+<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">);</span>
+<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1625,9 +1625,9 @@ C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span>
-<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
-<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">);</span>
+<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">);</span>
+<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1887,7 +1887,7 @@ identifier_option</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
-<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetch expected&quot;</span><span class="p">);</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetch expected"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1958,7 +1958,7 @@ identifier_option</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
-<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetch source&quot;</span><span class="p">);</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetch source"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2029,7 +2029,7 @@ identifier_option</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
-<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetch tag&quot;</span><span class="p">);</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetch tag"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2088,8 +2088,8 @@ C_SB_TAG_WIDTH defined in adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
-<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
+<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
+<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">"byte1"</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
 </pre></div>
 </div>
 </section>

@@ -182,10 +182,10 @@ auxiliary signal <cite>assert_count_not_13</cite>.</p>
 <span class="k">architecture</span><span class="w"> </span><span class="nc">func</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nc">simple_assertion_tb</span><span class="w"> </span><span class="k">is</span>
 <span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">clk</span><span class="w">                 </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">rst</span><span class="w">                 </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">clk</span><span class="w">                 </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
+<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">rst</span><span class="w">                 </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
 <span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">count</span><span class="w">               </span><span class="o">:</span><span class="w"> </span><span class="kt">integer</span><span class="w">   </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">count_valid</span><span class="w">         </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">count_valid</span><span class="w">         </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
 <span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">assert_count_not_13</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w">   </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span>
 <span class="k">begin</span>
 
@@ -211,28 +211,28 @@ auxiliary signal <cite>assert_count_not_13</cite>.</p>
 <span class="w">  </span><span class="n">p_assert_pure_vhdl</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
 <span class="w">  </span><span class="k">begin</span>
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">rising_edge</span><span class="p">(</span><span class="n">clk</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">count_valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">count_valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="w"> </span><span class="k">then</span>
 <span class="w">      </span><span class="c1">-- Check if the count is not equal to 13</span>
 <span class="w">      </span><span class="k">assert</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">13</span>
-<span class="w">        </span><span class="n">report</span><span class="w"> </span><span class="s">&quot;Pure VHDL assertion failed: count should not be 13&quot;</span>
+<span class="w">        </span><span class="n">report</span><span class="w"> </span><span class="s">"Pure VHDL assertion failed: count should not be 13"</span>
 <span class="w">        </span><span class="k">severity</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
 <span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">process</span><span class="w"> </span><span class="nc">p_assert_pure_vhdl</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">assert_count_not_13</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">13</span><span class="p">;</span>
-<span class="w">  </span><span class="n">p_uvvm_assertion</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">assert_value</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">count_valid</span><span class="p">,</span><span class="w"> </span><span class="n">assert_count_not_13</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;count must never be 13&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">p_uvvm_assertion</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">assert_value</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">count_valid</span><span class="p">,</span><span class="w"> </span><span class="n">assert_count_not_13</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="s">"count must never be 13"</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
 <span class="w">  </span><span class="k">begin</span>
-<span class="w">    </span><span class="n">log</span><span class="p">(</span><span class="n">ID_LOG_HDR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;STARTING SIMULATION&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">log</span><span class="p">(</span><span class="n">ID_LOG_HDR</span><span class="p">,</span><span class="w"> </span><span class="s">"STARTING SIMULATION"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">rst</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Assert reset</span>
+<span class="w">    </span><span class="n">rst</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Assert reset</span>
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="n">C_CLK_PERIOD</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Wait for 10 clock cycles</span>
-<span class="w">    </span><span class="n">rst</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">-- De-assert reset</span>
+<span class="w">    </span><span class="n">rst</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span><span class="w">  </span><span class="c1">-- De-assert reset</span>
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">200</span><span class="o">*</span><span class="n">C_CLK_PERIOD</span><span class="p">;</span>
 
 <span class="w">    </span><span class="n">report_alert_counters</span><span class="p">(</span><span class="n">FINAL</span><span class="p">);</span><span class="w">       </span><span class="c1">-- Report final counters and print conclusion (Success/Fail)</span>
-<span class="w">    </span><span class="n">log</span><span class="p">(</span><span class="n">ID_LOG_HDR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SIMULATION COMPLETED&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">log</span><span class="p">(</span><span class="n">ID_LOG_HDR</span><span class="p">,</span><span class="w"> </span><span class="s">"SIMULATION COMPLETED"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">-- Finish the simulation</span>
 <span class="w">    </span><span class="nn">std.env</span><span class="p">.</span><span class="n">stop</span><span class="p">;</span>
@@ -280,9 +280,9 @@ placed concurrently in the test-harness is checking that the output of a simple 
 <span class="w">  </span><span class="k">begin</span>
 <span class="w">    </span><span class="n">clock_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">-- continuously monitor the DUT output is in range (some time to allow for rst to be done)</span>
-<span class="w">    </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
-<span class="w">    </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">assert_value_in_range_ena</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">;</span>
 <span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">process</span><span class="w"> </span><span class="nc">p_main</span><span class="p">;</span>
 <span class="k">end</span><span class="w"> </span><span class="k">architecture</span><span class="w"> </span><span class="nc">sim</span><span class="p">;</span>
 </pre></div>
@@ -309,8 +309,8 @@ placed concurrently in the test-harness is checking that the output of a simple 
 
 <span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">clk</span><span class="w">                    </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="p">;</span>
 <span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">dut_counter_value</span><span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="kt">integer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">dut_counter_valid</span><span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">assertion_ena_combined</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">dut_counter_valid</span><span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
+<span class="w">  </span><span class="k">signal</span><span class="w"> </span><span class="n">assertion_ena_combined</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
 <span class="k">begin</span>
 <span class="w">  </span><span class="c1">-----------------------------------------------------------------------------</span>
 <span class="w">  </span><span class="c1">-- DUT Instantiation - Simple Counter</span>
@@ -318,7 +318,7 @@ placed concurrently in the test-harness is checking that the output of a simple 
 <span class="w">  </span><span class="n">i_simple_counter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">work</span><span class="p">.</span><span class="n">simple_counter</span>
 <span class="w">    </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
 <span class="w">      </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
-<span class="w">      </span><span class="n">enable</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">enable</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span>
 <span class="w">      </span><span class="n">counter_val</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_counter_value</span><span class="p">,</span>
 <span class="w">      </span><span class="n">counter_valid</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_counter_valid</span>
 <span class="w">    </span><span class="p">);</span>
@@ -333,14 +333,14 @@ placed concurrently in the test-harness is checking that the output of a simple 
 <span class="w">    </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_counter_value</span><span class="p">,</span>
 <span class="w">    </span><span class="n">lower_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Minimum valid counter value</span>
 <span class="w">    </span><span class="n">upper_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">250</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Maximum valid counter value (set by requirement)</span>
-<span class="w">    </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;DUT counter value valid range (0-250)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"DUT counter value valid range (0-250)"</span><span class="p">,</span>
 <span class="w">    </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span>
 <span class="w">  </span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">-----------------------------------------------------------------------------</span>
 <span class="w">  </span><span class="c1">-- Clock Generator</span>
 <span class="w">  </span><span class="c1">-----------------------------------------------------------------------------</span>
-<span class="w">  </span><span class="n">clock_generator</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">clock_ena</span><span class="p">,</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DUT TB clock&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">clock_generator</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">clock_ena</span><span class="p">,</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="p">,</span><span class="w"> </span><span class="s">"DUT TB clock"</span><span class="p">);</span>
 
 <span class="k">end</span><span class="w"> </span><span class="k">architecture</span><span class="w"> </span><span class="nc">sim</span><span class="p">;</span>
 </pre></div>
@@ -484,14 +484,14 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">assert_value</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DUT signal must be &#39;1&#39; at rising edge of clk:200MHz&quot;</span><span class="p">);</span>
+<span class="n">assert_value</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="s">"DUT signal must be '1' at rising edge of clk:200MHz"</span><span class="p">);</span>
 
 <span class="n">assert_value</span><span class="p">(</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">assertion_enable</span><span class="p">,</span>
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span>
-<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;DUT signal must be &#39;1&#39; at rising edge of clk:200MHz&quot;</span>
+<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"DUT signal must be '1' at rising edge of clk:200MHz"</span>
 <span class="p">);</span>
 </pre></div>
 </div>
@@ -594,18 +594,18 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 
-<span class="c1">-- This will check that &quot;dut_output&quot; is always within valid digital values (L, H, 0, 1) avoiding non-valid logic states (X, Z, U, W, -) in the std_logic signal.</span>
+<span class="c1">-- This will check that "dut_output" is always within valid digital values (L, H, 0, 1) avoiding non-valid logic states (X, Z, U, W, -) in the std_logic signal.</span>
 <span class="c1">-- The assertion will be tested on the rising edge of clk:200MHz</span>
 <span class="n">assert_one_of</span><span class="p">(</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">enable</span><span class="p">,</span>
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span>
-<span class="w">  </span><span class="n">allowed_values</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;LH01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">allowed_values</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"LH01"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Only DUT signal std_logic values constrained to: L, H, 0, and 1 are allowed at clk:200MHz&quot;</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Only DUT signal std_logic values constrained to: L, H, 0, and 1 are allowed at clk:200MHz"</span>
 <span class="p">);</span>
 
-<span class="n">assert_one_of</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LH01&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Only DUT signal std_logic values constrained to: L, H, 0, and 1 are allowed at clk:200MHz&quot;</span><span class="p">);</span>
+<span class="n">assert_one_of</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="s">"LH01"</span><span class="p">,</span><span class="w"> </span><span class="s">"Only DUT signal std_logic values constrained to: L, H, 0, and 1 are allowed at clk:200MHz"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -699,17 +699,17 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 
-<span class="c1">-- This will check that &quot;dut_output&quot; is a one-hot signal at the rising edge of clk:200MHz</span>
+<span class="c1">-- This will check that "dut_output" is a one-hot signal at the rising edge of clk:200MHz</span>
 <span class="n">assert_one_hot</span><span class="p">(</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">assertion_enable</span><span class="p">,</span>
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;DUT signal must be a one-hot signal at rising edge of clk:200MHz&quot;</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"DUT signal must be a one-hot signal at rising edge of clk:200MHz"</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span>
 <span class="w">  </span><span class="n">accept_all_zero</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ALL_ZERO_ALLOWED</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Also accept all zeros as valid state</span>
 <span class="p">);</span>
 
-<span class="n">assert_one_hot</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DUT signal must be a one-hot signal at rising edge of clk:200MHz&quot;</span><span class="p">);</span>
+<span class="n">assert_one_hot</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">dut_output</span><span class="p">,</span><span class="w"> </span><span class="s">"DUT signal must be a one-hot signal at rising edge of clk:200MHz"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -817,10 +817,10 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">lower_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">    </span><span class="c1">-- Min 5% duty cycle to ensure motor startup</span>
 <span class="w">  </span><span class="n">upper_limit</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Max 95% duty cycle to prevent overheating</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Motor PWM duty cycle must be in operating range (5-95%) @ clk:100MHz&quot;</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Motor PWM duty cycle must be in operating range (5-95%) @ clk:100MHz"</span>
 <span class="p">);</span>
 
-<span class="n">assert_value_in_range</span><span class="p">(</span><span class="n">clk_100mhz</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">motor_pwm_duty_cycle</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Motor PWM duty cycle must be in operating range (5-95%) @ clk:100MHz&quot;</span><span class="p">);</span>
+<span class="n">assert_value_in_range</span><span class="p">(</span><span class="n">clk_100mhz</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">motor_pwm_duty_cycle</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="s">"Motor PWM duty cycle must be in operating range (5-95%) @ clk:100MHz"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -841,7 +841,7 @@ pipelined sequences, and any new leftmost <cite>‘1’</cite> while in an ongoi
 If the sequence is broken, the assertion will drop all ongoing sequences, and give out an alert based on which <cite>necessary_condition</cite>
 is set, and which bit broke the sequence.</p>
 <p>Example of sequences:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- NOTE: &quot;b&quot; is a placeholder for any bit (0 or 1)</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- NOTE: "b" is a placeholder for any bit (0 or 1)</span>
 <span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b1bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb1b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb1</span><span class="w"> </span><span class="c1">-- a sequence of 4 bits with no errors</span>
 <span class="mi">1</span><span class="n">bbb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">11</span><span class="n">bb</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">b11b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bb11</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bbb1</span><span class="w"> </span><span class="c1">-- two sequences of 4 bits with no errors (pipelined)</span>
 
@@ -929,17 +929,17 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 
 <span class="c1">-- Pipeline Stage Valid Signal Tracking</span>
-<span class="c1">-- This assertion monitors the &quot;valid&quot; signal as it propagates through a 4-stage image processing pipeline (each bit represents a valid flag in one stage)</span>
+<span class="c1">-- This assertion monitors the "valid" signal as it propagates through a 4-stage image processing pipeline (each bit represents a valid flag in one stage)</span>
 <span class="n">assert_shift_one_from_left</span><span class="p">(</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pixel_clock</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ena</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pipeline_active</span><span class="p">,</span><span class="w">       </span><span class="c1">-- Enable signal for the pipeline</span>
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pipeline_stage_valid</span><span class="p">,</span><span class="w">  </span><span class="c1">-- 4-bit signal, one per pipeline stage</span>
 <span class="w">  </span><span class="n">necessary_condition</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w">         </span><span class="c1">-- Alert on any stage that drops the valid flag</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Image processing pipeline stage valid signal must shift one-hot from left to right&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">                 </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Image processing pipeline stage valid signal must shift one-hot from left to right"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span>
 <span class="p">);</span>
 
-<span class="n">assert_shift_one_from_left</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">pipeline_active</span><span class="p">,</span><span class="w"> </span><span class="n">pipeline_stage_valid</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Image processing pipeline stage valid signal must shift one-hot from left to right&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
+<span class="n">assert_shift_one_from_left</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">pipeline_active</span><span class="p">,</span><span class="w"> </span><span class="n">pipeline_stage_valid</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="s">"Image processing pipeline stage valid signal must shift one-hot from left to right"</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1160,12 +1160,12 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">start_transfer</span><span class="p">,</span>
 <span class="w">  </span><span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Start checking immediately when transfer begins</span>
 <span class="w">  </span><span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Check through the entire 4-cycle transfer window (cycles 0,1,2,3)</span>
-<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Data valid must remain high throughout the entire transfer</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Data valid flag must remain asserted for the entire 4-cycle transfer window&quot;</span>
+<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Data valid must remain high throughout the entire transfer</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Data valid flag must remain asserted for the entire 4-cycle transfer window"</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span>
 <span class="p">);</span>
 
-<span class="n">assert_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">data_valid_flag</span><span class="p">,</span><span class="w"> </span><span class="n">start_transfer</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Data valid flag must remain asserted for the entire 4-cycle transfer window&quot;</span><span class="p">);</span>
+<span class="n">assert_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">data_valid_flag</span><span class="p">,</span><span class="w"> </span><span class="n">start_transfer</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="s">"Data valid flag must remain asserted for the entire 4-cycle transfer window"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1280,12 +1280,12 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span>
 <span class="w">  </span><span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Allow 2 cycles minimum response time</span>
 <span class="w">  </span><span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Require response within 5 cycles maximum</span>
-<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Expected value is acknowledge high</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active within required timing window (2-5 cycles) after request&quot;</span>
+<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Expected value is acknowledge high</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Acknowledge signal must change to active within required timing window (2-5 cycles) after request"</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
 <span class="p">);</span>
 
-<span class="n">assert_change_to_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active within required timing window (2-5 cycles) after request&quot;</span><span class="p">);</span>
+<span class="n">assert_change_to_value_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">assertion_ena</span><span class="p">,</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="s">"Acknowledge signal must change to active within required timing window (2-5 cycles) after request"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1398,11 +1398,11 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">start_peripheral_operation</span><span class="p">,</span>
 <span class="w">  </span><span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Earliest expected response (operation takes minimum 5 cycles)</span>
 <span class="w">  </span><span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">    </span><span class="c1">-- Latest allowed response (operation timeout at 20 cycles)</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Peripheral interrupt line must toggle within expected operation window (5-20 cycles)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Peripheral interrupt line must toggle within expected operation window (5-20 cycles)"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">WARNING</span>
 <span class="p">);</span>
 
-<span class="n">assert_change_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">interrupt_line</span><span class="p">,</span><span class="w"> </span><span class="n">start_peripheral_operation</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Peripheral interrupt line must toggle within expected operation window (5-20 cycles)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
+<span class="n">assert_change_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">interrupt_line</span><span class="p">,</span><span class="w"> </span><span class="n">start_peripheral_operation</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">"Peripheral interrupt line must toggle within expected operation window (5-20 cycles)"</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1515,11 +1515,11 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">trigger</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_ready</span><span class="p">,</span>
 <span class="w">  </span><span class="n">min_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Start checking immediately when data is ready</span>
 <span class="w">  </span><span class="n">max_cycles</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">     </span><span class="c1">-- Check stability for 4 cycles (cycles 0,1,2,3)</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Memory data bus must remain stable after data_ready until transfer completes&quot;</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Memory data bus must remain stable after data_ready until transfer completes"</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
 <span class="p">);</span>
 
-<span class="n">assert_stable_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">memory_interface_active</span><span class="p">,</span><span class="w"> </span><span class="n">memory_data_bus</span><span class="p">,</span><span class="w"> </span><span class="n">data_ready</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Memory data bus must remain stable after data_ready until transfer completes&quot;</span><span class="p">);</span>
+<span class="n">assert_stable_from_min_to_max_cycles_after_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">memory_interface_active</span><span class="p">,</span><span class="w"> </span><span class="n">memory_data_bus</span><span class="p">,</span><span class="w"> </span><span class="n">data_ready</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"Memory data bus must remain stable after data_ready until transfer completes"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1620,19 +1620,19 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 
-<span class="c1">-- This will check that the bus data remains valid (equal to &#39;1&#39;) during an entire bus transaction from the request signal until the acknowledge signal</span>
+<span class="c1">-- This will check that the bus data remains valid (equal to '1') during an entire bus transaction from the request signal until the acknowledge signal</span>
 <span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span>
 <span class="w">  </span><span class="n">clk</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">system_clk</span><span class="p">,</span>
 <span class="w">  </span><span class="n">ena</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span>
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_valid</span><span class="p">,</span>
 <span class="w">  </span><span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">bus_request</span><span class="p">,</span>
 <span class="w">  </span><span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">bus_acknowledge</span><span class="p">,</span>
-<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Data must remain valid (1) during entire transaction</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Data valid signal must remain high during entire bus transaction (from request to acknowledge)&quot;</span>
+<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Data must remain valid (1) during entire transaction</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Data valid signal must remain high during entire bus transaction (from request to acknowledge)"</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
 <span class="p">);</span>
 
-<span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">data_valid</span><span class="p">,</span><span class="w"> </span><span class="n">bus_request</span><span class="p">,</span><span class="w"> </span><span class="n">bus_acknowledge</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Data valid signal must remain high during entire bus transaction (from request to acknowledge)&quot;</span><span class="p">);</span>
+<span class="n">assert_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">data_valid</span><span class="p">,</span><span class="w"> </span><span class="n">bus_request</span><span class="p">,</span><span class="w"> </span><span class="n">bus_acknowledge</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="s">"Data valid signal must remain high during entire bus transaction (from request to acknowledge)"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1745,12 +1745,12 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span>
 <span class="w">  </span><span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span>
 <span class="w">  </span><span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operation_complete</span><span class="p">,</span>
-<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Expected value is acknowledge high</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active during protocol transaction&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">exp_value</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w">   </span><span class="c1">-- Expected value is acknowledge high</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Acknowledge signal must change to active during protocol transaction"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TB_ERROR</span>
 <span class="p">);</span>
 
-<span class="n">assert_change_to_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span><span class="w"> </span><span class="n">operation_complete</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Acknowledge signal must change to active during protocol transaction&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">);</span>
+<span class="n">assert_change_to_value_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">acknowledge_signal</span><span class="p">,</span><span class="w"> </span><span class="n">request_signal</span><span class="p">,</span><span class="w"> </span><span class="n">operation_complete</span><span class="p">,</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span><span class="w"> </span><span class="s">"Acknowledge signal must change to active during protocol transaction"</span><span class="p">,</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1856,11 +1856,11 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">device_response</span><span class="p">,</span>
 <span class="w">  </span><span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">command_start</span><span class="p">,</span>
 <span class="w">  </span><span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">command_complete</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Device must produce a response signal transition during command execution&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Device must produce a response signal transition during command execution"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span>
 <span class="p">);</span>
 
-<span class="n">assert_change_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">device_active</span><span class="p">,</span><span class="w"> </span><span class="n">device_response</span><span class="p">,</span><span class="w"> </span><span class="n">command_start</span><span class="p">,</span><span class="w"> </span><span class="n">command_complete</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Device must produce a response signal transition during command execution&quot;</span><span class="p">);</span>
+<span class="n">assert_change_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">device_active</span><span class="p">,</span><span class="w"> </span><span class="n">device_response</span><span class="p">,</span><span class="w"> </span><span class="n">command_start</span><span class="p">,</span><span class="w"> </span><span class="n">command_complete</span><span class="p">,</span><span class="w"> </span><span class="s">"Device must produce a response signal transition during command execution"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1961,11 +1961,11 @@ For more information see <a class="reference internal" href="vvc_framework.html#
 <span class="w">  </span><span class="n">tracked_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">configuration_register</span><span class="p">,</span>
 <span class="w">  </span><span class="n">start_trigger</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transfer_start</span><span class="p">,</span>
 <span class="w">  </span><span class="n">end_trigger</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transfer_complete</span><span class="p">,</span>
-<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Configuration register must remain stable during the entire transfer operation&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"Configuration register must remain stable during the entire transfer operation"</span><span class="p">,</span>
 <span class="w">  </span><span class="n">alert_level</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span>
 <span class="p">);</span>
 
-<span class="n">assert_stable_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">configuration_register</span><span class="p">,</span><span class="w"> </span><span class="n">transfer_start</span><span class="p">,</span><span class="w"> </span><span class="n">transfer_complete</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Configuration register must remain stable during the entire transfer operation&quot;</span><span class="p">);</span>
+<span class="n">assert_stable_from_start_to_end_trigger</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">tb_assertions_enabled</span><span class="p">,</span><span class="w"> </span><span class="n">configuration_register</span><span class="p">,</span><span class="w"> </span><span class="n">transfer_start</span><span class="p">,</span><span class="w"> </span><span class="n">transfer_complete</span><span class="p">,</span><span class="w"> </span><span class="s">"Configuration register must remain stable during the entire transfer operation"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

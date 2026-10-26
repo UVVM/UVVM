@@ -689,7 +689,7 @@ SUMMARY,&lt;Testcase&gt;,&lt;PASS/FAIL&gt;
 </pre></div>
 </div>
 <p>Example:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NOTE</span><span class="o">:</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">coverage</span><span class="w"> </span><span class="k">file</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">valid</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">last</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="na">&#39;SUMMARY</span><span class="p">,</span><span class="w"> </span><span class="n">TC_1</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">&#39;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NOTE</span><span class="o">:</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">coverage</span><span class="w"> </span><span class="k">file</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">valid</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">last</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="na">'SUMMARY</span><span class="p">,</span><span class="w"> </span><span class="n">TC_1</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">'</span>
 <span class="n">TESTCASE_NAME</span><span class="o">:</span><span class="w"> </span><span class="n">TC_1</span>
 <span class="n">DELIMITER</span><span class="o">:</span><span class="w"> </span><span class="p">,</span>
 
@@ -851,8 +851,8 @@ overwritten.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">initialize_req_cov</span><span class="p">(</span><span class="s">&quot;TC_UART_9k6&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c:/my_folder/requirements.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;./cov_9k6.csv&quot;</span><span class="p">);</span>
-<span class="n">initialize_req_cov</span><span class="p">(</span><span class="s">&quot;TC_UART_9k6&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;requirements.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cov_9k6.csv&quot;</span><span class="p">);</span>
+<span class="n">initialize_req_cov</span><span class="p">(</span><span class="s">"TC_UART_9k6"</span><span class="p">,</span><span class="w"> </span><span class="s">"c:/my_folder/requirements.csv"</span><span class="p">,</span><span class="w"> </span><span class="s">"./cov_9k6.csv"</span><span class="p">);</span>
+<span class="n">initialize_req_cov</span><span class="p">(</span><span class="s">"TC_UART_9k6"</span><span class="p">,</span><span class="w"> </span><span class="s">"requirements.csv"</span><span class="p">,</span><span class="w"> </span><span class="s">"cov_9k6.csv"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -923,15 +923,15 @@ Default value is C_SCOPE defined in adaptations_pkg.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="c1">-- Will pass if no unexpected alert occurred</span>
-<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">);</span>
+<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_1"</span><span class="p">);</span>
 
 <span class="c1">-- Will fail since passed argument is set to false</span>
-<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">FAIL</span><span class="p">);</span>
+<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_1"</span><span class="p">,</span><span class="w"> </span><span class="n">FAIL</span><span class="p">);</span>
 
 <span class="c1">-- In order to include msg and scope requirement_status and tickoff_extent must be included</span>
-<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_msg&quot;</span><span class="p">);</span>
+<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_1"</span><span class="p">,</span><span class="w"> </span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="s">"my_msg"</span><span class="p">);</span>
 <span class="c1">-- or</span>
-<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_EVERY_TICKOFF</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_scope&quot;</span><span class="p">);</span>
+<span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_1"</span><span class="p">,</span><span class="w"> </span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="s">"my_msg"</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_EVERY_TICKOFF</span><span class="p">,</span><span class="w"> </span><span class="s">"my_scope"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1028,8 +1028,8 @@ Default value is C_SCOPE defined in adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">cond_tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_4&quot;</span><span class="p">);</span>
-<span class="n">cond_tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_4&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Monitor&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_SINGLE_TICKOFF</span><span class="p">);</span>
+<span class="n">cond_tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_4"</span><span class="p">);</span>
+<span class="n">cond_tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_4"</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">,</span><span class="w"> </span><span class="s">"Monitor"</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_SINGLE_TICKOFF</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1068,7 +1068,7 @@ cond_tick_off_req_cov() procedure.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">disable_cond_tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">);</span>
+<span class="n">disable_cond_tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1107,7 +1107,7 @@ procedure.</p>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">enable_cond_tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">);</span>
+<span class="n">enable_cond_tick_off_req_cov</span><span class="p">(</span><span class="s">"UART_REQ_1"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

@@ -322,7 +322,7 @@ default location is <code class="docutils literal notranslate"><span class="pre"
 <p>The <code class="docutils literal notranslate"><span class="pre">compile_all.do</span></code> script located in the main script directory can be used to precompile the UVVM libraries and VIPs. Choose
 (or create) an appropriate directory for user precompiled libraries, and create a <code class="docutils literal notranslate"><span class="pre">uvvm</span></code> sub-directory under it. This sub-directory
 is the 2nd argument to the script. For example, on Windows/MSYS2, enter the following command in a Windows Command Prompt:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vsim -c -do &quot;do C:/work/UVVM/script/compile_all.do C:/work/UVVM/script C:/work/.simlib/uvvm; exit&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vsim -c -do "do C:/work/UVVM/script/compile_all.do C:/work/UVVM/script C:/work/.simlib/uvvm; exit"</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -352,7 +352,7 @@ Functional Coverage auto-sampling feature to work.</p></li>
 <p>Example of <code class="docutils literal notranslate"><span class="pre">qopt</span></code>/<code class="docutils literal notranslate"><span class="pre">qsim</span></code> commands:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vcom -2008 &lt;vhdl files&gt;</span>
 <span class="go">qopt -o opt &lt;my_tb_entity&gt; qoneRandLib.RandLib  -noincr -access=r+/.</span>
-<span class="go">qsim -c opt -do &quot;run -all&quot;</span>
+<span class="go">qsim -c opt -do "run -all"</span>
 </pre></div>
 </div>
 <table class="docutils align-default">

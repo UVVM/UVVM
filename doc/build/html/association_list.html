@@ -199,7 +199,7 @@ structure. Possible values are ASSOCIATION_LIST_SUCCESS and ASSOCIATION_LIST_FAI
 <h2>Declaration<a class="headerlink" href="#declaration" title="Link to this heading"></a></h2>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Package declaration example</span>
 <span class="k">package</span><span class="w"> </span><span class="n">string_association_list_pkg</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">association_list_pkg</span>
-<span class="w">   </span><span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;string_association_list_pkg&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"string_association_list_pkg"</span><span class="p">,</span>
 <span class="w">                </span><span class="n">GC_KEY_TYPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
 <span class="w">                </span><span class="n">GC_VALUE_TYPE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kt">integer</span><span class="p">);</span>
 </pre></div>
@@ -219,7 +219,7 @@ structure. Possible values are ASSOCIATION_LIST_SUCCESS and ASSOCIATION_LIST_FAI
 </pre></div>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"my_key"</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -230,7 +230,7 @@ structure. Possible values are ASSOCIATION_LIST_SUCCESS and ASSOCIATION_LIST_FAI
 </pre></div>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">key_in_list</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">);</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">key_in_list</span><span class="p">(</span><span class="s">"my_key"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -241,7 +241,7 @@ structure. Possible values are ASSOCIATION_LIST_SUCCESS and ASSOCIATION_LIST_FAI
 </pre></div>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">);</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="s">"my_key"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -263,7 +263,7 @@ structure. Possible values are ASSOCIATION_LIST_SUCCESS and ASSOCIATION_LIST_FAI
 </pre></div>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">v_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">);</span>
+<span class="n">v_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"my_key"</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -279,7 +279,7 @@ in a failure.</p>
 </pre></div>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;my_key&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
+<span class="n">v_return_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">association_list</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">"my_key"</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

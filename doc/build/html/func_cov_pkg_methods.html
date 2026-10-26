@@ -567,7 +567,7 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Covpts goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_covpts_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Covpts goal: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_covpts_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
 </pre></div>
 </div>
 </section>
@@ -597,9 +597,9 @@ the types of coverage click <a class="reference internal" href="func_cov_pkg_ove
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Covpts Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">COVPTS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bins Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hits Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Covpts Overall Coverage: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">COVPTS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Bins Overall Coverage: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">"Hits Overall Coverage: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">"%"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -695,7 +695,7 @@ adaptations_pkg.</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">);</span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;coverage_report.txt&quot;</span><span class="p">);</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">,</span><span class="w"> </span><span class="s">"coverage_report.txt"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

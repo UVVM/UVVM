@@ -1,0 +1,408 @@
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    get_rand_dist_mean()=> mean has not been configured, using default
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    get_rand_dist_std_deviation()=> std_deviation has not been configured, using default
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    set_rand_dist_std_deviation(-1.00)=> Must use positive values
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(ONLY:(-2, 0, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-1:1], ADD:(-10))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-2:2], EXCL:(-1, 0, 1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-2:2], ADD:(-10), EXCL:(1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-2:2], CYCLIC)=> GAUSSIAN distribution and cyclic mode cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 1000,2000
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, ONLY:(-2, -1, 0, 1, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1:1], ADD:(-10))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-3:4], EXCL:(-1, 0, 1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2:2], ADD:(-10), EXCL:(1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2:2], CYCLIC)=> GAUSSIAN distribution and cyclic mode cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2:2], UNIQUE)=> GAUSSIAN distribution and uniqueness cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, ONLY:(-2, -1, 0, 1, 2), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1:1], ADD:(-10, 15), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-3:4], EXCL:(-1, 0, 1), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2:2], ADD:(-10, 15, 16), EXCL:(-1, 0, 1), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using
+UVVM:                    UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 1000,2000
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #16  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(ONLY:(-2.00, 0.56, 2.00))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #17  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-1.00:1.00], ADD:(15.50))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #18  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-1.00:1.00], EXCL:(-1.00, 0.00, 1.00))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #19  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-1.00:1.00], ADD:(15.50), EXCL:(-1.00))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 1000.00,2000.00
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #20  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, ONLY:(-2.00, -1.10, 0.25, 1.10, 2.00))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #21  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1.00:1.00], ADD:(15.50))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #22  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1.00:1.00], EXCL:(-1.00, 0.00, 1.00))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM
+UVVM:                    instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #23  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1.00:1.00], ADD:(15.50), EXCL:(-1.00))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM
+UVVM:                    instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #24  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2.00:2.00], UNIQUE)=> GAUSSIAN distribution and uniqueness cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #25  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, ONLY:(-2.00, -1.10, 0.25, 1.10, 2.00), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM
+UVVM:                    instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #26  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1.00:1.00], ADD:(15.50, 16.60), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM
+UVVM:                    instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #27  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1.00:1.00], EXCL:(-1.00, 0.00, 1.00), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM
+UVVM:                    instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #28  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1.00:1.00], ADD:(15.50, 16.60), EXCL:(-1.00, 0.00, 1.00), UNIQUE)=> GAUSSIAN distribution only supported for range(min/max)
+UVVM:                    constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 1000.00,2000.00
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[-2 fs:2 fs])=> Randomization distribution not supported: GAUSSIAN
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2 fs:2 fs])=> Randomization distribution not supported: GAUSSIAN
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #29  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:128)=> GAUSSIAN distribution not supported for long vectors. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #30  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:128, RANGE:[x"00000000000000000000000000000001":x"00000000000000000000000000000064"])=> GAUSSIAN distribution not supported for unsigned
+UVVM:                    constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #31  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[x"00000000000000000000000000000001":x"00000000000000000000000000000064"])=> GAUSSIAN distribution not supported for unsigned constraints.
+UVVM:                    Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #32  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, ONLY:(0, 1, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #33  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, EXCL:(0, 1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #34  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(7))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #35  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:3], EXCL:(1, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #36  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(7), EXCL:(1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #37  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:3], CYCLIC)=> GAUSSIAN distribution and cyclic mode cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 10,15
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #38  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:128)=> GAUSSIAN distribution not supported for long vectors. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #39  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:128, RANGE:[x"00000000000000000000000000000001":x"00000000000000000000000000000064"])=> GAUSSIAN distribution not supported for unsigned
+UVVM:                    constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #40  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[x"00000000000000000000000000000001":x"00000000000000000000000000000064"])=> GAUSSIAN distribution not supported for unsigned constraints.
+UVVM:                    Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #41  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, ONLY:(-2, 0, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #42  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, EXCL:(0, 1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #43  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[-1:1], ADD:(-8))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #44  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[-2:2], EXCL:(-1, 0, 1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #45  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[-2:2], ADD:(-8), EXCL:(1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #46  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[-2:2], CYCLIC)=> GAUSSIAN distribution and cyclic mode cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 6,7
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #47  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:128)=> GAUSSIAN distribution not supported for long vectors. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #48  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:128, RANGE:[x"00000000000000000000000000000001":x"00000000000000000000000000000064"])=> GAUSSIAN distribution not supported for unsigned
+UVVM:                    constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #49  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(RANGE:[x"00000000000000000000000000000001":x"00000000000000000000000000000064"])=> GAUSSIAN distribution not supported for unsigned constraints.
+UVVM:                    Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #50  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, ONLY:(0, 1, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #51  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, EXCL:(0, 1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #52  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(7))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #53  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:3], EXCL:(1, 2))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #54  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(7), EXCL:(1))=> GAUSSIAN distribution only supported for range(min/max) constraints. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #55  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand(LEN:4, RANGE:[0:3], CYCLIC)=> GAUSSIAN distribution and cyclic mode cannot be combined. Using UNIFORM instead.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #10  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    random_gaussian()=> Mean: 1.00 must be inside min/max range: 10,15
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #56  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand_val_weight((0,30),(1,20),(2,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #57  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand_val_weight((0.00,30),(1.00,20),(2.00,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #58  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand_val_weight((0 fs,30),(1 fs,20),(2 fs,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #59  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand_val_weight((0,30),(1,20),(2,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #60  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand_val_weight((0,30),(1,20),(2,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #61  ***
+UVVM:         10400 ns   TB seq.
+UVVM:                    rand_val_weight((0,30),(1,20),(2,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM: 

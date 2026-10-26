@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context vvc_framework_context is
-  library uvvm_vvc_framework;
+library uvvm_vvc_framework;
   use uvvm_vvc_framework.ti_data_fifo_pkg.all;
   use uvvm_vvc_framework.ti_data_queue_pkg.all;
   use uvvm_vvc_framework.ti_data_stack_pkg.all;

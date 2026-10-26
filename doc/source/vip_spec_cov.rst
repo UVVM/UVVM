@@ -145,8 +145,6 @@ want to do is the following - as illustrated in the diagram below:
    :name: fig-overview
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 Simple usage
 **********************************************************************************************************************************
@@ -156,8 +154,10 @@ Shortcut with no Requirement List
 A shortcut is supported to allow all tested requirements to be reported to the Partial Coverage file - without the need for a prior
 listing of the requirements. This shortcut does of course not yield any Specification Coverage, as no specification is given, but could
 be useful for scenarios or early testing where only a list of executed tests is wanted. This shortcut mode is automatically applied
-when no Requirement List is provided as an input to the initialize_req_cov() VHDL command in the test sequencer. If so, the Partial
-Coverage files will be generated, but no Specification Coverage file (the Python script) shall be run.
+when no Requirement List is provided as an input to the initialize_req_cov() VHDL command in the test sequencer. If the run_spec_cov.py
+script is run without a requirement file, or with requirements missing from the requirement file, any requirements that are ticked off
+during simulation but are not listed in the requirement file will be marked as UNLISTED_REQ_PASS/FAIL in the output files from the
+run_spec_cov.py script, i.e. they will not be given a COMPLIANT/NON_COMPLIANT status.
 
 
 Simple usage, with multiple testcases
@@ -212,8 +212,6 @@ Testcase names and Requirement labels are not case sensitive for any comparison.
 Requirement List will be used if available. If not provided via the Requirement List, then testcase name is taken from the
 initialize_req_cov() and the requirement label from the tick_off_req_cov(). 
 
-
-.. include:: rst_snippets/subtitle_1_division.rst
 
 **********************************************************************************************************************************
 Advanced usage
@@ -348,8 +346,6 @@ UART_REQ_2 have passed - For project requirement UART_REQ_B, UART_REQ_3 has pass
 The report from run_spec_cov.py will show compliance for the project requirement (e.g.UART_REQ_A), but also for the
 "sub-requirement(s)" (e.g. UART_REQ_1 and UART_REQ_2).
 
-
-.. include:: rst_snippets/subtitle_1_division.rst
 
 **********************************************************************************************************************************
 Requirement and Map files
@@ -534,8 +530,6 @@ Example of valid and invalid usage in Requirement List file:
     REQ_2, Description 2, TC_2 # This will NOT be interpreted as a comment!
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VHDL Package
 **********************************************************************************************************************************
@@ -546,7 +540,7 @@ Configuration record
 ==================================================================================================================================
 **t_spec_cov_config**
 
-This record is located in the spec_cov_pkg.vhd. The configuration record is applied as a shared_variable 'shared_spec_cov_config' 
+This record is located in the spec_cov_pkg.vhd. The configuration record is applied as a shared_variable ``shared_spec_cov_config`` 
 to allow different configuration for different DUTs. Any test sequencer may then set the complete record as required - or even just 
 parts of it like ``shared_spec_cov_config.csv_delimiter := ';';``. The default values of this record can be modified via the 
 adaptations_pkg.
@@ -661,7 +655,7 @@ Requirement List. ::
 |          |                    |        |                              | only once. Default value is LIST_SINGLE_TICKOFF.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_SCOPE ("TB seq.(uvvm)").             |
+|          |                    |        |                              | Default value is C_SCOPE defined in adaptations_pkg.    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block:: 
@@ -692,7 +686,7 @@ If the simulation never reached this command, e.g. if failed, then no summary li
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block:: 
@@ -729,7 +723,7 @@ conditional tick off (through the disable_cond_tick_off_req_cov() procedure) wil
 |          |                    |        |                              | only once. Default value is LIST_SINGLE_TICKOFF.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_SCOPE ("TB seq.(uvvm)").             |
+|          |                    |        |                              | Default value is C_SCOPE defined in adaptations_pkg.    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -815,8 +809,6 @@ Simulator compatibility and setup
 .. include:: rst_snippets/simulator_compatibility.rst
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 Post-processing script
 **********************************************************************************************************************************
@@ -840,7 +832,7 @@ from the command line. The CSV delimiter is fetched by the Python script from th
      - Description
    * - --requirement_list (-r)
      - --requirement_list path/requirements.csv
-     - Points to the Requirement List. Mandatory. (This script is not used when running spec. cov. without a Requirement List)
+     - Points to the Requirement List (Mandatory for compliance checking)
    * - --partial_cov (-p)
      - --partial_cov my_testcase_cov.csv
        
@@ -1129,6 +1121,11 @@ Coverage output files.
 | NOT_TESTED       | Not ticked off in any  | Not ticked off in any specified     | Not ticked off in any testcase.            |
 |                  | testcase.              | testcase.                           |                                            |                     
 +------------------+------------------------+-------------------------------------+--------------------------------------------+
+| UNLISTED_REQ_PASS| Ticked off in passing testcase, but not listed in requirement list.                                       |
++------------------+------------------------+-------------------------------------+--------------------------------------------+
+| UNLISTED_REQ_FAIL| Ticked off in failing testcase, but not listed in requirement list.                                       |
++------------------+------------------------+-------------------------------------+--------------------------------------------+
+
 
 
 +------------------------+--------------------------------------------+
@@ -1143,8 +1140,6 @@ Coverage output files.
 | NOT_EXECUTED           | Testcase not executed                      |                                     
 +------------------------+--------------------------------------------+
 
-
-.. include:: rst_snippets/subtitle_1_division.rst
 
 **********************************************************************************************************************************
 Example demos

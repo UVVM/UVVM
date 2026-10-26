@@ -1,6 +1,10 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.3.4
+----------
+Released: 2025-03-25
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
 
 v2.3.3
 ----------

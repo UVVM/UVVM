@@ -36,7 +36,7 @@ use work.vvc_sb_pkg.all;
 package vvc_methods_pkg is
 
   --===============================================================================================
-  -- Types and constants for the AXI VVC 
+  -- Types and constants for the AXI VVC
   --===============================================================================================
   constant C_VVC_NAME : string := "AXI_VVC";
 
@@ -56,7 +56,7 @@ package vvc_methods_pkg is
     cmd_queue_count_max                   : natural; -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural; -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level; -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural; -- Maximum number of unfetched results before result_queue is full. 
+    result_queue_count_max                : natural; -- Maximum number of unfetched results before result_queue is full.
     result_queue_count_threshold_severity : t_alert_level; -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
     result_queue_count_threshold          : natural; -- Severity of alert to be initiated if exceeding result_queue_count_threshold
     bfm_config                            : t_axi_bfm_config; -- Configuration for AXI4 BFM. See quick reference for AXI4 BFM
@@ -108,10 +108,10 @@ package vvc_methods_pkg is
 
   shared variable shared_axi_vvc_config : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_AXI_VVC_CONFIG_DEFAULT);
   shared variable shared_axi_vvc_status : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable AXI_VVC_SB            : t_generic_sb;
+  shared variable axi_vvc_sb            : t_generic_sb;
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -298,9 +298,9 @@ package body vvc_methods_pkg is
     constant scope               : in string                       := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel               := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(awaddr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(awaddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_awid      : std_logic_vector(shared_vvc_cmd.id'length - 1 downto 0);
     variable v_normalised_awaddr    : unsigned(shared_vvc_cmd.addr'length - 1 downto 0);
     variable v_normalised_awuser    : std_logic_vector(shared_vvc_cmd.auser'length - 1 downto 0);
@@ -314,34 +314,34 @@ package body vvc_methods_pkg is
     if awid'length = 0 then
       v_normalised_awid := C_VVC_CMD_DEFAULT.id;
     else
-      v_normalised_awid := normalize_and_check(awid, shared_vvc_cmd.id, ALLOW_WIDER_NARROWER, "awid", "shared_vvc_cmd.id", "Normalizing awid. " & add_msg_delimiter(msg));
+      v_normalised_awid := normalize_and_check(awid, shared_vvc_cmd.id, ALLOW_WIDER_NARROWER, "awid", "shared_vvc_cmd.id", "Normalizing awid." & add_msg_delimiter(msg));
     end if;
-    v_normalised_awaddr                := normalize_and_check(awaddr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "awaddr", "shared_vvc_cmd.addr", "Normalizing awaddr. " & add_msg_delimiter(msg));
+    v_normalised_awaddr                := normalize_and_check(awaddr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "awaddr", "shared_vvc_cmd.addr", "Normalizing awaddr." & add_msg_delimiter(msg));
     if awuser'length = 0 then
       v_normalised_awuser := C_VVC_CMD_DEFAULT.auser;
     else
-      v_normalised_awuser := normalize_and_check(awuser, shared_vvc_cmd.auser, ALLOW_WIDER_NARROWER, "awuser", "shared_vvc_cmd.auser", "Normalizing awuser. " & add_msg_delimiter(msg));
+      v_normalised_awuser := normalize_and_check(awuser, shared_vvc_cmd.auser, ALLOW_WIDER_NARROWER, "awuser", "shared_vvc_cmd.auser", "Normalizing awuser." & add_msg_delimiter(msg));
     end if;
-    v_normalised_wdata                 := normalize_and_check(wdata, shared_vvc_cmd.data_array, ALLOW_WIDER_NARROWER, "wdata", "shared_vvc_cmd.data_array", "Normalizing wdata. " & add_msg_delimiter(msg));
+    v_normalised_wdata                 := normalize_and_check(wdata, shared_vvc_cmd.data_array, ALLOW_WIDER_NARROWER, "wdata", "shared_vvc_cmd.data_array", "Normalizing wdata." & add_msg_delimiter(msg));
     if wstrb'length = 1 and wstrb(0)'length = 1 and wstrb(0) = "U" then
       v_normalised_wstrb := C_VVC_CMD_DEFAULT.strb_array;
     else
-      v_normalised_wstrb := normalize_and_check(wstrb, shared_vvc_cmd.strb_array, ALLOW_WIDER_NARROWER, "wstrb", "shared_vvc_cmd.strb_array", "Normalizing wstrb. " & add_msg_delimiter(msg));
+      v_normalised_wstrb := normalize_and_check(wstrb, shared_vvc_cmd.strb_array, ALLOW_WIDER_NARROWER, "wstrb", "shared_vvc_cmd.strb_array", "Normalizing wstrb." & add_msg_delimiter(msg));
     end if;
     if wuser'length = 1 and wuser(0)'length = 1 and wuser(0) = "U" then
       v_normalised_wuser := C_VVC_CMD_DEFAULT.user_array;
     else
-      v_normalised_wuser := normalize_and_check(wuser, shared_vvc_cmd.user_array, ALLOW_WIDER_NARROWER, "wuser", "shared_vvc_cmd.user_array", "Normalizing wuser. " & add_msg_delimiter(msg));
+      v_normalised_wuser := normalize_and_check(wuser, shared_vvc_cmd.user_array, ALLOW_WIDER_NARROWER, "wuser", "shared_vvc_cmd.user_array", "Normalizing wuser." & add_msg_delimiter(msg));
     end if;
     if buser_exp'length = 0 then
       v_normalised_buser_exp := C_VVC_CMD_DEFAULT.user;
     else
-      v_normalised_buser_exp := normalize_and_check(buser_exp, shared_vvc_cmd.user, ALLOW_WIDER_NARROWER, "buser_exp", "shared_vvc_cmd.user", "Normalizing buser. " & add_msg_delimiter(msg));
+      v_normalised_buser_exp := normalize_and_check(buser_exp, shared_vvc_cmd.user, ALLOW_WIDER_NARROWER, "buser_exp", "shared_vvc_cmd.user", "Normalizing buser." & add_msg_delimiter(msg));
     end if;
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, WRITE);
     shared_vvc_cmd.id                  := v_normalised_awid;
     shared_vvc_cmd.addr                := v_normalised_awaddr;
     shared_vvc_cmd.len                 := awlen;
@@ -384,9 +384,9 @@ package body vvc_methods_pkg is
     constant scope               : in string                       := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel               := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(araddr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_NAME         : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL         : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                             & ", " & to_string(araddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_upper(to_string(data_routing)) & ")";
     variable v_normalised_arid   : std_logic_vector(shared_vvc_cmd.id'length - 1 downto 0);
     variable v_normalised_araddr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0);
     variable v_normalised_aruser : std_logic_vector(shared_vvc_cmd.user'length - 1 downto 0);
@@ -396,18 +396,18 @@ package body vvc_methods_pkg is
     if arid'length = 0 then
       v_normalised_arid := C_VVC_CMD_DEFAULT.id;
     else
-      v_normalised_arid := normalize_and_check(arid, shared_vvc_cmd.id, ALLOW_WIDER_NARROWER, "arid", "shared_vvc_cmd.id", "Normalizing arid. " & add_msg_delimiter(msg));
+      v_normalised_arid := normalize_and_check(arid, shared_vvc_cmd.id, ALLOW_WIDER_NARROWER, "arid", "shared_vvc_cmd.id", "Normalizing arid." & add_msg_delimiter(msg));
     end if;
     v_normalised_araddr                := normalize_and_check(araddr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "araddr", "shared_vvc_cmd.addr", msg);
     if aruser'length = 0 then
       v_normalised_aruser := C_VVC_CMD_DEFAULT.auser;
     else
-      v_normalised_aruser := normalize_and_check(aruser, shared_vvc_cmd.user, ALLOW_WIDER_NARROWER, "aruser", "shared_vvc_cmd.auser", "Normalizing aruser. " & add_msg_delimiter(msg));
+      v_normalised_aruser := normalize_and_check(aruser, shared_vvc_cmd.user, ALLOW_WIDER_NARROWER, "aruser", "shared_vvc_cmd.auser", "Normalizing aruser." & add_msg_delimiter(msg));
     end if;
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, READ);
     shared_vvc_cmd.id                  := v_normalised_arid;
     shared_vvc_cmd.addr                := v_normalised_araddr;
     shared_vvc_cmd.len                 := arlen;
@@ -449,9 +449,9 @@ package body vvc_methods_pkg is
     constant scope               : in string                       := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel               := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(araddr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(araddr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_arid   : std_logic_vector(shared_vvc_cmd.id'length - 1 downto 0);
     variable v_normalised_araddr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0);
     variable v_normalised_aruser : std_logic_vector(shared_vvc_cmd.auser'length - 1 downto 0);
@@ -464,20 +464,20 @@ package body vvc_methods_pkg is
     if arid'length = 0 then
       v_normalised_arid := C_VVC_CMD_DEFAULT.id;
     else
-      v_normalised_arid := normalize_and_check(arid, shared_vvc_cmd.id, ALLOW_WIDER_NARROWER, "arid", "shared_vvc_cmd.id", "Normalizing arid. " & add_msg_delimiter(msg));
+      v_normalised_arid := normalize_and_check(arid, shared_vvc_cmd.id, ALLOW_WIDER_NARROWER, "arid", "shared_vvc_cmd.id", "Normalizing arid." & add_msg_delimiter(msg));
     end if;
     v_normalised_araddr                := normalize_and_check(araddr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "araddr", "shared_vvc_cmd.addr", msg);
     if aruser'length = 0 then
       v_normalised_aruser := C_VVC_CMD_DEFAULT.auser;
     else
-      v_normalised_aruser := normalize_and_check(aruser, shared_vvc_cmd.user, ALLOW_WIDER_NARROWER, "aruser", "shared_vvc_cmd.user", "Normalizing aruser. " & add_msg_delimiter(msg));
+      v_normalised_aruser := normalize_and_check(aruser, shared_vvc_cmd.user, ALLOW_WIDER_NARROWER, "aruser", "shared_vvc_cmd.user", "Normalizing aruser." & add_msg_delimiter(msg));
     end if;
-    v_normalised_rdata                 := normalize_and_check(rdata_exp, shared_vvc_cmd.data_array, ALLOW_WIDER_NARROWER, "rdata_exp", "shared_vvc_cmd.data_array", "Normalizing rdata. " & add_msg_delimiter(msg));
+    v_normalised_rdata                 := normalize_and_check(rdata_exp, shared_vvc_cmd.data_array, ALLOW_WIDER_NARROWER, "rdata_exp", "shared_vvc_cmd.data_array", "Normalizing rdata." & add_msg_delimiter(msg));
     if rresp_exp'length = 1 and rresp_exp(0) = ILLEGAL then
       v_normalised_rresp := C_VVC_CMD_DEFAULT.resp_array;
     else
       if not rresp_exp'ascending then
-        tb_error("The array rresp_exp is instantiated as 'downto', but only 'to' is supported" & add_msg_delimiter(msg), scope);
+        tb_error("The array rresp_exp is instantiated as 'downto', but only 'to' is supported." & add_msg_delimiter(msg), scope);
       else
         for i in 0 to minimum(rresp_exp'length, shared_vvc_cmd.resp_array'length) - 1 loop
           v_normalised_rresp(i) := rresp_exp(i);
@@ -487,12 +487,12 @@ package body vvc_methods_pkg is
     if ruser_exp'length = 1 and ruser_exp(0)'length = 1 and ruser_exp(0) = "U" then
       v_normalised_ruser := C_VVC_CMD_DEFAULT.user_array;
     else
-      v_normalised_ruser := normalize_and_check(ruser_exp, shared_vvc_cmd.user_array, ALLOW_WIDER_NARROWER, "ruser_exp", "shared_vvc_cmd.user_array", "Normalizing ruser. " & add_msg_delimiter(msg));
+      v_normalised_ruser := normalize_and_check(ruser_exp, shared_vvc_cmd.user_array, ALLOW_WIDER_NARROWER, "ruser_exp", "shared_vvc_cmd.user_array", "Normalizing ruser." & add_msg_delimiter(msg));
     end if;
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, CHECK);
     shared_vvc_cmd.id                  := v_normalised_arid;
     shared_vvc_cmd.addr                := v_normalised_araddr;
     shared_vvc_cmd.len                 := arlen;

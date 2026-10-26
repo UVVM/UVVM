@@ -1,6 +1,33 @@
 UVVM VVC Framework - Overview on Versions and Changes
+==============================================================
 
-----------------------------------------------------------------------
+v2.12.15
+----------
+Released: 2026-02-14
+- Updated await_uvvm_completion() to check first that scoreboards are empty and then VVCs are inactive.
+
+v2.12.14
+----------
+Released: 2025-11-28
+- Replaced constant C_VVC_NAME_MAX_LENGTH for C_MAX_VVC_NAME_LENGTH.
+- Added missing deprecate() calls to some procedures.
+- Updated log messages from await_completion().
+
+v2.12.13
+----------
+Released: 2025-09-17
+- Fixed vvc_generator.py where v_msg_id_panel was not being used correctly in cmd_interpreter.
+
+v2.12.12
+----------
+Released: 2025-08-18
+- Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
+- Updated check_unwanted_activity() procedures to ignore signal transitions from 'X' to '0'/'1'.
+
+v2.12.11
+----------
+Released: 2025-03-25
+- Updated vvc_generator.py to add missing delta cycle needed to update the last_cmd_idx_executed when not using transaction info.
 
 v2.12.10
 ----------

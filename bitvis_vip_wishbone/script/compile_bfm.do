@@ -33,6 +33,8 @@ if {[catch {eval "vsim -version"} message] == 0} {
   # puts "Version is: $simulator_version"
   if {[regexp -nocase {modelsim} $simulator_version]} {
     quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {questasim} $simulator_version]} {
+    quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
@@ -48,7 +50,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
 if {[batch_mode]} {
   if { [string equal -nocase $simulator "rivierapro"] } {
     # Special for Riviera-PRO
-    onerror {abort all; quit -code 1 -force}
+    onerror {quit -code 1 -force}
    } else {
     onerror {abort all; exit -f -code 1}
   }

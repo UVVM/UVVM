@@ -29,7 +29,7 @@ Coverpoints and bins
 Each point of the design that we wish to test is referred to as a *coverpoint*. A coverpoint can for instance be an input port, 
 output port or an internal register.
 
-A coverpoint is added by creating a shared variable of the protected type t_coverpoint.
+A coverpoint is added by creating a shared variable of the protected type **t_coverpoint**.
 
 .. code-block::
 
@@ -118,7 +118,7 @@ Getting started
 All the functionality for coverage can be found in *uvvm_util/src/func_cov_pkg.vhd*.
 
 To start using functional coverage it is necessary to import the utility library, create one or more shared variables with the protected 
-type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
+type **t_coverpoint** and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
 
 .. code-block::
 
@@ -167,7 +167,7 @@ The following code adds a bin for the value 1 to the coverpoint named *my_coverp
 
     my_coverpoint.add_bins(bin(1));
 
-Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
+Bins are implemented as record elements inside the protected type **t_coverpoint**, which represents both coverpoints and crosses.
 
 
 Bins can be created using the following :ref:`bin functions <bin_functions>`:
@@ -233,8 +233,10 @@ The bin functions may be concatenated to add several bins at once.
 
 .. note::
 
-    The maximum number of bins which can be added at once using a single ``add_bins()`` call is limited by C_FC_MAX_NUM_NEW_BINS 
-    defined in adaptations_pkg.
+    * The maximum number of bins which can be added at once using a single ``add_bins()`` call is limited by C_FC_MAX_NUM_NEW_BINS 
+      defined in adaptations_pkg.
+    * If many bins are added at once using concatenation, there will be a temporary increase in memory usage due to the big array
+      being created to hold all the bins. However, after ``add_bins()`` has finished, the memory will be released.
 
 Ignore bins
 ==================================================================================================================================
@@ -286,7 +288,7 @@ sampled. The default severity of the alert is ERROR and can be configured using 
 Using predefined bins
 ==================================================================================================================================
 Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable 
-can be created using the type *t_new_bin_array(0 to 0)* which is returned by any of the bin functions. 
+can be created using the type **t_new_bin_array(0 to 0)** which is returned by any of the bin functions. 
 
 .. code-block::
 
@@ -338,18 +340,44 @@ when the list becomes full. These constants are defined in adaptations_pkg.
 Moreover, the procedures ``set_num_allocated_bins()`` and ``set_num_allocated_bins_increment()`` can be used to reconfigure a 
 coverpoint's respective values.
 
+.. _bin_name:
+
 Bin name
 ==================================================================================================================================
-Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` procedure. If no name is given to the bin, a 
-default name will be automatically given. Having a bin name is useful when reading the reports.
+Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` and ``add_cross()`` procedures. If no name is
+given, a default name with an index appended will be given. The default bin name is *bin_<idx>* and is set by the
+C_FC_DEFAULT_BIN_NAME constant in the adaptations_pkg. If multiple bins are given to ``add_bins()`` (by using ``bin_range()``,
+``bin_vector()``, or concatenation), or if a call to ``add_cross()`` results in multiple cross bins, the bin name will be indexed
+as shown in the examples below. All bin name indices starts from 1.
+
+A warning is issued when duplicate bin names are detected. This warning can be turned off by setting the
+C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg to ``false``.
+
+Having bin names is useful when reading the reports.
 
 .. code-block::
 
-    add_bins(bin, [bin_name])
+    coverpoint_1.add_bins(bin(0));                        -- bin name: bin_1
+    coverpoint_1.add_bins(bin(255), "bin_max");           -- bin name: bin_max
+    coverpoint_1.add_bins(bin_range(0, 32, 4), "addr");   -- bin names: addr[1], addr[2], addr[3], addr[4]
+    coverpoint_1.add_bins(bin(0) & bin(100), "two_bins"); -- bin names: two_bins[1], two_bins[2]
+    coverpoint_1.add_bins(bin(1000));                     -- bin name: bin_2
+    coverpoint_1.add_bins(bin_range(0, 100, 4));          -- bin names: bin_3[1], bin_3[2], bin_3[3], bin_3[4]
 
-    my_coverpoint.add_bins(bin(255), "bin_max");
+    coverpoint_2.add_cross(bin(0), bin(10));                                    -- bin name: bin_1
+    coverpoint_2.add_cross(bin(0), bin(100), "cross_bin_a");                    -- bin name: cross_bin_a
+    coverpoint_2.add_cross(bin(0), bin(50), bin(100), "cross_bin_b");           -- bin name: cross_bin_b
+    coverpoint_2.add_cross(bin(0) & bin(5) & bin(10), bin(100), "cross_bin_c"); -- bin names: cross_bin_c[1], cross_bin_c[2], cross_bin_c[3]
+    coverpoint_2.add_cross(bin_range(0, 10, 3), bin(100), "cross_bin_d");       -- bin names: cross_bin_d[1], cross_bin_d[2], cross_bin_d[3]
+    coverpoint_2.add_cross(bin(10), bin(10000));                                -- bin name: bin_2
+    coverpoint_2.add_cross(bin(5), bin_range(0, 100, 3));                       -- bin names: bin_3[1], bin_3[2], bin_3[3]
 
-The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
+The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. Longer names will be truncated
+without warning.
+
+.. note::
+
+   It is recommended not to use bin names that may be generated automatically as input to the ``add_bins()`` and ``add_cross()`` procedures.
 
 Minimum coverage
 ==================================================================================================================================
@@ -501,6 +529,10 @@ in a bin has reached the minimum coverage, the bin will be marked as covered.
 
     It is NOT recommended to add more bins to a given coverpoint after it has been sampled, since the new bins will be missing any 
     previous sampled coverage. A TB_WARNING alert is generated whenever this occurs.
+
+.. note::
+    Questa One v.2026.1 and newer adds support for enabling automatic sampling of coverpoints.
+    See :ref:`Questa One Extended Features<questa_func_cov>`
 
 Overlapping bins
 ==================================================================================================================================
@@ -1176,34 +1208,85 @@ Clearing a coverpoint
 **********************************************************************************************************************************
 A coverpoint's complete model, configuration and counters can be reset with ``delete_coverpoint()``.
 
+
+.. _questa_func_cov:
+
+**********************************************************************************************************************************
+Questa One Extended Features
+**********************************************************************************************************************************
+Questa One v.2026.1 and newer supports some extended features for UVVM Functional Coverage. This includes automatic coverpoint
+sampling, UCDB database write support and GUI view of coverpoint coverage.
+
+.. important::
+    The functionality described in this section is only supported in Questa One v.2026.1 and newer
+
+Enabling extended features for Questa One
+==================================================================================================================================
+See :ref:`Getting Started - Questa One Extended Features<questa_enabling>` for instructions on how to enable the extended
+functionality.
+
+Auto-sampling of coverage
+==================================================================================================================================
+Auto-sampling allows for coverpoint data to be sampled automatically (without needing to call the ``sample_coverage()`` method) by
+defining a target signal or variable to be sampled, and a trigger signal which will trigger the sampling. Auto-sampling is enabled for
+a coverpoint by calling the method ``enable_auto_sampling(target, trigger)``. When auto-sampling is enabled, the value indicated by
+``target`` will be sampled to the coverpoint any time the ``trigger`` signal changes. ``target`` can be either a signal or a variable,
+while ``trigger`` must be a signal.
+
+.. note::
+    The overall coverage methods ``fc_get_overall_coverage()``, ``fc_overall_coverage_completed()`` and 
+    ``fc_report_overall_coverage()`` do not support auto-sampled coverpoints. It is recommended to instead retreive coverage status for
+    each coverpoint by using the t_coverpoint methods ``get_coverage()``, ``report_coverage()`` and ``coverage_completed()`` 
+
+
+GUI coverage view and report generation
+==================================================================================================================================
+Coverage can be viewed in the Coverpoint GUI view of Questa One or Questa Visualizer by saving coverage to a .ucdb file after
+simulation has been run. This also enables UVVM Functional Coverage data to be included in the coverage reports generated by
+Questa.
+
+Saving Functional Coverage data to UCDB database file
+----------------------------------------------------------------------------------------------------------------------------------
+Ensure that the extended features have been enabled by following the steps described above TODO:link. 
+After running the simulation, save the coverage data to a UCDB database file by either:
+a. Questa tcl command line: call **coverage save <filename>.ucdb**, where <filename> is the desired name for the UCDB file.
+b. In Questa GUI, select menu option **Tools->Coverage save**. 
+
+Viewing Functional Coverage in GUI mode
+----------------------------------------------------------------------------------------------------------------------------------
+To view Functional Coverage data saved to a UCDB file as described in the previous step, use tcl command **vsim -viewcov
+<filename>.ucdb** or menu option **Open-><filename>.ucdb**. To open the Coverpoint view, select menu option
+**View->Coverage->Covergroups**. 
+
 **********************************************************************************************************************************
 Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *func_cov_pkg* use the following message IDs (disabled by default):
 
-* ID_FUNC_COV_BINS: Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods. Note that each bin function within 
+* ID_FUNC_COV_BINS: Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods. Note that each bin function within
   the ``add_bins()`` and ``add_cross()`` log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.
 * ID_FUNC_COV_BINS_INFO: Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods detailed information.
 * ID_FUNC_COV_RAND: Used for logging functional coverage "Optimized Randomization" values returned by rand().
 * ID_FUNC_COV_SAMPLE: Used for logging functional coverage sampling.
 * ID_FUNC_COV_CONFIG: Used for logging functional coverage configuration changes.
 
-The default scope for log messages in the *func_cov_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure 
+The default scope for log messages in the *func_cov_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure
 ``set_scope()``. The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
 
 The maximum number of coverpoints that can be created is determined by C_FC_MAX_NUM_COVERPOINTS defined in adaptations_pkg.
 
 .. note::
 
-    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar 
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar
     functionality in SystemVerilog and OSVVM.
+
 
 .. _func_cov_pkg:
 
 **********************************************************************************************************************************
 func_cov_pkg
 **********************************************************************************************************************************
-The following links contain information regarding the API of the protected type *t_coverpoint*, the API for the general methods and 
+The following links contain information regarding the API of the protected type **t_coverpoint**, the API for the general methods and 
 all the type definitions inside *func_cov_pkg*.
 
 .. toctree::

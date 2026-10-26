@@ -5,7 +5,7 @@ Protected type containing the Enhanced Randomization functionality.
 
 .. _random_generator:
 
-The expression 'random generator' refers to the specific variable instance of *t_rand*.
+The expression 'random generator' refers to the specific variable instance of **t_rand**.
 
 Common configuration
 ==================================================================================================================================
@@ -38,7 +38,7 @@ Returns the random :ref:`random generator's <random_generator>` name. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -82,7 +82,7 @@ Returns the configured scope. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -104,7 +104,8 @@ distributions click :ref:`here <rand_pkg_distributions>`. ::
 | constant | rand_dist          | in     | :ref:`t_rand_dist`           | Randomization distribution, e.g. UNIFORM, GAUSSIAN    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -122,7 +123,7 @@ Returns the configured randomization distribution. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -145,7 +146,8 @@ distribution curve). ::
 | constant | mean               | in     | real                         | Mean value for the distribution                       |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -164,7 +166,7 @@ being used (since it depends on the parameters of each ``rand()`` call). ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -184,10 +186,11 @@ Clears the configured mean value. A value depending on the parameters of each ``
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -212,7 +215,8 @@ distribution curve). ::
 |          |                    |        |                              | Must be a positive value                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -231,7 +235,7 @@ default value is being used (since it depends on the parameters of each ``rand()
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -251,10 +255,11 @@ Clears the configured standard deviation value. A value depending on the paramet
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -277,7 +282,8 @@ overview on weighted randomization click :ref:`here <rand_pkg_weighted>`. ::
 | constant | mode               | in     | :ref:`t_weight_mode`         | How to divide the weight among a range of values      |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -295,7 +301,7 @@ Returns the default range weight mode. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -315,10 +321,11 @@ on cyclic randomization click :ref:`here <rand_pkg_cyclic>`. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see|
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -330,15 +337,16 @@ on cyclic randomization click :ref:`here <rand_pkg_cyclic>`. ::
 
 report_config()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints a report containing the :ref:`random generator's <random_generator>` configuration parameters. To see an example of the 
-generated report click :ref:`here <rand_pkg_config_report>`. ::
+Prints a report containing the :ref:`random generator's <random_generator>` configuration parameters. The printing destination can 
+be log and/or console and is defined by the ``shared variable shared_default_log_destination`` with the default value set by 
+C_DEFAULT_LOG_DESTINATION in adaptations_pkg. To see an example of the generated report click :ref:`here <rand_pkg_config_report>`. ::
 
     report_config(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -390,7 +398,7 @@ Returns the randomization seeds. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | variable | seed2              | out    | positive                     | A positive number representing seed 2                 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -437,7 +445,8 @@ Returns a random integer value. For more information on the probability distribu
 |          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -480,7 +489,8 @@ Returns a random real value. For more information on the probability distributio
 | constant | set_of_values      | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -501,13 +511,13 @@ return time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random time value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    time := rand(min_value, max_value, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], [msg_id_panel])
     time := rand(specifier, set_of_values, [msg_id_panel])
-    time := rand(min_value, max_value, specifier, value, [msg_id_panel])
-    time := rand(min_value, max_value, specifier, set_of_values, [msg_id_panel])
-    time := rand(min_value, max_value, specifier1, value1, specifier2, value2, [msg_id_panel])
-    time := rand(min_value, max_value, specifier1, value1, specifier2, set_of_values2, [msg_id_panel])
-    time := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier, value, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier, set_of_values, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier1, value1, specifier2, value2, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier1, value1, specifier2, set_of_values2, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier1, set_of_values1, specifier2, set_of_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -516,6 +526,11 @@ Returns a random time value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                              | smallest time unit between the min and max parameters.        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | specifier          | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | time                         | A single value used for the generation of the random number   |
@@ -523,13 +538,16 @@ Returns a random time value. For more information on the probability distributio
 | constant | set_of_values      | in     | time_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    rand_time := my_rand.rand(0 ps, 100 ps);
+    rand_time := my_rand.rand(1 us, 100 us);         -- Generates random values with a resolution of 1 us
+    rand_time := my_rand.rand(1 us, 100 us, ns);     -- Generates random values with a resolution of 1 ns
+    rand_time := my_rand.rand(1 us, 100 us, 100 ns); -- Generates random values with a resolution of 100 ns
     rand_time := my_rand.rand(ONLY, (5 us, 10 us, 15 us, 20 us));
     rand_time := my_rand.rand(1 ns, 10 ns, ADD,(20 ns));
     rand_time := my_rand.rand(1 ns, 10 ns, EXCL,(5 ns, 6 ns));
@@ -574,7 +592,8 @@ Returns a vector of random integer values. For more information on the probabili
 |          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -622,7 +641,8 @@ Returns a vector of random real values. For more information on the probability 
 |          |                    |        |                              | Default value is NON_UNIQUE.                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -643,13 +663,13 @@ return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    time_vector := rand(length, min_value, max_value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], [uniqueness, [msg_id_panel]])
     time_vector := rand(length, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier, value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -659,6 +679,11 @@ Returns a vector of random time values. For more information on the probability 
 | constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                              | smallest time unit between the min and max parameters.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | specifier          | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -670,13 +695,16 @@ Returns a vector of random time values. For more information on the probability 
 |          |                    |        |                              | Default value is NON_UNIQUE.                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 us, 100 us);         -- Generates random values with a resolution of 1 us
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 us, 100 us, ns);     -- Generates random values with a resolution of 1 ns
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 us, 100 us, 100 ns); -- Generates random values with a resolution of 100 ns
     rand_time_vec := my_rand.rand(rand_time_vec'length, ONLY, (5 us, 10 us, 15 us, 20 us, 25 us, 30 us));
     rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, ADD,(20 ns));
     rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, EXCL,(5 ns, 6 ns));
@@ -719,7 +747,8 @@ Returns a random unsigned value. For more information on the probability distrib
 |          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -755,7 +784,8 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 | constant | max_value          | in     | unsigned                     | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -799,7 +829,8 @@ Returns a random signed value. For more information on the probability distribut
 |          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -835,7 +866,8 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 | constant | max_value          | in     | signed                       | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -880,7 +912,8 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 |          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -917,7 +950,8 @@ largest length of either min_value or max_value. For more information on the pro
 | constant | max_value          | in     | std_logic_vector             | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -939,10 +973,11 @@ Returns a random std_logic value. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default          |
-|          |                    |        |                              | value is shared_msg_id_panel.                                 |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see        |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -964,10 +999,11 @@ Returns a random boolean value. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default          |
-|          |                    |        |                              | value is shared_msg_id_panel.                                 |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see        |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1003,7 +1039,8 @@ randomization. The sum of all weights could be any value since each individual p
 |          |                    |        | :ref:`t_val_weight_time_vec` |                                                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1031,7 +1068,7 @@ This mode can be changed to assigning the given weight equally to each value wit
 
     integer          := rand_range_weight(weighted_vector, [msg_id_panel])
     real             := rand_range_weight(weighted_vector, [msg_id_panel])
-    time             := rand_range_weight(weighted_vector, [msg_id_panel])
+    time             := rand_range_weight(weighted_vector, [time_resolution], [msg_id_panel])
     unsigned         := rand_range_weight(length, weighted_vector, [msg_id_panel])
     signed           := rand_range_weight(length, weighted_vector, [msg_id_panel])
     std_logic_vector := rand_range_weight(length, weighted_vector, [msg_id_panel])
@@ -1045,8 +1082,15 @@ This mode can be changed to assigning the given weight equally to each value wit
 |          |                    |        |                               |                                                               |
 |          |                    |        | :ref:`t_range_weight_time_vec`|                                                               |
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                          | Defines how many values can be generated between min_value and|
+|          |                    |        |                               | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                               | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                               | smallest time unit between the min and max parameters of the  |
+|          |                    |        |                               | first element in the weighted_vector.                         |
++----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel                | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                               | shared_msg_id_panel.                                          |
+|          |                    |        |                               | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                               | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1054,7 +1098,9 @@ This mode can be changed to assigning the given weight equally to each value wit
     -- Examples:
     rand_int  := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50)));
     rand_real := my_rand.rand_range_weight(((-5.0,-3.0,10),(0.0,0.0,30),(1.0,5.0,60)));
-    rand_time := my_rand.rand_range_weight(((1 ns,5 ns,10),(10 ns,10 ns,30),(25 ns,50 ns,60)));
+    rand_time := my_rand.rand_range_weight(((1 us,5 us,10),(10 us,10 us,30),(25 us,50 us,60)));         -- Generates random values with a resolution of 1 us
+    rand_time := my_rand.rand_range_weight(((1 us,5 us,10),(10 us,10 us,30),(25 us,50 us,60)), ns);     -- Generates random values with a resolution of 1 ns
+    rand_time := my_rand.rand_range_weight(((1 us,5 us,10),(10 us,10 us,30),(25 us,50 us,60)), 100 ns); -- Generates random values with a resolution of 100 ns
     rand_uns  := my_rand.rand_range_weight(rand_uns'length, ((10,15,1),(20,25,3),(30,35,6)));
     rand_sign := my_rand.rand_range_weight(rand_sign'length, ((-5,-3,1),(0,0,2),(5,10,2)));
     rand_slv  := my_rand.rand_range_weight(rand_slv'length, ((10,15,5),(20,25,1),(30,35,1))); -- SLV is interpreted as unsigned
@@ -1083,7 +1129,7 @@ values within a real/time range. ::
 
     integer          := rand_range_weight_mode(weighted_vector, [msg_id_panel])
     real             := rand_range_weight_mode(weighted_vector, [msg_id_panel])
-    time             := rand_range_weight_mode(weighted_vector, [msg_id_panel])
+    time             := rand_range_weight_mode(weighted_vector, [time_resolution], [msg_id_panel])
     unsigned         := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
     signed           := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
     std_logic_vector := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
@@ -1097,8 +1143,15 @@ values within a real/time range. ::
 |          |                    |        |                                    |                                                                |
 |          |                    |        | :ref:`t_range_weight_mode_time_vec`|                                                                |
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
+| constant | time_resolution    | in     | time                               | Defines how many values can be generated between min_value and |
+|          |                    |        |                                    | max_value. If the given resolution is too small for the range, |
+|          |                    |        |                                    | a TB_WARNING will be printed once. Default value is the        |
+|          |                    |        |                                    | smallest time unit between the min and max parameters of the   |
+|          |                    |        |                                    | first element in the weighted_vector.                          |
++----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel                     | Controls verbosity within a specified scope. Default value is  |
-|          |                    |        |                                    | shared_msg_id_panel.                                           |
+|          |                    |        |                                    | shared_msg_id_panel. For more information see                  |
+|          |                    |        |                                    | :ref:`vvc_framework_verbosity_ctrl`.                           |
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
 
 .. code-block::
@@ -1106,7 +1159,9 @@ values within a real/time range. ::
     -- Examples:
     rand_int  := my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,INDIVIDUAL_WEIGHT)));
     rand_real := my_rand.rand_range_weight_mode(((-5.0,-3.0,10,COMBINED_WEIGHT),(0.0,0.0,30,NA),(1.0,5.0,60,COMBINED_WEIGHT)));
-    rand_time := my_rand.rand_range_weight_mode(((1 ns,5 ns,10,COMBINED_WEIGHT),(10 ns,10 ns,30,NA),(25 ns,50 ns,60,COMBINED_WEIGHT)));
+    rand_time := my_rand.rand_range_weight_mode(((1 us,5 us,10,COMBINED_WEIGHT),(10 us,10 us,30,NA),(25 us,50 us,60,COMBINED_WEIGHT)));         -- Generates random values with a resolution of 1 us
+    rand_time := my_rand.rand_range_weight_mode(((1 us,5 us,10,COMBINED_WEIGHT),(10 us,10 us,30,NA),(25 us,50 us,60,COMBINED_WEIGHT)), ns);     -- Generates random values with a resolution of 1 ns
+    rand_time := my_rand.rand_range_weight_mode(((1 us,5 us,10,COMBINED_WEIGHT),(10 us,10 us,30,NA),(25 us,50 us,60,COMBINED_WEIGHT)), 100 ns); -- Generates random values with a resolution of 100 ns
     rand_uns  := my_rand.rand_range_weight_mode(rand_uns'length, ((10,15,1,INDIVIDUAL_WEIGHT),(20,20,3,NA),(30,35,6,INDIVIDUAL_WEIGHT)));
     rand_sign := my_rand.rand_range_weight_mode(rand_sign'length, ((-5,-3,1,INDIVIDUAL_WEIGHT),(0,0,2,NA),(5,10,2,INDIVIDUAL_WEIGHT)));
     rand_slv  := my_rand.rand_range_weight_mode(rand_slv'length, ((10,15,5,INDIVIDUAL_WEIGHT),(20,20,1,NA),(30,35,1,INDIVIDUAL_WEIGHT))); -- SLV is interpreted as unsigned
@@ -1129,13 +1184,14 @@ Adds a constraint specifying a range which will be included in the randomized va
 | constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
-    my_rand.add_range(1,10);
+    my_rand.add_range(1, 10);
 
 
 add_range_real()
@@ -1152,20 +1208,21 @@ Adds a constraint specifying a range which will be included in the randomized va
 | constant | max_value          | in     | real                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
-    my_rand.add_range_real(1.0,10.0);
+    my_rand.add_range_real(1.0, 10.0);
 
 
 add_range_time()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. ::
 
-    add_range_time(min_value, max_value, [msg_id_panel])
+    add_range_time(min_value, max_value, [time_resolution], [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -1174,14 +1231,22 @@ Adds a constraint specifying a range which will be included in the randomized va
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                              | smallest time unit between the min and max parameters.        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
-    my_rand.add_range_time(1 ns,10 ns);
+    my_rand.add_range_time(1 us, 10 us);         -- Generates random values with a resolution of 1 us
+    my_rand.add_range_time(1 us, 10 us, ns);     -- Generates random values with a resolution of 1 ns
+    my_rand.add_range_time(1 us, 10 us, 100 ns); -- Generates random values with a resolution of 100 ns
 
 
 .. _add_range_unsigned:
@@ -1201,7 +1266,8 @@ values bigger than the integer's 32-bit range. ::
 | constant | max_value          | in     | unsigned                     | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1227,7 +1293,8 @@ values bigger than the integer's 32-bit range. ::
 | constant | max_value          | in     | signed                       | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1251,7 +1318,8 @@ Adds a constraint specifying a single value or a set of values which will be inc
 | constant | set_of_values      | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1276,7 +1344,8 @@ Adds a constraint specifying a single value or a set of values which will be inc
 | constant | set_of_values      | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1301,7 +1370,8 @@ Adds a constraint specifying a single value or a set of values which will be inc
 | constant | set_of_values      | in     | time_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1326,7 +1396,8 @@ Adds a constraint specifying a single value or a set of values which will be exc
 | constant | set_of_values      | in     | integer_vector               | A set of values excluded from the generated random numbers    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1351,7 +1422,8 @@ Adds a constraint specifying a single value or a set of values which will be exc
 | constant | set_of_values      | in     | real_vector                  | A set of values excluded from the generated random numbers    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1376,7 +1448,8 @@ Adds a constraint specifying a single value or a set of values which will be exc
 | constant | set_of_values      | in     | time_vector                  | A set of values excluded from the generated random numbers    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1402,7 +1475,8 @@ Adds a constraint specifying a single value with a weight which will be included
 | constant | weight             | in     | natural                      | Determines how often the value is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1428,7 +1502,8 @@ Adds a constraint specifying a single value with a weight which will be included
 | constant | weight             | in     | natural                      | Determines how often the value is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1454,7 +1529,8 @@ Adds a constraint specifying a single value with a weight which will be included
 | constant | weight             | in     | natural                      | Determines how often the value is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1486,7 +1562,8 @@ Adds a constraint specifying a range with a weight which will be included in the
 |          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1522,7 +1599,8 @@ used by default due to the very large number of values within a real range. ::
 | constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1537,7 +1615,8 @@ used by default due to the very large number of values within a real range. ::
 add_range_weight_time()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is 
-used by default due to the very large number of values within a time range. ::
+used by default due to the very large number of values within a time range. To specify the time resolution see 
+:ref:`set_range_weight_time_resolution` ::
 
     add_range_weight_time(min_value, max_value, weight, [msg_id_panel])
 
@@ -1551,7 +1630,8 @@ used by default due to the very large number of values within a time range. ::
 | constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1574,7 +1654,8 @@ Configures whether cyclic mode is enabled or disabled. Default value is NON_CYCL
 | constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1596,13 +1677,43 @@ Configures whether uniqueness is enabled or disabled. Default value is NON_UNIQU
 | constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in a vector should be unique or not        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
     my_rand.set_uniqueness(UNIQUE);
+
+
+.. _set_range_weight_time_resolution:
+
+set_range_weight_time_resolution()
+----------------------------------------------------------------------------------------------------------------------------------
+Sets the time resolution to use in the weighted distribution functions. Default value is the smallest time unit between the min 
+and max parameters of the first element added to the weighted_vector. ::
+
+    set_range_weight_time_resolution(time_resolution, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.set_range_weight_time_resolution(100 ns); -- Generates random values with a resolution of 100 ns
+    my_rand.add_range_weight_time(10 us,19 us, 1);
+    my_rand.add_range_weight_time(20 us,29 us, 3);
 
 
 clear_constraints()
@@ -1615,10 +1726,11 @@ Removes all the randomization constraints in the :ref:`random generator <random_
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1638,10 +1750,11 @@ Resets all the configuration parameters to their default values and removes all 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1666,10 +1779,11 @@ Returns a random integer value using the configured constraints. For more inform
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1694,10 +1808,11 @@ Returns a random real value using the configured constraints. For more informati
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1722,10 +1837,11 @@ Returns a random time value using the configured constraints. For more informati
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
+| constant | VOID               | in     | :ref:`t_void`                | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1752,7 +1868,8 @@ click :ref:`here <rand_pkg_distributions>`. ::
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1779,7 +1896,8 @@ click :ref:`here <rand_pkg_distributions>`. ::
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1806,7 +1924,8 @@ click :ref:`here <rand_pkg_distributions>`. ::
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1833,7 +1952,8 @@ Returns a random unsigned value using the configured constraints. For more infor
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1864,7 +1984,8 @@ Returns a random signed value using the configured constraints. For more informa
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1895,7 +2016,8 @@ probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
-|          |                    |        |                              | shared_msg_id_panel.                                          |
+|          |                    |        |                              | shared_msg_id_panel. For more information see                 |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1909,3 +2031,367 @@ probability distribution click :ref:`here <rand_pkg_distributions>`. ::
     -- Example 2:
     my_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
     rand_slv := my_rand.randm(rand_slv'length);
+
+
+.. _questa_rand_methods:
+
+Additional methods for Questa One
+==================================================================================================================================
+
+Questa One v. 2026.1 and newer includes support for some additional constraint methods for use with with the Multi-method approach.
+See :ref:`questa_enabling` for information about how to enable this functionality.
+
+
+excl_range()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing a range of values to be excluded from the randomized
+values. ::
+
+    excl_range(min, max, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min                | in     | integer                      | The minimum value in the range to exclude when generating the |
+|          |                    |        |                              | random number.                                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max                | in     | integer                      | The maximum value in the range to exclude when generating the |
+|          |                    |        |                              | random number.                                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.excl_range(10, 20);
+
+
+vector_sum_min()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing that the sum of all the integers in a randomized
+integer vector shall be greater than or equal to the given value. ::
+
+    vector_sum_min(min, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | min                | in     | integer                  | The minimum value for the sum of all the values in the        |
+|          |                    |        |                          | random integer vector.                                        |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.vector_sum_min(10);
+
+
+vector_sum_max()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing that the sum of all the integers in a randomized
+integer vector shall be less than or equal to the given value. ::
+
+    vector_sum_min(max, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | max                | in     | integer                  | The maximum value for the sum of all the values in the        |
+|          |                    |        |                          | random integer vector.                                        |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.vector_sum_max(1000);
+
+
+excl_range_real()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing a range of values to be excluded from the ranodmized values. ::
+
+    excl_range_real(min, max, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | min                | in     | real                     | The minimum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | max                | in     | real                     | The maximum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_real(0.0, 10.0);
+    my_rand.excl_range_real(1.0, 5.5);
+
+
+excl_range_time()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Adds a constraint specyfing a range of values to be excluded from the ranodmized values. ::
+
+    excl_range_time(min, max, [msg_id_panel])
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | min                | in     | time                     | The minimum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | max                | in     | time                     | The maximum value in the range to exclude when generating the |
+|          |                    |        |                          | random number.                                                |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel           | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                          | shared_msg_id_panel.                                          |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_time(0 ns, 100 ns);
+    my_rand.excl_range_time(5 ns, 10 ns);
+
+
+get_value()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Returns internal linked randomized value from an linked coverpoint. Must be
+called on secondary coverpoint after first calling link() and randm() on the primary coverpoint. ::
+
+    integer          := get_value(VOID)
+    real             := get_value(VOID)
+    time             := get_value(VOID)
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | VOID               | in     | t_void                   | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| constant | length             | in     | positive                 | The length of the value to be returned                        |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+    :emphasize-lines: 7
+
+    -- Example 1:
+    my_rand1.add_range(0, 100);
+    my_rand2.add_range(0, 50);
+    handle_my_rand_2 := my_rand2.create_rand(VOID);
+    my_rand1.link(GT, handle_my_rand_2);   -- Define relationship rand1 > rand2
+    rand1_int := my_rand1.randm(VOID);     -- Randomize rand1 and rand2. Return rand1 value
+    rand2_int := my_rand2.get_value(VOID); -- Get rand2 value created by randm() call in previous step
+
+
+create_rand()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Creates internal randomisation object inside the t_rand object. This internal randomisation object is used for generation of linked
+randomised variables. The procedure call returns a handle to this ``t_rand`` object. This handle is used when calling the ``link()``
+procedure on another ``t_rand`` object to link it to this one. When ``randm()`` is called on the other t_rand object, a linked
+randomised value will be generated inside this ``t_rand`` object, which can be retrieved using the ``get_value()`` method. ::
+
+    integer := create_rand(VOID)
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | VOID               | in     | t_void                   | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+    :emphasize-lines: 2
+
+    -- Example 1:
+    handle_my_rand_2 := my_rand2.create_rand(VOID);
+    my_rand1.link(LT, handle_my_rand_2);   -- Define relationship rand1 < rand2
+    rand1_int := my_rand1.randm(VOID);     -- Randomize rand1 and rand2. Return rand1 value
+    rand2_int := my_rand2.get_value(VOID); -- Get rand2 value created by randm() call in previous step
+
+
+link()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Defines a relational link between the current (primary) coverpoint and another
+(secondary) coverpoint. Can either be a relational link to one other randomized value, or an arithmetic link to one other randomized
+value and a relational link to a third randomized or fixed value (e.g. "(A + B) > C" or "(A + B) > 10") ::
+
+    link(op, var2)
+    link(arith_op, var2, op, val_or_var_id_3, is_var_id_3)
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                               |
++==========+====================+========+==============================+===========================================================+
+| constant | op                 | in     | :ref:`t_relational_operator` | Defines relationship between linked values                |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | var2               | in     | integer                      | Handle to t_rand object of linked value. (Handle is       |
+|          |                    |        |                              | created using create_rand() procedure)                    |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | arith_op           | in     | :ref:`t_arithmetic_operator` | Arithmetic operation between two values that are          |
+|          |                    |        |                              | relationally linked to a third value *(e.g. (a + b) > c)* |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | val_or_var_id_3    | in     | integer                      | Value or handle to t_rand object of linked value          |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | is_var_id_3        | in     | boolean                      | Set to true when val_or_var_id_3 is a handle to a t_rand  |
+|          |                    |        |                              | object. Set to false when val_or_var_id_3 is a fixed      |
+|          |                    |        |                              | value. Default is false.                                  |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+
+.. code-block::
+    :emphasize-lines: 3
+
+    -- Example 1:
+    handle_my_rand_2 := my_rand2.create_rand(VOID);
+    my_rand1.link(LT, handle_my_rand_2);   -- Define relationship rand1 < rand2
+    rand1_int := my_rand1.randm(VOID);     -- Randomize rand1 and rand2. Return rand1 value
+    rand2_int := my_rand2.get_value(VOID); -- Get rand2 value created by randm() call in previous step
+
+    -- Example 2:
+    my_rand1.link(ADD, handle_my_rand_2, LT, handle_my_rand_3, TRUE); -- Define (value1 + value2) < value3
+
+    -- Example 3:
+    my_rand1.link(MULT, handle_my_rand_2, EQ, 20, FALSE); -- Define (value1 * value2 = 20)
+
+
+unlink()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**. 
+
+Removes relational link between the current coverpont and all or given linked
+coverpoints. ::
+
+    unlink(VOID)
+    unlink(var2)
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                               |
++==========+====================+========+==============================+===========================================================+
+| constant | VOID               | in     | :ref:`t_relational_operator` | Defines relationship between linked values                |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| constant | var2               | in     | integer                      | Handle to t_rand object to unlink.                        |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand1.unlink(VOID);
+
+
+nonzero_bitwise_and()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specyfing that a bitwise AND-operation between the
+std_logic_vector-representation of the given value and the randomized std_logic_vector shall produce a nonzero result. ::
+
+    nonzero_bitwise_and(mask)
+
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                     | Description                                                   |
++==========+====================+========+==========================+===============================================================+
+| constant | mask               | in     | integer                  | Integer representation of the mask which shall produce nonzero|
+|          |                    |        |                          | result when bitwise ANDed with the random number              |
++----------+--------------------+--------+--------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.nonzero_bitwise_and(3);
+    rand_slv := my_rand.randm(8); -- Generates an 8-bit slv which must produce a nonzero result when ANDed with "00000011"
+
+
+zero_bitwise_and()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specifying that a bitwise AND-operation between the
+std_logic_vector-representation of the given value and the randomized std_logic_vector shall give result zero. ::
+
+    zero_bitwise_and(mask)
+
++----------+--------------------+--------+---------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                      | Description                                                   |
++==========+====================+========+===========================+===============================================================+
+| constant | mask               | in     | integer                   | Integer representation of the mask which shall produce result |
+|          |                    |        |                           | zero when bitwise ANDed with the random number                |
++----------+--------------------+--------+---------------------------+---------------------------------------------------------------+
+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.zero_bitwise_and(3);
+    rand_slv := my_rand.randm(8); -- Generates an 8-bit slv with value "------00", to give result zero when ANDed with "00000011"
+
+
+force_bits_to()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specifying the value of individual bits in the randomized std_logic_vector. Constraint is applied to bits set to
+``1`` or ``0`` in the input parameter. Bits set to ``-`` are treated as "don't care" and may have either value in the randomized
+std_logic_vector. ::
+
+    force_bits_to(mask)
+
++----------+--------------------+--------+------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                   | Description                                                   |
++==========+====================+========+========================+===============================================================+
+| constant | mask               | in     | string                 | String representation of the mask indicating bit value of     |
+|          |                    |        |                        | given bits in the random number. Bits marked with "-" means   |
+|          |                    |        |                        | bit can have any value                                        |
++----------+--------------------+--------+------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.force_bits_to("1100----");
+    rand_slv := my_rand.randm(8); -- Generates an 8-bit slv with value "1100----" ("-" means any value)
+
+
+one_hot()
+----------------------------------------------------------------------------------------------------------------------------------
+**Supported only in Questa One v. 2026.1 and later**.
+
+Adds a constraint specifying that the randomized std_logic_vector must have only one bit set to 1.::
+
+    one_hot(VOID)
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                               |
++==========+====================+========+==============================+===========================================================+
+| constant | VOID               | in     | :ref:`t_relational_operator` | Defines relationship between linked values                |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.one_hot();
+    rand_slv := my_rand.randm("3"); -- Generates a 3-bit slv with value either "100", "010" or "001"
+

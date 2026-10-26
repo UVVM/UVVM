@@ -1,23 +1,22 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Types &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#getting-started">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#single-method-approach">Single-method approach</a></li>
@@ -60,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#distributions">Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#configuration-report">Configuration report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#clearing-configuration">Clearing configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#questa-one-extended-features">Questa One extended features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#additional-info">Additional info</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="rand_pkg_overview.html#rand-pkg">rand_pkg</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="rand_pkg_t_rand.html">t_rand (protected)</a></li>
@@ -95,9 +96,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -118,6 +119,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -150,23 +152,33 @@
 <p>Type definitions used for Enhanced Randomization in <em>rand_pkg</em>.</p>
 <section id="t-rand-dist">
 <span id="id1"></span><h2>t_rand_dist<a class="headerlink" href="#t-rand-dist" title="Link to this heading"></a></h2>
-<p>UNIFORM, GAUSSIAN</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">UNIFORM</span><span class="p">,</span><span class="w"> </span><span class="n">GAUSSIAN</span>
+</pre></div>
+</div>
 </section>
 <section id="t-value-specifier">
 <span id="id2"></span><h2>t_value_specifier<a class="headerlink" href="#t-value-specifier" title="Link to this heading"></a></h2>
-<p>ONLY, ADD, EXCL</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ONLY</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span>
+</pre></div>
+</div>
 </section>
 <section id="t-uniqueness">
 <span id="id3"></span><h2>t_uniqueness<a class="headerlink" href="#t-uniqueness" title="Link to this heading"></a></h2>
-<p>UNIQUE, NON_UNIQUE</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">UNIQUE</span><span class="p">,</span><span class="w"> </span><span class="n">NON_UNIQUE</span>
+</pre></div>
+</div>
 </section>
 <section id="t-weight-mode">
 <span id="id4"></span><h2>t_weight_mode<a class="headerlink" href="#t-weight-mode" title="Link to this heading"></a></h2>
-<p>NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">COMBINED_WEIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">INDIVIDUAL_WEIGHT</span>
+</pre></div>
+</div>
 </section>
 <section id="t-cyclic">
 <span id="id5"></span><h2>t_cyclic<a class="headerlink" href="#t-cyclic" title="Link to this heading"></a></h2>
-<p>CYCLIC, NON_CYCLIC</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">CYCLIC</span><span class="p">,</span><span class="w"> </span><span class="n">NON_CYCLIC</span>
+</pre></div>
+</div>
 </section>
 <section id="t-val-weight-int">
 <span id="id6"></span><h2>t_val_weight_int<a class="headerlink" href="#t-val-weight-int" title="Link to this heading"></a></h2>
@@ -359,39 +371,39 @@
 </section>
 <section id="t-val-weight-int-vec">
 <span id="id15"></span><h2>t_val_weight_int_vec<a class="headerlink" href="#t-val-weight-int-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-val-weight-int"><span class="std std-ref">t_val_weight_int</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-val-weight-int"><span class="std std-ref">t_val_weight_int</span></a></pre>
 </section>
 <section id="t-range-weight-int-vec">
 <span id="id16"></span><h2>t_range_weight_int_vec<a class="headerlink" href="#t-range-weight-int-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-int"><span class="std std-ref">t_range_weight_int</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-int"><span class="std std-ref">t_range_weight_int</span></a></pre>
 </section>
 <section id="t-range-weight-mode-int-vec">
 <span id="id17"></span><h2>t_range_weight_mode_int_vec<a class="headerlink" href="#t-range-weight-mode-int-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-mode-int"><span class="std std-ref">t_range_weight_mode_int</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-mode-int"><span class="std std-ref">t_range_weight_mode_int</span></a></pre>
 </section>
 <section id="t-val-weight-real-vec">
 <span id="id18"></span><h2>t_val_weight_real_vec<a class="headerlink" href="#t-val-weight-real-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-val-weight-real"><span class="std std-ref">t_val_weight_real</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-val-weight-real"><span class="std std-ref">t_val_weight_real</span></a></pre>
 </section>
 <section id="t-range-weight-real-vec">
 <span id="id19"></span><h2>t_range_weight_real_vec<a class="headerlink" href="#t-range-weight-real-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-real"><span class="std std-ref">t_range_weight_real</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-real"><span class="std std-ref">t_range_weight_real</span></a></pre>
 </section>
 <section id="t-range-weight-mode-real-vec">
 <span id="id20"></span><h2>t_range_weight_mode_real_vec<a class="headerlink" href="#t-range-weight-mode-real-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-mode-real"><span class="std std-ref">t_range_weight_mode_real</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-mode-real"><span class="std std-ref">t_range_weight_mode_real</span></a></pre>
 </section>
 <section id="t-val-weight-time-vec">
 <span id="id21"></span><h2>t_val_weight_time_vec<a class="headerlink" href="#t-val-weight-time-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-val-weight-time"><span class="std std-ref">t_val_weight_time</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-val-weight-time"><span class="std std-ref">t_val_weight_time</span></a></pre>
 </section>
 <section id="t-range-weight-time-vec">
 <span id="id22"></span><h2>t_range_weight_time_vec<a class="headerlink" href="#t-range-weight-time-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-time"><span class="std std-ref">t_range_weight_time</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-time"><span class="std std-ref">t_range_weight_time</span></a></pre>
 </section>
 <section id="t-range-weight-mode-time-vec">
 <span id="id23"></span><h2>t_range_weight_mode_time_vec<a class="headerlink" href="#t-range-weight-mode-time-vec" title="Link to this heading"></a></h2>
-<p>array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-mode-time"><span class="std std-ref">t_range_weight_mode_time</span></a></p>
+<pre class="literal-block">array (natural range &lt;&gt;) of <a class="reference internal" href="#t-range-weight-mode-time"><span class="std std-ref">t_range_weight_mode_time</span></a></pre>
 </section>
 </section>
 
@@ -406,7 +418,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

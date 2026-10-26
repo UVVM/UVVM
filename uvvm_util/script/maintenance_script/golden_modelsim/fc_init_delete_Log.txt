@@ -1,0 +1,556 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Functional Coverage package - fc_init_delete
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS_INFO).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_RAND).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_SAMPLE).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_CONFIG).
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing methods with uninitialized coverpoint
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'fc_get_covpts_coverage_goal(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00.
+UVVM:                                                                           'fc_get_overall_coverage(COVPTS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'fc_get_overall_coverage(BINS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'fc_get_overall_coverage(HITS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'fc_overall_coverage_completed(VOID)'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'get_illegal_bin_alert_level(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'get_bin_overlap_alert_level(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 1) => OK. Value was 1. 'get_overall_coverage_weight(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'get_bins_coverage_goal(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'get_hits_coverage_goal(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '') => OK. Value was ''. 'get_name(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'TB seq.') => OK. Value was 'TB seq.'. 'get_scope(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'is_defined(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking get_coverage(BINS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking get_coverage(HITS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'coverage_completed(BINS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'coverage_completed(HITS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'coverage_completed(BINS_AND_HITS)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 10) => OK. Value was 10. 'Checking seed 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'Checking seed 2'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              
+UVVM:      Coverage (for goal 100): Bins: 0.0%,     Hits: 0.0%    
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  COVERPOINT CONFIGURATION REPORT ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME                    :              **uninitialized**
+UVVM:                SCOPE                   :                        TB seq.
+UVVM:                ILLEGAL BIN ALERT LEVEL :                          ERROR
+UVVM:                BIN OVERLAP ALERT LEVEL :                       NO_ALERT
+UVVM:                COVERAGE WEIGHT         :                              1
+UVVM:                BINS COVERAGE GOAL      :                            100
+UVVM:                HITS COVERAGE GOAL      :                            100
+UVVM:                COVERPOINTS GOAL        :                            100
+UVVM:                NUMBER OF BINS          :                              0
+UVVM:                CROSS DIMENSIONS        :                             -1
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] clear_coverage()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] delete_coverpoint()
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 5.
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(NO_SAMPLE_COV)=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(NO_SAMPLE_COV)=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [] sample_coverage(5)
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    sample_coverage(5)=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    sample_coverage((5, 6, 7))=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    write_coverage_db(db_file.txt)=> Coverpoint has not been initialized
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing deleting a coverpoint
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Set up the coverpoint
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_illegal_bin_alert_level(FAILURE)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_bin_overlap_alert_level(TB_ERROR)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_overall_coverage_weight(5)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_bins_coverage_goal(50)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_hits_coverage_goal(200)
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] add_bins(bin_range(1, 100, num_bins:0), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  MY_SCOPE                         [MY_COVERPOINT] Adding bins:
+UVVM:                                                                             (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(2
+UVVM:                                                                             1),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31),(32),(33),(34),(35),(36),(37),(38),(39),
+UVVM:                                                                             (40),(41),(42),(43),(44),(45),(46),(47),(48),(49),(50),(51),(52),(53),(54),(55),(56),(57),(58
+UVVM:                                                                             ),(59),(60),(61),(62),(63),(64),(65),(66),(67),(68),(69),(70),(71),(72),(73),(74),(75),(76),(
+UVVM:                                                                             77),(78),(79),(80),(81),(82),(83),(84),(85),(86),(87),(88),(89),(90),(91),(92),(93),(94),(95)
+UVVM:                                                                             ,(96),(97),(98),(99),(100), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] add_bins(ignore_bin_range(101,200), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  MY_SCOPE                         [MY_COVERPOINT] Adding bins: IGN(101 to 200), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(1)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(2)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(3)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(4)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(5)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(6)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(7)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(8)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(9)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(10)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(11)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(12)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(13)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(14)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(15)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(16)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(17)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(18)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(19)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(20)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(21)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(22)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(23)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(24)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(25)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(26)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(27)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(28)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(29)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(30)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(31)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(32)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(33)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(34)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(35)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(36)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(37)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(38)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(39)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(40)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(41)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(42)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(43)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(44)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(45)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(46)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(47)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(48)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(49)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(50)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check the coverpoint has the right configuration
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'MY_COVERPOINT') => OK. Value was 'MY_COVERPOINT'. 'Checking name'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'MY_SCOPE') => OK. Value was 'MY_SCOPE'. 'Checking scope'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking illegal bin alert level'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking bin overlap alert level'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 5) => OK. Value was 5. 'Checking coverage weight'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 50) => OK. Value was 50. 'Checking bins coverage goal'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 200) => OK. Value was 200. 'Checking hits coverage goal'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking is_defined(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 1) => OK. Value was 1. 'Checking num_bins_crossed'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'Checking num_valid_bins'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 1) => OK. Value was 1. 'Checking num_invalid_bins'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 5.000000e+01) => OK. Value was 5.000000e+01. 'Checking bins coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 5.000000e+01) => OK. Value was 5.000000e+01. 'Checking hits coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking covpts overall
+UVVM:                                                                           coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 5.000000e+01) => OK. Value was 5.000000e+01. 'Checking bins overall coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 5.000000e+01) => OK. Value was 5.000000e+01. 'Checking hits overall coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 12345) => OK. Value was 12345. 'Checking seed 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 67890) => OK. Value was 67890. 'Checking seed 2'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): MY_SCOPE ***                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 100.00%,  Hits: 25.00%  
+UVVM:      % of Goal (uncapped):    Bins: 100.00%,  Hits: 25.00%  
+UVVM:      Coverage (for goal 100): Bins: 50.00%,   Hits: 50.00%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (1)                            1                 1              100.00%             bin_1[1]                -                                 
+UVVM:                            (2)                            1                 1              100.00%             bin_1[2]                -                                 
+UVVM:                            (3)                            1                 1              100.00%             bin_1[3]                -                                 
+UVVM:                            (4)                            1                 1              100.00%             bin_1[4]                -                                 
+UVVM:                            (5)                            1                 1              100.00%             bin_1[5]                -                                 
+UVVM:                            (6)                            1                 1              100.00%             bin_1[6]                -                                 
+UVVM:                            (7)                            1                 1              100.00%             bin_1[7]                -                                 
+UVVM:                            (8)                            1                 1              100.00%             bin_1[8]                -                                 
+UVVM:                            (9)                            1                 1              100.00%             bin_1[9]                -                                 
+UVVM:                           (10)                            1                 1              100.00%             bin_1[10]               -                                 
+UVVM:                           (11)                            1                 1              100.00%             bin_1[11]               -                                 
+UVVM:                           (12)                            1                 1              100.00%             bin_1[12]               -                                 
+UVVM:                           (13)                            1                 1              100.00%             bin_1[13]               -                                 
+UVVM:                           (14)                            1                 1              100.00%             bin_1[14]               -                                 
+UVVM:                           (15)                            1                 1              100.00%             bin_1[15]               -                                 
+UVVM:                           (16)                            1                 1              100.00%             bin_1[16]               -                                 
+UVVM:                           (17)                            1                 1              100.00%             bin_1[17]               -                                 
+UVVM:                           (18)                            1                 1              100.00%             bin_1[18]               -                                 
+UVVM:                           (19)                            1                 1              100.00%             bin_1[19]               -                                 
+UVVM:                           (20)                            1                 1              100.00%             bin_1[20]               -                                 
+UVVM:                           (21)                            1                 1              100.00%             bin_1[21]               -                                 
+UVVM:                           (22)                            1                 1              100.00%             bin_1[22]               -                                 
+UVVM:                           (23)                            1                 1              100.00%             bin_1[23]               -                                 
+UVVM:                           (24)                            1                 1              100.00%             bin_1[24]               -                                 
+UVVM:                           (25)                            1                 1              100.00%             bin_1[25]               -                                 
+UVVM:                           (26)                            1                 1              100.00%             bin_1[26]               -                                 
+UVVM:                           (27)                            1                 1              100.00%             bin_1[27]               -                                 
+UVVM:                           (28)                            1                 1              100.00%             bin_1[28]               -                                 
+UVVM:                           (29)                            1                 1              100.00%             bin_1[29]               -                                 
+UVVM:                           (30)                            1                 1              100.00%             bin_1[30]               -                                 
+UVVM:                           (31)                            1                 1              100.00%             bin_1[31]               -                                 
+UVVM:                           (32)                            1                 1              100.00%             bin_1[32]               -                                 
+UVVM:                           (33)                            1                 1              100.00%             bin_1[33]               -                                 
+UVVM:                           (34)                            1                 1              100.00%             bin_1[34]               -                                 
+UVVM:                           (35)                            1                 1              100.00%             bin_1[35]               -                                 
+UVVM:                           (36)                            1                 1              100.00%             bin_1[36]               -                                 
+UVVM:                           (37)                            1                 1              100.00%             bin_1[37]               -                                 
+UVVM:                           (38)                            1                 1              100.00%             bin_1[38]               -                                 
+UVVM:                           (39)                            1                 1              100.00%             bin_1[39]               -                                 
+UVVM:                           (40)                            1                 1              100.00%             bin_1[40]               -                                 
+UVVM:                           (41)                            1                 1              100.00%             bin_1[41]               -                                 
+UVVM:                           (42)                            1                 1              100.00%             bin_1[42]               -                                 
+UVVM:                           (43)                            1                 1              100.00%             bin_1[43]               -                                 
+UVVM:                           (44)                            1                 1              100.00%             bin_1[44]               -                                 
+UVVM:                           (45)                            1                 1              100.00%             bin_1[45]               -                                 
+UVVM:                           (46)                            1                 1              100.00%             bin_1[46]               -                                 
+UVVM:                           (47)                            1                 1              100.00%             bin_1[47]               -                                 
+UVVM:                           (48)                            1                 1              100.00%             bin_1[48]               -                                 
+UVVM:                           (49)                            1                 1              100.00%             bin_1[49]               -                                 
+UVVM:                           (50)                            1                 1              100.00%             bin_1[50]               -                                 
+UVVM:                           (51)                            0                 1               0.00%              bin_1[51]               -                                 
+UVVM:                           (52)                            0                 1               0.00%              bin_1[52]               -                                 
+UVVM:                           (53)                            0                 1               0.00%              bin_1[53]               -                                 
+UVVM:                           (54)                            0                 1               0.00%              bin_1[54]               -                                 
+UVVM:                           (55)                            0                 1               0.00%              bin_1[55]               -                                 
+UVVM:                           (56)                            0                 1               0.00%              bin_1[56]               -                                 
+UVVM:                           (57)                            0                 1               0.00%              bin_1[57]               -                                 
+UVVM:                           (58)                            0                 1               0.00%              bin_1[58]               -                                 
+UVVM:                           (59)                            0                 1               0.00%              bin_1[59]               -                                 
+UVVM:                           (60)                            0                 1               0.00%              bin_1[60]               -                                 
+UVVM:                           (61)                            0                 1               0.00%              bin_1[61]               -                                 
+UVVM:                           (62)                            0                 1               0.00%              bin_1[62]               -                                 
+UVVM:                           (63)                            0                 1               0.00%              bin_1[63]               -                                 
+UVVM:                           (64)                            0                 1               0.00%              bin_1[64]               -                                 
+UVVM:                           (65)                            0                 1               0.00%              bin_1[65]               -                                 
+UVVM:                           (66)                            0                 1               0.00%              bin_1[66]               -                                 
+UVVM:                           (67)                            0                 1               0.00%              bin_1[67]               -                                 
+UVVM:                           (68)                            0                 1               0.00%              bin_1[68]               -                                 
+UVVM:                           (69)                            0                 1               0.00%              bin_1[69]               -                                 
+UVVM:                           (70)                            0                 1               0.00%              bin_1[70]               -                                 
+UVVM:                           (71)                            0                 1               0.00%              bin_1[71]               -                                 
+UVVM:                           (72)                            0                 1               0.00%              bin_1[72]               -                                 
+UVVM:                           (73)                            0                 1               0.00%              bin_1[73]               -                                 
+UVVM:                           (74)                            0                 1               0.00%              bin_1[74]               -                                 
+UVVM:                           (75)                            0                 1               0.00%              bin_1[75]               -                                 
+UVVM:                           (76)                            0                 1               0.00%              bin_1[76]               -                                 
+UVVM:                           (77)                            0                 1               0.00%              bin_1[77]               -                                 
+UVVM:                           (78)                            0                 1               0.00%              bin_1[78]               -                                 
+UVVM:                           (79)                            0                 1               0.00%              bin_1[79]               -                                 
+UVVM:                           (80)                            0                 1               0.00%              bin_1[80]               -                                 
+UVVM:                           (81)                            0                 1               0.00%              bin_1[81]               -                                 
+UVVM:                           (82)                            0                 1               0.00%              bin_1[82]               -                                 
+UVVM:                           (83)                            0                 1               0.00%              bin_1[83]               -                                 
+UVVM:                           (84)                            0                 1               0.00%              bin_1[84]               -                                 
+UVVM:                           (85)                            0                 1               0.00%              bin_1[85]               -                                 
+UVVM:                           (86)                            0                 1               0.00%              bin_1[86]               -                                 
+UVVM:                           (87)                            0                 1               0.00%              bin_1[87]               -                                 
+UVVM:                           (88)                            0                 1               0.00%              bin_1[88]               -                                 
+UVVM:                           (89)                            0                 1               0.00%              bin_1[89]               -                                 
+UVVM:                           (90)                            0                 1               0.00%              bin_1[90]               -                                 
+UVVM:                           (91)                            0                 1               0.00%              bin_1[91]               -                                 
+UVVM:                           (92)                            0                 1               0.00%              bin_1[92]               -                                 
+UVVM:                           (93)                            0                 1               0.00%              bin_1[93]               -                                 
+UVVM:                           (94)                            0                 1               0.00%              bin_1[94]               -                                 
+UVVM:                           (95)                            0                 1               0.00%              bin_1[95]               -                                 
+UVVM:                           (96)                            0                 1               0.00%              bin_1[96]               -                                 
+UVVM:                           (97)                            0                 1               0.00%              bin_1[97]               -                                 
+UVVM:                           (98)                            0                 1               0.00%              bin_1[98]               -                                 
+UVVM:                           (99)                            0                 1               0.00%              bin_1[99]               -                                 
+UVVM:                           (100)                           0                 1               0.00%             bin_1[100]               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  COVERPOINT CONFIGURATION REPORT ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME                    :                  MY_COVERPOINT
+UVVM:                SCOPE                   :                       MY_SCOPE
+UVVM:                ILLEGAL BIN ALERT LEVEL :                        FAILURE
+UVVM:                BIN OVERLAP ALERT LEVEL :                       TB_ERROR
+UVVM:                COVERAGE WEIGHT         :                              5
+UVVM:                BINS COVERAGE GOAL      :                             50
+UVVM:                HITS COVERAGE GOAL      :                            200
+UVVM:                COVERPOINTS GOAL        :                            100
+UVVM:                NUMBER OF BINS          :                            101
+UVVM:                CROSS DIMENSIONS        :                              1
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 50.00%,   Hits: 50.00%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:             MY_COVERPOINT                5                  50 / 100            50.00% | 50.00%          50% | 200%          100.00% | 25.00%                            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Delete and check the coverpoint has default values
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, '') => OK. Value was ''. 'Checking name'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'TB seq.') => OK. Value was 'TB seq.'. 'Checking scope'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking illegal bin alert level'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking bin overlap alert level'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 1) => OK. Value was 1. 'Checking coverage weight'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'Checking bins coverage goal'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'Checking hits coverage goal'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'Checking is_defined(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, -1) => OK. Value was -1. 'Checking num_bins_crossed'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 0) => OK. Value was 0. 'Checking num_valid_bins'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 0) => OK. Value was 0. 'Checking num_invalid_bins'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking bins coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking hits coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking covpts overall
+UVVM:                                                                           coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking bins overall coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.000000e+00) => OK. Value was 0.000000e+00. 'Checking hits overall coverage'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 10) => OK. Value was 10. 'Checking seed 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 100) => OK. Value was 100. 'Checking seed 2'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              
+UVVM:      Coverage (for goal 100): Bins: 0.0%,     Hits: 0.0%    
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  COVERPOINT CONFIGURATION REPORT ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME                    :              **uninitialized**
+UVVM:                SCOPE                   :                        TB seq.
+UVVM:                ILLEGAL BIN ALERT LEVEL :                          ERROR
+UVVM:                BIN OVERLAP ALERT LEVEL :                       NO_ALERT
+UVVM:                COVERAGE WEIGHT         :                              1
+UVVM:                BINS COVERAGE GOAL      :                            100
+UVVM:                HITS COVERAGE GOAL      :                            100
+UVVM:                COVERPOINTS GOAL        :                            100
+UVVM:                NUMBER OF BINS          :                              0
+UVVM:                CROSS DIMENSIONS        :                             -1
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing deleting several coverpoints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_bins(bin(1), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding bins: (1), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_bins(bin(2), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_3] Adding bins: (2), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_bins(bin(3), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_4] Adding bins: (3), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_bins(bin(4), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_5] Adding bins: (4), min_hits:1, rand_weight:1, ""
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:                Covpt_2                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_3                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_4                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_5                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_2] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_4] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_5] delete_coverpoint()
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:                Covpt_3                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(bin(1000), bin(2000), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (1000) x (2000), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_7] add_cross(bin(1001), bin(2001), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_7] Adding cross: (1001) x (2001), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_8] add_cross(bin(1002), bin(2002), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_8] Adding cross: (1002) x (2002), min_hits:1, rand_weight:1, ""
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:                Covpt_6                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_3                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_7                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_8                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_6] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_7] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_8] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing initializing coverpoints with config procedures
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_9] set_illegal_bin_alert_level(FAILURE)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'get_illegal_bin_alert_level(VOID)'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_10] set_bin_overlap_alert_level(TB_WARNING)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'get_bin_overlap_alert_level(VOID)'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_11] set_overall_coverage_weight(5)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 5) => OK. Value was 5. 'get_overall_coverage_weight(VOID)'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_12] set_bins_coverage_goal(75)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 75) => OK. Value was 75. 'get_bins_coverage_goal(VOID)'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_13] set_hits_coverage_goal(300)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 300) => OK. Value was 300. 'get_hits_coverage_goal(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'MY_COVERPOINT') => OK. Value was 'MY_COVERPOINT'. 'get_name(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(string, 'MY_SCOPE') => OK. Value was 'MY_SCOPE'. 'get_scope(VOID)'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 12345) => OK. Value was 12345. 'Checking seed 1'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(int, 67890) => OK. Value was 67890. 'Checking seed 2'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing methods with initialized coverpoint without bins
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, false) => OK. Value was false. 'is_defined(VOID)'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_9] write_coverage_db(db_file.txt)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 4.
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(NO_SAMPLE_COV)=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(NO_SAMPLE_COV)=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_9] sample_coverage(5)
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    sample_coverage(5)=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    sample_coverage((5, 6, 7))=> Coverpoint does not contain any bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      9         9         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

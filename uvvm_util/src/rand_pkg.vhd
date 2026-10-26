@@ -26,6 +26,7 @@ use work.adaptations_pkg.all;
 use work.string_methods_pkg.all;
 use work.global_signals_and_shared_variables_pkg.all;
 use work.methods_pkg.all;
+use work.vendor_rand_extension_pkg.all;
 
 package rand_pkg is
 
@@ -103,7 +104,7 @@ package rand_pkg is
   ------------------------------------------------------------
   alias random_uniform is random[integer, integer, positive, positive, integer];
   alias random_uniform is random[real, real, positive, positive, real];
-  alias random_uniform is random[time, time, positive, positive, time];
+  alias random_uniform is random[time, time, time, positive, positive, time, string];
 
   -- Returns a real pseudo-random number with Gaussian distribution.
   -- It uses the Marsaglia polar method to generate a normally distributed
@@ -377,6 +378,14 @@ package rand_pkg is
     -- Random time
     ------------------------------------------------------------
     impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
+    return time;
+
+    impure function rand(
       constant min_value     : time;
       constant max_value     : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
@@ -388,6 +397,15 @@ package rand_pkg is
       constant set_of_values : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
+    return time;
+
+    impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant value           : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time;
 
     impure function rand(
@@ -399,12 +417,33 @@ package rand_pkg is
     return time;
 
     impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant set_of_values   : time_vector;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
+    return time;
+
+    impure function rand(
       constant min_value     : time;
       constant max_value     : time;
       constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
+    return time;
+
+    impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time;
 
     impure function rand(
@@ -418,6 +457,17 @@ package rand_pkg is
     return time;
 
     impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant value2          : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time;
+
+    impure function rand(
       constant min_value    : time;
       constant max_value    : time;
       constant specifier1   : t_value_specifier;
@@ -425,6 +475,18 @@ package rand_pkg is
       constant specifier2   : t_value_specifier;
       constant value2       : time;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time;
+
+    impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant set_of_values1  : time_vector;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
     return time;
 
     impure function rand(
@@ -599,6 +661,15 @@ package rand_pkg is
     -- Random time_vector
     ------------------------------------------------------------
     impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function rand(
       constant length       : positive;
       constant min_value    : time;
       constant max_value    : time;
@@ -612,6 +683,17 @@ package rand_pkg is
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant value           : time;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time_vector;
 
     impure function rand(
@@ -625,6 +707,17 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant set_of_values   : time_vector;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function rand(
       constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
@@ -632,6 +725,19 @@ package rand_pkg is
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time_vector;
 
     impure function rand(
@@ -647,6 +753,19 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant value2          : time;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function rand(
       constant length       : positive;
       constant min_value    : time;
       constant max_value    : time;
@@ -656,6 +775,19 @@ package rand_pkg is
       constant value2       : time;
       constant uniqueness   : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant set_of_values1  : time_vector;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time_vector;
 
     impure function rand(
@@ -1027,7 +1159,20 @@ package rand_pkg is
 
     impure function rand_range_weight(
       constant weighted_vector : t_range_weight_time_vec;
+      constant time_resolution : time;
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time;
+
+    impure function rand_range_weight(
+      constant weighted_vector : t_range_weight_time_vec;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time;
+
+    impure function rand_range_weight_mode(
+      constant weighted_vector : t_range_weight_mode_time_vec;
+      constant time_resolution : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
     return time;
 
     impure function rand_range_weight_mode(
@@ -1129,6 +1274,12 @@ package rand_pkg is
       constant set_of_values : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
+    -- Requires Questa One 2026.1 or newer
+    procedure excl_range(
+      constant min          : in integer;
+      constant max          : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure add_val_weight(
       constant value        : in integer;
       constant weight       : in natural;
@@ -1139,6 +1290,16 @@ package rand_pkg is
       constant max_value    : in integer;
       constant weight       : in natural;
       constant mode         : in t_weight_mode  := NA;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure vector_sum_min(
+      constant min          : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure vector_sum_max(
+      constant max          : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -1165,6 +1326,12 @@ package rand_pkg is
       constant set_of_values : in real_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
+    -- Requires Questa One 2026.1 or newer
+    procedure excl_range_real(
+      constant min          : in real;
+      constant max          : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure add_val_weight_real(
       constant value        : in real;
       constant weight       : in natural;
@@ -1179,6 +1346,12 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Time constraints
     ------------------------------------------------------------
+    procedure add_range_time(
+      constant min_value       : in time;
+      constant max_value       : in time;
+      constant time_resolution : in time;
+      constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure add_range_time(
       constant min_value    : in time;
       constant max_value    : in time;
@@ -1199,6 +1372,13 @@ package rand_pkg is
     procedure excl_val_time(
       constant set_of_values : in time_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure excl_range_time(
+      constant min          : in time;
+      constant max          : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
 
     procedure add_val_weight_time(
       constant value        : in time;
@@ -1237,6 +1417,10 @@ package rand_pkg is
     procedure set_uniqueness(
       constant uniqueness   : in t_uniqueness;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure set_range_weight_time_resolution(
+      constant time_resolution : in time;
+      constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure clear_constraints(
       constant VOID : in t_void);
@@ -1312,6 +1496,69 @@ package rand_pkg is
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector;
 
+    ------------------------------------------------------------
+    -- Get Value (Requires Questa One 2026.1 or newer)
+    ------------------------------------------------------------
+    impure function get_value(
+      constant VOID : t_void)
+    return integer;
+
+    impure function get_value(
+      constant VOID : t_void)
+    return real;
+
+    impure function get_value(
+      constant VOID : t_void)
+    return time;
+
+    ------------------------------------------------------------
+    -- Linking Variables (Requires Questa One 2026.1 or newer)
+    ------------------------------------------------------------
+    -- Requires Questa One 2026.1 or newer
+    impure function create_rand(
+      constant VOID : t_void)
+    return integer;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure link(
+      constant op   : t_relational_operator;
+      constant var2 : integer);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure link(
+      constant arith_op        : t_arithmetic_operator;
+      constant var2            : integer;
+      constant op              : t_relational_operator;
+      constant val_or_var_id_3 : integer;
+      constant is_var_id_3     : boolean := false);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure unlink(
+      constant var2 : integer);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure unlink(
+      constant VOID : t_void);
+
+    ------------------------------------------------------------
+    -- Bitwise Constraints
+    ------------------------------------------------------------
+    -- Requires Questa One 2026.1 or newer
+    procedure nonzero_bitwise_and(
+      constant mask : integer);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure zero_bitwise_and(
+      constant mask : integer);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure force_bits_to(
+      constant mask : string);
+
+    -- Requires Questa One 2026.1 or newer
+    procedure one_hot(
+      constant VOID : t_void);
+
   end protected t_rand;
 
 end package rand_pkg;
@@ -1346,7 +1593,8 @@ package body rand_pkg is
   type t_range_time is record
     min_value : time;
     max_value : time;
-    range_len : time;
+    range_len : natural;
+    time_res  : time;
   end record;
   type t_range_uns is record
     min_value : unsigned(C_RAND_MM_MAX_LONG_VECTOR_LENGTH - 1 downto 0);
@@ -1506,6 +1754,7 @@ package body rand_pkg is
     variable priv_seed2                   : positive                            := C_RAND_INIT_SEED_2;
     variable priv_rand_dist               : t_rand_dist                         := UNIFORM;
     variable priv_weight_mode             : t_weight_mode                       := COMBINED_WEIGHT;
+    variable priv_weight_time_resolution  : time                                := -1 ns;
     variable priv_warned_same_specifier   : boolean                             := false;
     variable priv_warned_simulation_slow  : boolean                             := false;
     variable priv_ret_valid               : boolean                             := true;
@@ -1538,6 +1787,9 @@ package body rand_pkg is
                                                                                     weighted_config => false);
     variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl => new t_null_range_uns_vec);
     variable priv_sig_constraints         : t_sig_constraints                   := (ran_incl => new t_null_range_sig_vec);
+
+    -- Requires Questa One 2026.1 or newer
+    variable v_vendor_var_id              : integer                             := -1;
 
     -- The number of attempts for a random value to be generated with exclude constraints is multiplied by this constant
     constant C_NUM_INVALID_TRIES : natural := 10;
@@ -1600,10 +1852,10 @@ package body rand_pkg is
       alias normalized_weighted_vector : t_range_weight_mode_int_vec(0 to weighted_vector'length-1) is weighted_vector;
       variable v_line                  : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in normalized_weighted_vector'range loop
@@ -1640,10 +1892,10 @@ package body rand_pkg is
       alias normalized_weighted_vector : t_range_weight_mode_real_vec(0 to weighted_vector'length-1) is weighted_vector;
       variable v_line                  : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in normalized_weighted_vector'range loop
@@ -1680,17 +1932,19 @@ package body rand_pkg is
       alias normalized_weighted_vector : t_range_weight_mode_time_vec(0 to weighted_vector'length-1) is weighted_vector;
       variable v_line                  : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in normalized_weighted_vector'range loop
         if normalized_weighted_vector(i).min_value = normalized_weighted_vector(i).max_value then
-          write(v_line, '(' & to_string(normalized_weighted_vector(i).min_value) & ',' & to_string(normalized_weighted_vector(i).weight) & ')');
+          write(v_line, '(' & to_string(normalized_weighted_vector(i).min_value, get_time_unit(normalized_weighted_vector(i).min_value)) & ',' &
+            to_string(normalized_weighted_vector(i).weight) & ')');
         else
-          write(v_line, string'("([") & to_string(normalized_weighted_vector(i).min_value) & ':' & to_string(normalized_weighted_vector(i).max_value) & string'("],") & to_string(normalized_weighted_vector(i).weight));
+          write(v_line, string'("([") & to_string(normalized_weighted_vector(i).min_value, get_time_unit(normalized_weighted_vector(i).min_value)) & ':' &
+            to_string(normalized_weighted_vector(i).max_value, get_time_unit(normalized_weighted_vector(i).max_value)) & string'("],") & to_string(normalized_weighted_vector(i).weight));
           if normalized_weighted_vector(i).mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weighted_vector(i).mode = COMBINED_WEIGHT then
@@ -1719,10 +1973,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in 0 to priv_int_constraints.ran_incl'length - 1 loop
@@ -1740,10 +1994,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in 0 to priv_real_constraints.ran_incl'length - 1 loop
@@ -1761,14 +2015,15 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in 0 to priv_time_constraints.ran_incl'length - 1 loop
-        write(v_line, '[' & to_string(priv_time_constraints.ran_incl(i).min_value) & ':' & to_string(priv_time_constraints.ran_incl(i).max_value) & ']');
+        write(v_line, '[' & to_string(priv_time_constraints.ran_incl(i).min_value, get_time_unit(priv_time_constraints.ran_incl(i).min_value)) & ':' &
+          to_string(priv_time_constraints.ran_incl(i).max_value, get_time_unit(priv_time_constraints.ran_incl(i).max_value)) & ']');
         if i < priv_time_constraints.ran_incl'length - 1 then
           write(v_line, ',');
         end if;
@@ -1783,10 +2038,10 @@ package body rand_pkg is
       variable v_len  : natural;
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in 0 to priv_uns_constraints.ran_incl'length - 1 loop
@@ -1809,10 +2064,10 @@ package body rand_pkg is
       variable v_len  : natural;
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       for i in 0 to priv_sig_constraints.ran_incl'length - 1 loop
@@ -2041,16 +2296,29 @@ package body rand_pkg is
       end if;
     end procedure;
 
+    -- Requires Questa One 2026.1 or newer
+    procedure check_and_initialize_vendor_varid(
+      constant VOID : t_void) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        if (v_vendor_var_id = -1) then
+          v_vendor_var_id := vendor_create_rand_var;
+        end if;
+      end if;
+    end procedure;
+
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
     procedure set_name(
-      constant name : in string) is
+      constant name : in string
+    ) is
+      constant C_NAME_NORMALISED : string(1 to name'length) := name;
     begin
-      if name'length > C_RAND_MAX_NAME_LENGTH then
-        priv_name := name(1 to C_RAND_MAX_NAME_LENGTH);
+      if C_NAME_NORMALISED'length > C_RAND_MAX_NAME_LENGTH then
+        priv_name := C_NAME_NORMALISED(1 to C_RAND_MAX_NAME_LENGTH);
       else
-        priv_name := name & fill_string(NUL, C_RAND_MAX_NAME_LENGTH - name'length);
+        priv_name := C_NAME_NORMALISED & fill_string(NUL, C_RAND_MAX_NAME_LENGTH - C_NAME_NORMALISED'length);
       end if;
     end procedure;
 
@@ -2062,12 +2330,14 @@ package body rand_pkg is
     end function;
 
     procedure set_scope(
-      constant scope : in string) is
+      constant scope : in string
+    ) is
+      constant C_SCOPE_NORMALISED : string(1 to scope'length) := scope;
     begin
-      if scope'length > C_LOG_SCOPE_WIDTH then
-        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
+      if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+        priv_scope := C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH);
       else
-        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH - scope'length);
+        priv_scope := C_SCOPE_NORMALISED & fill_string(NUL, C_LOG_SCOPE_WIDTH - C_SCOPE_NORMALISED'length);
       end if;
     end procedure;
 
@@ -2202,7 +2472,9 @@ package body rand_pkg is
       DEALLOCATE(priv_cyclic_current_function);
       priv_cyclic_current_function := new string'("");
       DEALLOCATE(priv_cyclic_list);
-      priv_cyclic_queue.reset(VOID);
+      if priv_cyclic_queue.get_scope(VOID) /= "" then
+        priv_cyclic_queue.reset(VOID);
+      end if;
     end procedure;
 
     procedure report_config(
@@ -2213,6 +2485,7 @@ package body rand_pkg is
       variable v_line                    : line;
       variable v_multi_method_configured : boolean;
     begin
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
         "***  REPORT OF RANDOM GENERATOR CONFIGURATION ***" & LF &
@@ -2291,9 +2564,11 @@ package body rand_pkg is
       -- Print report bottom line
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
 
-      -- Write the info string to transcript
+      -- Format the report
       wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
       prefix_lines(v_line, C_PREFIX);
+
+      -- Write the report to the log destination
       write_line_to_log_destination(v_line);
       DEALLOCATE(v_line);
     end procedure;
@@ -2306,6 +2581,15 @@ package body rand_pkg is
       constant C_STR_LEN : natural := str'length;
       constant C_MAX_POS : natural := integer'right;
     begin
+      priv_seed1 := C_RAND_INIT_SEED_1;
+      priv_seed2 := C_RAND_INIT_SEED_2;
+
+      -- Requires Questa One 2026.1 or newer
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_set_seed(v_vendor_var_id, str);
+        return;
+      end if;
       -- Create the seeds by accumulating the ASCII values of the string,
       -- multiplied by a factor so they are widely spread, and making sure
       -- they don't overflow the positive range.
@@ -2322,6 +2606,11 @@ package body rand_pkg is
       constant seed1 : in positive;
       constant seed2 : in positive) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_set_seed_ints(v_vendor_var_id, seed1, seed2);
+        return;
+      end if;
       priv_seed1 := seed1;
       priv_seed2 := seed2;
     end procedure;
@@ -2329,6 +2618,11 @@ package body rand_pkg is
     procedure set_rand_seeds(
       constant seeds : in t_positive_vector(0 to 1)) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_set_seed_ints(v_vendor_var_id, seeds(0), seeds(1));
+        return;
+      end if;
       priv_seed1 := seeds(0);
       priv_seed2 := seeds(1);
     end procedure;
@@ -2337,6 +2631,11 @@ package body rand_pkg is
       variable seed1 : out positive;
       variable seed2 : out positive) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_get_seed_ints(v_vendor_var_id, seed1, seed2);
+        return;
+      end if;
       seed1 := priv_seed1;
       seed2 := priv_seed2;
     end procedure;
@@ -2346,6 +2645,11 @@ package body rand_pkg is
     return t_positive_vector is
       variable v_ret : t_positive_vector(0 to 1);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        vendor_randvar_get_seed_ints(v_vendor_var_id, v_ret(0), v_ret(1));
+        return v_ret;
+      end if;
       v_ret(0) := priv_seed1;
       v_ret(1) := priv_seed2;
       return v_ret;
@@ -2381,6 +2685,7 @@ package body rand_pkg is
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         priv_ret_valid := false;
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
@@ -2452,11 +2757,6 @@ package body rand_pkg is
           v_mean    := priv_mean when priv_mean_configured else (real(min_value) + (real(max_value) - real(min_value)) / 2.0);
           v_std_dev := priv_std_dev when priv_std_dev_configured else ((real(max_value) - real(min_value)) / 6.0);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
-
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          priv_ret_valid := false;
-          return v_ret;
       end case;
 
       -- Restore previous distribution
@@ -2485,6 +2785,7 @@ package body rand_pkg is
       if specifier /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
         priv_ret_valid := false;
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -2623,8 +2924,8 @@ package body rand_pkg is
       constant ext_proc_call  : string         := "")
     return integer is
       constant C_LOCAL_CALL          : string      := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+                                                      to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+                                                      to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : integer_vector(0 to set_of_values1'length + set_of_values2'length - 1);
@@ -2717,6 +3018,7 @@ package body rand_pkg is
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         priv_ret_valid := false;
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -2729,10 +3031,6 @@ package body rand_pkg is
           v_mean    := priv_mean when priv_mean_configured else (min_value + (max_value - min_value) / 2.0);
           v_std_dev := priv_std_dev when priv_std_dev_configured else ((max_value - min_value) / 6.0);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          priv_ret_valid := false;
-          return v_ret;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2757,6 +3055,7 @@ package body rand_pkg is
       if specifier /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
         priv_ret_valid := false;
+        deallocate(v_proc_call);
         return real'left;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -2882,8 +3181,8 @@ package body rand_pkg is
       constant ext_proc_call  : string         := "")
     return real is
       constant C_LOCAL_CALL          : string      := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & ")";
+                                                      to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
+                                                      to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : real_vector(0 to set_of_values1'length + set_of_values2'length - 1);
@@ -2959,12 +3258,13 @@ package body rand_pkg is
     -- Random time
     ------------------------------------------------------------
     impure function rand(
-      constant min_value     : time;
-      constant max_value     : time;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
     return time is
-      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "])";
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "])";
       variable v_proc_call  : line;
       variable v_ret        : time;
     begin
@@ -2974,26 +3274,34 @@ package body rand_pkg is
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         priv_ret_valid := false;
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
       case priv_rand_dist is
         when UNIFORM =>
-          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+          random_uniform(min_value, max_value, time_resolution, priv_seed1, priv_seed2, v_ret, ext_proc_call);
         when GAUSSIAN =>
           alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
           priv_ret_valid := false;
-          return v_ret;
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
       end case;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
+    end function;
+
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time is
+    begin
+      return rand(min_value, max_value, get_range_time_unit(min_value, max_value), msg_id_panel, ext_proc_call);
     end function;
 
     impure function rand(
@@ -3012,6 +3320,7 @@ package body rand_pkg is
       if specifier /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
         priv_ret_valid := false;
+        deallocate(v_proc_call);
         return time'left;
       end if;
 
@@ -3024,6 +3333,19 @@ package body rand_pkg is
     end function;
 
     impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant value           : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time is
+      variable v_set_values : time_vector(0 to 0) := (0 => value);
+    begin
+      return rand(min_value, max_value, time_resolution, specifier, v_set_values, msg_id_panel);
+    end function;
+
+    impure function rand(
       constant min_value    : time;
       constant max_value    : time;
       constant specifier    : t_value_specifier;
@@ -3032,19 +3354,20 @@ package body rand_pkg is
     return time is
       variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
-      return rand(min_value, max_value, specifier, v_set_values, msg_id_panel);
+      return rand(min_value, max_value, get_range_time_unit(min_value, max_value), specifier, v_set_values, msg_id_panel);
     end function;
 
     impure function rand(
-      constant min_value     : time;
-      constant max_value     : time;
-      constant specifier     : t_value_specifier;
-      constant set_of_values : time_vector;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant set_of_values   : time_vector;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
     return time is
-      constant C_LOCAL_CALL       : string  := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & ")";
-      constant C_TIME_UNIT        : time    := std.env.resolution_limit;
+      constant C_LOCAL_CALL       : string  := "rand(RANGE:[" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "], " &
+                                               to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : time_vector(0 to set_of_values'length-1) is set_of_values;
       variable v_gen_new_random   : boolean := true;
@@ -3054,14 +3377,14 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if specifier = ADD then
-        v_ret := rand(min_value, max_value + (set_of_values'length * C_TIME_UNIT), msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value + (set_of_values'length * time_resolution), time_resolution, msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
-          v_ret := normalized_set_values((v_ret - max_value) / C_TIME_UNIT - 1);
+          v_ret := normalized_set_values((v_ret - max_value) / time_resolution - 1);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif specifier = EXCL then
         for i in 0 to (set_of_values'length) * C_NUM_INVALID_TRIES loop
-          v_ret            := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
+          v_ret            := rand(min_value, max_value, time_resolution, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
           exit when not v_gen_new_random;
           if i = (set_of_values'length) * C_NUM_INVALID_TRIES then
@@ -3074,9 +3397,37 @@ package body rand_pkg is
         priv_ret_valid := false;
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
+    end function;
+
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant specifier     : t_value_specifier;
+      constant set_of_values : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time is
+    begin
+      return rand(min_value, max_value, get_range_time_unit(min_value, max_value), specifier, set_of_values, msg_id_panel, ext_proc_call);
+    end function;
+
+    impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant value2          : time;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time is
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
+    begin
+      return rand(min_value, max_value, time_resolution, specifier1, v_set_values1, specifier2, v_set_values2, msg_id_panel);
     end function;
 
     impure function rand(
@@ -3091,7 +3442,22 @@ package body rand_pkg is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
-      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, msg_id_panel);
+      return rand(min_value, max_value, get_range_time_unit(min_value, max_value), specifier1, v_set_values1, specifier2, v_set_values2, msg_id_panel);
+    end function;
+
+    impure function rand(
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time is
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
+    begin
+      return rand(min_value, max_value, time_resolution, specifier1, v_set_values1, specifier2, set_of_values2, msg_id_panel);
     end function;
 
     impure function rand(
@@ -3105,22 +3471,23 @@ package body rand_pkg is
     return time is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
-      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, msg_id_panel);
+      return rand(min_value, max_value, get_range_time_unit(min_value, max_value), specifier1, v_set_values1, specifier2, set_of_values2, msg_id_panel);
     end function;
 
     impure function rand(
-      constant min_value      : time;
-      constant max_value      : time;
-      constant specifier1     : t_value_specifier;
-      constant set_of_values1 : time_vector;
-      constant specifier2     : t_value_specifier;
-      constant set_of_values2 : time_vector;
-      constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call  : string         := "")
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant set_of_values1  : time_vector;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
     return time is
-      constant C_LOCAL_CALL          : string  := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & ")";
+      constant C_LOCAL_CALL          : string  := "rand(RANGE:[" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "], " &
+                                                  to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+                                                  to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & ")";
       variable v_proc_call           : line;
       variable v_combined_set_values : time_vector(0 to set_of_values1'length + set_of_values2'length - 1);
       variable v_gen_new_random      : boolean := true;
@@ -3142,15 +3509,15 @@ package body rand_pkg is
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
       if specifier1 = ADD and specifier2 = ADD then
         alert_same_specifier(specifier1, v_proc_call.all);
-        v_ret := rand(min_value, max_value, ADD, v_combined_set_values, msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value, time_resolution, ADD, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
       elsif specifier1 = EXCL and specifier2 = EXCL then
         alert_same_specifier(specifier1, v_proc_call.all);
-        v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value, time_resolution, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
       elsif specifier1 = ADD and specifier2 = EXCL then
         for i in 0 to (set_of_values2'length) * C_NUM_INVALID_TRIES loop
-          v_ret            := rand(min_value, max_value, ADD, set_of_values1, msg_id_panel, v_proc_call.all);
+          v_ret            := rand(min_value, max_value, time_resolution, ADD, set_of_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
           exit when not v_gen_new_random;
           if i = (set_of_values2'length) * C_NUM_INVALID_TRIES then
@@ -3161,7 +3528,7 @@ package body rand_pkg is
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif specifier1 = EXCL and specifier2 = ADD then
         for i in 0 to (set_of_values1'length) * C_NUM_INVALID_TRIES loop
-          v_ret            := rand(min_value, max_value, ADD, set_of_values2, msg_id_panel, v_proc_call.all);
+          v_ret            := rand(min_value, max_value, time_resolution, ADD, set_of_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
           exit when not v_gen_new_random;
           if i = (set_of_values1'length) * C_NUM_INVALID_TRIES then
@@ -3178,9 +3545,23 @@ package body rand_pkg is
         priv_ret_valid := false;
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
+    end function;
+
+    impure function rand(
+      constant min_value      : time;
+      constant max_value      : time;
+      constant specifier1     : t_value_specifier;
+      constant set_of_values1 : time_vector;
+      constant specifier2     : t_value_specifier;
+      constant set_of_values2 : time_vector;
+      constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call  : string         := "")
+    return time is
+    begin
+      return rand(min_value, max_value, get_range_time_unit(min_value, max_value), specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, ext_proc_call);
     end function;
 
     ------------------------------------------------------------
@@ -3320,7 +3701,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
       constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
+                                                 to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_cyclic_mode    : t_cyclic    := cyclic_mode;
@@ -3412,8 +3793,8 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
       constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
+                                                 to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+                                                 to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_cyclic_mode    : t_cyclic    := cyclic_mode;
@@ -3576,7 +3957,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
       constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
+                                                 to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_ret            : real_vector(0 to length - 1);
@@ -3660,8 +4041,8 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
       constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
+                                                 to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
+                                                 to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_ret            : real_vector(0 to length - 1);
@@ -3704,27 +4085,29 @@ package body rand_pkg is
     -- Random time_vector
     ------------------------------------------------------------
     impure function rand(
-      constant length       : positive;
-      constant min_value    : time;
-      constant max_value    : time;
-      constant uniqueness   : t_uniqueness   := NON_UNIQUE;
-      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "]" & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, get_time_unit(min_value)) & ":" &
+                                             to_string(max_value, get_time_unit(max_value)) & "]" & to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random : boolean := true;
       variable v_ret            : time_vector(0 to length - 1);
     begin
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to length - 1 loop
-          v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, time_resolution, msg_id_panel, C_LOCAL_CALL);
           exit when not priv_ret_valid;
         end loop;
       else                              -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
         l_vector : for i in 0 to length - 1 loop
           l_unique : for j in 0 to length * C_NUM_INVALID_TRIES loop
-            v_ret(i)         := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+            v_ret(i)         := rand(min_value, max_value, time_resolution, msg_id_panel, C_LOCAL_CALL);
             exit l_vector when not priv_ret_valid;
             v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i - 1));
             exit l_unique when not v_gen_new_random;
@@ -3738,6 +4121,17 @@ package body rand_pkg is
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret;
+    end function;
+
+    impure function rand(
+      constant length       : positive;
+      constant min_value    : time;
+      constant max_value    : time;
+      constant uniqueness   : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+    begin
+      return rand(length, min_value, max_value, get_range_time_unit(min_value, max_value), uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
@@ -3778,6 +4172,21 @@ package body rand_pkg is
     end function;
 
     impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant value           : time;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+      variable v_set_values : time_vector(0 to 0) := (0 => value);
+    begin
+      return rand(length, min_value, max_value, time_resolution, specifier, v_set_values, uniqueness, msg_id_panel);
+    end function;
+
+    impure function rand(
       constant length       : positive;
       constant min_value    : time;
       constant max_value    : time;
@@ -3788,34 +4197,35 @@ package body rand_pkg is
     return time_vector is
       variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
-      return rand(length, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, get_range_time_unit(min_value, max_value), specifier, v_set_values, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant length        : positive;
-      constant min_value     : time;
-      constant max_value     : time;
-      constant specifier     : t_value_specifier;
-      constant set_of_values : time_vector;
-      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier       : t_value_specifier;
+      constant set_of_values   : time_vector;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, get_time_unit(min_value)) & ":" &
+                                             to_string(max_value, get_time_unit(max_value)) & "], " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random : boolean := true;
       variable v_ret            : time_vector(0 to length - 1);
     begin
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to length - 1 loop
-          v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, time_resolution, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
           exit when not priv_ret_valid;
         end loop;
       else                              -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         l_vector : for i in 0 to length - 1 loop
           l_unique : for j in 0 to length * C_NUM_INVALID_TRIES loop
-            v_ret(i)         := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+            v_ret(i)         := rand(min_value, max_value, time_resolution, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
             exit l_vector when not priv_ret_valid;
             v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i - 1));
             exit l_unique when not v_gen_new_random;
@@ -3829,6 +4239,37 @@ package body rand_pkg is
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret;
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : time;
+      constant max_value     : time;
+      constant specifier     : t_value_specifier;
+      constant set_of_values : time_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+    begin
+      return rand(length, min_value, max_value, get_range_time_unit(min_value, max_value), specifier, set_of_values, uniqueness, msg_id_panel);
+    end function;
+
+    impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant value2          : time;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
+    begin
+      return rand(length, min_value, max_value, time_resolution, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
@@ -3845,7 +4286,24 @@ package body rand_pkg is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
-      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, get_range_time_unit(min_value, max_value), specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
+    end function;
+
+    impure function rand(
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant value1          : time;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
+    begin
+      return rand(length, min_value, max_value, time_resolution, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
@@ -3861,37 +4319,38 @@ package body rand_pkg is
     return time_vector is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
-      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, get_range_time_unit(min_value, max_value), specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant length         : positive;
-      constant min_value      : time;
-      constant max_value      : time;
-      constant specifier1     : t_value_specifier;
-      constant set_of_values1 : time_vector;
-      constant specifier2     : t_value_specifier;
-      constant set_of_values2 : time_vector;
-      constant uniqueness     : t_uniqueness   := NON_UNIQUE;
-      constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
+      constant length          : positive;
+      constant min_value       : time;
+      constant max_value       : time;
+      constant time_resolution : time;
+      constant specifier1      : t_value_specifier;
+      constant set_of_values1  : time_vector;
+      constant specifier2      : t_value_specifier;
+      constant set_of_values2  : time_vector;
+      constant uniqueness      : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, get_time_unit(min_value)) & ":" &
+                                             to_string(max_value, get_time_unit(max_value)) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+                                             to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random : boolean := true;
       variable v_ret            : time_vector(0 to length - 1);
     begin
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to length - 1 loop
-          v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, time_resolution, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
           exit when not priv_ret_valid;
         end loop;
       else                              -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         l_vector : for i in 0 to length - 1 loop
           l_unique : for j in 0 to length * C_NUM_INVALID_TRIES loop
-            v_ret(i)         := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+            v_ret(i)         := rand(min_value, max_value, time_resolution, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
             exit l_vector when not priv_ret_valid;
             v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i - 1));
             exit l_unique when not v_gen_new_random;
@@ -3905,6 +4364,21 @@ package body rand_pkg is
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret;
+    end function;
+
+    impure function rand(
+      constant length         : positive;
+      constant min_value      : time;
+      constant max_value      : time;
+      constant specifier1     : t_value_specifier;
+      constant set_of_values1 : time_vector;
+      constant specifier2     : t_value_specifier;
+      constant set_of_values2 : time_vector;
+      constant uniqueness     : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+    begin
+      return rand(length, min_value, max_value, get_range_time_unit(min_value, max_value), specifier1, set_of_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     ------------------------------------------------------------
@@ -3988,10 +4462,12 @@ package body rand_pkg is
 
       if min_value >= max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if min_value'length > length or max_value'length > length then
         alert(TB_ERROR, v_proc_call.all & "=> unsigned min_value and max_value lengths must be less or equal than length", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -4058,6 +4534,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if not check_parameters_within_range(length, integer_vector(set_of_values), C_LOCAL_CALL, signed_values => false) then
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       -- Generate a random value within the set of values
@@ -4119,7 +4596,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
       constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+                                         to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int    : integer;
       variable v_ret        : unsigned(length - 1 downto 0);
       variable v_check_ok   : boolean := true;
@@ -4182,8 +4659,8 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
       constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+                                         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+                                         to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int    : integer;
       variable v_ret        : unsigned(length - 1 downto 0);
       variable v_check_ok   : boolean := true;
@@ -4273,10 +4750,12 @@ package body rand_pkg is
 
       if min_value >= max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if min_value'length > length or max_value'length > length then
         alert(TB_ERROR, v_proc_call.all & "=> signed min_value and max_value lengths must be less or equal than length", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -4339,6 +4818,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if not check_parameters_within_range(length, set_of_values, v_proc_call.all, signed_values => true) then
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       -- Generate a random value within the set of values
@@ -4401,7 +4881,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
       constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+                                         to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret        : integer;
       variable v_check_ok   : boolean := true;
     begin
@@ -4462,8 +4942,8 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return signed is
       constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+                                         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+                                         to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret        : integer;
       variable v_check_ok   : boolean := true;
     begin
@@ -4756,6 +5236,7 @@ package body rand_pkg is
       for i in weighted_vector'range loop
         if weighted_vector(i).min_value > weighted_vector(i).max_value then
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
+          deallocate(v_proc_call);
           return v_ret;
         end if;
         v_mode := weighted_vector(i).mode when weighted_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -4771,6 +5252,7 @@ package body rand_pkg is
       end loop;
       if v_acc_weight = 0 then
         alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -4867,6 +5349,7 @@ package body rand_pkg is
       for i in weighted_vector'range loop
         if weighted_vector(i).min_value > weighted_vector(i).max_value then
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
+          deallocate(v_proc_call);
           return v_ret;
         end if;
         v_mode := weighted_vector(i).mode when weighted_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -4876,12 +5359,14 @@ package body rand_pkg is
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
           alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for real type", priv_scope);
+          deallocate(v_proc_call);
           return v_ret;
         end if;
         v_acc_weighted_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
         alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -4927,13 +5412,14 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weighted_vector, msg_id_panel, v_local_call.all);
 
-      log(ID_RAND_GEN, v_local_call.all & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      log(ID_RAND_GEN, v_local_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), priv_scope, msg_id_panel);
       DEALLOCATE(v_local_call);
       return v_ret;
     end function;
 
     impure function rand_range_weight(
       constant weighted_vector : t_range_weight_time_vec;
+      constant time_resolution : time;
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return time is
       variable v_local_call      : line;
@@ -4946,15 +5432,24 @@ package body rand_pkg is
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weighted_vector) & ")");
 
-      v_ret := rand_range_weight_mode(v_weighted_vector, msg_id_panel, v_local_call.all);
+      v_ret := rand_range_weight_mode(v_weighted_vector, time_resolution, msg_id_panel, v_local_call.all);
 
-      log(ID_RAND_GEN, v_local_call.all & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      log(ID_RAND_GEN, v_local_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), priv_scope, msg_id_panel);
       DEALLOCATE(v_local_call);
       return v_ret;
     end function;
 
+    impure function rand_range_weight(
+      constant weighted_vector : t_range_weight_time_vec;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
+    return time is
+    begin
+      return rand_range_weight(weighted_vector, get_range_time_unit(weighted_vector(weighted_vector'low).min_value, weighted_vector(weighted_vector'low).max_value), msg_id_panel);
+    end function;
+
     impure function rand_range_weight_mode(
       constant weighted_vector : t_range_weight_mode_time_vec;
+      constant time_resolution : time;
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call   : string         := "")
     return time is
@@ -4978,6 +5473,7 @@ package body rand_pkg is
       for i in weighted_vector'range loop
         if weighted_vector(i).min_value > weighted_vector(i).max_value then
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
+          deallocate(v_proc_call);
           return v_ret;
         end if;
         v_mode := weighted_vector(i).mode when weighted_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -4987,12 +5483,14 @@ package body rand_pkg is
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
           alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for time type", priv_scope);
+          deallocate(v_proc_call);
           return v_ret;
         end if;
         v_acc_weighted_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
         alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -5006,7 +5504,7 @@ package body rand_pkg is
       -- Associate the random value to the original value in the vector based on the weight
       for i in v_acc_weighted_vector'range loop
         if v_weight_idx <= v_acc_weighted_vector(i) then
-          v_ret := rand(weighted_vector(i).min_value, weighted_vector(i).max_value, msg_id_panel, v_proc_call.all);
+          v_ret := rand(weighted_vector(i).min_value, weighted_vector(i).max_value, time_resolution, msg_id_panel, v_proc_call.all);
           exit;
         end if;
       end loop;
@@ -5014,9 +5512,18 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
+    end function;
+
+    impure function rand_range_weight_mode(
+      constant weighted_vector : t_range_weight_mode_time_vec;
+      constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call   : string         := "")
+    return time is
+    begin
+      return rand_range_weight_mode(weighted_vector, get_range_time_unit(weighted_vector(weighted_vector'low).min_value, weighted_vector(weighted_vector'low).max_value), msg_id_panel, ext_proc_call);
     end function;
 
     ------------------------------------------------------------
@@ -5272,10 +5779,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       if length > 0 then
@@ -5328,10 +5835,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       if length > 0 then
@@ -5378,10 +5885,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       if length > 0 then
@@ -5427,10 +5934,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       write(v_line, string'("LEN:") & to_string(length) & string'(", "));
@@ -5446,10 +5953,10 @@ package body rand_pkg is
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
-        constant ret : string := v_line.all;
+        constant C_RET : string := v_line.all;
       begin
         DEALLOCATE(v_line);
-        return ret;
+        return C_RET;
       end function;
     begin
       write(v_line, string'("LEN:") & to_string(length) & string'(", "));
@@ -5658,35 +6165,34 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel;
       constant proc_call    : string)
     return time is
-      constant C_TIME_UNIT      : time    := std.env.resolution_limit;
-      variable v_max_range      : time;
-      variable v_max_value      : time;
-      variable v_acc_range_len  : time;
+      variable v_max_range      : natural;
+      variable v_max_value      : natural;
+      variable v_acc_range_len  : natural;
       variable v_gen_new_random : boolean := true;
+      variable v_ret_int        : natural;
       variable v_ret            : time;
     begin
       -- Invalid distributions checked in randm() procedure
 
       for i in 0 to (priv_time_constraints.val_excl'length) * C_NUM_INVALID_TRIES loop
         -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
-        v_max_range := 0 ns;
+        -- Note that the ranges are in integer units and will be converted to time after randomization
+        v_max_range := 0;
         for j in 0 to priv_time_constraints.ran_incl'length - 1 loop
           v_max_range := v_max_range + priv_time_constraints.ran_incl(j).range_len;
         end loop;
-        v_max_range := v_max_range - C_TIME_UNIT;
-        -- It is impossible to give the same weight to an included value than to a single value in the time range,
-        -- therefore we split the probability to 50% ranges and 50% included values.
-        v_max_value := v_max_range * 2 when priv_time_constraints.val_incl'length > 0 else v_max_range;
+        v_max_range := v_max_range - 1;
+        v_max_value := v_max_range + priv_time_constraints.val_incl'length;
 
-        v_ret := rand(0 ns, v_max_value, msg_id_panel, proc_call);
+        v_ret_int := rand(0, v_max_value, NON_CYCLIC, msg_id_panel, proc_call);
 
         -- Convert the random value to the correct range
-        if v_ret <= v_max_range then
-          v_acc_range_len := 0 ns;
+        if v_ret_int <= v_max_range then
+          v_acc_range_len := 0;
           for j in 0 to priv_time_constraints.ran_incl'length - 1 loop
             v_acc_range_len := v_acc_range_len + priv_time_constraints.ran_incl(j).range_len;
-            if v_ret < v_acc_range_len then
-              v_ret := v_ret + priv_time_constraints.ran_incl(j).min_value - (v_acc_range_len - priv_time_constraints.ran_incl(j).range_len);
+            if v_ret_int < v_acc_range_len then
+              v_ret := priv_time_constraints.ran_incl(j).min_value + (v_ret_int - (v_acc_range_len - priv_time_constraints.ran_incl(j).range_len)) * priv_time_constraints.ran_incl(j).time_res;
               exit;
             end if;
           end loop;
@@ -5886,6 +6392,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range([" & to_string(min_value) & ":" & to_string(max_value) & "])";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_range_int(v_vendor_var_id, min_value, max_value, 0);
+        return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -5907,6 +6418,11 @@ package body rand_pkg is
       constant value        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_range_int(v_vendor_var_id, value, value, 0);
+        return;
+      end if;
       add_val((0 => value), msg_id_panel);
     end procedure;
 
@@ -5915,6 +6431,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_vals_int(v_vendor_var_id, set_of_values);
+        return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -5932,6 +6453,11 @@ package body rand_pkg is
       constant value        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_range_int(v_vendor_var_id, value, value, 0);
+        return;
+      end if;
       excl_val((0 => value), msg_id_panel);
     end procedure;
 
@@ -5940,6 +6466,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_vals_int(v_vendor_var_id, set_of_values);
+        return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -5949,12 +6480,32 @@ package body rand_pkg is
       priv_int_constraints.val_excl(priv_int_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_int_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
+    -- Requires Questa One 2026.1 or newer
+    procedure excl_range(
+      constant min          : in integer;
+      constant max          : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_range_int(v_vendor_var_id, min, max, 0);
+      else
+        alert(TB_ERROR, "Procedure excl_range() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+      end if;
+    end procedure;
+
     procedure add_val_weight(
       constant value        : in integer;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight(" & to_string(value) & "," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_range_weight_int(v_vendor_var_id, value, value, weight);
+        return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -5974,6 +6525,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL  : string := "add_range_weight([" & to_string(min_value) & ":" & to_string(max_value) & "]," & to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
       variable v_weight_mode : t_weight_mode;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_range_weight_int(v_vendor_var_id, min_value, max_value, weight);
+        return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -5989,6 +6545,34 @@ package body rand_pkg is
       priv_int_constraints.weighted_config                                    := true;
     end procedure;
 
+    -- Requires Questa One 2026.1 or newer
+    procedure vector_sum_max(
+      constant max          : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_vector_sum_max(v_vendor_var_id, max);
+      else
+        alert(TB_ERROR, "Procedure vector_sum_max() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure vector_sum_min(
+      constant min          : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_vector_sum_min(v_vendor_var_id, min);
+      else
+        alert(TB_ERROR, "Procedure vector_sum_min() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+      end if;
+    end procedure;
+
     ------------------------------------------------------------
     -- Real constraints
     ------------------------------------------------------------
@@ -5998,6 +6582,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_real([" & format_real(min_value) & ":" & format_real(max_value) & "])";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_range_real(v_vendor_var_id, min_value, max_value, 0);
+        return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6017,6 +6606,11 @@ package body rand_pkg is
       constant value        : in real;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_range_real(v_vendor_var_id, value, value, 0);
+        return;
+      end if;
       add_val_real((0 => value), msg_id_panel);
     end procedure;
 
@@ -6025,6 +6619,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_real" & format_real(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_vals_real(v_vendor_var_id, set_of_values);
+        return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6042,6 +6641,11 @@ package body rand_pkg is
       constant value        : in real;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_range_real(v_vendor_var_id, value, value, 0);
+        return;
+      end if;
       excl_val_real((0 => value), msg_id_panel);
     end procedure;
 
@@ -6050,6 +6654,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val_real" & format_real(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_vals_real(v_vendor_var_id, set_of_values);
+        return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6059,12 +6668,32 @@ package body rand_pkg is
       priv_real_constraints.val_excl(priv_real_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_real_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
+    -- Requires Questa One 2026.1 or newer
+    procedure excl_range_real(
+      constant min          : in real;
+      constant max          : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_range_real(v_vendor_var_id, min, max, 0);
+      else
+        alert(TB_ERROR, "Procedure excl_range_real() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+      end if;
+    end procedure;
+
     procedure add_val_weight_real(
       constant value        : in real;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight_real(" & format_real(value) & "," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_range_weight_real(v_vendor_var_id, value, value, weight);
+        return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6082,6 +6711,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_real([" & format_real(min_value) & ":" & format_real(max_value) & "]," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_range_weight_real(v_vendor_var_id, min_value, max_value, weight);
+        return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6100,12 +6734,17 @@ package body rand_pkg is
     -- Time constraints
     ------------------------------------------------------------
     procedure add_range_time(
-      constant min_value    : in time;
-      constant max_value    : in time;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_range_time([" & to_string(min_value) & ":" & to_string(max_value) & "])";
-      constant C_TIME_UNIT  : time   := std.env.resolution_limit;
+      constant min_value       : in time;
+      constant max_value       : in time;
+      constant time_resolution : in time;
+      constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_time([" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "])";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_range_time(v_vendor_var_id, min_value, max_value, 0);
+        return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6117,14 +6756,27 @@ package body rand_pkg is
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_time_constraints.ran_incl, 1);
       increment_vec_size(priv_time_constraints.weighted, 1);
-      priv_time_constraints.ran_incl(priv_time_constraints.ran_incl'length - 1) := (min_value, max_value, max_value - min_value + C_TIME_UNIT);
+      priv_time_constraints.ran_incl(priv_time_constraints.ran_incl'length - 1) := (min_value, max_value, (max_value - min_value + time_resolution) / time_resolution, time_resolution);
       priv_time_constraints.weighted(priv_time_constraints.weighted'length - 1) := (min_value, max_value, 1, COMBINED_WEIGHT);
+    end procedure;
+
+    procedure add_range_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      add_range_time(min_value, max_value, get_range_time_unit(min_value, max_value), msg_id_panel);
     end procedure;
 
     procedure add_val_time(
       constant value        : in time;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_range_time(v_vendor_var_id, value, value, 0);
+        return;
+      end if;
       add_val_time((0 => value), msg_id_panel);
     end procedure;
 
@@ -6133,6 +6785,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_time" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_include_vals_time(v_vendor_var_id, set_of_values);
+        return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6150,6 +6807,11 @@ package body rand_pkg is
       constant value        : in time;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_range_time(v_vendor_var_id, value, value, 0);
+        return;
+      end if;
       excl_val_time((0 => value), msg_id_panel);
     end procedure;
 
@@ -6158,6 +6820,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val_time" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_vals_time(v_vendor_var_id, set_of_values);
+        return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6167,12 +6834,32 @@ package body rand_pkg is
       priv_time_constraints.val_excl(priv_time_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_time_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
+    -- Requires Questa One 2026.1 or newer
+    procedure excl_range_time(
+      constant min          : in time;
+      constant max          : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_exclude_range_time(v_vendor_var_id, min, max, 0);
+      else
+        alert(TB_ERROR, "Procedure excl_range_time() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+      end if;
+    end procedure;
+
     procedure add_val_weight_time(
       constant value        : in time;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_val_weight_time(" & to_string(value) & "," & to_string(weight) & ")";
+      constant C_LOCAL_CALL : string := "add_val_weight_time(" & to_string(value, get_time_unit(value)) & "," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_range_weight_time(v_vendor_var_id, value, value, weight);
+        return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6181,6 +6868,10 @@ package body rand_pkg is
       increment_vec_size(priv_time_constraints.weighted, 1);
       priv_time_constraints.weighted(priv_time_constraints.weighted'length - 1) := (value, value, weight, NA);
       priv_time_constraints.weighted_config                                     := true;
+      -- Use the resolution of the first range as default
+      if priv_weight_time_resolution = -1 ns then
+        priv_weight_time_resolution := get_time_unit(value);
+      end if;
     end procedure;
 
     procedure add_range_weight_time(
@@ -6188,8 +6879,13 @@ package body rand_pkg is
       constant max_value    : in time;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_range_weight_time([" & to_string(min_value) & ":" & to_string(max_value) & "]," & to_string(weight) & ")";
+      constant C_LOCAL_CALL : string := "add_range_weight_time([" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "]," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_range_weight_time(v_vendor_var_id, min_value, max_value, weight);
+        return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6202,6 +6898,10 @@ package body rand_pkg is
       increment_vec_size(priv_time_constraints.weighted, 1);
       priv_time_constraints.weighted(priv_time_constraints.weighted'length - 1) := (min_value, max_value, weight, COMBINED_WEIGHT);
       priv_time_constraints.weighted_config                                     := true;
+      -- Use the resolution of the first range as default
+      if priv_weight_time_resolution = -1 ns then
+        priv_weight_time_resolution := get_range_time_unit(min_value, max_value);
+      end if;
     end procedure;
 
     ------------------------------------------------------------
@@ -6214,6 +6914,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "add_range_unsigned([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_range_unsigned(v_vendor_var_id, min_value, max_value);
+        return;
+      end if;
       -- Check only unsigned constraints have been configured
       if not (check_configured_constraints("UNSIGNED", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6243,6 +6948,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "add_range_signed([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_add_range_signed(v_vendor_var_id, min_value, max_value);
+        return;
+      end if;
       -- Check only signed constraints have been configured
       if not (check_configured_constraints("SIGNED", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6295,6 +7005,15 @@ package body rand_pkg is
       end if;
     end procedure;
 
+    procedure set_range_weight_time_resolution(
+      constant time_resolution : in time;
+      constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_range_weight_time_resolution(" & to_string(time_resolution, get_time_unit(time_resolution)) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      priv_weight_time_resolution := time_resolution;
+    end procedure;
+
     procedure clear_constraints(
       constant VOID : in t_void) is
     begin
@@ -6307,6 +7026,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "clear_constraints()";
       variable v_proc_call  : line;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_clear_constraints(v_vendor_var_id);
+        return;
+      end if;
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       log_proc_call(ID_RAND_CONF, v_proc_call.all, ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -6394,6 +7118,10 @@ package body rand_pkg is
       variable v_num_ranges          : natural := priv_int_constraints.ran_incl'length;
       variable v_ret                 : integer;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        return vendor_randomize_int(v_vendor_var_id);
+      end if;
       create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
@@ -6401,6 +7129,7 @@ package body rand_pkg is
 
       -- Check only integer constraints are configured
       if not (check_configured_constraints("INTEGER", v_proc_call.all, is_config => false)) then
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -6416,6 +7145,7 @@ package body rand_pkg is
                     priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         v_ret := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
         log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -6488,6 +7218,7 @@ package body rand_pkg is
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured)), priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
       end case;
 
@@ -6516,6 +7247,10 @@ package body rand_pkg is
       variable v_num_ranges          : natural := priv_real_constraints.ran_incl'length;
       variable v_ret                 : real;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        return vendor_randomize_real(v_vendor_var_id);
+      end if;
       create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
@@ -6523,6 +7258,7 @@ package body rand_pkg is
 
       -- Check only real constraints are configured
       if not (check_configured_constraints("REAL", v_proc_call.all, is_config => false)) then
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if priv_cyclic_mode = CYCLIC then
@@ -6539,6 +7275,7 @@ package body rand_pkg is
                     priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         v_ret := rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
         log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -6568,6 +7305,7 @@ package body rand_pkg is
         when "001" =>
           alert(TB_ERROR, v_proc_call.all & "=> Real random generator needs ""include"" constraints", priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
         ----------------------------------------
         -- RANGE + SET OF VALUES
@@ -6610,11 +7348,13 @@ package body rand_pkg is
         when "000" =>
           alert(TB_ERROR, v_proc_call.all & "=> Real random generator must be constrained", priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
 
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured)), priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
       end case;
 
@@ -6643,6 +7383,10 @@ package body rand_pkg is
       variable v_num_ranges          : natural := priv_time_constraints.ran_incl'length;
       variable v_ret                 : time;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        return vendor_randomize_time(v_vendor_var_id);
+      end if;
       create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
@@ -6650,10 +7394,12 @@ package body rand_pkg is
 
       -- Check only time constraints are configured
       if not (check_configured_constraints("TIME", v_proc_call.all, is_config => false)) then
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_ERROR, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for time type.", priv_scope);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
       if priv_cyclic_mode = CYCLIC then
@@ -6668,8 +7414,9 @@ package body rand_pkg is
                     priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
                     priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
-        v_ret := rand_range_weight_mode(priv_time_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
-        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        v_ret := rand_range_weight_mode(priv_time_constraints.weighted.all, priv_weight_time_resolution, msg_id_panel, C_LOCAL_CALL_2);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret, get_time_unit(v_ret)), priv_scope, msg_id_panel);
+        deallocate(v_proc_call);
         return v_ret;
       end if;
 
@@ -6699,6 +7446,7 @@ package body rand_pkg is
         when "001" =>
           alert(TB_ERROR, v_proc_call.all & "=> Time random generator needs ""include"" constraints", priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
         ----------------------------------------
         -- RANGE + SET OF VALUES
@@ -6741,15 +7489,17 @@ package body rand_pkg is
         when "000" =>
           alert(TB_ERROR, v_proc_call.all & "=> Time random generator must be constrained", priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
 
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured)), priv_scope);
           priv_ret_valid := false;
+          deallocate(v_proc_call);
           return v_ret;
       end case;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, get_time_unit(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -6769,6 +7519,12 @@ package body rand_pkg is
     begin
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
+
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randomize_int_array(v_vendor_var_id, length, v_ret);
+        return v_ret;
+      end if;
 
       -- Check only integer constraints are configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL_1, is_config => false)) then
@@ -6838,6 +7594,12 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randomize_real_array(v_vendor_var_id, length, v_ret);
+        return v_ret;
+      end if;
+
       -- Check only real constraints are configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL_1, is_config => false)) then
         return v_ret;
@@ -6903,12 +7665,17 @@ package body rand_pkg is
       constant C_PREVIOUS_CYCLIC_MODE : t_cyclic := priv_cyclic_mode;
       variable v_val_incl_configured  : std_logic;
       variable v_val_excl_configured  : std_logic;
-      variable v_num_ranges           : natural  := priv_time_constraints.ran_incl'length;
       variable v_gen_new_random       : boolean  := true;
       variable v_ret                  : time_vector(0 to length - 1);
     begin
       v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_time_constraints.val_excl'length > 0 else '0';
+
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randomize_time_array(v_vendor_var_id, length, v_ret);
+        return v_ret;
+      end if;
 
       -- Check only time constraints are configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL_1, is_config => false)) then
@@ -6973,6 +7740,12 @@ package body rand_pkg is
       variable v_ret                     : unsigned(length - 1 downto 0);
       variable v_check_ok                : boolean := true;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randomize_unsigned(v_vendor_var_id, length, v_ret);
+        return v_ret;
+      end if;
+
       v_ran_incl_configured     := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
       v_val_incl_configured     := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured     := '1' when priv_int_constraints.val_excl'length > 0 else '0';
@@ -7087,6 +7860,12 @@ package body rand_pkg is
       variable v_ret                     : signed(length - 1 downto 0);
       variable v_check_ok                : boolean := true;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randomize_signed(v_vendor_var_id, length, v_ret);
+        return v_ret;
+      end if;
+
       v_ran_incl_configured     := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
       v_val_incl_configured     := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured     := '1' when priv_int_constraints.val_excl'length > 0 else '0';
@@ -7191,10 +7970,198 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_ret : unsigned(length - 1 downto 0);
+      variable v_vendor_ret : std_logic_vector(length - 1 downto 0);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randomize_slv(v_vendor_var_id, length, v_vendor_ret);
+        return v_vendor_ret;
+      end if;
+
       v_ret := randm(length, msg_id_panel, "slv");
       return std_logic_vector(v_ret);
     end function;
+
+    -- Requires Questa One 2026.1 or newer
+    impure function get_value(
+      constant VOID : t_void)
+    return integer is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        return vendor_randvar_get_value_int(v_vendor_var_id);
+      else
+        alert(TB_ERROR, "Function get_value() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return 0;
+      end if;
+    end function;
+
+    -- Requires Questa One 2026.1 or newer
+    impure function get_value(
+      constant VOID : t_void)
+    return real is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        return vendor_randvar_get_value_real(v_vendor_var_id);
+      else
+        alert(TB_ERROR, "Function get_value() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return 0.0;
+      end if;
+    end function;
+
+    -- Requires Questa One 2026.1 or newer
+    impure function get_value(
+      constant VOID : t_void)
+    return time is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        return vendor_randvar_get_value_time(v_vendor_var_id);
+      else
+        alert(TB_ERROR, "Function get_value() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return 0 ns;
+      end if;
+    end function;
+
+    -- Requires Questa One 2026.1 or newer
+    impure function create_rand(
+      constant VOID : t_void)
+    return integer is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        return v_vendor_var_id;
+      else
+        alert(TB_ERROR, "Function create_rand() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return 0;
+      end if;
+    end function;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure link(
+      constant op   : t_relational_operator;
+      constant var2 : integer) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_link(v_vendor_var_id, var2, t_relational_operator'pos(op));
+        return;
+      else
+        alert(TB_ERROR, "Procedure link() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure link(
+      constant arith_op        : t_arithmetic_operator;
+      constant var2            : integer;
+      constant op              : t_relational_operator;
+      constant val_or_var_id_3 : integer;
+      constant is_var_id_3     : boolean := false) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_add_link2(v_vendor_var_id, var2, t_relational_operator'pos(op), t_arithmetic_operator'pos(arith_op), val_or_var_id_3, boolean'pos(is_var_id_3));
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure unlink(
+      constant var2 : integer) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_delete_link(v_vendor_var_id, var2);
+        return;
+      else
+        alert(TB_ERROR, "Procedure link() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure unlink(
+      constant VOID : t_void) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        vendor_randvar_delete_link(v_vendor_var_id, -1);
+        return;
+      else
+        alert(TB_ERROR, "Procedure unlink() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure nonzero_bitwise_and(
+      constant mask : integer) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_nonzero_bitwise_and(v_vendor_var_id, mask);
+        return;
+      else
+        alert(TB_ERROR, "Procedure nonzero_bitwise_and() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure zero_bitwise_and(
+      constant mask : integer) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_zero_bitwise_and(v_vendor_var_id, mask);
+        return;
+      else
+        alert(TB_ERROR, "Procedure zero_bitwise_and() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure force_bits_to(
+      constant mask : string) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_force_bits_to(v_vendor_var_id, mask);
+        return;
+      else
+        alert(TB_ERROR, "Procedure force_bits_to() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
+
+    -- Requires Questa One 2026.1 or newer
+    procedure one_hot(
+      constant VOID : t_void) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(VOID);
+        vendor_randvar_one_hot(v_vendor_var_id);
+        return;
+      else
+        alert(TB_ERROR, "Procedure one_hot() is only supported in Questa One 2026.1 and newer. " & 
+                        "If you are running Questa One, see UVVM documentation for instructions on how to enable support for this procedure", C_SCOPE);
+        return;
+      end if;
+    end procedure;
 
   end protected body t_rand;
 

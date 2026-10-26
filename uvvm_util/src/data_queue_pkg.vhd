@@ -25,13 +25,6 @@ use work.string_methods_pkg.all;
 
 package data_queue_pkg is
 
-  -- Declaration of storage
-  subtype t_data_buffer is std_logic_vector(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1 downto 0);
-  shared variable shared_data_buffer : t_data_buffer;
-
-  type t_buffer_natural_array is array (C_NUMBER_OF_DATA_BUFFERS - 1 downto 0) of natural;
-  type t_buffer_boolean_array is array (C_NUMBER_OF_DATA_BUFFERS - 1 downto 0) of boolean;
-
   type t_data_queue is protected
     ------------------------------------------
     -- init_queue
@@ -268,11 +261,13 @@ end package data_queue_pkg;
 package body data_queue_pkg is
 
   type t_data_queue is protected body
+    type t_buffer_boolean_array is array (C_NUMBER_OF_DATA_BUFFERS - 1 downto 0) of boolean;
+    type t_buffer_natural_array is array (C_NUMBER_OF_DATA_BUFFERS - 1 downto 0) of natural;
+
     -- Internal variables for the data queue
     -- The buffer is one large std_logic_vector of size C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER.
     -- There are several queues that can be instantiated in the slv.
     -- There is one set of variables per queue.
-
     variable priv_queue_initialized  : t_buffer_boolean_array := (others => false);
     variable priv_queue_size_in_bits : t_buffer_natural_array := (others => 0);
     variable priv_count              : t_buffer_natural_array := (others => 0);
@@ -296,6 +291,10 @@ package body data_queue_pkg is
 
     type t_string_pointer is access string;
     variable priv_scope : t_string_pointer := NULL;
+
+    -- Declaration of storage
+    subtype t_data_buffer is std_logic_vector(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1 downto 0);
+    variable priv_data_buffer : t_data_buffer;
 
     ------------------------------------------
     -- init_queue
@@ -415,7 +414,7 @@ package body data_queue_pkg is
       if check_value(priv_queue_initialized(queue_idx), TB_ERROR,
                        "push_back called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER) then
         for i in a_data'right to a_data'left loop -- From right to left since LSB shall be first in the queue.
-          shared_data_buffer(priv_last_idx(queue_idx)) := a_data(i);
+          priv_data_buffer(priv_last_idx(queue_idx)) := a_data(i);
 
           if priv_last_idx(queue_idx) /= priv_max_idx(queue_idx) then
             priv_last_idx(queue_idx) := priv_last_idx(queue_idx) + 1;
@@ -436,9 +435,9 @@ package body data_queue_pkg is
       queue_idx : natural
     ) is
     begin
-      check_value(priv_queue_initialized(queue_idx), TB_WARNING, "flush called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
+      check_value(priv_queue_initialized(queue_idx), TB_WARNING, "flush called, but queue " & to_string(queue_idx) & " not initialized.", "data_queue", ID_NEVER);
 
-      shared_data_buffer(priv_max_idx(queue_idx) downto priv_min_idx(queue_idx)) := (others => '0');
+      priv_data_buffer(priv_max_idx(queue_idx) downto priv_min_idx(queue_idx)) := (others => '0');
       priv_first_idx(queue_idx)                                               := priv_min_idx(queue_idx);
       priv_last_idx(queue_idx)                                                := priv_min_idx(queue_idx);
       priv_count(queue_idx)                                                   := 0;
@@ -462,7 +461,7 @@ package body data_queue_pkg is
 
       -- Generate return value
       for i in 0 to v_return_entry'length - 1 loop
-        v_return_entry(i) := shared_data_buffer(v_current_idx);
+        v_return_entry(i) := priv_data_buffer(v_current_idx);
 
         if v_current_idx < priv_max_idx(queue_idx) then
           v_current_idx := v_current_idx + 1;
@@ -496,7 +495,7 @@ package body data_queue_pkg is
 
       -- Generate return value
       for i in v_return_entry'length - 1 downto 0 loop
-        v_return_entry(i) := shared_data_buffer(v_current_idx);
+        v_return_entry(i) := priv_data_buffer(v_current_idx);
 
         if v_current_idx > priv_min_idx(queue_idx) then
           v_current_idx := v_current_idx - 1;
@@ -533,7 +532,7 @@ package body data_queue_pkg is
 
           -- Clear fields that belong to the return value
           for i in 0 to entry_size_in_bits - 1 loop
-            shared_data_buffer(v_current_idx) := '0';
+            priv_data_buffer(v_current_idx) := '0';
 
             if v_current_idx > priv_min_idx(queue_idx) then
               v_current_idx := v_current_idx - 1;
@@ -579,7 +578,7 @@ package body data_queue_pkg is
 
           -- Clear fields that belong to the return value
           for i in 0 to entry_size_in_bits - 1 loop
-            shared_data_buffer(v_current_idx) := '0';
+            priv_data_buffer(v_current_idx) := '0';
 
             if v_current_idx < priv_max_idx(queue_idx) then
               v_current_idx := v_current_idx + 1;
@@ -644,7 +643,7 @@ package body data_queue_pkg is
       dummy : t_void
     ) is
     begin
-      shared_data_buffer := (others => '0');
+      priv_data_buffer := (others => '0');
 
       priv_queue_initialized  := (others => false);
       priv_queue_size_in_bits := (others => 0);

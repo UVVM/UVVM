@@ -1,0 +1,94 @@
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF GLOBAL CTRL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ALL_MESSAGES).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_POS_ACK).
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Association List Package - association_list_tb
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Verify initial length of the list.
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Verify the append() function.
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append a random number (50 <= num_nodes <= 100) of nodes to the list and verify the list
+UVVM:                                                                           length.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Lookup all keys and verify their value.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Verify the return value when append() is called with the same key twice.
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Verify the length().
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append nodes to the list and check the list length.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Delete from list and check length
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Verify the delete() function.
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append 10 nodes to the list.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Delete all nodes starting from the head of the list
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append 10 nodes to the list.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Delete all nodes starting from the tail of the list
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append 10 nodes to the list.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Delete a node from the middle of the list
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Verifying that the list is not broken after deleting a node from the middle of the list.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Try to delete a node that is not in the list.
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Delete randomly from the list and check key and length.
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append a random number (10 <= num_nodes <= 100) of nodes to the list.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Delete 10 nodes at random from the 68 appended.
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Verify the clear() function.
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append a random number of nodes to the list.
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Verify the get() and the set() functions.
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Append 10 nodes to the list.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Set new values to all key-value pairs.
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Verify the new values set.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  test_bench                     SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

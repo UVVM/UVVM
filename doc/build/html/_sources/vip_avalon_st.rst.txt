@@ -18,8 +18,6 @@ Bitvis VIP Avalon-ST
   * :ref:`avalon_st_expect_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -53,6 +51,8 @@ Signal Record
 
 .. note::
 
+    * The maximum number of symbols transmitted in a beat, which is data length / symbol_width, is defined by 
+      C_AVALON_ST_BFM_MAX_SYMBOLS_PER_BEAT in adaptations_pkg.
     * All supported signals, including channel and data_error are included in the record type, even when not used or connected to 
       the DUT.
     * For more information on the Avalon-ST signals, refer to "Avalon® Interface Specifications, Chapter: Avalon Streaming 
@@ -69,13 +69,13 @@ Default value for the record is C_AVALON_ST_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| max_wait_cycles              | natural                      | 100             | The maximum number of clock cycles to wait for  |
+| max_wait_cycles              | natural                      | 1000            | The maximum number of clock cycles to wait for  |
 |                              |                              |                 | the DUT ready or valid signal before reporting  |
 |                              |                              |                 | a timeout alert                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | max_wait_cycles_severity     | :ref:`t_alert_level`         | ERROR           | The above timeout will have this severity       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| clock_period                 | time                         | -1 ns           | Period of the clock signal                      |
+| clock_period                 | time                         | C_UNDEFINED_TIME| Period of the clock signal                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_period_margin          | time                         | 0 ns            | Input clock period margin to specified          |
 |                              |                              |                 | clock_period. Will check 'T/2' if input clock is|
@@ -84,34 +84,58 @@ Default value for the record is C_AVALON_ST_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_margin_severity        | :ref:`t_alert_level`         | TB_ERROR        | The above margin will have this severity        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| setup_time                   | time                         | -1 ns           | Generated signals setup time. Suggested value   |
+| setup_time                   | time                         | C_UNDEFINED_TIME| Generated signals setup time. Suggested value   |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | setup_time exceeds clock_period/2.              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| hold_time                    | time                         | -1 ns           | Generated signals hold time. Suggested value    |
+| hold_time                    | time                         | C_UNDEFINED_TIME| Generated signals hold time. Suggested value    |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
-|                              |                              | NLY             |   enter on the first falling edge, estimate the |
-|                              |                              |                 |   clock period,                                 |
-|                              |                              |                 | | synchronize the output signals and exit ¼     |
-|                              |                              |                 |   clock period after a succeeding rising edge.  |
-|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
-|                              |                              |                 |   will use the configured setup_time, hold_time |
-|                              |                              |                 |   and                                           |
-|                              |                              |                 | | clock_period to synchronize output signals    |
-|                              |                              |                 |   with clock edges.                             |
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
+|                              |                              | NLY             | always wait for the first falling edge of the   |
+|                              |                              |                 | clock.                                          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Then the interface output signals will be       |
+|                              |                              |                 | set up immediately. After that, the BFM will    |
+|                              |                              |                 | wait for the rising edge of the clock,          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | sample or set relevant interface signals (if    |
+|                              |                              |                 | any), and estimate the clock period.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit ¼ clock period after a  |
+|                              |                              |                 | succeeding rising edge.                         |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
+|                              |                              |                 | will always wait for the configured setup time  |
+|                              |                              |                 | before the first rising edge of the clock.      |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Then the interface output signals will be set up|
+|                              |                              |                 | immediately. After that, the BFM will wait for  |
+|                              |                              |                 | the rising edge of the clock,                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | and sample or set relevant interface signals (if|
+|                              |                              |                 | any). Note that the clock period needs to be    |
+|                              |                              |                 | configured in this mode.                        |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit after the configured    |
+|                              |                              |                 | hold time after a succeeding rising edge.       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| symbol_width                 | natural                      | 8               | Number of data bits per symbol                  |
+| symbol_width                 | natural                      | 8               | Number of data bits per symbol. The maximum     |
+|                              |                              |                 | width is defined by C_AVALON_ST_BFM_MAX_BITS_PE\|
+|                              |                              |                 | R_SYMBOL in adaptations_pkg.                    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | first_symbol_in_msb          | boolean                      | true            | Symbol ordering. When true, first-order symbol  |
 |                              |                              |                 | is in most significant bits.                    |
@@ -122,7 +146,42 @@ Default value for the record is C_AVALON_ST_BFM_CONFIG_DEFAULT.
 | use_packet_transfer          | boolean                      | true            | When true, packet signals are enabled:          |
 |                              |                              |                 | start_of_packet, end_of_packet & empty          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| valid_low_at_word_idx        | integer                      | 0               | Word index during which the master BFM shall    |
+|                              |                              |                 | de-assert valid while sending a packet. Can be  |
+|                              |                              |                 | set to multiple random indices using            |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_multiple_random_pr\| real                         | 0.5             | Probability, between 0.0 and 1.0, of how often  |
+| ob                           |                              |                 | valid shall be de-asserted when using           |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_duration           | integer                      | 0               | Number of clock cycles to de-assert valid. To   |
+|                              |                              |                 | disable this feature set to 0. Can be set to    |
+|                              |                              |                 | random using C_RANDOM.                          |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_max_random_duration| integer                      | 5               | Maximum number of clock cycles to de-assert     |
+|                              |                              |                 | valid when using C_RANDOM.                      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_at_word_idx        | integer                      | 0               | Word index during which the slave BFM shall     |
+|                              |                              |                 | de-assert ready while receiving the packet. Can |
+|                              |                              |                 | be set to multiple random indices using         |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_multiple_random_pr\| real                         | 0.5             | Probability, between 0.0 and 1.0, of how often  |
+| ob                           |                              |                 | ready shall be de-asserted when using           |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_duration           | integer                      | 0               | Number of clock cycles to de-assert ready. To   |
+|                              |                              |                 | disable this feature set to 0. Can be set to    |
+|                              |                              |                 | random using C_RANDOM.                          |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_max_random_duration| integer                      | 5               | Maximum number of clock cycles to de-assert     |
+|                              |                              |                 | ready when using C_RANDOM.                      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_default_value          | std_logic                    | '0'             | Determines the ready output value while the     |
+|                              |                              |                 | slave BFM is idle.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -164,7 +223,7 @@ When the config use_packet_transfer is enabled:
 | constant | channel_value      | in     | std_logic_vector             | Channel number for the data being transferred. The value|
 |          |                    |        |                              | is limited by max_channel in the BFM config             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_array         | in     | t_slv_array                  | An array of SLVs containing the data to be sent         |
+| constant | data_array         | in     | :ref:`t_slv_array`           | An array of SLVs containing the data to be sent         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -178,7 +237,8 @@ When the config use_packet_transfer is enabled:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AVALON_ST BFM").         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_avalon_st_bfm_config | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_avalon_st_bfm_config>`    | value is C_AVALON_ST_BFM_CONFIG_DEFAULT.                |
@@ -216,7 +276,7 @@ When the config use_packet_transfer is enabled:
 +==========+====================+========+==============================+=========================================================+
 | variable | channel_value      | out    | std_logic_vector             | Channel number for the data being received              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | data_array         | out    | t_slv_array                  | An array of SLVs containing the data to be received     |
+| variable | data_array         | out    | :ref:`t_slv_array`           | An array of SLVs containing the data to be received     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -230,7 +290,8 @@ When the config use_packet_transfer is enabled:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AVALON_ST BFM").         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_avalon_st_bfm_config | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_avalon_st_bfm_config>`    | value is C_AVALON_ST_BFM_CONFIG_DEFAULT.                |
@@ -251,7 +312,8 @@ When the config use_packet_transfer is enabled:
 avalon_st_expect()
 ----------------------------------------------------------------------------------------------------------------------------------
 Calls the :ref:`avalon_st_receive_bfm` procedure, then compares the received data with data_exp and the optional channel with 
-channel_exp.
+channel_exp. If the received data and channel are not equal to the expected parameters, an alert with severity 'alert_level' will 
+be issued. To reduce the verbosity of the alert message, use the C_ERROR_REPORT_EXTENT defined in adaptations_pkg.
 
 .. code-block::
 
@@ -262,7 +324,7 @@ channel_exp.
 +==========+====================+========+==============================+=========================================================+
 | constant | channel_exp        | in     | std_logic_vector             | Expected channel number for the data being received     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_exp           | in     | t_slv_array                  | An array of SLVs containing the expected data           |
+| constant | data_exp           | in     | :ref:`t_slv_array`           | An array of SLVs containing the expected data           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -278,7 +340,8 @@ channel_exp.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AVALON_ST BFM").         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_avalon_st_bfm_config | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_avalon_st_bfm_config>`    | value is C_AVALON_ST_BFM_CONFIG_DEFAULT.                |
@@ -298,11 +361,12 @@ channel_exp.
 
 init_avalon_st_if_signals()
 ----------------------------------------------------------------------------------------------------------------------------------
-Initializes the Avalon-ST interface. All the BFM outputs are set to '0', and BFM inputs are set to 'Z'.
+Initializes the Avalon-ST interface. All the BFM outputs are set to '0', except for the ready signal which is set from the config. 
+All BFM inputs are set to 'Z'.
 
 .. code-block::
 
-    t_avalon_st_if := init_avalon_st_if_signals(is_master, channel_width, data_width, data_error_width, empty_width)
+    t_avalon_st_if := init_avalon_st_if_signals(is_master, channel_width, data_width, data_error_width, empty_width, config)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
@@ -316,6 +380,9 @@ Initializes the Avalon-ST interface. All the BFM outputs are set to '0', and BFM
 | constant | data_error_width   | in     | natural                      | Width of the data error signal                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | empty_width        | in     | natural                      | Width of the empty signal                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | config             | in     | :ref:`t_avalon_st_bfm_config | Configuration of BFM behavior and restrictions. Default |
+|          |                    |        | <t_avalon_st_bfm_config>`    | value is C_AVALON_ST_BFM_CONFIG_DEFAULT.                |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -393,10 +460,11 @@ The following signals from the Avalon-ST interface are supported:
 | valid             | Master | 1      | Yes              | This signal qualifies all other master to slave signals. A transfer    |
 |                   |        |        |                  | takes place when both valid and ready are asserted.                    |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
-| empty             | Master | 1-5    | Yes              | | Number of symbols that are empty during the end_of_packet cycle. The |
-|                   |        |        |                  |   signal width in bits is ceil[log2(symbols_per_cycle)].               |
-|                   |        |        |                  | | Only required when the data signal carries more than one symbol of   |
-|                   |        |        |                  |   data per cycle and has a variable packet length.                     |
+| empty             | Master | 1-5    | Yes              | Number of symbols that are empty during the end_of_packet cycle. The   |
+|                   |        |        |                  | signal width in bits is ceil[log2(symbols_per_cycle)].                 |
+|                   |        |        |                  |                                                                        |
+|                   |        |        |                  | Only required when the data signal carries more than one symbol of     |
+|                   |        |        |                  | data per cycle and has a variable packet length.                       |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
 | end_of_packet     | Master | 1      | Yes              | When '1', it indicates that the data is the last word of the packet    |
 +-------------------+--------+--------+------------------+------------------------------------------------------------------------+
@@ -414,13 +482,11 @@ Interfaces" (MNL-AVABUSREF), available from Intel.
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in avalon_st_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -435,27 +501,34 @@ Generics
 |                              |                              |                 | VVC. Set to false when data shall be input to   |
 |                              |                              |                 | this VVC.                                       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_CHANNEL_WIDTH             | integer                      | 1               | | Width of the Avalon-ST channel signal.        |
-|                              |                              |                 | | Note 1: if CHANNEL is wider than 8, increase  |
-|                              |                              |                 |   the value of the constant C_AVALON_ST_CHANNEL\|
-|                              |                              |                 |   _MAX_LENGTH in the local_adaptations_pkg.     |
-|                              |                              |                 | | Note 2: If the CHANNEL signal is not used,    |
-|                              |                              |                 |   refer to `Signals`_                           |
+| GC_CHANNEL_WIDTH             | integer                      | 1               | Width of the Avalon-ST channel signal.          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 1: if CHANNEL is wider than 8, increase    |
+|                              |                              |                 | the value of the constant C_AVALON_ST_VVC_CMD_C\|
+|                              |                              |                 | HAN_MAX_LENGTH in adaptations_pkg.              |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note 2: If the CHANNEL signal is not used,      |
+|                              |                              |                 | refer to `Signals`_                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_DATA_WIDTH                | integer                      | N/A             | | Width of the Avalon-ST data bus.              |
-|                              |                              |                 | | Note: if DATA is wider than 512, increase the |
-|                              |                              |                 |   value of the constant C_AVALON_ST_WORD_MAX_LE\|
-|                              |                              |                 |   GTH in the local_adaptations_pkg              |
+| GC_DATA_WIDTH                | integer                      | N/A             | Width of the Avalon-ST data bus.                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note: if DATA is wider than 512, increase the   |
+|                              |                              |                 | value of the constant C_AVALON_ST_VVC_CMD_WORD\ |
+|                              |                              |                 | _MAX_LENGTH in adaptations_pkg.                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_DATA_ERROR_WIDTH          | integer                      | 1               | | Width of the Avalon-ST data error signal.     |
-|                              |                              |                 | | Note: If the DATA_ERROR signal is not used,   |
-|                              |                              |                 |   refer to `Signals`_                           |
+| GC_DATA_ERROR_WIDTH          | integer                      | 1               | Width of the Avalon-ST data error signal.       |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note: If the DATA_ERROR signal is not used,     |
+|                              |                              |                 | refer to `Signals`_                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_EMPTY_WIDTH               | integer                      | 1               | | Width of the Avalon-ST empty signal.          |
-|                              |                              |                 | | Note: If the EMPTY signal is not used, refer  |
-|                              |                              |                 |   to `Signals`_                                 |
+| GC_EMPTY_WIDTH               | integer                      | 1               | Width of the Avalon-ST empty signal.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Note: If the EMPTY signal is not used, refer    |
+|                              |                              |                 | to `Signals`_                                   |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_AVALON_ST_VVC_MAX_INSTANCE_NUM  |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_AVALON_ST_BFM_CONFIG      | :ref:`t_avalon_st_bfm_config | C_AVALON_ST_BFM\| Configuration for the Avalon-ST BFM             |
 |                              | <t_avalon_st_bfm_config>`    | _CONFIG_DEFAULT |                                                 |
@@ -485,6 +558,10 @@ Generics
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
+
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -497,7 +574,7 @@ Signals
 |          |                    |        | <t_avalon_st_if>`            |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-In this VVC, the interface has been encapsulated in a signal record of type t_avalon_st_if in order to improve readability of the code. 
+In this VVC, the interface has been encapsulated in a signal record of type **t_avalon_st_if** in order to improve readability of the code. 
 Since the Avalon-ST interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained 
 vectors need to be constrained when the interface signals are instantiated. For this interface, this could look like: ::
 
@@ -556,16 +633,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AVALON_ST_INT\| | Delay between any requested BFM accesses      |
-|                              |                              | ER_BFM_DELAY_DE\|   towards the DUT.                              |
-|                              |                              | FAULT           | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AVALON_ST_INT\| Delay between any requested BFM accesses        |
+|                              |                              | ER_BFM_DELAY_DE\| towards the DUT.                                |
+|                              |                              | FAULT           |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -610,8 +690,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_avalon_st_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_avalon_st_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_avalon_st_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_avalon_st_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================
@@ -635,6 +715,20 @@ Methods
     variable v_data_array : t_slv_array(0 to C_MAX_WORDS - 1)(C_SYMBOL_WIDTH - 1 downto 0);
     variable v_data_array : t_slv_array(0 to C_MAX_WORDS - 1)(C_DATA_BUS_LENGTH - 1 downto 0);
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH        | Maximum **channel** length           |
+      +--------------------------------------------+--------------------------------------+
+      | C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH        | Maximum **data_array** word length   |
+      +--------------------------------------------+--------------------------------------+
+      | C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS         | Maximum **data_array** words         |
+      +--------------------------------------------+--------------------------------------+
+      | C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH      | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _avalon_st_transmit_vvc:
 
@@ -660,12 +754,13 @@ generic constant 'GC_VVC_IS_MASTER' to true.
 | constant | channel_value      | in     | std_logic_vector             | Channel number for the data being transferred. The value|
 |          |                    |        |                              | is limited by max_channel in the BFM config             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_array         | in     | t_slv_array                  | An array of SLVs containing the data to be sent         |
+| constant | data_array         | in     | :ref:`t_slv_array`           | An array of SLVs containing the data to be sent         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -708,7 +803,8 @@ the received data and metadata will be stored in the VVC for a potential future 
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -739,6 +835,9 @@ the command is scheduled to run, the executor calls the :ref:`avalon_st_expect_b
 The avalon_st_expect() procedure can only be called when the Avalon-ST VVC is instantiated in slave mode, i.e. setting the 
 generic constant 'GC_VVC_IS_MASTER' to false.
 
+If the received data and channel are not equal to the expected parameters, an alert with severity 'alert_level' will be issued. 
+To reduce the verbosity of the alert message, use the C_ERROR_REPORT_EXTENT defined in adaptations_pkg.
+
 .. code-block::
 
     avalon_st_expect(VVCT, vvc_instance_idx, [channel_exp,] data_exp, msg, [alert_level, [scope]])
@@ -753,14 +852,15 @@ generic constant 'GC_VVC_IS_MASTER' to false.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | channel_exp        | in     | std_logic_vector             | Expected channel number for the data being received     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_exp           | in     | t_slv_array                  | An array of SLVs containing the expected data           |
+| constant | data_exp           | in     | :ref:`t_slv_array`           | An array of SLVs containing the expected data           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -790,8 +890,8 @@ Transaction Info
     | channel_value                | std_logic_vector(7 downto 0) | 0x0             | Channel number for the data being transferred or|
     |                              |                              |                 | expected                                        |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data_array                   | t_slv_array(0 to 1024)(512   | 0x0             | An array of SLVs containing the data to be sent |
-    |                              | downto 0)                    |                 | /received                                       |
+    | data_array                   | :ref:`t_slv_array(0 to 1024)\| 0x0             | An array of SLVs containing the data to be sent |
+    |                              | (512 downto 0) <t_slv_array>`|                 | /received                                       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
     |                              |                              | ULT             |                                                 |
@@ -800,11 +900,19 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 More information can be found in :ref:`Essential Mechanisms - Distribution of Transaction Info <vvc_framework_transaction_info>`.
+
+
+Scoreboard
+==================================================================================================================================
+This VVC does not have a built in Scoreboard functionality due to the complexity to make it generic for several use cases. However, 
+a dedicated Scoreboard can be added by the user if needed.
+
+See the :ref:`vip_scoreboard` for a complete list of available commands and additional information.
 
 
 Unwanted Activity Detection

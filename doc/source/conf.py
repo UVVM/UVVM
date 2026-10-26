@@ -19,7 +19,7 @@ import os
 
 project = 'UVVM'
 author = 'UVVM'
-copyright = '2024, UVVM'
+copyright = '2025 by UVVM steering group. All rights reserved'
 
 # The full version, including alpha/beta/rc tags
 def read_uvvm_version(fname):
@@ -75,7 +75,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     'navigation_depth': '5',
     'style_nav_header_background': '#F5F5F5',
-    'logo_only': 'True'
+    'logo_only': 'true'
 }
 
 html_logo = 'images/uvvm.png'
@@ -84,4 +84,10 @@ html_logo = 'images/uvvm.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ['_static']
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'custom.css',
+]

@@ -39,7 +39,7 @@ end entity error_injection_slv;
 architecture behave of error_injection_slv is
 begin
 
-  p_error_injection : process
+  p_error_injection : process is
     constant C_INITIAL_VALUE_DONT_CARE : std_logic_vector(ei_in'length - 1 downto 0) := (others => '-');
     constant C_IS_VECTOR               : boolean                                     := (ei_in'length > 1);
     -- helper variables
@@ -50,29 +50,30 @@ begin
     variable v_last_ei_in              : std_logic_vector(ei_in'length - 1 downto 0) := (others => '0');
     variable v_config_copy             : t_error_injection_config                    := shared_ei_config(GC_INSTANCE_IDX);
     variable v_timestamp               : time;
+    variable v_seeds                   : t_positive_vector(0 to 1)                   := (1, 2);
 
     alias ei_config is shared_ei_config(GC_INSTANCE_IDX);
-    alias seed1 is ei_config.randomization_seed1;
-    alias seed2 is ei_config.randomization_seed2;
     alias base_value is ei_config.base_value;
     alias error_type is ei_config.error_type;
 
     -- Return random time within specified range if requested.
     impure function get_error_injection_timing(start_time : time; end_time : time) return time is
+      variable v_rand : time := 0 ns;
     begin
       if end_time = 0 ns then
         return start_time;
       else
-        return random(start_time, end_time);
+        random(start_time, end_time, v_seeds(0), v_seeds(1), v_rand);
+        return v_rand;
       end if;
     end function get_error_injection_timing;
 
     -- Computes if input interval number is a error inject interval
-    impure function is_valid_interval(counter : natural; error_type : t_error_injection_types) return boolean is
+    impure function is_valid_interval(counter : natural; error_injection_type : t_error_injection_types) return boolean is
     begin
       if (counter mod ei_config.interval) = 0 then
         return true;
-      elsif error_type = BYPASS then
+      elsif error_injection_type = BYPASS then
         return true;
       else
         return false;
@@ -80,8 +81,8 @@ begin
     end function is_valid_interval;
 
   begin
-    -- Set randomzation seeds for randomized timing parameters.
-    randomize(seed1, seed2, "setting global randomization seeds " & to_string(GC_INSTANCE_IDX));
+    -- Use the instance_name attribute and instance index to generate seeds for randomized timing parameters
+    set_rand_seeds(v_seeds'instance_name & to_string(GC_INSTANCE_IDX), v_seeds(0), v_seeds(1));
 
     -- Wait before monitoring signal
     v_timestamp := now;

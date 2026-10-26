@@ -1,0 +1,60 @@
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(210)=> Sampled illegal_bin(210)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(226)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #3  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(227)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #4  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(228)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #5  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(229)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #6  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(231)=> Sampled illegal_bin_transition(231->237->237->238->235->231)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((210, 1210))=> Sampled illegal_bin(1210)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((226, 1226))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((227, 1227))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((228, 1228))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((229, 1229))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
+UVVM: 

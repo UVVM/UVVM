@@ -1,0 +1,14 @@
+# Subreq mappings
+REQ_COMPOUND_BASIC,        REQ_SUB_1, REQ_SUB_2
+REQ_COMPOUND_TICKOFF,      REQ_NOT_TESTED
+REQ_COMPOUND_NONCOMPLIANT, REQ_SUB_1, REQ_NONCOMPLIANT
+REQ_COMPOUND_NOT_TESTED,   REQ_NOT_TESTED
+REQ_COMPOUND_ANDOR,        REQ_SUB_1, REQ_SUB_ANDOR
+
+# Subreq definitions:
+REQ_SUB_1,          Subreq 1,                 TC_1
+REQ_SUB_2,          Subreq 2,                 TC_2
+REQ_NOT_TESTED,     Not tested requirement,   TC_NOT_RUN
+REQ_NONCOMPLIANT,   Noncompliant requirement, TC_FAIL
+REQ_SUB_ANDOR,      AndOr subreq,             TC_1
+REQ_SUB_ANDOR,      AndOr subreq,             TC_2, TC_3

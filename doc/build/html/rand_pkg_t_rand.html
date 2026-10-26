@@ -1,23 +1,22 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>t_rand (protected) &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#getting-started">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#single-method-approach">Single-method approach</a></li>
@@ -60,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#distributions">Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#configuration-report">Configuration report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#clearing-configuration">Clearing configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#questa-one-extended-features">Questa One extended features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#additional-info">Additional info</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="rand_pkg_overview.html#rand-pkg">rand_pkg</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">t_rand (protected)</a><ul>
@@ -111,9 +112,26 @@
 <li class="toctree-l5"><a class="reference internal" href="#add-range-weight-time">add_range_weight_time()</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#set-cyclic-mode">set_cyclic_mode()</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#set-uniqueness">set_uniqueness()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#set-range-weight-time-resolution">set_range_weight_time_resolution()</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#clear-constraints">clear_constraints()</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#clear-config">clear_config()</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#randm">randm()</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#additional-methods-for-questa-one">Additional methods for Questa One</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#excl-range">excl_range()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#vector-sum-min">vector_sum_min()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#vector-sum-max">vector_sum_max()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#excl-range-real">excl_range_real()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#excl-range-time">excl_range_time()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#get-value">get_value()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#create-rand">create_rand()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#link">link()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#unlink">unlink()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nonzero-bitwise-and">nonzero_bitwise_and()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#zero-bitwise-and">zero_bitwise_and()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#force-bits-to">force_bits_to()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#one-hot">one_hot()</a></li>
 </ul>
 </li>
 </ul>
@@ -125,9 +143,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -148,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -178,7 +197,7 @@
   <section id="t-rand-protected">
 <h1>t_rand (protected)<a class="headerlink" href="#t-rand-protected" title="Link to this heading"></a></h1>
 <p>Protected type containing the Enhanced Randomization functionality.</p>
-<p id="random-generator">The expression ‘random generator’ refers to the specific variable instance of <em>t_rand</em>.</p>
+<p id="random-generator">The expression ‘random generator’ refers to the specific variable instance of <strong>t_rand</strong>.</p>
 <section id="common-configuration">
 <h2>Common configuration<a class="headerlink" href="#common-configuration" title="Link to this heading"></a></h2>
 <section id="set-name">
@@ -230,7 +249,7 @@ adaptations_pkg. Default value is **unnamed**.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -297,7 +316,7 @@ in adaptations_pkg.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -335,7 +354,8 @@ distributions click <a class="reference internal" href="rand_pkg_overview.html#r
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -363,7 +383,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -402,7 +422,8 @@ distribution curve).</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -431,7 +452,7 @@ being used (since it depends on the parameters of each <code class="docutils lit
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -462,7 +483,7 @@ being used (since it depends on the parameters of each <code class="docutils lit
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -470,7 +491,8 @@ being used (since it depends on the parameters of each <code class="docutils lit
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -510,7 +532,8 @@ Must be a positive value</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -539,7 +562,7 @@ default value is being used (since it depends on the parameters of each <code cl
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -570,7 +593,7 @@ default value is being used (since it depends on the parameters of each <code cl
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -578,7 +601,8 @@ default value is being used (since it depends on the parameters of each <code cl
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -616,7 +640,8 @@ overview on weighted randomization click <a class="reference internal" href="ran
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -644,7 +669,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -675,7 +700,7 @@ on cyclic randomization click <a class="reference internal" href="rand_pkg_overv
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -683,7 +708,8 @@ on cyclic randomization click <a class="reference internal" href="rand_pkg_overv
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -695,8 +721,9 @@ value is shared_msg_id_panel.</p></td>
 </section>
 <section id="report-config">
 <h3>report_config()<a class="headerlink" href="#report-config" title="Link to this heading"></a></h3>
-<p>Prints a report containing the <a class="reference internal" href="#random-generator"><span class="std std-ref">random generator’s</span></a> configuration parameters. To see an example of the
-generated report click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-config-report"><span class="std std-ref">here</span></a>.</p>
+<p>Prints a report containing the <a class="reference internal" href="#random-generator"><span class="std std-ref">random generator’s</span></a> configuration parameters. The printing destination can
+be log and/or console and is defined by the <code class="docutils literal notranslate"><span class="pre">shared</span> <span class="pre">variable</span> <span class="pre">shared_default_log_destination</span></code> with the default value set by
+C_DEFAULT_LOG_DESTINATION in adaptations_pkg. To see an example of the generated report click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-config-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -713,7 +740,7 @@ generated report click <a class="reference internal" href="rand_pkg_overview.htm
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -807,7 +834,7 @@ and C_RAND_INIT_SEED_2 in adaptations_pkg.</p>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 </tbody>
@@ -887,7 +914,8 @@ NON_CYCLIC.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -959,7 +987,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -977,13 +1006,13 @@ shared_msg_id_panel.</p></td>
 <section id="return-time">
 <span id="rand-time"></span><h4>return time<a class="headerlink" href="#return-time" title="Link to this heading"></a></h4>
 <p>Returns a random time value. For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">value2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">value2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1009,34 +1038,46 @@ shared_msg_id_panel.</p></td>
 <td><p>The maximum value in the range to generate the random number</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between min_value and
+max_value. If the given resolution is too small for the range,
+a TB_WARNING will be printed once. Default value is the
+smallest time unit between the min and max parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
 <td><p>specifier</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="rand_pkg_types.html#t-value-specifier"><span class="std std-ref">t_value_specifier</span></a></p></td>
 <td><p>Defines how to handle a single value or a set of values</p></td>
 </tr>
-<tr class="row-odd"><td><p>constant</p></td>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>value</p></td>
 <td><p>in</p></td>
 <td><p>time</p></td>
 <td><p>A single value used for the generation of the random number</p></td>
 </tr>
-<tr class="row-even"><td><p>constant</p></td>
+<tr class="row-odd"><td><p>constant</p></td>
 <td><p>set_of_values</p></td>
 <td><p>in</p></td>
 <td><p>time_vector</p></td>
 <td><p>A set of values used for the generation of the random number</p></td>
 </tr>
-<tr class="row-odd"><td><p>constant</p></td>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">);</span><span class="w">         </span><span class="c1">-- Generates random values with a resolution of 1 us</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Generates random values with a resolution of 1 ns</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates random values with a resolution of 100 ns</span>
 <span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ONLY</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">us</span><span class="p">));</span>
 <span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">));</span>
 <span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">ns</span><span class="p">));</span>
@@ -1123,7 +1164,8 @@ NON_CYCLIC.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1208,7 +1250,8 @@ Default value is NON_UNIQUE.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1226,13 +1269,13 @@ shared_msg_id_panel.</p></td>
 <section id="return-time-vector">
 <span id="rand-time-vec"></span><h4>return time_vector<a class="headerlink" href="#return-time-vector" title="Link to this heading"></a></h4>
 <p>Returns a vector of random time values. For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
 <span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">value2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">value2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="n">specifier1</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values1</span><span class="p">,</span><span class="w"> </span><span class="n">specifier2</span><span class="p">,</span><span class="w"> </span><span class="n">set_of_values2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1264,41 +1307,53 @@ shared_msg_id_panel.</p></td>
 <td><p>The maximum value in the range to generate the random number</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between min_value and
+max_value. If the given resolution is too small for the range,
+a TB_WARNING will be printed once. Default value is the
+smallest time unit between the min and max parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>specifier</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="rand_pkg_types.html#t-value-specifier"><span class="std std-ref">t_value_specifier</span></a></p></td>
 <td><p>Defines how to handle a single value or a set of values</p></td>
 </tr>
-<tr class="row-even"><td><p>constant</p></td>
+<tr class="row-odd"><td><p>constant</p></td>
 <td><p>value</p></td>
 <td><p>in</p></td>
 <td><p>time</p></td>
 <td><p>A single value used for the generation of the random number</p></td>
 </tr>
-<tr class="row-odd"><td><p>constant</p></td>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>set_of_values</p></td>
 <td><p>in</p></td>
 <td><p>time_vector</p></td>
 <td><p>A set of values used for the generation of the random number</p></td>
 </tr>
-<tr class="row-even"><td><p>constant</p></td>
+<tr class="row-odd"><td><p>constant</p></td>
 <td><p>uniqueness</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="rand_pkg_types.html#t-uniqueness"><span class="std std-ref">t_uniqueness</span></a></p></td>
 <td><p>Whether the values in the vector should be unique or not.
 Default value is NON_UNIQUE.</p></td>
 </tr>
-<tr class="row-odd"><td><p>constant</p></td>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">);</span><span class="w">         </span><span class="c1">-- Generates random values with a resolution of 1 us</span>
+<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Generates random values with a resolution of 1 ns</span>
+<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates random values with a resolution of 100 ns</span>
 <span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">ONLY</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="n">us</span><span class="p">));</span>
 <span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">));</span>
 <span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">ns</span><span class="p">));</span>
@@ -1379,7 +1434,8 @@ NON_CYCLIC.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1436,7 +1492,8 @@ For more information on the probability distribution click <a class="reference i
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1517,7 +1574,8 @@ NON_CYCLIC.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1574,7 +1632,8 @@ For more information on the probability distribution click <a class="reference i
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1656,7 +1715,8 @@ NON_CYCLIC.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1714,7 +1774,8 @@ largest length of either min_value or max_value. For more information on the pro
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1744,7 +1805,7 @@ shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1752,7 +1813,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1782,7 +1844,7 @@ value is shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -1790,7 +1852,8 @@ value is shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1843,7 +1906,8 @@ randomization. The sum of all weights could be any value since each individual p
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1867,7 +1931,7 @@ This mode can be changed to assigning the given weight equally to each value wit
 <code class="docutils literal notranslate"><span class="pre">set_range_weight_default_mode(INDIVIDUAL_WEIGHT)</span></code> (EXCEPT for the real and time types).</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w">          </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="n">real</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">unsigned</span><span class="w">         </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">signed</span><span class="w">           </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -1894,18 +1958,31 @@ This mode can be changed to assigning the given weight equally to each value wit
 single value, it needs to be set equally for min and max.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between min_value and
+max_value. If the given resolution is too small for the range,
+a TB_WARNING will be printed once. Default value is the
+smallest time unit between the min and max parameters of the
+first element in the weighted_vector.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">rand_int</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">)));</span>
 <span class="n">rand_real</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">)));</span>
-<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">60</span><span class="p">)));</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">60</span><span class="p">)));</span><span class="w">         </span><span class="c1">-- Generates random values with a resolution of 1 us</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">60</span><span class="p">)),</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Generates random values with a resolution of 1 ns</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">60</span><span class="p">)),</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates random values with a resolution of 100 ns</span>
 <span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">30</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">6</span><span class="p">)));</span>
 <span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)));</span>
 <span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">30</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">1</span><span class="p">)));</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span>
@@ -1930,7 +2007,7 @@ to avoid confusion regarding the distribution of the weights.</p>
 values within a real/time range.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w">          </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="n">real</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">time</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<span class="kt">time</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">unsigned</span><span class="w">         </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">signed</span><span class="w">           </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 <span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">weighted_vector</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -1958,18 +2035,31 @@ specify a single value, it needs to be set equally for min and
 max, and the mode to NA since it doesn’t have any meaning.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between min_value and
+max_value. If the given resolution is too small for the range,
+a TB_WARNING will be printed once. Default value is the
+smallest time unit between the min and max parameters of the
+first element in the weighted_vector.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">rand_int</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">)));</span>
 <span class="n">rand_real</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)));</span>
-<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)));</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)));</span><span class="w">         </span><span class="c1">-- Generates random values with a resolution of 1 us</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)),</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Generates random values with a resolution of 1 ns</span>
+<span class="n">rand_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">5</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">25</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">50</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)),</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates random values with a resolution of 100 ns</span>
 <span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">30</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">)));</span>
 <span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">)));</span>
 <span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">30</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">)));</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span>
@@ -2012,12 +2102,13 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2054,19 +2145,20 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_real</span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_real</span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="add-range-time">
 <h3>add_range_time()<a class="headerlink" href="#add-range-time" title="Link to this heading"></a></h3>
 <p>Adds a constraint specifying a range which will be included in the randomized values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">time_resolution</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -2092,16 +2184,28 @@ shared_msg_id_panel.</p></td>
 <td><p>The maximum value in the range to generate the random number</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between min_value and
+max_value. If the given resolution is too small for the range,
+a TB_WARNING will be printed once. Default value is the
+smallest time unit between the min and max parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">);</span><span class="w">         </span><span class="c1">-- Generates random values with a resolution of 1 us</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Generates random values with a resolution of 1 ns</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates random values with a resolution of 100 ns</span>
 </pre></div>
 </div>
 </section>
@@ -2139,7 +2243,8 @@ values bigger than the integer’s 32-bit range.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2182,7 +2287,8 @@ values bigger than the integer’s 32-bit range.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2225,7 +2331,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2269,7 +2376,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2313,7 +2421,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2357,7 +2466,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2401,7 +2511,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2445,7 +2556,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2488,7 +2600,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2531,7 +2644,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2574,7 +2688,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2631,7 +2746,8 @@ Default value is COMBINED_WEIGHT and can be updated via
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2688,7 +2804,8 @@ used by default due to the very large number of values within a real range.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2701,7 +2818,8 @@ shared_msg_id_panel.</p></td>
 <section id="add-range-weight-time">
 <span id="id11"></span><h3>add_range_weight_time()<a class="headerlink" href="#add-range-weight-time" title="Link to this heading"></a></h3>
 <p>Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is
-used by default due to the very large number of values within a time range.</p>
+used by default due to the very large number of values within a time range. To specify the time resolution see
+<a class="reference internal" href="#set-range-weight-time-resolution"><span class="std std-ref">set_range_weight_time_resolution()</span></a></p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">,</span><span class="w"> </span><span class="n">weight</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -2738,7 +2856,8 @@ used by default due to the very large number of values within a time range.</p>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2776,7 +2895,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2813,12 +2933,55 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">set_uniqueness</span><span class="p">(</span><span class="n">UNIQUE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="set-range-weight-time-resolution">
+<span id="id12"></span><h3>set_range_weight_time_resolution()<a class="headerlink" href="#set-range-weight-time-resolution" title="Link to this heading"></a></h3>
+<p>Sets the time resolution to use in the weighted distribution functions. Default value is the smallest time unit between the min
+and max parameters of the first element added to the weighted_vector.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_range_weight_time_resolution</span><span class="p">(</span><span class="n">time_resolution</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between min_value and
+max_value. If the given resolution is too small for the range,
+a TB_WARNING will be printed once.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default value is
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_range_weight_time_resolution</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates random values with a resolution of 100 ns</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">10</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">19</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">20</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="mi">29</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -2842,7 +3005,7 @@ shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -2850,7 +3013,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2880,7 +3044,7 @@ shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -2888,7 +3052,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2900,7 +3065,7 @@ shared_msg_id_panel.</p></td>
 <section id="randm">
 <h3>randm()<a class="headerlink" href="#randm" title="Link to this heading"></a></h3>
 <section id="randm-int">
-<span id="id12"></span><h4>return integer<a class="headerlink" href="#randm-int" title="Link to this heading"></a></h4>
+<span id="id13"></span><h4>return integer<a class="headerlink" href="#randm-int" title="Link to this heading"></a></h4>
 <p>Returns a random integer value using the configured constraints. For more information on the probability distribution click
 <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
@@ -2920,7 +3085,7 @@ shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -2928,7 +3093,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2941,7 +3107,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-real">
-<span id="id13"></span><h4>return real<a class="headerlink" href="#randm-real" title="Link to this heading"></a></h4>
+<span id="id14"></span><h4>return real<a class="headerlink" href="#randm-real" title="Link to this heading"></a></h4>
 <p>Returns a random real value using the configured constraints. For more information on the probability distribution click
 <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
@@ -2961,7 +3127,7 @@ shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -2969,7 +3135,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2982,7 +3149,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-time">
-<span id="id14"></span><h4>return time<a class="headerlink" href="#randm-time" title="Link to this heading"></a></h4>
+<span id="id15"></span><h4>return time<a class="headerlink" href="#randm-time" title="Link to this heading"></a></h4>
 <p>Returns a random time value using the configured constraints. For more information on the probability distribution click
 <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
@@ -3002,7 +3169,7 @@ shared_msg_id_panel.</p></td>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>VOID</p></td>
 <td><p>in</p></td>
-<td><p>t_void</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-void"><span class="std std-ref">t_void</span></a></p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
@@ -3010,7 +3177,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3023,7 +3191,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-int-vec">
-<span id="id15"></span><h4>return integer_vector<a class="headerlink" href="#randm-int-vec" title="Link to this heading"></a></h4>
+<span id="id16"></span><h4>return integer_vector<a class="headerlink" href="#randm-int-vec" title="Link to this heading"></a></h4>
 <p>Returns a vector of random integer values using the configured constraints. For more information on the probability distribution
 click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">integer_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -3050,7 +3218,8 @@ click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distri
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3063,7 +3232,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-real-vec">
-<span id="id16"></span><h4>return real_vector<a class="headerlink" href="#randm-real-vec" title="Link to this heading"></a></h4>
+<span id="id17"></span><h4>return real_vector<a class="headerlink" href="#randm-real-vec" title="Link to this heading"></a></h4>
 <p>Returns a vector of random real values using the configured constraints. For more information on the probability distribution
 click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -3090,7 +3259,8 @@ click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distri
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3103,7 +3273,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-time-vec">
-<span id="id17"></span><h4>return time_vector<a class="headerlink" href="#randm-time-vec" title="Link to this heading"></a></h4>
+<span id="id18"></span><h4>return time_vector<a class="headerlink" href="#randm-time-vec" title="Link to this heading"></a></h4>
 <p>Returns a vector of random time values using the configured constraints. For more information on the probability distribution
 click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -3130,7 +3300,8 @@ click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distri
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3143,7 +3314,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-uns">
-<span id="id18"></span><h4>return unsigned<a class="headerlink" href="#randm-uns" title="Link to this heading"></a></h4>
+<span id="id19"></span><h4>return unsigned<a class="headerlink" href="#randm-uns" title="Link to this heading"></a></h4>
 <p>Returns a random unsigned value using the configured constraints. For more information on the probability distribution click
 <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -3170,7 +3341,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3187,7 +3359,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-sig">
-<span id="id19"></span><h4>return signed<a class="headerlink" href="#randm-sig" title="Link to this heading"></a></h4>
+<span id="id20"></span><h4>return signed<a class="headerlink" href="#randm-sig" title="Link to this heading"></a></h4>
 <p>Returns a random signed value using the configured constraints. For more information on the probability distribution click
 <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">signed</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -3214,7 +3386,8 @@ shared_msg_id_panel.</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3231,7 +3404,7 @@ shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="randm-slv">
-<span id="id20"></span><h4>return std_logic_vector<a class="headerlink" href="#randm-slv" title="Link to this heading"></a></h4>
+<span id="id21"></span><h4>return std_logic_vector<a class="headerlink" href="#randm-slv" title="Link to this heading"></a></h4>
 <p>Returns a random std_logic_vector value (interpreted as unsigned) using the configured constraints. For more information on the
 probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
@@ -3258,7 +3431,8 @@ probability distribution click <a class="reference internal" href="rand_pkg_over
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default value is
-shared_msg_id_panel.</p></td>
+shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -3276,6 +3450,547 @@ shared_msg_id_panel.</p></td>
 </section>
 </section>
 </section>
+<section id="additional-methods-for-questa-one">
+<span id="questa-rand-methods"></span><h2>Additional methods for Questa One<a class="headerlink" href="#additional-methods-for-questa-one" title="Link to this heading"></a></h2>
+<p>Questa One v. 2026.1 and newer includes support for some additional constraint methods for use with with the Multi-method approach.
+See <a class="reference internal" href="uvvm_getting_started.html#questa-enabling"><span class="std std-ref">Questa One Extended Features</span></a> for information about how to enable this functionality.</p>
+<section id="excl-range">
+<h3>excl_range()<a class="headerlink" href="#excl-range" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specyfing a range of values to be excluded from the randomized
+values.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">excl_range</span><span class="p">(</span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The minimum value in the range to exclude when generating the
+random number.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The maximum value in the range to exclude when generating the
+random number.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default value is
+shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="vector-sum-min">
+<h3>vector_sum_min()<a class="headerlink" href="#vector-sum-min" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specyfing that the sum of all the integers in a randomized
+integer vector shall be greater than or equal to the given value.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">vector_sum_min</span><span class="p">(</span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The minimum value for the sum of all the values in the
+random integer vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default value is
+shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">vector_sum_min</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="vector-sum-max">
+<h3>vector_sum_max()<a class="headerlink" href="#vector-sum-max" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specyfing that the sum of all the integers in a randomized
+integer vector shall be less than or equal to the given value.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">vector_sum_min</span><span class="p">(</span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>max</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The maximum value for the sum of all the values in the
+random integer vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default value is
+shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">vector_sum_max</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="excl-range-real">
+<h3>excl_range_real()<a class="headerlink" href="#excl-range-real" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specyfing a range of values to be excluded from the ranodmized values.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">excl_range_real</span><span class="p">(</span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min</p></td>
+<td><p>in</p></td>
+<td><p>real</p></td>
+<td><p>The minimum value in the range to exclude when generating the
+random number.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max</p></td>
+<td><p>in</p></td>
+<td><p>real</p></td>
+<td><p>The maximum value in the range to exclude when generating the
+random number.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default value is
+shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_real</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_range_real</span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="excl-range-time">
+<h3>excl_range_time()<a class="headerlink" href="#excl-range-time" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specyfing a range of values to be excluded from the ranodmized values.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">excl_range_time</span><span class="p">(</span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>min</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The minimum value in the range to exclude when generating the
+random number.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum value in the range to exclude when generating the
+random number.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default value is
+shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_range_time</span><span class="p">(</span><span class="mi">5</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-value">
+<h3>get_value()<a class="headerlink" href="#get-value" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Returns internal linked randomized value from an linked coverpoint. Must be
+called on secondary coverpoint after first calling link() and randm() on the primary coverpoint.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w">          </span><span class="o">:=</span><span class="w"> </span><span class="n">get_value</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">real</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">get_value</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">time</span><span class="w">             </span><span class="o">:=</span><span class="w"> </span><span class="n">get_value</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>length</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>The length of the value to be returned</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand1</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
+<span class="n">my_rand2</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">handle_my_rand_2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand2</span><span class="p">.</span><span class="n">create_rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">handle_my_rand_2</span><span class="p">);</span><span class="w">   </span><span class="c1">-- Define relationship rand1 &gt; rand2</span>
+<span class="n">rand1_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand1</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Randomize rand1 and rand2. Return rand1 value</span>
+<span class="hll"><span class="n">rand2_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand2</span><span class="p">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Get rand2 value created by randm() call in previous step</span>
+</span></pre></div>
+</div>
+</section>
+<section id="create-rand">
+<h3>create_rand()<a class="headerlink" href="#create-rand" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Creates internal randomisation object inside the t_rand object. This internal randomisation object is used for generation of linked
+randomised variables. The procedure call returns a handle to this <code class="docutils literal notranslate"><span class="pre">t_rand</span></code> object. This handle is used when calling the <code class="docutils literal notranslate"><span class="pre">link()</span></code>
+procedure on another <code class="docutils literal notranslate"><span class="pre">t_rand</span></code> object to link it to this one. When <code class="docutils literal notranslate"><span class="pre">randm()</span></code> is called on the other t_rand object, a linked
+randomised value will be generated inside this <code class="docutils literal notranslate"><span class="pre">t_rand</span></code> object, which can be retrieved using the <code class="docutils literal notranslate"><span class="pre">get_value()</span></code> method.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">create_rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="hll"><span class="n">handle_my_rand_2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand2</span><span class="p">.</span><span class="n">create_rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</span><span class="n">my_rand1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">handle_my_rand_2</span><span class="p">);</span><span class="w">   </span><span class="c1">-- Define relationship rand1 &lt; rand2</span>
+<span class="n">rand1_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand1</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Randomize rand1 and rand2. Return rand1 value</span>
+<span class="n">rand2_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand2</span><span class="p">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Get rand2 value created by randm() call in previous step</span>
+</pre></div>
+</div>
+</section>
+<section id="link">
+<h3>link()<a class="headerlink" href="#link" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Defines a relational link between the current (primary) coverpoint and another
+(secondary) coverpoint. Can either be a relational link to one other randomized value, or an arithmetic link to one other randomized
+value and a relational link to a third randomized or fixed value (e.g. “(A + B) &gt; C” or “(A + B) &gt; 10”)</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">link</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">var2</span><span class="p">)</span>
+<span class="n">link</span><span class="p">(</span><span class="n">arith_op</span><span class="p">,</span><span class="w"> </span><span class="n">var2</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">val_or_var_id_3</span><span class="p">,</span><span class="w"> </span><span class="n">is_var_id_3</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>op</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-relational-operator"><span class="std std-ref">t_relational_operator</span></a></p></td>
+<td><p>Defines relationship between linked values</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>var2</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Handle to t_rand object of linked value. (Handle is
+created using create_rand() procedure)</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arith_op</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-arithmetic-operator"><span class="std std-ref">t_arithmetic_operator</span></a></p></td>
+<td><p>Arithmetic operation between two values that are
+relationally linked to a third value <em>(e.g. (a + b) &gt; c)</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>val_or_var_id_3</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Value or handle to t_rand object of linked value</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>is_var_id_3</p></td>
+<td><p>in</p></td>
+<td><p>boolean</p></td>
+<td><p>Set to true when val_or_var_id_3 is a handle to a t_rand
+object. Set to false when val_or_var_id_3 is a fixed
+value. Default is false.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">handle_my_rand_2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand2</span><span class="p">.</span><span class="n">create_rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="hll"><span class="n">my_rand1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">handle_my_rand_2</span><span class="p">);</span><span class="w">   </span><span class="c1">-- Define relationship rand1 &lt; rand2</span>
+</span><span class="n">rand1_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand1</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Randomize rand1 and rand2. Return rand1 value</span>
+<span class="n">rand2_int</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand2</span><span class="p">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Get rand2 value created by randm() call in previous step</span>
+
+<span class="c1">-- Example 2:</span>
+<span class="n">my_rand1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">ADD</span><span class="p">,</span><span class="w"> </span><span class="n">handle_my_rand_2</span><span class="p">,</span><span class="w"> </span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">handle_my_rand_3</span><span class="p">,</span><span class="w"> </span><span class="n">TRUE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Define (value1 + value2) &lt; value3</span>
+
+<span class="c1">-- Example 3:</span>
+<span class="n">my_rand1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">MULT</span><span class="p">,</span><span class="w"> </span><span class="n">handle_my_rand_2</span><span class="p">,</span><span class="w"> </span><span class="n">EQ</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="n">FALSE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Define (value1 * value2 = 20)</span>
+</pre></div>
+</div>
+</section>
+<section id="unlink">
+<h3>unlink()<a class="headerlink" href="#unlink" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Removes relational link between the current coverpont and all or given linked
+coverpoints.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">unlink</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">unlink</span><span class="p">(</span><span class="n">var2</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-relational-operator"><span class="std std-ref">t_relational_operator</span></a></p></td>
+<td><p>Defines relationship between linked values</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>var2</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Handle to t_rand object to unlink.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand1</span><span class="p">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="nonzero-bitwise-and">
+<h3>nonzero_bitwise_and()<a class="headerlink" href="#nonzero-bitwise-and" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specyfing that a bitwise AND-operation between the
+std_logic_vector-representation of the given value and the randomized std_logic_vector shall produce a nonzero result.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">nonzero_bitwise_and</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>mask</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Integer representation of the mask which shall produce nonzero
+result when bitwise ANDed with the random number</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">nonzero_bitwise_and</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">rand_slv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates an 8-bit slv which must produce a nonzero result when ANDed with &quot;00000011&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="zero-bitwise-and">
+<h3>zero_bitwise_and()<a class="headerlink" href="#zero-bitwise-and" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specifying that a bitwise AND-operation between the
+std_logic_vector-representation of the given value and the randomized std_logic_vector shall give result zero.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">zero_bitwise_and</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>mask</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Integer representation of the mask which shall produce result
+zero when bitwise ANDed with the random number</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">zero_bitwise_and</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">rand_slv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates an 8-bit slv with value &quot;------00&quot;, to give result zero when ANDed with &quot;00000011&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="force-bits-to">
+<h3>force_bits_to()<a class="headerlink" href="#force-bits-to" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specifying the value of individual bits in the randomized std_logic_vector. Constraint is applied to bits set to
+<code class="docutils literal notranslate"><span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code> in the input parameter. Bits set to <code class="docutils literal notranslate"><span class="pre">-</span></code> are treated as “don’t care” and may have either value in the randomized
+std_logic_vector.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">force_bits_to</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>mask</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>String representation of the mask indicating bit value of
+given bits in the random number. Bits marked with “-” means
+bit can have any value</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">force_bits_to</span><span class="p">(</span><span class="s">&quot;1100----&quot;</span><span class="p">);</span>
+<span class="n">rand_slv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates an 8-bit slv with value &quot;1100----&quot; (&quot;-&quot; means any value)</span>
+</pre></div>
+</div>
+</section>
+<section id="one-hot">
+<h3>one_hot()<a class="headerlink" href="#one-hot" title="Link to this heading"></a></h3>
+<p><strong>Supported only in Questa One v. 2026.1 and later</strong>.</p>
+<p>Adds a constraint specifying that the randomized std_logic_vector must have only one bit set to 1.:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">one_hot</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-relational-operator"><span class="std std-ref">t_relational_operator</span></a></p></td>
+<td><p>Defines relationship between linked values</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">one_hot</span><span class="p">();</span>
+<span class="n">rand_slv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="s">&quot;3&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a 3-bit slv with value either &quot;100&quot;, &quot;010&quot; or &quot;001&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -3289,7 +4004,7 @@ shared_msg_id_panel.</p></td>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

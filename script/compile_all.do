@@ -35,6 +35,8 @@ if {[catch {eval "vsim -version"} message] == 0} {
   # puts "Version is: $simulator_version"
   if {[regexp -nocase {modelsim} $simulator_version]} {
     quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {questasim} $simulator_version]} {
+    quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
@@ -50,7 +52,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
 if {[batch_mode]} {
   if { [string equal -nocase $simulator "rivierapro"] } {
     # Special for Riviera-PRO
-    onerror {abort all; quit -code 1 -force}
+    onerror {quit -code 1 -force}
    } else {
     onerror {abort all; exit -f -code 1}
   }
@@ -65,16 +67,19 @@ variable source_path
 variable component_path
 variable target_path
 variable component_list_path
+variable uvvm_root
 
 # Default values
 # assume we stand in script folder if no source argument is given
 quietly set source_path [pwd]
 quietly set component_list_path "$source_path/component_list.txt"
+quietly set uvvm_root [file normalize "$source_path/.."]
 quietly set default_target 0
 
 if { [info exists 1] } {
   quietly set source_path "$1"
   quietly set component_list_path "$source_path/component_list.txt"
+  quietly set uvvm_root [file normalize "$source_path/.."]
 
   if {$argc >= 2} {
     quietly set target_path "$2"
@@ -106,6 +111,7 @@ foreach item $file_data {
     variable local_source_path $source_path
     variable source_path $component_path
     variable target_path $target_path
+    variable uvvm_root $uvvm_root
 
     variable argc -1
 

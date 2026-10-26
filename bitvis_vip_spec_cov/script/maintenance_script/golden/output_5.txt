@@ -1,0 +1,36 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : ../tb/maintenance_tb/tb_tests_req_file.csv
+partial_cov          : ../sim/pc_error_during_tc.csv
+requirement_map_list : None
+spec_cov             : ../sim/sc_error_during_tc.csv
+clean                : None
+strictness           : 0
+config               : None
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 0
+Number of non compliant requirements : 1
+Number of non verified requirements  : 5
+Number of not listed requirements    : 0
+Number of passing testcases : 0
+Number of failing testcases : 1
+Number of not run testcases : 3
+
+
+Non compliant requirement(s) :
+REQ_ERROR_DURING_TC, 
+
+Not verified requirement(s) :
+REQ_ERROR_BEFORE_TC, REQ_LIST_SINGLE_TICKOFF, REQ_LIST_SINGLE_TICKOFF_PF, REQ_COND_TICKOFF, REQ_ALWAYS_TICKOFF, 
+
+Failing testcase(s) :
+TC_ERROR_DURING_TC, 
+
+Not run testcase(s) :
+TC_ERROR_BEFORE_TC, TC_LIST_SINGLE_TICKOFF, TC_COND_TICKOFF, 
+
+Non-compliant or not verified requirements found. Please see ../sim/sc_error_during_tc.req_non_compliance.csv for details.

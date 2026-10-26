@@ -1,0 +1,3 @@
+# library uvvm_assertions
+../src/uvvm_assertions_pkg.vhd
+

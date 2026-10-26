@@ -42,8 +42,6 @@ package error_injection_pkg is
     width_max           : time;
     interval            : positive;
     base_value          : std_logic;    -- SL only
-    randomization_seed1 : positive;
-    randomization_seed2 : positive;
   end record;
 
   constant C_EI_CONFIG_DEFAULT : t_error_injection_config := (
@@ -55,12 +53,10 @@ package error_injection_pkg is
     width_min           => 0 ns,
     width_max           => 0 ns,
     interval            => 1,
-    base_value          => '0',
-    randomization_seed1 => 1,
-    randomization_seed2 => 2
+    base_value          => '0'
   );
 
-  constant C_MAX_EI_INSTANCE_NUM : natural := C_EI_VVC_MAX_INSTANCE_NUM;
+  alias C_MAX_EI_INSTANCE_NUM is C_EI_VVC_MAX_INSTANCE_NUM;
 
   type t_error_injection_config_array is array (natural range <>) of t_error_injection_config;
 

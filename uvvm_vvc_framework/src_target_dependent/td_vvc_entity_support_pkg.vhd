@@ -119,7 +119,7 @@ package td_vvc_entity_support_pkg is
     constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
   );
 
-  -- DEPRECATED
+  -- DEPRECATED: will be removed in v3
   procedure await_cmd_from_sequencer(
     constant vvc_labels      : in t_vvc_labels;
     constant vvc_config      : in t_vvc_config;
@@ -229,7 +229,7 @@ package td_vvc_entity_support_pkg is
     variable shared_vvc_response                : inout work.vvc_cmd_pkg.t_vvc_response
   );
 
-  -- DEPRECATE: will be removed in v3
+  -- DEPRECATED: will be removed in v3
   procedure interpreter_fetch_result(
     variable result_queue          : inout work.td_result_queue_pkg.t_generic_queue;
     constant command               : in t_vvc_cmd_record;
@@ -344,21 +344,21 @@ package body td_vvc_entity_support_pkg is
     instance_idx : integer;
     channel      : t_channel
   ) return t_vvc_labels is
-    variable vvc_labels : t_vvc_labels;
+    variable v_vvc_labels : t_vvc_labels;
   begin
-    vvc_labels.scope        := pad_string(scope, NUL, vvc_labels.scope'length);
-    vvc_labels.vvc_name     := pad_string(vvc_name, NUL, vvc_labels.vvc_name'length);
-    vvc_labels.instance_idx := instance_idx;
-    vvc_labels.channel      := channel;
-    return vvc_labels;
-  end;
+    v_vvc_labels.scope        := pad_string(scope, NUL, v_vvc_labels.scope'length);
+    v_vvc_labels.vvc_name     := pad_string(vvc_name, NUL, v_vvc_labels.vvc_name'length);
+    v_vvc_labels.instance_idx := instance_idx;
+    v_vvc_labels.channel      := channel;
+    return v_vvc_labels;
+  end function;
 
   impure function format_msg(
     command : t_vvc_cmd_record
   ) return string is
   begin
     return add_msg_delimiter(to_string(command.msg)) & " " & format_command_idx(command);
-  end;
+  end function;
 
   procedure vvc_constructor(
     constant scope                                 : in string;
@@ -375,6 +375,7 @@ package body td_vvc_entity_support_pkg is
     constant result_queue_count_threshold_severity : in t_alert_level;
     constant max_vvc_instance_num                  : in natural := C_MAX_VVC_INSTANCE_NUM
   ) is
+    constant C_SCOPE_NORMALISED    : string(1 to scope'length) := scope;
     variable v_delta_cycle_counter : natural := 0;
     variable v_comma_number        : natural := 0;
   begin
@@ -382,32 +383,32 @@ package body td_vvc_entity_support_pkg is
     vvc_config.bfm_config := bfm_config;
 
     -- compose log message based on the number of channels in scope string
-    if pos_of_leftmost(',', scope, 1) = pos_of_rightmost(',', scope, 1) then
-      log(ID_CONSTRUCTOR, "VVC instantiated.", scope, vvc_config.msg_id_panel);
+    if pos_of_leftmost(',', C_SCOPE_NORMALISED, 1) = pos_of_rightmost(',', C_SCOPE_NORMALISED, 1) then
+      log(ID_CONSTRUCTOR, "VVC instantiated.", C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
     else
-      for idx in scope'range loop
-        if (scope(idx) = ',') and (v_comma_number < 2) then -- locate 2nd comma in string
+      for idx in C_SCOPE_NORMALISED'range loop
+        if (C_SCOPE_NORMALISED(idx) = ',') and (v_comma_number < 2) then -- locate 2nd comma in string
           v_comma_number := v_comma_number + 1;
         end if;
         if v_comma_number = 2 then      -- rest of string is channel name
-          log(ID_CONSTRUCTOR, "VVC instantiated for channel " & scope((idx + 1) to scope'length), scope, vvc_config.msg_id_panel);
+          log(ID_CONSTRUCTOR, "VVC instantiated for channel " & C_SCOPE_NORMALISED((idx + 1) to C_SCOPE_NORMALISED'length), C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
           exit;
         end if;
       end loop;
     end if;
-    command_queue.set_scope(scope);
+    command_queue.set_scope(C_SCOPE_NORMALISED);
     command_queue.set_name("cmd_queue");
     command_queue.set_queue_count_max(cmd_queue_count_max);
     command_queue.set_queue_count_threshold(cmd_queue_count_threshold);
     command_queue.set_queue_count_threshold_severity(cmd_queue_count_threshold_severity);
-    log(ID_CONSTRUCTOR_SUB, "Command queue instantiated and will give a warning when reaching " & to_string(command_queue.get_queue_count_max(VOID)) & " elements in queue.", scope, vvc_config.msg_id_panel);
+    log(ID_CONSTRUCTOR_SUB, "Command queue instantiated and will give a warning when reaching " & to_string(command_queue.get_queue_count_max(VOID)) & " elements in queue.", C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
 
-    result_queue.set_scope(scope);
+    result_queue.set_scope(C_SCOPE_NORMALISED);
     result_queue.set_name("result_queue");
     result_queue.set_queue_count_max(result_queue_count_max);
     result_queue.set_queue_count_threshold(result_queue_count_threshold);
     result_queue.set_queue_count_threshold_severity(result_queue_count_threshold_severity);
-    log(ID_CONSTRUCTOR_SUB, "Result queue instantiated and will give a warning when reaching " & to_string(result_queue.get_queue_count_max(VOID)) & " elements in queue.", scope, vvc_config.msg_id_panel);
+    log(ID_CONSTRUCTOR_SUB, "Result queue instantiated and will give a warning when reaching " & to_string(result_queue.get_queue_count_max(VOID)) & " elements in queue.", C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
 
     if shared_uvvm_state /= PHASE_A then
       loop
@@ -537,7 +538,6 @@ package body td_vvc_entity_support_pkg is
     log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received " & format_command_idx(output_vvc_cmd), vvc_labels.scope, v_msg_id_panel); -- Get and ack the new command
   end procedure await_cmd_from_sequencer;
 
-  -- Overloading procedure - DEPRECATED
   procedure await_cmd_from_sequencer(
     constant vvc_labels      : in t_vvc_labels;
     constant vvc_config      : in t_vvc_config;
@@ -658,7 +658,7 @@ package body td_vvc_entity_support_pkg is
         -- await a SPECIFIC command in this VVC
         return (last_cmd_idx_executed >= wanted_idx);
       end if;
-    end;
+    end function;
 
   begin
 
@@ -746,7 +746,7 @@ package body td_vvc_entity_support_pkg is
     log(ID_IMMEDIATE_CMD, "Flushing command queue" & format_command_idx(shared_vvc_cmd), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
     command_queue.flush(VOID);
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
-  end;
+  end procedure;
 
   procedure interpreter_terminate_current_command(
     constant command               : in t_vvc_cmd_record;
@@ -790,7 +790,7 @@ package body td_vvc_entity_support_pkg is
       -- Pop the element. Compare cmd idx. If it does not match, push to local result queue.
       -- If an index matches, set shared_vvc_response.result. (Don't push element back to result queue)
       while result_queue.get_count(VOID) > 0 loop
-        v_current_element := result_queue.get(VOID);
+        v_current_element := result_queue.fetch(VOID);
         if v_current_element.cmd_idx = wanted_idx then
           shared_vvc_response.fetch_is_accepted := true;
           shared_vvc_response.result            := v_current_element.result;
@@ -806,7 +806,7 @@ package body td_vvc_entity_support_pkg is
       -- This is to clear the local result queue and restore the result
       -- queue to its original state (except that the matched element is not put back).
       while v_local_result_queue.get_count(VOID) > 0 loop
-        result_queue.put(v_local_result_queue.get(VOID));
+        result_queue.put(v_local_result_queue.fetch(VOID));
       end loop;
 
       if not shared_vvc_response.fetch_is_accepted then
@@ -815,7 +815,6 @@ package body td_vvc_entity_support_pkg is
     end if;
   end procedure;
 
-  -- DEPRECATE: will be removed in v3
   procedure interpreter_fetch_result(
     variable result_queue          : inout work.td_result_queue_pkg.t_generic_queue;
     constant command               : in t_vvc_cmd_record;
@@ -828,6 +827,9 @@ package body td_vvc_entity_support_pkg is
     variable v_current_element    : work.vvc_cmd_pkg.t_vvc_result_queue_element;
     variable v_local_result_queue : work.td_result_queue_pkg.t_generic_queue;
   begin
+    deprecate(get_procedure_name_from_instance_name(vvc_labels'instance_name),
+      "last_cmd_idx_executed parameter is no longer in use. Please call this procedure with entry_num_in_vvc_activity_register and without the last_cmd_idx_executed parameter.");
+
     v_local_result_queue.set_scope(to_string(vvc_labels.scope));
 
     shared_vvc_response.fetch_is_accepted := false; -- default
@@ -841,7 +843,7 @@ package body td_vvc_entity_support_pkg is
       -- Pop the element. Compare cmd idx. If it does not match, push to local result queue.
       -- If an index matches, set shared_vvc_response.result. (Don't push element back to result queue)
       while result_queue.get_count(VOID) > 0 loop
-        v_current_element := result_queue.get(VOID);
+        v_current_element := result_queue.fetch(VOID);
         if v_current_element.cmd_idx = command.gen_integer_array(0) then
           shared_vvc_response.fetch_is_accepted := true;
           shared_vvc_response.result            := v_current_element.result;
@@ -857,7 +859,7 @@ package body td_vvc_entity_support_pkg is
       -- This is to clear the local result queue and restore the result
       -- queue to its original state (except that the matched element is not put back).
       while v_local_result_queue.get_count(VOID) > 0 loop
-        result_queue.put(v_local_result_queue.get(VOID));
+        result_queue.put(v_local_result_queue.fetch(VOID));
       end loop;
 
       if not shared_vvc_response.fetch_is_accepted then
@@ -901,7 +903,7 @@ package body td_vvc_entity_support_pkg is
     -- Queue is now not empty
     executor_is_busy <= true;
     wait until executor_is_busy;
-    command          := command_queue.get(VOID);
+    command          := command_queue.fetch(VOID);
 
     v_msg_id_panel             := get_msg_id_panel(command, vvc_config);
     log(executor_id, to_string(command.proc_call) & " - Will be executed " & format_command_idx(command), to_string(vvc_labels.scope), v_msg_id_panel); -- Get and ack the new command
@@ -990,7 +992,7 @@ package body td_vvc_entity_support_pkg is
       when FLUSH_COMMAND_QUEUE       => return IMMEDIATE;
       when TERMINATE_CURRENT_COMMAND => return IMMEDIATE;
       when INSERT_DELAY              => return QUEUED;
-      when others                    => return NO_command_type;
+      when others                    => return NO_COMMAND_TYPE;
     end case;
   end function;
 
@@ -1017,7 +1019,7 @@ package body td_vvc_entity_support_pkg is
     output_vvc_cmd.command_type         := get_command_type_from_operation(shared_vvc_broadcast_cmd.operation);
 
     if global_show_msg_for_uvvm_cmd then
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_broadcast_cmd.msg)) & format_command_idx(shared_cmd_idx), scope);
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & ":" & add_msg_delimiter(to_string(shared_vvc_broadcast_cmd.msg)) & format_command_idx(shared_cmd_idx), scope);
     else
       log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & format_command_idx(shared_cmd_idx), scope);
     end if;
@@ -1048,11 +1050,11 @@ package body td_vvc_entity_support_pkg is
     if v_activity = INACTIVE and not (command_queue_is_empty) then
       v_activity := ACTIVE;
     end if;
-    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx                => entry_num_in_vvc_activity_register,
-                                                          executor_id            => executor_id,
-                                                          activity               => v_activity,
-                                                          last_cmd_idx_executed  => last_cmd_idx_executed,
-                                                          cmd_completed          => activity = INACTIVE);
+    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
+                                                          executor_id           => executor_id,
+                                                          activity              => v_activity,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed,
+                                                          cmd_completed         => activity = INACTIVE);
     if global_trigger_vvc_activity_register /= 'L' then
       wait until global_trigger_vvc_activity_register = 'L';
     end if;

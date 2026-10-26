@@ -18,8 +18,6 @@ Bitvis VIP AXI4
   * :ref:`axi_check_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -70,7 +68,7 @@ Default value for the record is C_AXI_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | max_wait_cycles_severity     | :ref:`t_alert_level`         | TB_FAILURE      | The above timeout will have this severity       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| clock_period                 | time                         | -1 ns           | Period of the clock signal                      |
+| clock_period                 | time                         | C_UNDEFINED_TIME| Period of the clock signal                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_period_margin          | time                         | 0 ns            | Input clock period margin to specified          |
 |                              |                              |                 | clock_period. Will check 'T/2' if input clock is|
@@ -79,32 +77,54 @@ Default value for the record is C_AXI_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_margin_severity        | :ref:`t_alert_level`         | TB_ERROR        | The above margin will have this severity        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| setup_time                   | time                         | -1 ns           | Generated signals setup time. Suggested value   |
+| setup_time                   | time                         | C_UNDEFINED_TIME| Generated signals setup time. Suggested value   |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | setup_time exceeds clock_period/2.              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| hold_time                    | time                         | -1 ns           | Generated signals hold time. Suggested value    |
+| hold_time                    | time                         | C_UNDEFINED_TIME| Generated signals hold time. Suggested value    |
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
-|                              |                              | NLY             |   enter on the first falling edge, estimate the |
-|                              |                              |                 |   clock period,                                 |
-|                              |                              |                 | | synchronize the output signals and exit ¼     |
-|                              |                              |                 |   clock period after a succeeding rising edge.  |
-|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
-|                              |                              |                 |   will use the configured setup_time, hold_time |
-|                              |                              |                 |   and                                           |
-|                              |                              |                 | | clock_period to synchronize output signals    |
-|                              |                              |                 |   with clock edges.                             |
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
+|                              |                              | NLY             | always wait for the first falling edge of the   |
+|                              |                              |                 | clock.                                          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Then the interface output signals will be       |
+|                              |                              |                 | set up immediately. After that, the BFM will    |
+|                              |                              |                 | wait for the rising edge of the clock,          |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | sample or set relevant interface signals (if    |
+|                              |                              |                 | any), and estimate the clock period.            |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit ¼ clock period after a  |
+|                              |                              |                 | succeeding rising edge.                         |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
+|                              |                              |                 | will always wait for the configured setup time  |
+|                              |                              |                 | before the first rising edge of the clock.      |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Then the interface output signals will be set up|
+|                              |                              |                 | immediately. After that, the BFM will wait for  |
+|                              |                              |                 | the rising edge of the clock,                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | and sample or set relevant interface signals (if|
+|                              |                              |                 | any). Note that the clock period needs to be    |
+|                              |                              |                 | configured in this mode.                        |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | The BFM will deactivate potential interface     |
+|                              |                              |                 | output signals and exit after the configured    |
+|                              |                              |                 | hold time after a succeeding rising edge.       |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | num_aw_pipe_stages           | natural                      | 1               | Write Address Channel pipeline steps            |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -116,12 +136,12 @@ Default value for the record is C_AXI_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | num_b_pipe_stages            | natural                      | 1               | Response Channel pipeline steps                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
+| id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
@@ -184,14 +204,14 @@ The procedure reports an alert if:
 | constant | awuser_value       | in     | std_logic_vector             | User-defined extension for the write address channel.   |
 |          |                    |        |                              | Default value is 0x0.                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wdata_value        | in     | t_slv_array                  | Array of data values to be written to the addressed     |
+| constant | wdata_value        | in     | :ref:`t_slv_array`           | Array of data values to be written to the addressed     |
 |          |                    |        |                              | registers                                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wstrb_value        | in     | t_slv_array                  | Array of write strobes, indicates which byte lanes hold |
+| constant | wstrb_value        | in     | :ref:`t_slv_array`           | Array of write strobes, indicates which byte lanes hold |
 |          |                    |        |                              | valid data (all '1' means all bytes are updated).       |
 |          |                    |        |                              | Default value is C_EMPTY_SLV_ARRAY.                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wuser_value        | in     | t_slv_array                  | Array of user-defined extension for the write data      |
+| constant | wuser_value        | in     | :ref:`t_slv_array`           | Array of user-defined extension for the write data      |
 |          |                    |        |                              | channel. Default value is C_EMPTY_SLV_ARRAY.            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | buser_value        | out    | std_logic_vector             | Output variable containing the user-defined extension   |
@@ -211,7 +231,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AXI_BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_axi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_axi_bfm_config>`          | value is C_AXI_BFM_CONFIG_DEFAULT.                      |
@@ -310,12 +331,12 @@ The procedure reports an alert if:
 | constant | aruser_value       | in     | std_logic_vector             | User-defined extension for the read address channel.    |
 |          |                    |        |                              | Default value is 0x0.                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | rdata_value        | out    | t_slv_array                  | Output variable containing an array of read data        |
+| variable | rdata_value        | out    | :ref:`t_slv_array`           | Output variable containing an array of read data        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | rresp_value        | out    | `t_xresp_array`_             | Output variable containing an array of read responses   |
 |          |                    |        |                              | which indicates the status of a read transfer           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | ruser_value        | out    | t_slv_array                  | Output variable containing an array of user-defined     |
+| variable | ruser_value        | out    | :ref:`t_slv_array`           | Output variable containing an array of user-defined     |
 |          |                    |        |                              | extensions for the read data channel                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
@@ -329,7 +350,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AXI_BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_axi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_axi_bfm_config>`          | value is C_AXI_BFM_CONFIG_DEFAULT.                      |
@@ -423,14 +445,14 @@ reading data from the AXI4 bus, the read data is compared with the expected data
 | constant | aruser_value       | in     | std_logic_vector             | User-defined extension for the read address channel.    |
 |          |                    |        |                              | Default value is 0x0.                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | rdata_exp          | in     | t_slv_array                  | Array of expected read data values. A mismatch results  |
+| constant | rdata_exp          | in     | :ref:`t_slv_array`           | Array of expected read data values. A mismatch results  |
 |          |                    |        |                              | in an alert 'alert_level'                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | rresp_exp          | in     | `t_xresp_array`_             | Array of expected read responses which indicates the    |
 |          |                    |        |                              | status of a read transfer. Default value is OKAY for    |
 |          |                    |        |                              | all words.                                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | ruser_exp          | in     | t_slv_array                  | Array of expected user-defined extensions for the read  |
+| constant | ruser_exp          | in     | :ref:`t_slv_array`           | Array of expected user-defined extensions for the read  |
 |          |                    |        |                              | data channel. Default value is 0x0 for all words.       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
@@ -447,7 +469,8 @@ reading data from the AXI4 bus, the read data is compared with the expected data
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("AXI_BFM").               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_axi_bfm_config       | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_axi_bfm_config>`          | value is C_AXI_BFM_CONFIG_DEFAULT.                      |
@@ -518,7 +541,7 @@ bid, arid and rid shares a common width (id_width) and that awuser, buser, aruse
 .. code-block::
 
     -- Examples:
-    axi_if <= init_axi_if_signals(addr_width, data_width, id_width, user_width)
+    axi_if <= init_axi_if_signals(addr_width, data_width, id_width, user_width);
 
 
 Local types
@@ -649,26 +672,36 @@ t_axi_read_data_channel
 
 t_axburst
 ----------------------------------------------------------------------------------------------------------------------------------
-FIXED, INCR, WRAP
+.. code-block::
+
+    FIXED, INCR, WRAP
 
 t_axlock
 ----------------------------------------------------------------------------------------------------------------------------------
-NORMAL, EXCLUSIVE
+.. code-block::
+
+    NORMAL, EXCLUSIVE
 
 t_axprot
 ----------------------------------------------------------------------------------------------------------------------------------
-UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
-PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
+.. code-block::
+
+    UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
+    PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
 
 t_xresp
 ----------------------------------------------------------------------------------------------------------------------------------
-OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL
+.. code-block::
+
+    OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL
 
 .. _t_xresp_array:
 
 t_xresp_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of t_xresp;
+.. code-block::
+
+    array (natural range <>) of t_xresp;
 
 
 Local BFM overloads
@@ -768,13 +801,11 @@ available from ARM.
     * For a more advanced BFM please contact UVVM support at info@uvvm.org
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in axi_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -797,7 +828,9 @@ Generics
 | GC_USER_WIDTH                | integer                      | 8               | Width of the AXI4 User signals (AWUSER, WUSER,  |
 |                              |                              |                 | BUSER, ARUSER, RUSER)                           |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_AXI_VVC_MAX_INSTANCE_NUM        |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_AXI_CONFIG                | :ref:`t_axi_bfm_config       | C_AXI_BFM_CONFI\| Configuration for the AXI4 BFM                  |
 |                              | <t_axi_bfm_config>`          | G_DEFAULT       |                                                 |
@@ -827,6 +860,10 @@ Generics
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
+
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -838,7 +875,7 @@ Signals
 | signal   | axi_vvc_master_if  | inout  | :ref:`t_axi_if <t_axi_if>`   | AXI4 signal interface record                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-In this VVC, the interface has been encapsulated in a signal record of type t_axi_if in order to improve readability of the code. 
+In this VVC, the interface has been encapsulated in a signal record of type **t_axi_if** in order to improve readability of the code. 
 Since the AXI4 interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained 
 vectors need to be constrained when the interface signals are instantiated. For this interface, it could look like: ::
 
@@ -865,16 +902,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AXI_INTER_BFM\| | Delay between any requested BFM accesses      |
-|                              |                              | _DELAY_DEFAULT  |   towards the DUT.                              |
-|                              |                              |                 | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AXI_INTER_BFM\| Delay between any requested BFM accesses        |
+|                              |                              | _DELAY_DEFAULT  | towards the DUT.                                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -922,8 +962,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_axi_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_axi_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_axi_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_axi_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================
@@ -938,6 +978,24 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_AXI_VVC_CMD_MAX_BURST_WORDS              | Maximum words in a burst             |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXI_VVC_CMD_DATA_MAX_LENGTH              | Maximum **data** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXI_VVC_CMD_ADDR_MAX_LENGTH              | Maximum **addr** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXI_VVC_CMD_ID_MAX_LENGTH                | Maximum **id** length                |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXI_VVC_CMD_USER_MAX_LENGTH              | Maximum **user** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_AXI_VVC_CMD_STRING_MAX_LENGTH            | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _axi_write_vvc:
 
@@ -993,14 +1051,14 @@ procedures in axi_channel_handler_pkg.vhd. This procedure can be called with or 
 | constant | awuser             | in     | std_logic_vector             | User-defined extension for the write address channel.   |
 |          |                    |        |                              | Default value is 0x0.                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wdata              | in     | t_slv_array                  | Array of data values to be written to the addressed     |
+| constant | wdata              | in     | :ref:`t_slv_array`           | Array of data values to be written to the addressed     |
 |          |                    |        |                              | registers                                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wstrb              | in     | t_slv_array                  | Array of write strobes, indicates which byte lanes hold |
+| constant | wstrb              | in     | :ref:`t_slv_array`           | Array of write strobes, indicates which byte lanes hold |
 |          |                    |        |                              | valid data (all '1' means all bytes are updated).       |
 |          |                    |        |                              | Default value is C_EMPTY_SLV_ARRAY.                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | wuser              | in     | t_slv_array                  | Array of user-defined extension for the write data      |
+| constant | wuser              | in     | :ref:`t_slv_array`           | Array of user-defined extension for the write data      |
 |          |                    |        |                              | channel. Default value is C_EMPTY_SLV_ARRAY.            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | bresp_exp          | in     | `t_xresp`_                   | Expected write response which indicates the status of a |
@@ -1012,7 +1070,8 @@ procedures in axi_channel_handler_pkg.vhd. This procedure can be called with or 
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1110,7 +1169,8 @@ scoreboard where it will be checked against the expected value (provided by the 
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1126,7 +1186,7 @@ scoreboard where it will be checked against the expected value (provided by the 
       arburst          => INCR,
       arlock           => NORMAL,
       arcache          => "0000",
-      arprot           => UNPRIVILEGED_UNSECURE_DATA,
+      arprot           => UNPRIVILEGED_NONSECURE_DATA,
       arqos            => "0000",
       arregion         => "0000",
       aruser           => x"01",
@@ -1215,14 +1275,14 @@ severity 'alert_level' will be issued. The read data will not be stored by this 
 | constant | aruser             | in     | std_logic_vector             | User-defined extension for the read address channel.    |
 |          |                    |        |                              | Default value is 0x0.                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | rdata_exp          | in     | t_slv_array                  | Array of expected read data values. A mismatch results  |
+| constant | rdata_exp          | in     | :ref:`t_slv_array`           | Array of expected read data values. A mismatch results  |
 |          |                    |        |                              | in an alert 'alert_level'                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | rresp_exp          | in     | `t_xresp_array`_             | Array of expected read responses which indicates the    |
 |          |                    |        |                              | status of a read transfer. Default value is OKAY for    |
 |          |                    |        |                              | all words.                                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | ruser_exp          | in     | t_slv_array                  | Array of expected user-defined extensions for the read  |
+| constant | ruser_exp          | in     | :ref:`t_slv_array`           | Array of expected user-defined extensions for the read  |
 |          |                    |        |                              | data channel. Default value is 0x0 for all words.       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
@@ -1230,7 +1290,8 @@ severity 'alert_level' will be issued. The read data will not be stored by this 
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1246,7 +1307,7 @@ severity 'alert_level' will be issued. The read data will not be stored by this 
       arburst          => INCR,
       arlock           => NORMAL,
       arcache          => "0000",
-      arprot           => UNPRIVILEGED_UNSECURE_DATA,
+      arprot           => UNPRIVILEGED_NONSECURE_DATA,
       arqos            => "0000",
       arregion         => "0000",
       aruser           => x"01",
@@ -1288,7 +1349,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1333,7 +1394,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1345,14 +1406,14 @@ Transaction Info
     | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
     |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | wdata                        | t_slv_array(0 to 255)(255 do\| 0x0             | Write data                                      |
-    |                              | wnto 0)                      |                 |                                                 |
+    | wdata                        | :ref:`t_slv_array(0 to 255)(\| 0x0             | Write data                                      |
+    |                              | 255 downto 0) <t_slv_array>` |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | wstrb                        | t_slv_array(0 to 255)(31 dow\| 0x0             | Write strobe                                    |
-    |                              | nto 0)                       |                 |                                                 |
+    | wstrb                        | :ref:`t_slv_array(0 to 255)(\| 0x0             | Write strobe                                    |
+    |                              | 31 downto 0)  <t_slv_array>` |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | wuser                        | t_slv_array(0 to 255)(127 do\| 0x0             | User value                                      |
-    |                              | wnto 0)                      |                 |                                                 |
+    | wuser                        | :ref:`t_slv_array(0 to 255)(\| 0x0             | User value                                      |
+    |                              | 127 downto 0) <t_slv_array>` |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
     |                              |                              | ULT             |                                                 |
@@ -1361,7 +1422,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1387,7 +1448,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1401,14 +1462,14 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | rid                          | std_logic_vector(31 downto 0)| 0x0             | Identification tag for read data channel        |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | rdata                        | t_slv_array(0 to 255)(255 do\| 0x0             | Read data array                                 |
-    |                              | wnto 0)                      |                 |                                                 |
+    | rdata                        | :ref:`t_slv_array(0 to 255)(\| 0x0             | Read data array                                 |
+    |                              | 255 downto 0) <t_slv_array>` |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | rresp                        | :ref:`t_xresp_array(0 to 255)| OKAY            | Read response array                             |
     |                              | <t_xresp_array>`             |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | ruser                        | t_slv_array(0 to 255)(127 do\| 0x0             | Read user extension array                       |
-    |                              | wnto 0)                      |                 |                                                 |
+    | ruser                        | :ref:`t_slv_array(0 to 255)(\| 0x0             | Read user extension array                       |
+    |                              | 127 downto 0) <t_slv_array>` |                 |                                                 |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
     |                              |                              | ULT             |                                                 |
@@ -1417,7 +1478,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -1428,16 +1489,16 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. axi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable AXI_VVC_SB, located in the 
-vvc_methods_pkg.vhd, e.g. ::
+TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable ``axi_vvc_sb``, located in 
+the vvc_methods_pkg.vhd, e.g. ::
 
-    AXI_VVC_SB.add_expected(C_AXI_VVC_IDX, v_expected, "Adding expected");
+    axi_vvc_sb.add_expected(C_AXI_VVC_IDX, v_expected, "Adding expected");
 
 The AXI4 scoreboard is per default the maximum width of rid, rdata, rresp and ruser. When sending expected result to the scoreboard, 
 where the result width is smaller than the default scoreboard width, we recommend zero-padding the data.
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the AXI4 VVC scoreboard using the AXI_VVC_SB.
+Scoreboard commands are available for the AXI4 VVC scoreboard using the ``axi_vvc_sb``.
 
 
 Unwanted Activity Detection

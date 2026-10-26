@@ -1,6 +1,16 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.14
+----------
+Released: 2025-09-17
+- Updated .sh scripts to use bash shebang.
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util packages.
+
+v1.0.13
+----------
+Released: 2025-03-25
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
 
 v1.0.12
 ----------

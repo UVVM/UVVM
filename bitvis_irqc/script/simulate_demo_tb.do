@@ -14,5 +14,5 @@
 # Run simulation
 #-----------------------------------------------------------------------
 vsim bitvis_irqc.irqc_demo_tb
-do wave.do
+do ../script/wave.do
 run -all

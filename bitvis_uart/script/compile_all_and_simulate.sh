@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # compile_all_and_simulate.sh
 # Compile all required sources and run simulation for bitvis_uart demo.

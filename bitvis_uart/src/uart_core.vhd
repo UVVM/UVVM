@@ -110,9 +110,9 @@ begin
   -- received via SBI, and decremented when a new byte is loaded into
   -- tx_buffer.
   ---------------------------------------------------------------------------
-  uart_tx : process(clk, arst) is
+  p_uart_tx : process(clk, arst) is
     variable vr_tx_data_idx : unsigned(2 downto 0) := (others => '0');
-  begin                                 -- process uart_tx
+  begin                                 -- process p_uart_tx
     if arst = '1' then                  -- asynchronous reset (active high)
       tx_data        <= (others => (others => '0'));
       tx_buffer      <= (others => '0');
@@ -213,7 +213,7 @@ begin
         end if;
       end if;
     end if;
-  end process uart_tx;
+  end process p_uart_tx;
 
   -- Data is set on the output when available on rx_data(0)
   c2p_i.aro_rx_data <= rx_data(0);
@@ -221,10 +221,10 @@ begin
   ---------------------------------------------------------------------------
   -- Receive process
   ---------------------------------------------------------------------------
-  uart_rx : process(clk, arst) is
+  p_uart_rx : process(clk, arst) is
     variable vr_rx_data_idx   : unsigned(2 downto 0) := (others => '0');
     variable v_error_detected : boolean              := false;
-  begin                                 -- process uart_tx
+  begin                                 -- process p_uart_rx
     if arst = '1' then                  -- asynchronous reset (active high)
       rx_active        <= '0';
       rx_just_active   <= false;
@@ -355,7 +355,7 @@ begin
         end if;
       end if;
     end if;
-  end process uart_rx;
+  end process p_uart_rx;
 
   p_busy_assert : process(clk) is
   begin

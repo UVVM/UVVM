@@ -175,10 +175,10 @@ begin
       shared_uart_vvc_config(TX, 1).error_injection.stop_bit_error_prob := 0.0;
 
       -- Print report of Scoreboard counters
-      SBI_VVC_SB.report_counters(VOID);
+      sbi_vvc_sb.report_counters(VOID);
 
       -- Empty SB for next test
-      SBI_VVC_SB.reset("Empty SB for next test");
+      sbi_vvc_sb.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -220,10 +220,10 @@ begin
       await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
       -- Print report of Scoreboard counters
-      SBI_VVC_SB.report_counters(VOID);
+      sbi_vvc_sb.report_counters(VOID);
 
       -- Empty SBI SB for next test
-      SBI_VVC_SB.reset("Empty SB for next test");
+      sbi_vvc_sb.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -284,10 +284,10 @@ begin
       end loop;
 
       -- Print report of Scoreboard counters
-      UART_VVC_SB.report_counters(VOID);
+      uart_vvc_sb.report_counters(VOID);
 
       -- Empty SB for next test
-      UART_VVC_SB.reset("Empty SB for next test");
+      uart_vvc_sb.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -345,10 +345,10 @@ begin
       end loop;
 
       -- Print report of Scoreboard counters
-      UART_VVC_SB.report_counters(VOID);
+      uart_vvc_sb.report_counters(VOID);
 
       -- Empty SB for next test
-      UART_VVC_SB.reset("Empty SB for next test");
+      uart_vvc_sb.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -479,7 +479,7 @@ begin
       end loop;
 
       -- Empty SB for next test
-      UART_VVC_SB.reset("Empty SB for next test");
+      uart_vvc_sb.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;

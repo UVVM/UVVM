@@ -1,0 +1,50 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   test_bench
+UVVM:                    check_value(slv, x"55") => Failed. Value was x"00". Expected x"55". 'pop_front should be 55.'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   test_bench
+UVVM:                    check_value(bool, true) => Failed. Value was false. Expected true. 'peek_back() when queue 1 is empty. Return value will be garbage.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   test_bench
+UVVM:                    check_value(bool, true) => Failed. Value was false. Expected true. 'peek_front() when queue 1 is empty. Return value will be garbage.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:         20010 ns   test_bench
+UVVM:                    check_value(bool, true) => Failed. Value was false. Expected true. 'init_queue called, but all queues have already been initialized!'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:         60100 ns   UVVM_FIFO
+UVVM:                    check_value(bool, true) => Failed. Value was false. Expected true. 'push_back called, but queue 1 not initialized.'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:         60170 ns   test_bench
+UVVM:                    check_value(slv, x"00") => Failed. Value was x"02". Expected x"00". 'uvvm_fifo_get should be 00.'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:         60170 ns   test_bench
+UVVM:                    check_value(slv, x"04") => Failed. Value was x"00". Expected x"04". 'uvvm_fifo_get should be 04.'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

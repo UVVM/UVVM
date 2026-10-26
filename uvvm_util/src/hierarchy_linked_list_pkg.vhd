@@ -132,22 +132,21 @@ package body hierarchy_linked_list_pkg is
 
     -- Initialization variables
     variable priv_has_been_initialized : boolean := false;
-    variable priv_base_scope           : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);
 
     procedure initialize_hierarchy(
       base_scope : string := "";
       stop_limit : t_alert_counters) is
-      variable priv_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH)                 := justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
-      variable base_node    : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH)) := (
-        priv_base_scope,
+      variable v_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH)                 := justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
+      variable v_base_node  : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH)) := (
+        v_base_scope,
         (others => (others => 0)),
         stop_limit,
         (others => true));
     begin
       if not priv_has_been_initialized then
         -- Generate a base node.
-        insert_in_tree(base_node, "");
-        priv_base_scope           := priv_base_scope;
+        insert_in_tree(v_base_node, "");
+        v_base_scope           := v_base_scope;
         priv_has_been_initialized := true;
       end if;
     end procedure;
@@ -190,7 +189,7 @@ package body hierarchy_linked_list_pkg is
         end if;
       end if;
 
-      -- No candidate found
+    -- No candidate found
     end procedure;
 
     procedure search_for_scope(
@@ -230,12 +229,12 @@ package body hierarchy_linked_list_pkg is
         end if;
       end if;
 
-      -- No candidate found
+    -- No candidate found
     end procedure;
 
     procedure update_uvvm_sim_status is
-      type alert_array is array (1 to 6) of t_alert_level;
-      constant alert_check_array       : alert_array := (WARNING, TB_WARNING, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
+      type t_alert_array is array (1 to 6) of t_alert_level;
+      constant C_ALERT_CHECK_ARRAY     : t_alert_array := (WARNING, TB_WARNING, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
       variable v_traverse_children_ptr : t_element_ptr;
       variable v_traverse_siblings_ptr : t_element_ptr;
       -- uvvm simulation status
@@ -255,23 +254,23 @@ package body hierarchy_linked_list_pkg is
         v_traverse_siblings_ptr := v_traverse_children_ptr;
         while v_traverse_siblings_ptr /= null loop -- loop through siblings
           -- Compare expected and current allerts
-          for i in 1 to alert_check_array'high loop
-            if (v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(REGARD) /= v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(EXPECT)) then
+          for i in 1 to C_ALERT_CHECK_ARRAY'high loop
+            if (v_traverse_siblings_ptr.element_data.alert_attention_counters(C_ALERT_CHECK_ARRAY(i))(REGARD) /= v_traverse_siblings_ptr.element_data.alert_attention_counters(C_ALERT_CHECK_ARRAY(i))(EXPECT)) then
 
               -- MISMATCH
               -- warning or worse
               mismatch_on_expected_simulation_warnings_or_worse := 1;
               -- error or worse
-              if not (alert_check_array(i) = WARNING) and not (alert_check_array(i) = TB_WARNING) then
+              if not (C_ALERT_CHECK_ARRAY(i) = WARNING) and not (C_ALERT_CHECK_ARRAY(i) = TB_WARNING) then
                 mismatch_on_expected_simulation_errors_or_worse := 1;
               end if;
 
               -- FOUND UNEXPECTED ALERT
-              if (v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(REGARD) > v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(EXPECT)) then
+              if (v_traverse_siblings_ptr.element_data.alert_attention_counters(C_ALERT_CHECK_ARRAY(i))(REGARD) > v_traverse_siblings_ptr.element_data.alert_attention_counters(C_ALERT_CHECK_ARRAY(i))(EXPECT)) then
                 -- warning and worse
                 found_unexpected_simulation_warnings_or_worse := 1;
                 -- error and worse
-                if not (alert_check_array(i) = WARNING) and not (alert_check_array(i) = TB_WARNING) then
+                if not (C_ALERT_CHECK_ARRAY(i) = WARNING) and not (C_ALERT_CHECK_ARRAY(i) = TB_WARNING) then
                   found_unexpected_simulation_errors_or_worse := 1;
                 end if;
               end if;
@@ -368,7 +367,6 @@ package body hierarchy_linked_list_pkg is
     end procedure;
 
     procedure clear is
-      variable v_to_be_deallocated_ptr : t_element_ptr;
     begin
 
       -- Deallocate all nodes in the tree
@@ -434,16 +432,6 @@ package body hierarchy_linked_list_pkg is
       end if;
     end procedure;
 
-    procedure tee(
-      file     file_handle : text;
-      variable my_line     : inout line
-    ) is
-      variable v_line : line;
-    begin
-      write(v_line, my_line.all);
-      writeline(file_handle, v_line);
-    end procedure tee;
-
     procedure alert(
       constant scope       : string;
       constant alert_level : t_alert_level;
@@ -453,11 +441,9 @@ package body hierarchy_linked_list_pkg is
       variable v_starting_node_ptr : t_element_ptr;
       variable v_current_ptr       : t_element_ptr;
       variable v_found             : boolean := false;
-      variable v_is_in_tree        : boolean := false;
       variable v_msg               : line; -- msg after pot. replacement of \n
       variable v_info              : line;
       variable v_hierarchy         : line; -- stores the hierarchy propagation
-      variable v_parent_node       : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
       variable v_do_print          : boolean := false; -- Enable/disable print of alert message
     begin
       if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
@@ -541,9 +527,8 @@ package body hierarchy_linked_list_pkg is
           end if;
         end if;
 
-        if v_msg /= null then
-          deallocate(v_msg);
-        end if;
+        deallocate(v_msg);
+        deallocate(v_hierarchy);
 
         -- Write stop message if stop-limit is reached for number of this alert
         if (v_current_ptr.element_data.alert_stop_limit(alert_level) /= 0) and (v_current_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= v_current_ptr.element_data.alert_stop_limit(alert_level)) then
@@ -558,10 +543,6 @@ package body hierarchy_linked_list_pkg is
           end if;
         end if;
 
-        if v_hierarchy /= null then
-          deallocate(v_hierarchy);
-        end if;
-
         -- 5. Write last part of alert message
         if (alert_level > MANUAL_CHECK) then
           write(v_info, LF & fill_string('=', C_LOG_INFO_WIDTH) & LF & LF);
@@ -571,15 +552,16 @@ package body hierarchy_linked_list_pkg is
 
         prefix_lines(v_info);
 
-        if v_do_print then              -- Only print if alert level print enabled for this alert level.
-          tee(OUTPUT, v_info);
-          tee(ALERT_FILE, v_info);
-          writeline(LOG_FILE, v_info);
-        else
-          if v_info /= null then
-            deallocate(v_info);
+        if v_do_print then -- Only print if alert level print enabled for this alert level.
+          if shared_log_file_name_is_set and shared_alert_file_name_is_set then
+            tee_and_keep_line(ALERT_FILE, v_info); -- Write to file, while keeping the line contents
+            write_line_to_log_destination(v_info);
+          else
+            bitvis_assert(false, FAILURE, "Attempting to write to an unopened log file. Please use a log procedure before this call.", "hierarchy_linked_list_pkg.alert()");
           end if;
         end if;
+
+        deallocate(v_info);
 
         if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
           update_uvvm_sim_status;
@@ -832,7 +814,6 @@ package body hierarchy_linked_list_pkg is
       variable v_minor_mismatch  : inout boolean;
       variable v_line            : inout line
     ) is
-      variable v_current_ptr : t_element_ptr;
     begin
 
       -- Write indentation according to hierarchy level
@@ -900,8 +881,7 @@ package body hierarchy_linked_list_pkg is
     ) is
       variable v_header          : string(1 to 80);
       variable v_line            : line;
-      variable v_line_copy       : line;
-      constant prefix            : string  := C_LOG_PREFIX & "     ";
+      constant C_PREFIX          : string  := C_LOG_PREFIX & "     ";
       variable v_status_ok       : boolean := true;
       variable v_minor_status_ok : boolean := true;
       variable v_mismatch        : boolean := false;
@@ -916,14 +896,14 @@ package body hierarchy_linked_list_pkg is
 
       -- Write header
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & v_header & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "     " & justify(" ", RIGHT, 3 + C_HIERARCHY_NODE_NAME_LENGTH + priv_max_hierarchy_level * 3) & "NOTE" & justify(" ", RIGHT, 6) & "TB_NOTE" & justify(" ", RIGHT, 5) & "WARNING" & justify(" ", RIGHT, 3) & "TB_WARNING" & justify(" ", RIGHT, 2) & "MANUAL_CHECK" & justify(" ", RIGHT, 3) & "ERROR" & justify(" ", RIGHT, 5) & "TB_ERROR" & justify(" ", RIGHT, 5) & "FAILURE" & justify(" ", RIGHT, 3) & "TB_FAILURE" & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & v_header & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "     " & justify(" ", RIGHT, 3 + C_HIERARCHY_NODE_NAME_LENGTH + priv_max_hierarchy_level * 3) & "NOTE" & justify(" ", RIGHT, 6) & "TB_NOTE" & justify(" ", RIGHT, 5) & "WARNING" & justify(" ", RIGHT, 3) & "TB_WARNING" & justify(" ", RIGHT, 2) & "MANUAL_CHECK" & justify(" ", RIGHT, 3) & "ERROR" & justify(" ", RIGHT, 5) & "TB_ERROR" & justify(" ", RIGHT, 5) & "FAILURE" & justify(" ", RIGHT, 3) & "TB_FAILURE" & LF);
 
       -- Print all nodes
       if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
         print_node(priv_top_element_ptr, v_status_ok, v_minor_status_ok, v_mismatch, v_minor_mismatch, v_line);
       end if;
 
-      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print a conclusion when called from the FINAL part of the test sequencer
       -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
@@ -937,17 +917,20 @@ package body hierarchy_linked_list_pkg is
         else
           write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
         end if;
-        write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
+        write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
       end if;
 
-      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
-      prefix_lines(v_line, prefix);
+      -- Format the report
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
 
-      -- Write the info string to the target file
-      write(v_line_copy, v_line.all & lf); -- copy line
-      writeline(OUTPUT, v_line);
-      writeline(LOG_FILE, v_line_copy);
-
+      -- Write the report to the log destination
+      if shared_log_file_name_is_set then
+        write_line_to_log_destination(v_line);
+      else
+        bitvis_assert(false, FAILURE, "Attempting to write to an unopened log file. Please use a log procedure before this call.", "hierarchy_linked_list_pkg.print_hierarchical_log()");
+      end if;
+      deallocate(v_line);
     end procedure;
 
     impure function get_parent_scope(

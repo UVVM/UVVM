@@ -25,4 +25,4 @@ proc quietly { args } {
 #-----------------------------------------------------------------------
 quietly set root_path "../.."
 do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
-do compile_sbi_bfm.do $root_path/bitvis_vip_sbi $root_path/bitvis_irqc/sim
+do ../script/compile_sbi_bfm.do $root_path/bitvis_vip_sbi $root_path/bitvis_irqc/sim

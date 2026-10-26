@@ -1,0 +1,9 @@
+NOTE: This coverage file is only valid when the last line is 'SUMMARY, TC_FAIL, PASS'
+TESTCASE_NAME: TC_FAIL
+DELIMITER: ,
+
+REQ_ANDOR_NONCOMPLIANT,TC_FAIL,PASS
+REQ_NONCOMPLIANT,TC_FAIL,PASS
+REQ_UNLISTED_FAIL,TC_FAIL,PASS
+
+Has been parsed by run_spec_cov.py script for total coverage

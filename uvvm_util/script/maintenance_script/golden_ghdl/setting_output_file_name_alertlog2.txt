@@ -1,0 +1,17 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    This alert should be written to alertLog2.txt
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    Sub-program set_log_file_name is outdated and has been replaced by another sub-program.
+UVVM:                    msg_id parameter is no longer in use. Please call this procedure without the msg_id parameter.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    Sub-program set_alert_file_name is outdated and has been replaced by another sub-program.
+UVVM:                    msg_id parameter is no longer in use. Please call this procedure without the msg_id parameter.
+UVVM: 

@@ -1,0 +1,60 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2:2], UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:5, ONLY:(-2, -1, 0, 1, 2), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1:1], ADD:(-5, 6), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-3:4], EXCL:(-1, 0, 1), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-2:2], ADD:(-5, 6, 8), EXCL:(-1, 0, 1), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:5, RANGE:[-1:1], EXCL:(-1), ADD:(-5, 6, 8), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:128, CYCLIC)=> Vector is too big for cyclic mode. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:32, EXCL:(0, 1, 2), CYCLIC)=> Range is too big for cyclic mode (min: 0, max: 2**32-1)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:128, CYCLIC)=> Vector is too big for cyclic mode. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:33, EXCL:(0, 1, 2), CYCLIC)=> Range is too big for cyclic mode (min: -2**32, max: 2**32-1)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:128, CYCLIC)=> Vector is too big for cyclic mode. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(LEN:32, EXCL:(0, 1, 2), CYCLIC)=> Range is too big for cyclic mode (min: 0, max: 2**32-1)
+UVVM: 

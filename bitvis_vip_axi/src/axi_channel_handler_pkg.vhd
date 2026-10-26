@@ -594,6 +594,7 @@ package body axi_channel_handler_pkg is
       end loop;
       v_ret := check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
       if (v_ret = false) then
+        rready <= '0';
         exit;
       end if;
       if v_rlast_detected then

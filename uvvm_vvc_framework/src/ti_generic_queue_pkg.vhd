@@ -499,6 +499,7 @@ package body ti_generic_queue_pkg is
       while v_first_element(instance) /= null loop
         v_to_be_deallocated_ptr   := v_first_element(instance);
         v_first_element(instance) := v_first_element(instance).next_element;
+        v_to_be_deallocated_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
         DEALLOCATE(v_to_be_deallocated_ptr);
       end loop;
 
@@ -836,6 +837,7 @@ package body ti_generic_queue_pkg is
             v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) - 1;
 
             -- Memory management
+            v_element_to_delete_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
             DEALLOCATE(v_element_to_delete_ptr);
 
             v_deletes_remaining := v_deletes_remaining - 1;
@@ -898,6 +900,7 @@ package body ti_generic_queue_pkg is
             v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) - 1;
 
             -- Memory management
+            v_element_to_delete_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
             DEALLOCATE(v_element_to_delete_ptr);
 
           else                          -- v_found_match
@@ -1095,6 +1098,7 @@ package body ti_generic_queue_pkg is
         v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) - 1;
 
         -- Memory management
+        v_matched_element_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
         DEALLOCATE(v_matched_element_ptr);
 
       else

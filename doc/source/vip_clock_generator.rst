@@ -10,6 +10,7 @@ Bitvis VIP Clock Generator
   * :ref:`clock_generator_stop_clock`
   * :ref:`clock_generator_set_clock_period`
   * :ref:`clock_generator_set_clock_high_time`
+  * :ref:`clock_generator_set_clock_max_jitter`
 
 
 **********************************************************************************************************************************
@@ -37,6 +38,9 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_CLOCK_HIGH_TIME           | time                         | 5 ns            | Time of the clock cycle that is '1'. Value must |
 |                              |                              |                 | be less than GC_CLOCK_PERIOD                    |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_CLOCK_MAX_JITTER          | time                         | 0 ns            | Maximum clock jitter, see                       |
+|                              |                              |                 | :ref:`clock_generator_set_clock_max_jitter`     |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_CMD_QUEUE_COUNT_MAX       | natural                      | C_CMD_QUEUE_COU\| Absolute maximum number of commands in the VVC  |
 |                              |                              | NT_MAX          | command queue                                   |
@@ -126,6 +130,9 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | clock_high_time              | time                         | 5 ns            | Time of the clock cycle that is '1'. Value must |
 |                              |                              |                 | be less than clock_period                       |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| clock_max_jitter             | time                         | 0 ns            | Maximum clock jitter, see                       |
+|                              |                              |                 | :ref:`clock_generator_set_clock_max_jitter`     |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -303,6 +310,52 @@ following rising clock edge.
 
     -- Examples:
     set_clock_high_time(CLOCK_GENERATOR_VVCT, 1, 6 ns, "Change the duty cycle to 60%", C_SCOPE);
+
+
+.. _clock_generator_set_clock_max_jitter:
+
+set_clock_max_jitter()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a set_clock_max_jitter command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands
+have completed. When the command is scheduled to run, the executor updates the maximum clock jitter and the change takes effect on
+the following rising clock edge.
+
+The jitter moves each clock edge randomly (uniform distribution) by up to +/- clock_max_jitter/2 from its nominal time, so the
+clock period and the clock high time vary by up to +/- clock_max_jitter. The first rising edge after the clock is started is not
+moved. Each VVC instance uses its own random seeds. The default max jitter is 0 ns, i.e. no jitter.
+
+.. note::
+
+    The max jitter must be less than both the clock high time and the clock low time, otherwise a TB_ERROR is given and the
+    jitter is not applied.
+
+.. code-block::
+
+    set_clock_max_jitter(VVCT, vvc_instance_idx, clock_max_jitter, msg, [scope])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | clock_max_jitter   | in     | time                         | Maximum clock jitter. Value must be less than both the  |
+|          |                    |        |                              | clock high time and the clock low time. 0 ns disables   |
+|          |                    |        |                              | the jitter.                                             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    set_clock_max_jitter(CLOCK_GENERATOR_VVCT, 1, 1 ns, "Set max clock jitter to 1 ns", C_SCOPE);
 
 
 Compilation

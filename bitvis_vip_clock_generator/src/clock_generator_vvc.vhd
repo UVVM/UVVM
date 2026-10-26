@@ -17,7 +17,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.math_real.all;                 -- for uniform & trunc functions
+use ieee.math_real.all;                 -- for uniform
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -262,7 +262,10 @@ begin
 
         when SET_CLOCK_MAX_JITTER =>
           clock_max_jitter := v_cmd.clock_max_jitter;
-          log(ID_CLOCK_GEN, "Clock '" & clock_name & "' max jitter time set to " & to_string(clock_max_jitter), C_SCOPE);
+          if clock_ena then
+            wait until clk = '1';
+          end if;
+          log(ID_CLOCK_GEN, "Clock '" & clock_name & "' max jitter set to " & to_string(clock_max_jitter), C_SCOPE);
 
         -- UVVM common operations
         --===================================
@@ -306,30 +309,30 @@ begin
   -- - Process that generates the clock signal
   --========================================================================================================================
   p_clock_generator : process is
-    variable v_clock_period    : time;
-    variable v_clock_high_time : time;
-    variable v_clock_low_time  : time;
-    variable v_clock_max_jitter : time;
-
-    variable v_seed1, v_seed2 : positive;
-    variable v_rand           : real := 0.0;
-
-    variable v_clock_rising_edge  : time;
-    variable v_clock_falling_edge : time;
+    variable v_clock_period        : time;
+    variable v_clock_high_time     : time;
+    variable v_clock_low_time      : time;
+    variable v_clock_max_jitter    : time;
+    variable v_seed1               : positive := GC_INSTANCE_IDX + 1; -- Different seeds for each instance
+    variable v_seed2               : positive := 1;
+    variable v_rand                : real;
+    variable v_rising_edge_jitter  : time     := 0 ns; -- Offset of the next rising edge from its nominal time
+    variable v_falling_edge_jitter : time;
   begin
     wait for 0 ns;                      -- wait for clock_ena to be set
     loop
 
       if not clock_ena then
-        clk <= '0';
+        clk                  <= '0';
+        v_rising_edge_jitter := 0 ns;   -- The first rising edge after starting the clock has no jitter
         wait until clock_ena;
       end if;
 
       -- Clock period is sampled so it won't change during a clock cycle and potentialy introduce negative time in
       -- last wait statement
-      v_clock_period    := clock_period;
-      v_clock_high_time := clock_high_time;
-      v_clock_low_time  := v_clock_period - v_clock_high_time;
+      v_clock_period     := clock_period;
+      v_clock_high_time  := clock_high_time;
+      v_clock_low_time   := v_clock_period - v_clock_high_time;
       v_clock_max_jitter := clock_max_jitter;
 
       if v_clock_high_time >= v_clock_period then
@@ -337,21 +340,22 @@ begin
         v_clock_low_time := 0 ns; -- Avoid failure from waiting a negative time
       end if;
 
-      if v_clock_max_jitter > v_clock_high_time then
-        tb_error(clock_name & ": max jitter can't be larger than the clock high time ; clock high time: " & to_string(v_clock_high_time) & ", clock max jitter: " & to_string(v_clock_max_jitter), C_SCOPE);
+      if v_clock_max_jitter > 0 ns and (v_clock_max_jitter >= v_clock_high_time or v_clock_max_jitter >= v_clock_low_time) then
+        tb_error(clock_name & ": clock max jitter must be less than clock high time and clock low time; clock high time: " & to_string(v_clock_high_time) &
+                 ", clock low time: " & to_string(v_clock_low_time) & ", clock max jitter: " & to_string(v_clock_max_jitter), C_SCOPE);
+        v_clock_max_jitter := 0 ns; -- Avoid failure from waiting a negative time
       end if;
 
+      -- Each clock edge is moved randomly by up to +/- half the max jitter from its nominal time
       uniform(v_seed1, v_seed2, v_rand);
-      v_clock_rising_edge  := (((v_clock_period - v_clock_high_time) - v_clock_max_jitter) / 2) + (v_rand * v_clock_max_jitter);
+      v_falling_edge_jitter := (v_rand - 0.5) * v_clock_max_jitter;
 
+      clk                  <= '1';
+      wait for v_clock_high_time - v_rising_edge_jitter + v_falling_edge_jitter;
       uniform(v_seed1, v_seed2, v_rand);
-      v_clock_falling_edge := ((v_clock_high_time - v_clock_max_jitter) / 2) + (v_rand * v_clock_max_jitter);
-
-      wait for v_clock_rising_edge;
-      clk <= '1';
-      wait for ((v_clock_period / 2) - v_clock_rising_edge) + v_clock_falling_edge;
-      clk <= '0';
-      wait for (v_clock_period / 2) - v_clock_falling_edge;
+      v_rising_edge_jitter := (v_rand - 0.5) * v_clock_max_jitter;
+      clk                  <= '0';
+      wait for v_clock_low_time - v_falling_edge_jitter + v_rising_edge_jitter;
     end loop;
   end process;
 --========================================================================================================================

@@ -1,13 +1,71 @@
 UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
-----------------------------------------------------------------------
+v2.21.4
+----------
+Released: 2026-02-14
+- Fixed a fatal error in await_sb_completion() when waiting for a sb_poll_time equal or greater than the timeout.
+- Fixed typos in string_methods_pkg.vhd. From pull request by user JHertz5.
+- Extended randomization and functional coverage functionality for Questa One is now supported. 
+
+v2.21.3
+----------
+Released: 2025-11-28
+- Moved spec cov section to a more correct location in adaptations_pkg.
+- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg.
+- Updated comments and reorganized some constants in adaptations_pkg.
+- Removed unused constants C_EMPTY_NODE and C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH from adaptations_pkg.
+- Reorganized types_pkg. Removed unused types t_info_target and t_global_ctrl.
+- Fixed bug where a log message of one character is not displayed. From pull request by user jorkrohn.
+- Removed unused utility library release info function and constant.
+- Added uvvm_stack_is_full() and uvvm_stack_deallocate() methods to data_stack_pkg.
+- Replaced shared buffer between instances of t_data_queue to avoid overwritting data between data fifo and data stack.
+- Moved shared_default_log_destination to string_methods_pkg and added a constant to set the default value in adaptations_pkg.
+- Added missing deprecate() calls to some functions and procedures.
+- Changed deprecate message from log message to tb_note alert.
+- Moved C_DEPRECATE_SETTING to adaptations_pkg.
+- Updated check_clock_period_margin() documentation.
+- Added missing timeouts to BFM common procedures and updated log messages.
+- Updated wait_on_bfm_sync_start to always return time_of_rising_edge.
+- Fixed the error message for check_value() using signed values and radix "DEC".
+- Added comments to alert_hierarchy_pkg procedures which are for internal use. Updated hierarchical alerts documentation.
+- Modified the log messages of most checks/awaits to be consistent.
+- Use normalized value alias in string_contains_char and to_string functions.
+- Fixed bug in await_change_to_value for std_logic_vector. From pull request by user MartinBoberTecmata.
+
+
+v2.21.2
+----------
+Released: 2025-09-17
+- Added a generic association list data structure.
+- Made default bin names 1-indexed.
+- Changed bin naming so that each resulting bin from a call to add_bin() or add_cross() gets an index (1 to the
+  number of resulting bins) in square brackets appended to the given name if the call results in more than one bin.
+- Added the constant C_FC_BIN_NAME_DUPLICATE_WARNING to the adaptations_pkg to enable warnings on duplicate bin names.
+- Added the constant C_FC_DEFAULT_BIN_NAME to the adaptations_pkg that sets the default bin name.
+- Moved UVVM assertions to its own folder (any new changes will be tracked there).
+- Fixed functional coverage reports not being written to log/console when written also to a separate file.
+- Fixed some report methods not being written to the correct shared_default_log_destination.
+- Fixed some report methods crashing the simulation when used at the very start of the simulation due to an unopened log file.
+- Moved vendor extensions packages for Questa to the misc directory.
+- Fixed bin_vector() not supporting sizes of 31 bits. Added a note to the documentation that it is the maximum supported size.
+- Fixed bin_range() not handling correctly a range of 0 to 2**31-1.
+- Merged func_cov related vendor extension packages into single package. Other minor modifications to test version of Questa vendor
+  extensions.
+- Updated .sh script to use bash shebang.
+
+v2.21.1
+----------
+Released: 2025-08-18
+- Fixed TB_WARNING when calling clear_rand_cyclic() in enhanced randomization.
+- Minor modifications to Siemens test-version of upcoming rand and functional coverage extensions for Questa.
+- Added UVVM assertions and demo testbench.
 
 v2.21.0
 ----------
 Released: 2025-05-11
 - Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
-- Added preliminary test version of upcoming rand and functional coverage extensions for Questa. 
+- Added preliminary test version of upcoming rand and functional coverage extensions for Questa.
 
 v2.20.0
 ----------
@@ -150,7 +208,7 @@ Released: 2021-04-08
 
 v2.15.1
 ----------
-Released: 2020-XX-XX
+Released: 2020-12-08
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.

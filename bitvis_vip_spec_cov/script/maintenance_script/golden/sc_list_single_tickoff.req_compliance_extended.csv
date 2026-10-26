@@ -1,0 +1,9 @@
+Requirement,Covering testcases(all),Compliance
+REQ_ERROR_BEFORE_TC,check *.req_non_compliance.csv,NOT_TESTED
+REQ_ERROR_DURING_TC,check *.req_non_compliance.csv,NOT_TESTED
+REQ_LIST_SINGLE_TICKOFF,TC_LIST_SINGLE_TICKOFF,COMPLIANT
+REQ_LIST_SINGLE_TICKOFF_PF,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_COND_TICKOFF,check *.req_non_compliance.csv,NOT_TESTED
+REQ_ALWAYS_TICKOFF,check *.req_non_compliance.csv,NOT_TESTED
+
+

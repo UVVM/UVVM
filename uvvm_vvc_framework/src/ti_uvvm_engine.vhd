@@ -32,7 +32,7 @@ begin
   --------------------------------------------------------
   -- Initializes the UVVM VVC Framework
   --------------------------------------------------------
-  p_initialize_uvvm : process
+  p_initialize_uvvm : process is
   begin
     -- shared_uvvm_state is initialized to IDLE. Hence it will stay in IDLE if this procedure is not included in the TB
     shared_uvvm_state := PHASE_A;
@@ -48,4 +48,4 @@ begin
     wait;
   end process p_initialize_uvvm;
 
-end func;
+end architecture func;

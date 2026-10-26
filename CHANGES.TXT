@@ -9,12 +9,134 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2 2025.04.11
+v2 2026.02.14
+--------------------
+Released: 2026-02-14
+- Fixed a fatal error in await_sb_completion() when waiting for a sb_poll_time equal or greater than the timeout.
+- Fixed axi_read() and axi_check() VVC examples typo.
+- Improved code formatting of src files to be consistent with regards to prefixes, casing, indentation, etc.
+- Print data_routing and randomisation parameters in corresponding VVC procedures.
+- Fixed typos in string_methods_pkg.vhd. From pull request by user JHertz5.
+- Fixed source path display error in compile-scripts.
+- Fixed inconsistency in axistream_expect-log messages in vvc_methods_pkg.vhd in bitvis_vip_axistream.
+- Updated await_uvvm_completion() to check first that scoreboards are empty and then VVCs are inactive.
+- Moved bitvis_vip_spec_cov demo folders under its tb folder.
+- Added a python script "copy_td_files_to_vips.py" which copies all the necessary files under each <vip>/src/vvc_framework_td folder,
+  this was requested since Vivado can't compile the same file in different libraries.
+- Added initial version of APB VIP. From pull request by user mikkelmi2.
+- Removed duplicate component_list.txt file under the release folder.
+- Removed unused testbench.py script under the script folder.
+- Extended randomization and functional coverage functionality for Questa One is now supported. 
+
+v2 2025.11.28
+--------------------
+Released: 2025-11-28
+- Changed spec cov requirement tickoff log text from "Logging requirement" to "Ticking off requirement".
+- Moved spec cov section to a more correct location in adaptations_pkg.
+- Set ready default value from config in init_avalon_st_if_signals function.
+- Added handling of BOM character (utf-8-sig encoding) when parsing req/map files in run_spec_cov.py and spec_cov_pkg.
+- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg and removed double definition of C_MAX_CYCLES 
+  in uvvm_assertions_pkg.
+- Added C_WINDOW_ASSERTIONS_MAX_CYCLES range guard to trigger->trigger (sl) overload as well as more pipeline numbering in log (uvvm_assertions_pkg).
+- Added two uses of window assertions to UVVM assertions demo tb.
+- Updated comments and reorganized some constants in adaptations_pkg.
+- Removed unused constants C_EMPTY_NODE and C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH from adaptations_pkg.
+- Replaced constant C_VVC_NAME_MAX_LENGTH for C_MAX_VVC_NAME_LENGTH.
+- Reorganized if statements for printing C_ERROR_REPORT_EXTENT in Avalon-ST, GMII and RGMII BFMs.
+- Reorganized types_pkg. Removed unused types t_info_target and t_global_ctrl.
+- Updated documentation with content from adaptations_pkg and added links to types descriptions.
+- Fixed bug where a log message of one character is not displayed. From pull request by user jorkrohn.
+- Support running spec cov post-processing without requirement list. Labels for unlisted req tickoff.
+- Removed unused utility library release info function and constant.
+- Added uvvm_stack_is_full() and uvvm_stack_deallocate() methods to data_stack_pkg.
+- Moved data structures into a new section in the documentation. Added documentation for data_stack.
+- Replaced shared buffer between instances of t_data_queue to avoid overwritting data between data fifo and data stack.
+- Added Sigasi project (requires Sigasi 2025.3.1 or later). Fixed a bug in compile_src.do when the UVVM repository was checked
+  out in a directory containing spaces. From pull request by user lievenlemiengre.
+- Fixed spec cov testcase status for partial coverage files with no requirement tickoffs. 
+- Moved shared_default_log_destination to string_methods_pkg and added a constant to set the default value in adaptations_pkg.
+- Added missing deprecate() calls to some functions and procedures.
+- Changed deprecate message from log message to tb_note alert.
+- Moved C_DEPRECATE_SETTING to adaptations_pkg.
+- Added more detail to await_value error messages in the I2C BFM.
+- Updated timeout alert message in several BFMs with more detail.
+- Replaced all -1 ns values with the constant C_UNDEFINED_TIME in all VIPs.
+- Removed default timeout value of 1 us in VVC procedures gpio_expect and gpio_expect_stable to match the BFM procedures.
+- Replaced assertion with check_value in uart_expect and added missing timeout value check in uart_receive.
+- Fixed typos in VVC documentation for gpio_get.
+- Changed default timeout in UART BFM config.
+- Increased max_wait_cycles default value to 1000 in all BFMs.
+- Updated BFM procedures to only call check_clock_period_margin() once.
+- Updated check_clock_period_margin() documentation.
+- Added missing timeouts to BFM common procedures and updated log messages.
+- Updated wait_on_bfm_sync_start to always return time_of_rising_edge and removed extra sampling of rising_edge inside BFM procedures.
+- Initial release of Wishbone VIP.
+- Fixed the error message for check_value() using signed values and radix "DEC".
+- Fixed an issue in compile_src.do where it was creating the same directory twice with mkdir and vlib commands.
+- Updated log messages from await_completion().
+- Fixed use of await_completion with Clock Generator VVC set_clock_period() and set_clock_high_time() procedures.
+- Added comments to alert_hierarchy_pkg procedures which are for internal use. Updated hierarchical alerts documentation.
+- Minor changes to formatting in log messages across most log messages (changed add_msg_delimiter behaviour among others).
+- Documentation updates: Reorganized Utility Library and VVC framework sections. Updated multi-channel VVC examples, shared variables
+  and global signals section and VVC Implementation Guide section. Renamed and reorganized VVC Framework Essential Mechanisms section. 
+  Added info regarding logging and verbosity control. Added links to different sections in the UVVM intro section.
+- Updated vvc_generator to replace the GC_CHANNEL generic for a constant C_CHANNEL inside the VVC.
+- Use normalized value alias in string_contains_char and to_string functions.
+- Fixed multisim.sh script error when using Modelsim.
+- Fixed bug in await_change_to_value for std_logic_vector. From pull request by user MartinBoberTecmata.
+
+
+v2 2025.09.17
+--------------------
+Released: 2025-09-17
+- Added a generic association list data structure.
+- Made default bin names 1-indexed.
+- Changed bin naming so that each resulting bin from a call to add_bin() or add_cross() gets an index (1 to the
+  number of resulting bins) in square brackets appended to the given name if the call results in more than one bin.
+- Added the constant C_FC_BIN_NAME_DUPLICATE_WARNING to the adaptations_pkg to enable warnings on duplicate bin names.
+- Added the constant C_FC_DEFAULT_BIN_NAME to the adaptations_pkg that sets the default bin name.
+- Fixed vvc_generator.py where v_msg_id_panel was not being used correctly in cmd_interpreter.
+- Added range constraints to SPI VVC generics to make sure they are within legal range.
+- Added missing deallocate functions for lines and deprecated deallocate_line_if_exists function. From pull request by user avelure.
+- Added checks to make sure input arrays to axistream VVC procedures have ascending range.
+- Moved UVVM assertions to its own folder (from uvvm_util).
+- Fixed functional coverage reports not being written to log/console when written also to a separate file.
+- Fixed some report methods not being written to the correct shared_default_log_destination.
+- Fixed some report methods crashing the simulation when used at the very start of the simulation due to an unopened log file.
+- Released HVVC to VVC Bridge VIP and Ethernet VIP from BETA.
+- Moved Markdown documentation files to main HTML documentation.
+- Fixed bug in Clock Generator VVC where the initial configuration for the clock_name, clock_period and clock_high_time given by 
+  the VVC generics is not assigned when using Riviera-PRO simulator.
+- Added misc folder to the root directory, and placed the UVVM context files and vendor extensions packages for Questa.
+- Added context section in the Essential Mechanisms documentation.
+- Fixed bin_vector() not supporting sizes of 31 bits. Added a note to the documentation that it is the maximum supported size.
+- Fixed bin_range() not handling correctly a range of 0 to 2**31-1.
+- Updated the examples in the SPI VVC documentation.
+- Added QuestaSim support to all compile scripts. From pull request by user tijmenvn.
+- Merged func_cov related vendor extension packages into single package. Other minor modifications to test version of Questa vendor
+  extensions.
+- Updated .sh scripts to use bash shebang.
+- Added missing files in ghdl_compile_all_and_simulate.sh scripts.
+
+
+v2 2025.08.18
+--------------------
+Released: 2025-08-18
+- Updated unwanted activity detection to ignore signal transitions from 'X' to '0'/'1'.
+- Fixed TB_WARNING when calling clear_rand_cyclic() in enhanced randomization.
+- Updated wait statement in spi_slave_transmit_and_receive() which allows NVC to run without errors.
+- Added transaction_pkg to Wishbone VVC.
+- Converted rest of documentation to RST format.
+- Minor modifications to Siemens test-version of upcoming rand and functional coverage extensions for Questa.
+- Added UVVM assertions and demo testbench to UVVM Utility Library.
+
+
+v2 2025.05.11
 --------------------
 Released: 2025-05-11
 - Changed C_SPI_VVC_DATA_ARRAY_WIDTH from 31 to 32 in adaptations_pkg.
 - Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
-- Added preliminary test version of upcoming rand and functional coverage extensions for Questa. 
+- Added preliminary test version of upcoming rand and functional coverage extensions for Questa.
 
 
 v2 2025.03.25

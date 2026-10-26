@@ -1,0 +1,21 @@
+--UVVM_FUNCTIONAL_COVERAGE_FILE--
+Covpt_9
+TB seq.
+-1
+FALSE
+0
+86538 86638
+8
+0
+0
+0
+0
+0
+0
+0
+1
+100
+100
+100
+0
+0

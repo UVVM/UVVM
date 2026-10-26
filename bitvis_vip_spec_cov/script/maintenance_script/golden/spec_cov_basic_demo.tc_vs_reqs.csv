@@ -1,0 +1,7 @@
+Testcase,Requirement,Result
+T_UART_1, FPGA_SPEC_1 FPGA_SPEC_2 FPGA_SPEC_3 FPGA_SPEC_4 , PASS
+
+
+
+Testcase,Requirement,Result
+T_UART_1, FPGA_SPEC_1, PASS

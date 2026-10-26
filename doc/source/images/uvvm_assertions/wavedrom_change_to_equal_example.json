@@ -1,0 +1,8 @@
+{signal: [
+  {name: 'clk',              wave: '0...H.l.H.l.H.l.H.l.H.l'},
+  {name: 'ena',              wave: '0..1.................0'},
+  {name: 'trigger',          wave: '0..1...0..............'},
+  {name: 'tracked_value',    wave: 'x..2.......2.2........', data: ["'1'", "'0'", "'1'"] },
+  {name: 'valid window', wave: '0.......H.......0.....'}
+  ],
+   }

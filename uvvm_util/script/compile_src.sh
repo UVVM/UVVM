@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # compile_src.sh
 # Compiles UVVM component (library or VIP).

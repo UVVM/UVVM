@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP GPIO &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -48,12 +49,13 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -125,6 +127,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -176,10 +179,6 @@
 </ul>
 </li>
 </ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <section id="bfm">
 <h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
 <p>BFM functionality is implemented in gpio_bfm_pkg.vhd</p>
@@ -198,35 +197,38 @@
 <tbody>
 <tr class="row-even"><td><p>clock_period</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
 <td><p>Specifies the clock period</p></td>
 </tr>
 <tr class="row-odd"><td><p>match_strictness</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
-<td><p>MATCH_STD</p></td>
-<td><div class="line-block">
-<div class="line">Matching strictness for std_logic values in
-check procedures.</div>
-<div class="line">MATCH_EXACT requires both values to be the
+<td><p>MATCH_EXACT</p></td>
+<td><p>Matching strictness for std_logic values in
+check procedures.</p>
+<p>MATCH_EXACT requires both values to be the
 same. Note that the expected value can contain
-the don’t care operator ‘-‘.</div>
-<div class="line">MATCH_STD allows comparisons between ‘H’ and
-‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
-</div>
+the don’t care operator ‘-‘.</p>
+<p>MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>id_for_bfm</p></td>
-<td><p>t_msg_id</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
 the BFM</p></td>
 </tr>
-<tr class="row-odd"><td><p>timeout</p></td>
+<tr class="row-odd"><td><p>id_for_bfm_wait</p></td>
+<td><p><a class="reference internal" href="utility_library.html#message-ids"><span class="std std-ref">t_msg_id</span></a></p></td>
+<td><p>ID_BFM_WAIT</p></td>
+<td><p>DEPRECATED</p></td>
+</tr>
+<tr class="row-even"><td><p>timeout</p></td>
 <td><p>time</p></td>
-<td><p>-1 ns</p></td>
-<td><p>Timeout value for the expected procedures. This
-is only used if no timeout parameter is given
-in the procedures.</p></td>
+<td><p>C_UNDEFINED_TIME</p></td>
+<td><p>The maximum time to pass before the expected
+data must be found. This value can be overridden
+by the timeout parameter in the procedure call.</p></td>
 </tr>
 </tbody>
 </table>
@@ -285,7 +287,8 @@ Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -350,7 +353,8 @@ Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -429,7 +433,8 @@ Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -517,7 +522,8 @@ Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -583,8 +589,8 @@ direction.</p></td>
 <td><p>time</p></td>
 <td><p>The maximum time to pass before the expected data must
 be found. A timeout results in an alert with severity
-‘alert_level’. Default value is -1 ns which means no
-timeout.</p></td>
+‘alert_level’. Default value is C_UNDEFINED_TIME which
+leads to using the timeout from the BFM config parameter</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>alert_level</p></td>
@@ -604,7 +610,8 @@ Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -685,8 +692,8 @@ stable in the register</p></td>
 <td><p>time</p></td>
 <td><p>The maximum time to pass before the expected data must
 be found. A timeout results in an alert with severity
-‘alert_level’. Default value is -1 ns which means no
-timeout.</p></td>
+‘alert_level’. Default value is C_UNDEFINED_TIME which
+leads to using the timeout from the BFM config parameter</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>alert_level</p></td>
@@ -706,7 +713,8 @@ Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
 <td><p>Controls verbosity within a specified scope. Default
-value is shared_msg_id_panel.</p></td>
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>config</p></td>
@@ -796,10 +804,6 @@ the ‘stable_req_from’ parameter does not have any influence since the event 
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/checking_stability.png"><img alt="Checking stability" class="align-center" src="_images/checking_stability.png" style="width: 600pt;" />
 </a>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 </section>
 </section>
 </section>
@@ -807,7 +811,7 @@ the ‘stable_req_from’ parameter does not have any influence since the event 
 <h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>VVC functionality is implemented in gpio_vvc.vhd</p></li>
-<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-vvc-mechanisms-and-features"><span class="std std-ref">VVC Mechanisms and Features</span></a>.</p></li>
 </ul>
 <section id="entity">
 <h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
@@ -830,7 +834,9 @@ the ‘stable_req_from’ parameter does not have any influence since the event 
 <tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
 <td><p>N/A</p></td>
-<td><p>Instance number to assign the VVC</p></td>
+<td><p>Instance number to assign the VVC. Maximum value
+is defined by C_GPIO_VVC_MAX_INSTANCE_NUM
+in adaptations_pkg.</p></td>
 </tr>
 <tr class="row-even"><td><p>GC_DEFAULT_LINE_VALUE</p></td>
 <td><p>std_logic_vector</p></td>
@@ -883,6 +889,10 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default values for the cmd/result queue generics are defined in adaptations_pkg.</p>
+</div>
 </section>
 <section id="signals">
 <h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
@@ -900,18 +910,16 @@ GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
 <td><p>gpio_vvc_if</p></td>
 <td><p>inout</p></td>
 <td><p>std_logic_vector</p></td>
-<td><div class="line-block">
-<div class="line">This interface can be used as input, output or inout.</div>
-<div class="line">If the GC_DEFAULT_LINE_VALUE is set to ‘Z’, ‘H’ or ‘L’
-, the interface can be used as an input, output or
-inout.</div>
-<div class="line">If the default is set to ‘1’, ‘0’ or ‘U’, the
-interface must be used as an output.</div>
-<div class="line">When using the interface as inout, the process
+<td><p>This interface can be used as input, output or inout.</p>
+<p>If the GC_DEFAULT_LINE_VALUE is set to ‘Z’, ‘H’ or ‘L’,
+the interface can be used as an input, output or
+inout.</p>
+<p>If the default is set to ‘1’, ‘0’ or ‘U’, the
+interface must be used as an output.</p>
+<p>When using the interface as inout, the process
 currently driving the signal (DUT or VVC) must set it
 to ‘Z’ after it is finished in order to release the
-interface so that the other process can drive it.</div>
-</div>
+interface so that the other process can drive it.</p>
 </td>
 </tr>
 </tbody>
@@ -933,18 +941,16 @@ interface so that the other process can drive it.</div>
 <tr class="row-even"><td><p>inter_bfm_delay</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
 <td><p>C_GPIO_INTER_BFM_DELAY_DEFAULT</p></td>
-<td><div class="line-block">
-<div class="line">Delay between any requested BFM accesses
-towards the DUT.</div>
-<div class="line">TIME_START2START: Time from a BFM start to the
+<td><p>Delay between any requested BFM accesses
+towards the DUT.</p>
+<p>TIME_START2START: Time from a BFM start to the
 next BFM start (a TB_WARNING will be issued if
-access takes longer than TIME_START2START).</div>
-<div class="line">TIME_FINISH2START: Time from a BFM end to the
-next BFM start.</div>
-<div class="line">Any insert_delay() command will add to the
+access takes longer than TIME_START2START).</p>
+<p>TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</p>
+<p>Any insert_delay() command will add to the
 above minimum delays, giving for instance the
-ability to skew the BFM starting time.</div>
-</div>
+ability to skew the BFM starting time.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
@@ -1005,7 +1011,7 @@ use verbosity control.</p></td>
 <td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
 <td><p>Severity of alert to be issued if unwanted
 activity on the DUT outputs is detected. It is
-enabled with ERROR severity by default.</p></td>
+disabled with NO_ALERT severity by default.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1054,6 +1060,23 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to
+be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>C_GPIO_VVC_CMD_DATA_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>data</strong> length</p></td>
+</tr>
+<tr class="row-even"><td><p>C_GPIO_VVC_CMD_STRING_MAX_LENGTH</p></td>
+<td><p>Maximum <strong>msg</strong> length</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
 <section id="gpio-set-vvc">
 <span id="id4"></span><h4>gpio_set()<a class="headerlink" href="#gpio-set-vvc" title="Link to this heading"></a></h4>
 <p>Adds a set command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
@@ -1101,7 +1124,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1161,19 +1185,20 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate and send to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate and send to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from receive.</span>
 <span class="p">...</span>
-<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">);</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">);</span>
 <span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
 <span class="n">fetch_result</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
@@ -1237,7 +1262,8 @@ differentiate between VVCs</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1309,7 +1335,8 @@ stable in the register</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1322,7 +1349,7 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 <span id="id8"></span><h4>gpio_expect()<a class="headerlink" href="#gpio-expect-vvc" title="Link to this heading"></a></h4>
 <p>Adds an expect command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
 command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-expect-bfm"><span class="std std-ref">gpio_expect()</span></a> procedure.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1360,7 +1387,8 @@ differentiate between VVCs</p></td>
 <td><p>time</p></td>
 <td><p>The maximum time to pass before the expected data must
 be found. A timeout results in an alert with severity
-‘alert_level’.</p></td>
+‘alert_level’. Default value is C_UNDEFINED_TIME which
+leads to using the timeout from the BFM config parameter</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
@@ -1379,12 +1407,13 @@ be found. A timeout results in an alert with severity
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">gpio_expect</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found or timeout&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_expect</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found or timeout&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1392,7 +1421,7 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 <span id="id9"></span><h4>gpio_expect_stable()<a class="headerlink" href="#gpio-expect-stable-vvc" title="Link to this heading"></a></h4>
 <p>Adds an expect_stable command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When
 the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-expect-stable-bfm"><span class="std std-ref">gpio_expect_stable()</span></a> procedure.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req_from</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req_from</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1441,28 +1470,38 @@ stable in the register</p></td>
 <td><p>The point in time where stable_req starts</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be found. A timeout results in an alert with severity
+‘alert_level’. Default value is C_UNDEFINED_TIME which
+leads to using the timeout from the BFM config parameter</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>A custom message to be appended in the log/alert</p></td>
 </tr>
-<tr class="row-even"><td><p>constant</p></td>
+<tr class="row-odd"><td><p>constant</p></td>
 <td><p>alert_level</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
 <td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
 </tr>
-<tr class="row-odd"><td><p>constant</p></td>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>scope</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
 <td><p>Describes the scope from which the log/alert originates.
-Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found and check that it remains stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found and check that it remains stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1527,7 +1566,7 @@ POLL_UNTIL, READ, WRITE</p></td>
 <td><p>Command index of executing VVC command</p></td>
 </tr>
 <tr class="row-even"><td><p>transaction_status</p></td>
-<td><p>t_transaction_status</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-transaction-status"><span class="std std-ref">t_transaction_status</span></a></p></td>
 <td><p>INACTIVE</p></td>
 <td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
 SUCCEEDED during a transaction</p></td>
@@ -1540,18 +1579,18 @@ SUCCEEDED during a transaction</p></td>
 <h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
 <p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
 i.e. gpio_get(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
-TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable GPIO_VVC_SB, located in the
-vvc_methods_pkg.vhd, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">GPIO_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_GPIO_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_gpio_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">gpio_vvc_sb</span></code>, located in
+the vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_GPIO_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_gpio_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The GPIO scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the
 data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_gpio_sb() function, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">GPIO_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="o">&lt;</span><span class="n">GPIO</span><span class="w"> </span><span class="n">VVC</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="n">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">pad_gpio_sb</span><span class="p">(</span><span class="o">&lt;</span><span class="n">exp</span><span class="w"> </span><span class="n">data</span><span class="o">&gt;</span><span class="p">));</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="o">&lt;</span><span class="n">GPIO</span><span class="w"> </span><span class="n">VVC</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="n">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">pad_gpio_sb</span><span class="p">(</span><span class="o">&lt;</span><span class="n">exp</span><span class="w"> </span><span class="n">data</span><span class="o">&gt;</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the GPIO VVC scoreboard using the GPIO_VVC_SB.</p>
+Scoreboard commands are available for the GPIO VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">gpio_vvc_sb</span></code>.</p>
 </section>
 <section id="unwanted-activity-detection">
 <h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
@@ -1670,7 +1709,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

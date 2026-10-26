@@ -86,4 +86,4 @@ begin
       GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY => GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
     );
 
-end struct;
+end architecture struct;

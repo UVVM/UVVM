@@ -12,13 +12,11 @@ Bitvis VIP Clock Generator
   * :ref:`clock_generator_set_clock_high_time`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in clock_generator_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -29,7 +27,9 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Name                         | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_CLOCK_GEN_VVC_MAX_INSTANCE_NUM  |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_CLOCK_NAME                | string                       | "clk"           | Name to assign the VVC                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -62,6 +62,10 @@ Generics
 | OLD_SEVERITY                 |                              | _COUNT_THRESHOL\| GC_RESULT_QUEUE_COUNT_THRESHOLD                 |
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
 
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -145,6 +149,14 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_CLOCK_GEN_VVC_CMD_STRING_MAX_LENGTH      | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _clock_generator_start_clock:
 
@@ -168,7 +180,8 @@ completed. When the command is scheduled to run, the executor activates the cloc
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -200,7 +213,8 @@ the current clock cycle.
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -214,8 +228,14 @@ the current clock cycle.
 set_clock_period()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a set_clock_period command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have 
-completed. When the command is scheduled to run, the executor will change the clock period on the preceding rising clock edge.
-Note: the clock high time will have to be set using the set_clock_high_time() after setting a new clock period.
+completed. When the command is scheduled to run, the executor updates the clock period and the change takes effect on the 
+following rising clock edge.
+
+.. note::
+
+    * The clock high time will have to be set using the :ref:`clock_generator_set_clock_high_time` after setting a new clock period.
+    * If the period is changed to a smaller value than the current high time, the :ref:`clock_generator_set_clock_high_time` must
+      be called first to avoid a TB_ERROR.
 
 .. code-block::
 
@@ -234,7 +254,8 @@ Note: the clock high time will have to be set using the set_clock_high_time() af
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -248,8 +269,13 @@ Note: the clock high time will have to be set using the set_clock_high_time() af
 set_clock_high_time()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a set_clock_high_time command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have 
-completed. When the command is scheduled to run, the executor changes the clock high time and the change will take effect from the 
-next rising edge.
+completed. When the command is scheduled to run, the executor updates the clock high time and the change takes effect on the 
+following rising clock edge.
+
+.. note::
+
+    If the high time is changed to a bigger value than the current clock period, the :ref:`clock_generator_set_clock_period` must
+    be called first to avoid a TB_ERROR.
 
 .. code-block::
 
@@ -269,7 +295,8 @@ next rising edge.
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::

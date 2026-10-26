@@ -16,9 +16,9 @@
 -- Description   : See dedicated powerpoint presentation and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use work.irqc_pif_pkg.all;
 
@@ -35,7 +35,7 @@ entity irqc_core is
     irq2cpu     : out std_logic;
     irq2cpu_ack : in  std_logic
   );
-end irqc_core;
+end entity irqc_core;
 
 architecture rtl of irqc_core is
 
@@ -51,11 +51,11 @@ architecture rtl of irqc_core is
       v_tmp := v_tmp or value(i);
     end loop;
     return v_tmp;
-  end;
+  end function;
 
 begin
 
-  p_irr : process(clk, arst)
+  p_irr : process(clk, arst) is
   begin
     if arst = '1' then
       c2p_i.aro_irr <= (others => '0');
@@ -77,7 +77,7 @@ begin
   c2p_i.aro_ipr <= c2p_i.aro_irr and p2c.rw_ier;
   igr           <= or_reduce(c2p_i.aro_ipr);
 
-  p_irq2cpu : process(clk, arst)
+  p_irq2cpu : process(clk, arst) is
   begin
     if arst = '1' then
       c2p_i.aro_irq2cpu_allowed <= '0';
@@ -99,4 +99,4 @@ begin
 
   c2p <= c2p_i;
 
-end rtl;
+end architecture rtl;

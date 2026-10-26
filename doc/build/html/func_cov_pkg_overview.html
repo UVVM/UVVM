@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Functional Coverage &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -48,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
@@ -102,6 +104,16 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#clearing-a-coverpoint">Clearing a coverpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#questa-one-extended-features">Questa One Extended Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#enabling-extended-features-for-questa-one">Enabling extended features for Questa One</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auto-sampling-of-coverage">Auto-sampling of coverage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gui-coverage-view-and-report-generation">GUI coverage view and report generation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#saving-functional-coverage-data-to-ucdb-database-file">Saving Functional Coverage data to UCDB database file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#viewing-functional-coverage-in-gui-mode">Viewing Functional Coverage in GUI mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-info">Additional info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#func-cov-pkg">func_cov_pkg</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="func_cov_pkg_t_coverpoint.html">t_coverpoint (protected)</a></li>
@@ -112,9 +124,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -135,6 +147,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -182,7 +195,7 @@ compliance with requirements.</p>
 <h3>Coverpoints and bins<a class="headerlink" href="#coverpoints-and-bins" title="Link to this heading"></a></h3>
 <p>Each point of the design that we wish to test is referred to as a <em>coverpoint</em>. A coverpoint can for instance be an input port,
 output port or an internal register.</p>
-<p>A coverpoint is added by creating a shared variable of the protected type t_coverpoint.</p>
+<p>A coverpoint is added by creating a shared variable of the protected type <strong>t_coverpoint</strong>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span>
 </pre></div>
 </div>
@@ -194,11 +207,11 @@ a range of values or a given transition between values.</p>
 <p>In Figure 1, we can see a coverpoint named <em>memory_address</em> which contains six different bins: four bins with a single value each,
 one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting
 how many times the coverpoint has been sampled with the corresponding values of the bins.</p>
-<figure class="align-center" id="id2">
+<figure class="align-center" id="id3">
 <a class="reference internal image-reference" href="_images/func_cov_coverpoint.png"><img alt="Coverpoint representation" src="_images/func_cov_coverpoint.png" style="width: 400pt;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Figure 1</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 1</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>Sometimes we want to monitor the values of multiple points of our design at the same time. In this case, we can create a coverpoint
@@ -206,11 +219,11 @@ containing a <em>cross</em>. A cross is a type of container that can hold a comb
 combination of the values covered by the crossed bins or coverpoints must have been sampled during testing for the cross to be covered.</p>
 <p>In Figure 2, we can see a cross named <em>src_addr_x_dst_addr</em> which contains eight different bins. Each bin contains different
 combinations of values for <em>src_addr</em> and <em>dst_addr</em>.</p>
-<figure class="align-center" id="id3">
+<figure class="align-center" id="id4">
 <a class="reference internal image-reference" href="_images/func_cov_cross.png"><img alt="Cross representation" src="_images/func_cov_cross.png" style="width: 400pt;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Figure 2</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 2</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>Once we have defined all our coverpoints with bins or crosses for the required scenarios, we can begin running tests on our
@@ -221,11 +234,11 @@ Each value received through the input is sampled using the <code class="docutils
 the value 255. This will increment the hit counter of the bin associated with that value by one. Since this bin has a
 min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
 hit coverage, the coverpoint will have full coverage.</p>
-<figure class="align-center" id="id4">
+<figure class="align-center" id="id5">
 <a class="reference internal image-reference" href="_images/func_cov_sampling.png"><img alt="Sampling coverage" src="_images/func_cov_sampling.png" style="width: 400pt;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <div class="admonition note">
@@ -254,7 +267,7 @@ unsigned, enumerated, etc., they must be converted to integer values first.</p>
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
 <p>All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pkg.vhd</em>.</p>
 <p>To start using functional coverage it is necessary to import the utility library, create one or more shared variables with the protected
-type <em>t_coverpoint</em> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
+type <strong>t_coverpoint</strong> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span>
 <span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
 <span class="p">...</span>
@@ -297,7 +310,7 @@ supporting adding multiple types of bins in a single line.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 </pre></div>
 </div>
-<p>Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.</p>
+<p>Bins are implemented as record elements inside the protected type <strong>t_coverpoint</strong>, which represents both coverpoints and crosses.</p>
 <p>Bins can be created using the following <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Create a single bin for a single value</span>
 <span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -355,8 +368,12 @@ supporting adding multiple types of bins in a single line.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The maximum number of bins which can be added at once using a single <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> call is limited by C_FC_MAX_NUM_NEW_BINS
-defined in adaptations_pkg.</p>
+<ul class="simple">
+<li><p>The maximum number of bins which can be added at once using a single <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> call is limited by C_FC_MAX_NUM_NEW_BINS
+defined in adaptations_pkg.</p></li>
+<li><p>If many bins are added at once using concatenation, there will be a temporary increase in memory usage due to the big array
+being created to hold all the bins. However, after <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> has finished, the memory will be released.</p></li>
+</ul>
 </div>
 <section id="ignore-bins">
 <h3>Ignore bins<a class="headerlink" href="#ignore-bins" title="Link to this heading"></a></h3>
@@ -406,7 +423,7 @@ sampled. The default severity of the alert is ERROR and can be configured using 
 <section id="using-predefined-bins">
 <h3>Using predefined bins<a class="headerlink" href="#using-predefined-bins" title="Link to this heading"></a></h3>
 <p>Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable
-can be created using the type <em>t_new_bin_array(0 to 0)</em> which is returned by any of the bin functions.</p>
+can be created using the type <strong>t_new_bin_array(0 to 0)</strong> which is returned by any of the bin functions.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_BIN_IDLE</span><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 <span class="k">constant</span><span class="w"> </span><span class="n">C_BIN_RUNNING</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 <span class="k">constant</span><span class="w"> </span><span class="n">C_BIN_ILLEGAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
@@ -456,15 +473,37 @@ when the list becomes full. These constants are defined in adaptations_pkg.</p>
 coverpoint’s respective values.</p>
 </section>
 <section id="bin-name">
-<h3>Bin name<a class="headerlink" href="#bin-name" title="Link to this heading"></a></h3>
-<p>Bins can be named by using the optional parameter <em>bin_name</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure. If no name is given to the bin, a
-default name will be automatically given. Having a bin name is useful when reading the reports.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
+<span id="id1"></span><h3>Bin name<a class="headerlink" href="#bin-name" title="Link to this heading"></a></h3>
+<p>Bins can be named by using the optional parameter <em>bin_name</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedures. If no name is
+given, a default name with an index appended will be given. The default bin name is <em>bin_&lt;idx&gt;</em> and is set by the
+C_FC_DEFAULT_BIN_NAME constant in the adaptations_pkg. If multiple bins are given to <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> (by using <code class="docutils literal notranslate"><span class="pre">bin_range()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bin_vector()</span></code>, or concatenation), or if a call to <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> results in multiple cross bins, the bin name will be indexed
+as shown in the examples below. All bin name indices starts from 1.</p>
+<p>A warning is issued when duplicate bin names are detected. This warning can be turned off by setting the
+C_FC_BIN_NAME_DUPLICATE_WARNING constant in the adaptations_pkg to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+<p>Having bin names is useful when reading the reports.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w">                        </span><span class="c1">-- bin name: bin_1</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">-- bin name: bin_max</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;addr&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">-- bin names: addr[1], addr[2], addr[3], addr[4]</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;two_bins&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- bin names: two_bins[1], two_bins[2]</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">));</span><span class="w">                     </span><span class="c1">-- bin name: bin_2</span>
+<span class="n">coverpoint_1</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span><span class="w">          </span><span class="c1">-- bin names: bin_3[1], bin_3[2], bin_3[3], bin_3[4]</span>
 
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span><span class="w">                                    </span><span class="c1">-- bin name: bin_1</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_a&quot;</span><span class="p">);</span><span class="w">                    </span><span class="c1">-- bin name: cross_bin_a</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_b&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">-- bin name: cross_bin_b</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_c&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- bin names: cross_bin_c[1], cross_bin_c[2], cross_bin_c[3]</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;cross_bin_d&quot;</span><span class="p">);</span><span class="w">       </span><span class="c1">-- bin names: cross_bin_d[1], cross_bin_d[2], cross_bin_d[3]</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="mi">10000</span><span class="p">));</span><span class="w">                                </span><span class="c1">-- bin name: bin_2</span>
+<span class="n">coverpoint_2</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span><span class="w">                       </span><span class="c1">-- bin names: bin_3[1], bin_3[2], bin_3[3]</span>
 </pre></div>
 </div>
-<p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
+<p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. Longer names will be truncated
+without warning.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended not to use bin names that may be generated automatically as input to the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedures.</p>
+</div>
 </section>
 <section id="minimum-coverage">
 <h3>Minimum coverage<a class="headerlink" href="#minimum-coverage" title="Link to this heading"></a></h3>
@@ -602,6 +641,11 @@ in a bin has reached the minimum coverage, the bin will be marked as covered.</p
 <p class="admonition-title">Important</p>
 <p>It is NOT recommended to add more bins to a given coverpoint after it has been sampled, since the new bins will be missing any
 previous sampled coverage. A TB_WARNING alert is generated whenever this occurs.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Questa One v.2026.1 and newer adds support for enabling automatic sampling of coverpoints.
+See <a class="reference internal" href="#questa-func-cov"><span class="std std-ref">Questa One Extended Features</span></a></p>
 </div>
 <section id="overlapping-bins">
 <h3>Overlapping bins<a class="headerlink" href="#overlapping-bins" title="Link to this heading"></a></h3>
@@ -1283,6 +1327,53 @@ the testcases for the given coverpoint.</p></li>
 <h2>Clearing a coverpoint<a class="headerlink" href="#clearing-a-coverpoint" title="Link to this heading"></a></h2>
 <p>A coverpoint’s complete model, configuration and counters can be reset with <code class="docutils literal notranslate"><span class="pre">delete_coverpoint()</span></code>.</p>
 </section>
+<section id="questa-one-extended-features">
+<span id="questa-func-cov"></span><h2>Questa One Extended Features<a class="headerlink" href="#questa-one-extended-features" title="Link to this heading"></a></h2>
+<p>Questa One v.2026.1 and newer supports some extended features for UVVM Functional Coverage. This includes automatic coverpoint
+sampling, UCDB database write support and GUI view of coverpoint coverage.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The functionality described in this section is only supported in Questa One v.2026.1 and newer</p>
+</div>
+<section id="enabling-extended-features-for-questa-one">
+<h3>Enabling extended features for Questa One<a class="headerlink" href="#enabling-extended-features-for-questa-one" title="Link to this heading"></a></h3>
+<p>See <a class="reference internal" href="uvvm_getting_started.html#questa-enabling"><span class="std std-ref">Getting Started - Questa One Extended Features</span></a> for instructions on how to enable the extended
+functionality.</p>
+</section>
+<section id="auto-sampling-of-coverage">
+<h3>Auto-sampling of coverage<a class="headerlink" href="#auto-sampling-of-coverage" title="Link to this heading"></a></h3>
+<p>Auto-sampling allows for coverpoint data to be sampled automatically (without needing to call the <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> method) by
+defining a target signal or variable to be sampled, and a trigger signal which will trigger the sampling. Auto-sampling is enabled for
+a coverpoint by calling the method <code class="docutils literal notranslate"><span class="pre">enable_auto_sampling(target,</span> <span class="pre">trigger)</span></code>. When auto-sampling is enabled, the value indicated by
+<code class="docutils literal notranslate"><span class="pre">target</span></code> will be sampled to the coverpoint any time the <code class="docutils literal notranslate"><span class="pre">trigger</span></code> signal changes. <code class="docutils literal notranslate"><span class="pre">target</span></code> can be either a signal or a variable,
+while <code class="docutils literal notranslate"><span class="pre">trigger</span></code> must be a signal.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The overall coverage methods <code class="docutils literal notranslate"><span class="pre">fc_get_overall_coverage()</span></code>, <code class="docutils literal notranslate"><span class="pre">fc_overall_coverage_completed()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">fc_report_overall_coverage()</span></code> do not support auto-sampled coverpoints. It is recommended to instead retreive coverage status for
+each coverpoint by using the t_coverpoint methods <code class="docutils literal notranslate"><span class="pre">get_coverage()</span></code>, <code class="docutils literal notranslate"><span class="pre">report_coverage()</span></code> and <code class="docutils literal notranslate"><span class="pre">coverage_completed()</span></code></p>
+</div>
+</section>
+<section id="gui-coverage-view-and-report-generation">
+<h3>GUI coverage view and report generation<a class="headerlink" href="#gui-coverage-view-and-report-generation" title="Link to this heading"></a></h3>
+<p>Coverage can be viewed in the Coverpoint GUI view of Questa One or Questa Visualizer by saving coverage to a .ucdb file after
+simulation has been run. This also enables UVVM Functional Coverage data to be included in the coverage reports generated by
+Questa.</p>
+<section id="saving-functional-coverage-data-to-ucdb-database-file">
+<h4>Saving Functional Coverage data to UCDB database file<a class="headerlink" href="#saving-functional-coverage-data-to-ucdb-database-file" title="Link to this heading"></a></h4>
+<p>Ensure that the extended features have been enabled by following the steps described above TODO:link.
+After running the simulation, save the coverage data to a UCDB database file by either:
+a. Questa tcl command line: call <strong>coverage save &lt;filename&gt;.ucdb</strong>, where &lt;filename&gt; is the desired name for the UCDB file.
+b. In Questa GUI, select menu option <strong>Tools-&gt;Coverage save</strong>.</p>
+</section>
+<section id="viewing-functional-coverage-in-gui-mode">
+<h4>Viewing Functional Coverage in GUI mode<a class="headerlink" href="#viewing-functional-coverage-in-gui-mode" title="Link to this heading"></a></h4>
+<p>To view Functional Coverage data saved to a UCDB file as described in the previous step, use tcl command <strong>vsim -viewcov
+&lt;filename&gt;.ucdb</strong> or menu option <strong>Open-&gt;&lt;filename&gt;.ucdb</strong>. To open the Coverpoint view, select menu option
+<strong>View-&gt;Coverage-&gt;Covergroups</strong>.</p>
+</section>
+</section>
+</section>
 <section id="additional-info">
 <h2>Additional info<a class="headerlink" href="#additional-info" title="Link to this heading"></a></h2>
 <p>Log messages within the procedures and functions in the <em>func_cov_pkg</em> use the following message IDs (disabled by default):</p>
@@ -1304,8 +1395,8 @@ functionality in SystemVerilog and OSVVM.</p>
 </div>
 </section>
 <section id="func-cov-pkg">
-<span id="id1"></span><h2>func_cov_pkg<a class="headerlink" href="#func-cov-pkg" title="Link to this heading"></a></h2>
-<p>The following links contain information regarding the API of the protected type <em>t_coverpoint</em>, the API for the general methods and
+<span id="id2"></span><h2>func_cov_pkg<a class="headerlink" href="#func-cov-pkg" title="Link to this heading"></a></h2>
+<p>The following links contain information regarding the API of the protected type <strong>t_coverpoint</strong>, the API for the general methods and
 all the type definitions inside <em>func_cov_pkg</em>.</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -1335,7 +1426,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

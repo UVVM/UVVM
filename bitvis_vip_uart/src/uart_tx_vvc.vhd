@@ -56,10 +56,11 @@ architecture behave of uart_tx_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
-  signal executor_is_busy      : boolean := false;
-  signal queue_is_increasing   : boolean := false;
-  signal last_cmd_idx_executed : natural := 0;
-  signal terminate_current_cmd : t_flag_record;
+  signal executor_is_busy                   : boolean := false;
+  signal queue_is_increasing                : boolean := false;
+  signal last_cmd_idx_executed              : natural := 0;
+  signal terminate_current_cmd              : t_flag_record;
+  signal entry_num_in_vvc_activity_register : integer;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -71,21 +72,19 @@ architecture behave of uart_tx_vvc is
   -- Transaction info
   alias vvc_transaction_info_trigger        : std_logic is global_uart_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_transaction_info                : t_transaction_group is shared_uart_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
-  -- Activity Watchdog
-  signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
+    constant command : in t_vvc_cmd_record;
+    constant config  : in t_vvc_config
   ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
     if command.msg(1 to 5) = "HVVC:" then
-      return vvc_config.parent_msg_id_panel;
+      return config.parent_msg_id_panel;
     else
-      return vvc_config.msg_id_panel;
+      return config.msg_id_panel;
     end if;
   end function;
 
@@ -107,7 +106,7 @@ begin
   -- Command interpreter
   -- - Interpret, decode and acknowledge commands from the central sequencer
   --===============================================================================================
-  cmd_interpreter : process
+  p_cmd_interpreter : process is
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
@@ -202,10 +201,9 @@ begin
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
-  cmd_executor : process
+  p_cmd_executor : process is
     constant C_EXECUTOR_ID                            : natural                                     := 0;
     variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access  : time                                        := 0 ns;
     variable v_timestamp_start_of_last_bfm_access     : time                                        := 0 ns;
     variable v_timestamp_end_of_last_bfm_access       : time                                        := 0 ns;
@@ -303,7 +301,7 @@ begin
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Normalise address and data
-            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with too wide data. " & add_msg_delimiter(v_cmd.msg));
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with too wide data." & add_msg_delimiter(v_cmd.msg));
 
             transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.
@@ -368,7 +366,7 @@ begin
   -- - Handles the termination request record (sets and resets terminate flag on request)
   --===============================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
-  --===============================================================================================
+--===============================================================================================
 
-end behave;
+end architecture behave;
 

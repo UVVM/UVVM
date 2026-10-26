@@ -36,7 +36,7 @@ package td_target_support_pkg is
 
   type t_vvc_target_record_unresolved is record -- VVC dedicated to assure signature differences between equal common methods
     trigger          : std_logic;
-    vvc_name         : string(1 to C_VVC_NAME_MAX_LENGTH); -- as scope is vvc_name & ',' and number
+    vvc_name         : string(1 to C_MAX_VVC_NAME_LENGTH); -- as scope is vvc_name & ',' and number
     vvc_instance_idx : integer;
     vvc_channel      : t_channel;
   end record;
@@ -185,7 +185,7 @@ package body td_target_support_pkg is
       check_value(v_cnt < 2, TB_FAILURE, "Arbitration mechanism failed. Check VVC " & to_string(v_result.vvc_name) & " implementation and semaphore handling. Crashing instances with numbers " & v_instance_string(1 to v_width), "Multiple scopes", ID_NEVER);
       return v_result;
     end if;
-  end resolved;
+  end function resolved;
 
   function to_string(
     value        : t_vvc_target_record;
@@ -218,7 +218,7 @@ package body td_target_support_pkg is
         return to_string(value.vvc_name) & "," & to_string(v_instance) & "," & to_upper(to_string(v_channel));
       end if;
     end if;
-  end;
+  end function;
 
   function set_vvc_target_defaults(
     constant vvc_name : in string;
@@ -227,7 +227,7 @@ package body td_target_support_pkg is
     variable v_rec : t_vvc_target_record := C_VVC_TARGET_RECORD_DEFAULT;
   begin
     if vvc_name'length > C_MAX_VVC_NAME_LENGTH then
-      alert(TB_FAILURE, "vvc_name is too long. Shorten name or set C_MAX_VVC_NAME_LENGTH in adaptation_pkg to desired length.", scope);
+      alert(TB_FAILURE, "vvc_name is too long. Shorten name or set C_MAX_VVC_NAME_LENGTH in adaptations_pkg to desired length.", scope);
     end if;
     v_rec.vvc_name                       := (others => NUL);
     v_rec.vvc_name(1 to vvc_name'length) := vvc_name;
@@ -278,7 +278,7 @@ package body td_target_support_pkg is
   ) return string is
   begin
     return format_command_idx(command.cmd_idx);
-  end;
+  end function;
 
   procedure send_command_to_vvc(
     signal   vvc_target   : inout t_vvc_target_record;
@@ -322,7 +322,7 @@ package body td_target_support_pkg is
     shared_vvc_cmd.cmd_idx := shared_cmd_idx;
 
     if global_show_msg_for_uvvm_cmd then
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_cmd.msg)) & "." & format_command_idx(shared_cmd_idx), scope, msg_id_panel);
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call) & ":" & add_msg_delimiter(to_string(shared_vvc_cmd.msg)) & "." & format_command_idx(shared_cmd_idx), scope, msg_id_panel);
     else
       log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call) & format_command_idx(shared_cmd_idx), scope, msg_id_panel);
     end if;

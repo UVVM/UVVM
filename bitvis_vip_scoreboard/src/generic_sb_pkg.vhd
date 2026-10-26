@@ -27,13 +27,15 @@ use work.generic_sb_support_pkg.all;
 
 package generic_sb_pkg is
 
-  generic(type t_element;
-          function element_match(received_element : t_element;
-                                 expected_element : t_element) return boolean;
-          function to_string_element(element : t_element) return string;
-          constant sb_config_default        : t_sb_config := C_SB_CONFIG_DEFAULT;
-          constant GC_QUEUE_COUNT_MAX       : natural     := 1000;
-          constant GC_QUEUE_COUNT_THRESHOLD : natural     := 950);
+  generic(
+    type t_element;
+    function element_match(received_element : t_element;
+                           expected_element : t_element) return boolean;
+    function to_string_element(element : t_element) return string;
+    constant SB_CONFIG_DEFAULT        : t_sb_config := C_SB_CONFIG_DEFAULT;
+    constant GC_QUEUE_COUNT_MAX       : natural     := 1000;
+    constant GC_QUEUE_COUNT_THRESHOLD : natural     := 950
+  );
 
   type t_generic_sb is protected
 
@@ -547,7 +549,7 @@ package body generic_sb_pkg is
   package sb_queue_pkg is new uvvm_util.generic_queue_pkg
     generic map(
       t_generic_element        => t_sb_entry,
-      scope                    => "SB_queue",
+      SCOPE                    => "SB_queue",
       GC_QUEUE_COUNT_MAX       => GC_QUEUE_COUNT_MAX,
       GC_QUEUE_COUNT_THRESHOLD => GC_QUEUE_COUNT_THRESHOLD);
 
@@ -559,7 +561,7 @@ package body generic_sb_pkg is
     -- Variables
     ----------------------------------------------------------------------------------------------------
     variable priv_scope            : string(1 to C_LOG_SCOPE_WIDTH)                := (1 to 4 => "?_SB", others => NUL);
-    variable priv_config           : t_sb_config_array(0 to C_MAX_SB_INSTANCE_IDX) := (others => sb_config_default);
+    variable priv_config           : t_sb_config_array(0 to C_MAX_SB_INSTANCE_IDX) := (others => SB_CONFIG_DEFAULT);
     variable priv_instance_enabled : boolean_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => false);
     variable priv_sb_queue         : sb_queue_pkg.t_generic_queue;
     variable priv_index            : integer_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => -1);
@@ -602,12 +604,12 @@ package body generic_sb_pkg is
     end procedure check_queue_empty;
 
     procedure check_config_validity(
-      constant config : in t_sb_config
+      constant sb_config : in t_sb_config
     ) is
     begin
-      check_value(config.allow_out_of_order and config.allow_lossy, false, TB_ERROR,
+      check_value(sb_config.allow_out_of_order and sb_config.allow_lossy, false, TB_ERROR,
                   "allow_out_of_order and allow_lossy cannot both be enabled. Se documentation for how to handle both modes.", priv_scope, ID_NEVER);
-      check_value(config.overdue_check_time_limit >= 0 ns, TB_ERROR,
+      check_value(sb_config.overdue_check_time_limit >= 0 ns, TB_ERROR,
                   "overdue_check_time_limit cannot be less than 0 ns.", priv_scope, ID_NEVER);
     end procedure;
 
@@ -670,7 +672,7 @@ package body generic_sb_pkg is
       constant sb_config_array : in t_sb_config_array;
       constant msg             : in string := ""
     ) is
-      constant proc_name : string := "config";
+      constant C_PROC_NAME : string := "config";
     begin
 
       -- Check if range is within limits
@@ -680,7 +682,7 @@ package body generic_sb_pkg is
       -- Apply config to the defined range
       for i in sb_config_array'low to sb_config_array'high loop
         check_config_validity(sb_config_array(i));
-        log(i, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
+        log(i, ID_CTRL, C_PROC_NAME & "() => config applied to SB." & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
         priv_config(i) := sb_config_array(i);
       end loop;
     end procedure config;
@@ -691,7 +693,7 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := "" -- not proc???
     ) is
-      constant proc_name : string := "config";
+      constant C_PROC_NAME : string := "config";
     begin
       -- Sanity checks
       check_instance_in_range(instance);
@@ -699,7 +701,7 @@ package body generic_sb_pkg is
 
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
-        log(instance, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_CTRL, C_PROC_NAME & "() => config applied to SB." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         -- Called from other SB method
         log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
@@ -729,7 +731,7 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := "" -- not proc???
     ) is
-      constant proc_name : string := "enable";
+      constant C_PROC_NAME : string := "enable";
     begin
       -- Check if instance is within range and not already enabled
       if instance /= ALL_INSTANCES then
@@ -740,9 +742,9 @@ package body generic_sb_pkg is
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
         if instance = ALL_INSTANCES then
-          log(ID_CTRL, proc_name & "() => all instances enabled. " & add_msg_delimiter(msg), priv_scope);
+          log(ID_CTRL, C_PROC_NAME & "() => all instances enabled." & add_msg_delimiter(msg), priv_scope);
         else
-          log(instance, ID_CTRL, proc_name & "() => SB enabled. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, C_PROC_NAME & "() => SB enabled." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       else
         -- Called from other SB method
@@ -810,7 +812,7 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := "" -- not proc???
     ) is
-      constant proc_name : string := "disable";
+      constant C_PROC_NAME : string := "disable";
     begin
       -- Check if instance is within range and not already disabled
       if instance /= ALL_INSTANCES then
@@ -831,9 +833,9 @@ package body generic_sb_pkg is
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
         if instance = ALL_INSTANCES then
-          log(ID_CTRL, proc_name & "() => all instances disabled. " & add_msg_delimiter(msg), priv_scope);
+          log(ID_CTRL, C_PROC_NAME & "() => all instances disabled." & add_msg_delimiter(msg), priv_scope);
         else
-          log(instance, ID_CTRL, proc_name & "() => SB disabled. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, C_PROC_NAME & "() => SB disabled." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       else
         -- Called from other SB method
@@ -917,8 +919,8 @@ package body generic_sb_pkg is
       constant source           : in string := "";
       constant ext_proc_call    : in string := ""
     ) is
-      constant proc_name  : string := "add_expected";
-      variable v_sb_entry : t_sb_entry;
+      constant C_PROC_NAME : string := "add_expected";
+      variable v_sb_entry  : t_sb_entry;
     begin
 
       v_sb_entry := (expected_element => expected_element,
@@ -936,9 +938,9 @@ package body generic_sb_pkg is
             protected_sb_activity_register.increment_sb_element_cnt(priv_index(i));
 
             if tag_usage = NO_TAG then
-              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
+              log(i, ID_DATA, C_PROC_NAME & "() => value: " & to_string_element(expected_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
             else
-              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
+              log(i, ID_DATA, C_PROC_NAME & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
             end if;
           end if;
         end loop;
@@ -955,9 +957,9 @@ package body generic_sb_pkg is
 
         if ext_proc_call = "" then
           if tag_usage = NO_TAG then
-            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            log(instance, ID_DATA, C_PROC_NAME & "() => value: " & to_string_element(expected_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            log(instance, ID_DATA, C_PROC_NAME & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           end if;
         else
           -- Called from other SB method
@@ -1016,54 +1018,47 @@ package body generic_sb_pkg is
       constant ext_proc_call    : in string := ""
     ) is
 
-      constant proc_name : string := "check_received";
-
-      procedure check_pending_exists(
-        constant instance : in integer
-      ) is
-      begin
-        check_value(not priv_sb_queue.is_empty(instance), TB_ERROR, "No pending entries to check.", priv_scope & "," & to_string(instance), ID_NEVER);
-      end procedure check_pending_exists;
+      constant C_PROC_NAME : string := "check_received";
 
       procedure check_received_instance(
-        constant instance : in integer
+        constant instance_num : in integer
       ) is
         variable v_matched     : boolean := false;
         variable v_entry       : t_sb_entry;
         variable v_dropped_num : natural := 0;
       begin
-        check_pending_exists(instance);
+        check_value(not priv_sb_queue.is_empty(instance_num), TB_ERROR, "No pending entries to check.", priv_scope & "," & to_string(instance_num), ID_NEVER);
 
         -- If OOB
-        if priv_config(instance).allow_out_of_order then
+        if priv_config(instance_num).allow_out_of_order then
 
           -- Loop through entries in queue until match
-          for i in 1 to get_pending_count(instance) loop
-            v_entry := priv_sb_queue.peek(instance, POSITION, i);
+          for i in 1 to get_pending_count(instance_num) loop
+            v_entry := priv_sb_queue.peek(instance_num, POSITION, i);
             if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete entry
-              priv_sb_queue.delete(instance, POSITION, i, SINGLE);
-              protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
+              priv_sb_queue.delete(instance_num, POSITION, i, SINGLE);
+              protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance_num));
 
               exit;
             end if;
           end loop;
 
         -- If LOSSY
-        elsif priv_config(instance).allow_lossy then
+        elsif priv_config(instance_num).allow_lossy then
 
           -- Loop through entries in queue until match
-          for i in 1 to get_pending_count(instance) loop
-            v_entry := priv_sb_queue.peek(instance, POSITION, i);
+          for i in 1 to get_pending_count(instance_num) loop
+            v_entry := priv_sb_queue.peek(instance_num, POSITION, i);
             if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete matching entry and preceding entries
               for j in i downto 1 loop
-                priv_sb_queue.delete(instance, POSITION, j, SINGLE);
-                protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
+                priv_sb_queue.delete(instance_num, POSITION, j, SINGLE);
+                protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance_num));
               end loop;
               v_dropped_num := i - 1;
               exit;
@@ -1072,68 +1067,68 @@ package body generic_sb_pkg is
 
         -- Not OOB or LOSSY
         else
-          v_entry := priv_sb_queue.peek(instance);
+          v_entry := priv_sb_queue.peek(instance_num);
           if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
             v_matched := true;
             -- delete entry
-            priv_sb_queue.delete(instance, POSITION, 1, SINGLE);
-            protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
-          elsif not (priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage) then
-            priv_sb_queue.delete(instance, POSITION, 1, SINGLE);
-            protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
+            priv_sb_queue.delete(instance_num, POSITION, 1, SINGLE);
+            protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance_num));
+          elsif not (priv_match_cnt(instance_num) = 0 and priv_config(instance_num).ignore_initial_garbage) then
+            priv_sb_queue.delete(instance_num, POSITION, 1, SINGLE);
+            protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance_num));
           end if;
         end if;
 
         -- Update counters
-        priv_drop_cnt(instance) := priv_drop_cnt(instance) + v_dropped_num;
+        priv_drop_cnt(instance_num) := priv_drop_cnt(instance_num) + v_dropped_num;
         if v_matched then
-          priv_match_cnt(instance) := priv_match_cnt(instance) + 1;
-        elsif priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage then
-          priv_initial_garbage_cnt(instance) := priv_initial_garbage_cnt(instance) + 1;
+          priv_match_cnt(instance_num) := priv_match_cnt(instance_num) + 1;
+        elsif priv_match_cnt(instance_num) = 0 and priv_config(instance_num).ignore_initial_garbage then
+          priv_initial_garbage_cnt(instance_num) := priv_initial_garbage_cnt(instance_num) + 1;
         else
-          priv_mismatch_cnt(instance) := priv_mismatch_cnt(instance) + 1;
+          priv_mismatch_cnt(instance_num) := priv_mismatch_cnt(instance_num) + 1;
         end if;
 
         -- Check if overdue time
-        if v_matched and (priv_config(instance).overdue_check_time_limit /= 0 ns) and (now - v_entry.entry_time > priv_config(instance).overdue_check_time_limit) then
+        if v_matched and (priv_config(instance_num).overdue_check_time_limit /= 0 ns) and (now - v_entry.entry_time > priv_config(instance_num).overdue_check_time_limit) then
           if ext_proc_call = "" then
-            alert(priv_config(instance).overdue_check_alert_level, proc_name & "() => TIME LIMIT OVERDUE: time limit is " & to_string(priv_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            alert(priv_config(instance_num).overdue_check_alert_level, C_PROC_NAME & "() => TIME LIMIT OVERDUE: time limit is " & to_string(priv_config(instance_num).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
           else
-            alert(priv_config(instance).overdue_check_alert_level, ext_proc_call & " => TIME LIMIT OVERDUE: time limit is " & to_string(priv_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            alert(priv_config(instance_num).overdue_check_alert_level, ext_proc_call & " => TIME LIMIT OVERDUE: time limit is " & to_string(priv_config(instance_num).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
           end if;
           -- Update counter
-          priv_overdue_check_cnt(instance) := priv_overdue_check_cnt(instance) + 1;
+          priv_overdue_check_cnt(instance_num) := priv_overdue_check_cnt(instance_num) + 1;
         end if;
 
         -- Logging
         if v_matched then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              log(instance_num, ID_DATA, C_PROC_NAME & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             else
-              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              log(instance_num, ID_DATA, C_PROC_NAME & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             end if;
           -- Called from other SB method
           else
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              log(instance_num, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             else
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              log(instance_num, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             end if;
           end if;
         -- Initial garbage
-        elsif not (priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage) then
+        elsif not (priv_match_cnt(instance_num) = 0 and priv_config(instance_num).ignore_initial_garbage) then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              alert(priv_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              alert(priv_config(instance_num).mismatch_alert_level, C_PROC_NAME & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             else
-              alert(priv_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) & "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              alert(priv_config(instance_num).mismatch_alert_level, C_PROC_NAME & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) & "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             end if;
           else
             if tag_usage = NO_TAG then
-              alert(priv_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              alert(priv_config(instance_num).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance_num));
             else
-              alert(priv_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) & "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+              alert(priv_config(instance_num).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) & "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             end if;
           end if;
         end if;
@@ -1194,10 +1189,10 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := ""
     ) is
-      constant proc_name : string := "flush";
+      constant C_PROC_NAME : string := "flush";
     begin
       if instance = ALL_INSTANCES then
-        log(ID_DATA, proc_name & "() => flushing all instances. " & add_msg_delimiter(msg), priv_scope);
+        log(ID_DATA, C_PROC_NAME & "() => flushing all instances." & add_msg_delimiter(msg), priv_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           -- update counters
           priv_delete_cnt(i) := priv_delete_cnt(i) + priv_sb_queue.get_count(i);
@@ -1207,7 +1202,7 @@ package body generic_sb_pkg is
         end loop;
       else
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & "() => flushing SB. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_DATA, C_PROC_NAME & "() => flushing SB." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
@@ -1247,35 +1242,35 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := ""
     ) is
-      constant proc_name : string := "reset";
+      constant C_PROC_NAME : string := "reset";
 
       procedure reset_instance(
-        constant instance : natural
+        constant instance_num : natural
       ) is
       begin
         -- reset instance 0 only if it is used
-        if not (priv_sb_queue.is_empty(0)) or (instance > 0) then
-          priv_sb_queue.reset(instance);
-          priv_entered_cnt(instance)         := 0;
-          priv_match_cnt(instance)           := 0;
-          priv_mismatch_cnt(instance)        := 0;
-          priv_drop_cnt(instance)            := 0;
-          priv_initial_garbage_cnt(instance) := 0;
-          priv_delete_cnt(instance)          := 0;
-          priv_overdue_check_cnt(instance)   := 0;
-          protected_sb_activity_register.reset_sb_element_cnt(priv_index(instance));
+        if not (priv_sb_queue.is_empty(0)) or (instance_num > 0) then
+          priv_sb_queue.reset(instance_num);
+          priv_entered_cnt(instance_num)         := 0;
+          priv_match_cnt(instance_num)           := 0;
+          priv_mismatch_cnt(instance_num)        := 0;
+          priv_drop_cnt(instance_num)            := 0;
+          priv_initial_garbage_cnt(instance_num) := 0;
+          priv_delete_cnt(instance_num)          := 0;
+          priv_overdue_check_cnt(instance_num)   := 0;
+          protected_sb_activity_register.reset_sb_element_cnt(priv_index(instance_num));
         end if;
       end procedure reset_instance;
 
     begin
       if instance = ALL_INSTANCES then
-        log(ID_CTRL, proc_name & "() => reseting all instances. " & add_msg_delimiter(msg), priv_scope);
+        log(ID_CTRL, C_PROC_NAME & "() => reseting all instances." & add_msg_delimiter(msg), priv_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           reset_instance(i);
         end loop;
       else
         if ext_proc_call = "" then
-          log(instance, ID_CTRL, proc_name & "() => reseting SB. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, C_PROC_NAME & "() => reseting SB." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         else
           log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
@@ -1563,10 +1558,10 @@ package body generic_sb_pkg is
       constant msg_id        : in t_msg_id;
       constant ext_proc_call : in string := ""
     ) is
-      constant proc_name : string := "enable_log_msg";
+      constant C_PROC_NAME : string := "enable_log_msg";
     begin
       if instance = ALL_INSTANCES then
-        log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled for all instances.", priv_scope);
+        log(ID_CTRL, C_PROC_NAME & "() => message id " & to_string(msg_id) & " enabled for all instances.", priv_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           priv_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
@@ -1574,7 +1569,7 @@ package body generic_sb_pkg is
         check_instance_in_range(instance);
         check_instance_enabled(instance);
         if ext_proc_call = "" then
-          log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled.", priv_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, C_PROC_NAME & "() => message id " & to_string(msg_id) & " enabled.", priv_scope & "," & to_string(instance));
         else
           log(instance, ID_CTRL, ext_proc_call, priv_scope & "," & to_string(instance));
         end if;
@@ -1601,10 +1596,10 @@ package body generic_sb_pkg is
       constant msg_id        : in t_msg_id;
       constant ext_proc_call : in string := ""
     ) is
-      constant proc_name : string := "disable_log_msg";
+      constant C_PROC_NAME : string := "disable_log_msg";
     begin
       if instance = ALL_INSTANCES then
-        log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled for all instances.", priv_scope);
+        log(ID_CTRL, C_PROC_NAME & "() => message id " & to_string(msg_id) & " disabled for all instances.", priv_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           priv_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
@@ -1612,7 +1607,7 @@ package body generic_sb_pkg is
         check_instance_in_range(instance);
         check_instance_enabled(instance);
         if ext_proc_call = "" then
-          log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled.", priv_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, C_PROC_NAME & "() => message id " & to_string(msg_id) & " disabled.", priv_scope & "," & to_string(instance));
         else
           log(instance, ID_CTRL, ext_proc_call, priv_scope & "," & to_string(instance));
         end if;
@@ -1640,20 +1635,17 @@ package body generic_sb_pkg is
       constant ext_proc_call : in string := ""
     ) is
       variable v_line                           : line;
-      variable v_line_copy                      : line;
-      variable v_status_failed                  : boolean  := true;
-      variable v_mismatch                       : boolean  := false;
       variable v_no_enabled_instances           : boolean  := true;
       constant C_HEADER                         : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(priv_scope) & " ***";
-      constant prefix                           : string   := C_LOG_PREFIX & "     ";
-      constant log_counter_width                : positive := 8; -- shouldn't be smaller than 8 due to the counters names
+      constant C_PREFIX                         : string   := C_LOG_PREFIX & "     ";
+      constant C_LOG_COUNTER_WIDTH              : positive := 8; -- shouldn't be smaller than 8 due to the counters names
       variable v_log_extra_space                : integer  := 0;
       constant C_MAX_SB_INSTANCE_IDX_STRING     : string   := to_string(C_MAX_SB_INSTANCE_IDX);
       constant C_MAX_SB_INSTANCE_IDX_STRING_LEN : natural  := C_MAX_SB_INSTANCE_IDX_STRING'length;
 
     begin
       -- Calculate how much space we can insert between the columns of the report
-      v_log_extra_space := (C_LOG_LINE_WIDTH - prefix'length - 20 - log_counter_width * 6 - 15 - 13) / 8;
+      v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - 20 - C_LOG_COUNTER_WIDTH * 6 - 15 - 13) / 8;
       if v_log_extra_space < 1 then
         alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small, the report will not be properly aligned.", priv_scope);
         v_log_extra_space := 1;
@@ -1661,24 +1653,24 @@ package body generic_sb_pkg is
 
       write(v_line,
             LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-            timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       write(v_line,
             justify(
               fill_string(' ', 16) &
-              justify("ENTERED", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("PENDING", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("MATCH", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("MISMATCH", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("DROP", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("DELETE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("OVERDUE_CHECK", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-              left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              justify("ENTERED", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("PENDING", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("MATCH", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("MISMATCH", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("DROP", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("INITIAL_GARBAGE", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("DELETE", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("OVERDUE_CHECK", center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      if instance = ALL_INSTANCES THEN
+      if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           if (instance = ALL_INSTANCES and priv_instance_enabled(i)) then
             v_no_enabled_instances := false;
@@ -1688,15 +1680,15 @@ package body generic_sb_pkg is
                     "instance: " &
                     justify(to_string(i), right, C_MAX_SB_INSTANCE_IDX_STRING_LEN, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
                     fill_string(' ', 20 - 4 - 10 - C_MAX_SB_INSTANCE_IDX_STRING_LEN) &
-                    justify(to_string(get_entered_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                    justify(to_string(get_pending_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                    justify(to_string(get_match_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                    justify(to_string(get_mismatch_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                    justify(to_string(get_drop_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                    justify(to_string(get_entered_count(i)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                    justify(to_string(get_pending_count(i)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                    justify(to_string(get_match_count(i)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                    justify(to_string(get_mismatch_count(i)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                    justify(to_string(get_drop_count(i)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
                     justify(to_string(get_initial_garbage_count(i)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                    justify(to_string(get_delete_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                    justify(to_string(get_delete_count(i)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
                     justify(to_string(get_overdue_check_count(i)), center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-                    left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+                    left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
 
@@ -1713,25 +1705,26 @@ package body generic_sb_pkg is
                 "instance: " &
                 justify(to_string(instance), right, C_MAX_SB_INSTANCE_IDX_STRING_LEN, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
                 fill_string(' ', 20 - 4 - 10 - C_MAX_SB_INSTANCE_IDX_STRING_LEN) &
-                justify(to_string(get_entered_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                justify(to_string(get_pending_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                justify(to_string(get_match_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                justify(to_string(get_mismatch_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                justify(to_string(get_drop_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                justify(to_string(get_entered_count(instance)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                justify(to_string(get_pending_count(instance)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                justify(to_string(get_match_count(instance)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                justify(to_string(get_mismatch_count(instance)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                justify(to_string(get_drop_count(instance)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
                 justify(to_string(get_initial_garbage_count(instance)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-                justify(to_string(get_delete_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+                justify(to_string(get_delete_count(instance)), center, C_LOG_COUNTER_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
                 justify(to_string(get_overdue_check_count(instance)), center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-                left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+                left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end if;
 
-      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
-      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
-      prefix_lines(v_line, prefix);
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
 
-      -- Write the info string to transcript
-      write(v_line_copy, v_line.all);   -- copy line
-      writeline(OUTPUT, v_line);
-      writeline(LOG_FILE, v_line_copy);
+      -- Format the report
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
+
+      -- Write the report to the log destination
+      write_line_to_log_destination(v_line);
+      deallocate(v_line);
     end procedure report_counters;
 
     procedure report_counters(
@@ -1763,8 +1756,8 @@ package body generic_sb_pkg is
       constant source            : in string := "";
       constant ext_proc_call     : in string := ""
     ) is
-      constant proc_name  : string := "insert_expected";
-      variable v_sb_entry : t_sb_entry;
+      constant C_PROC_NAME : string := "insert_expected";
+      variable v_sb_entry  : t_sb_entry;
     begin
       -- Check if instance is within range
       if instance /= ALL_INSTANCES then
@@ -1791,7 +1784,7 @@ package body generic_sb_pkg is
         -- Check that instance is in valid range and enabled
         check_instance_in_range(instance);
         check_instance_enabled(instance);
-        -- insert_expected to POSITION 1 is allowed  
+        -- insert_expected to POSITION 1 is allowed
         if identifier_option /= POSITION and identifier /= 1 then
           check_queue_empty(instance);
         end if;
@@ -1807,29 +1800,29 @@ package body generic_sb_pkg is
         if instance = ALL_INSTANCES then
           if identifier_option = POSITION then
             if tag_usage = NO_TAG then
-              log(ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope);
+              log(ID_DATA, C_PROC_NAME & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & "." & add_msg_delimiter(msg), priv_scope);
             else
-              log(ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope);
+              log(ID_DATA, C_PROC_NAME & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope);
             end if;
           else
             if tag_usage = NO_TAG then
-              log(ID_DATA, proc_name & "() => inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope);
+              log(ID_DATA, C_PROC_NAME & "() => inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & "." & add_msg_delimiter(msg), priv_scope);
             else
-              log(ID_DATA, proc_name & "() => inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope);
+              log(ID_DATA, C_PROC_NAME & "() => inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope);
             end if;
           end if;
         else
           if identifier_option = POSITION then
-            log(instance, ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            log(instance, ID_DATA, C_PROC_NAME & "() => inserted expected after entry with position " & to_string(identifier) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & "() => inserted expected after entry with entry number " & to_string(identifier) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            log(instance, ID_DATA, C_PROC_NAME & "() => inserted expected after entry with entry number " & to_string(identifier) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           end if;
         end if;
       else
         if tag_usage = NO_TAG then
-          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         else
-          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       end if;
     end procedure insert_expected;
@@ -2069,8 +2062,8 @@ package body generic_sb_pkg is
       constant msg              : in string := "";
       constant ext_proc_call    : in string := ""
     ) is
-      constant proc_name  : string := "delete_expected";
-      variable v_position : integer;
+      constant C_PROC_NAME : string := "delete_expected";
+      variable v_position  : integer;
     begin
       -- Sanity checks done in find_expected_position
 
@@ -2082,12 +2075,12 @@ package body generic_sb_pkg is
         protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
 
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_DATA, C_PROC_NAME & "() => value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       else
-        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => NO DELETION. Did not find matching entry." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
     end procedure delete_expected;
 
@@ -2125,8 +2118,8 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := ""
     ) is
-      constant proc_name  : string := "delete_expected";
-      variable v_position : integer;
+      constant C_PROC_NAME : string := "delete_expected";
+      variable v_position  : integer;
     begin
       -- Sanity checks done in find_expected_position
 
@@ -2138,12 +2131,12 @@ package body generic_sb_pkg is
         protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
 
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & "() => tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_DATA, C_PROC_NAME & "() => tag: '" & to_string(tag) & "'." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope);
         end if;
       else
-        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => NO DELETION. Did not find matching entry." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
     end procedure delete_expected;
 
@@ -2164,7 +2157,7 @@ package body generic_sb_pkg is
       constant msg               : in string := "";
       constant ext_proc_call     : in string := ""
     ) is
-      constant proc_name                : string  := "delete_expected";
+      constant C_PROC_NAME              : string  := "delete_expected";
       constant C_PRE_DELETE_PENDING_CNT : natural := priv_sb_queue.get_count(instance);
       variable v_num_deleted            : natural;
     begin
@@ -2181,10 +2174,10 @@ package body generic_sb_pkg is
 
       -- If error
       if v_num_deleted = 0 then
-        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => NO DELETION. Did not find matching entry." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & "() => entries with identifier " & to_string(identifier_option) & " range " & to_string(identifier_min) & " to " & to_string(identifier_max) & " deleted. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+          log(instance, ID_DATA, C_PROC_NAME & "() => entries with identifier " & to_string(identifier_option) & " range " & to_string(identifier_min) & " to " & to_string(identifier_max) & " deleted." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
@@ -2209,7 +2202,7 @@ package body generic_sb_pkg is
       constant msg               : in string := "";
       constant ext_proc_call     : in string := ""
     ) is
-      constant proc_name                : string  := "delete_expected";
+      constant C_PROC_NAME              : string  := "delete_expected";
       constant C_PRE_DELETE_PENDING_CNT : natural := priv_sb_queue.get_count(instance);
       variable v_num_deleted            : natural;
     begin
@@ -2226,13 +2219,13 @@ package body generic_sb_pkg is
 
       -- If error
       if v_num_deleted = 0 then
-        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => NO DELETION. Did not find matching entry." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         if ext_proc_call = "" then
           if range_option = SINGLE then
-            log(instance, ID_DATA, proc_name & "() => entry with identifier " & to_string(identifier_option) & " " & to_string(identifier) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            log(instance, ID_DATA, C_PROC_NAME & "() => entry with identifier " & to_string(identifier_option) & " " & to_string(identifier) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & "() => entries with identifier " & to_string(identifier_option) & " range " & to_string(identifier) & " " & to_string(range_option) & " deleted. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+            log(instance, ID_DATA, C_PROC_NAME & "() => entries with identifier " & to_string(identifier_option) & " range " & to_string(identifier) & " " & to_string(range_option) & " deleted." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           end if;
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
@@ -2426,12 +2419,12 @@ package body generic_sb_pkg is
       constant msg               : string := "";
       constant ext_proc_call     : string := ""
     ) return t_element is
-      constant proc_name : string := "fetch_expected";
+      constant C_PROC_NAME : string := "fetch_expected";
     begin
       -- Sanity checks in fetch entry
       -- Logging
       if ext_proc_call = "" then
-        log(instance, ID_DATA, proc_name & "() => fetching expected by " & to_string(identifier_option) & " " & to_string(identifier) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => fetching expected by " & to_string(identifier_option) & " " & to_string(identifier) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
@@ -2483,12 +2476,12 @@ package body generic_sb_pkg is
       constant msg               : string := "";
       constant ext_proc_call     : string := ""
     ) return string is
-      constant proc_name : string := "fetch_source";
+      constant C_PROC_NAME : string := "fetch_source";
     begin
       -- Sanity checks in fetch entry
       -- Logging
       if ext_proc_call = "" then
-        log(instance, ID_DATA, proc_name & "() => fetching source by " & to_string(identifier_option) & " " & to_string(identifier) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => fetching source by " & to_string(identifier_option) & " " & to_string(identifier) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
@@ -2540,12 +2533,12 @@ package body generic_sb_pkg is
       constant msg               : string := "";
       constant ext_proc_call     : string := ""
     ) return string is
-      constant proc_name : string := "fetch_tag";
+      constant C_PROC_NAME : string := "fetch_tag";
     begin
       -- Sanity checks in fetch entry
       -- Logging
       if ext_proc_call = "" then
-        log(instance, ID_DATA, proc_name & "() => fetching tag by " & to_string(identifier_option) & " " & to_string(identifier) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
+        log(instance, ID_DATA, C_PROC_NAME & "() => fetching tag by " & to_string(identifier_option) & " " & to_string(identifier) & "." & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;

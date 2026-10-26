@@ -1,0 +1,51 @@
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  COVERPOINT CONFIGURATION REPORT ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME                    :                        Covpt_1
+UVVM:                SCOPE                   :                        TB seq.
+UVVM:                ILLEGAL BIN ALERT LEVEL :                          ERROR
+UVVM:                BIN OVERLAP ALERT LEVEL :                       NO_ALERT
+UVVM:                COVERAGE WEIGHT         :                              1
+UVVM:                BINS COVERAGE GOAL      :                             50
+UVVM:                HITS COVERAGE GOAL      :                            100
+UVVM:                COVERPOINTS GOAL        :                             25
+UVVM:                NUMBER OF BINS          :                              9
+UVVM:                CROSS DIMENSIONS        :                              1
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  COVERPOINT CONFIGURATION REPORT ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME                    :                        Covpt_2
+UVVM:                SCOPE                   :                        TB seq.
+UVVM:                ILLEGAL BIN ALERT LEVEL :                          ERROR
+UVVM:                BIN OVERLAP ALERT LEVEL :                       NO_ALERT
+UVVM:                COVERAGE WEIGHT         :                              1
+UVVM:                BINS COVERAGE GOAL      :                            100
+UVVM:                HITS COVERAGE GOAL      :                            100
+UVVM:                COVERPOINTS GOAL        :                             25
+UVVM:                NUMBER OF BINS          :                              4
+UVVM:                CROSS DIMENSIONS        :                              2
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  COVERPOINT CONFIGURATION REPORT ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME                    :                        Covpt_3
+UVVM:                SCOPE                   :                        TB seq.
+UVVM:                ILLEGAL BIN ALERT LEVEL :                          ERROR
+UVVM:                BIN OVERLAP ALERT LEVEL :                       NO_ALERT
+UVVM:                COVERAGE WEIGHT         :                              1
+UVVM:                BINS COVERAGE GOAL      :                            100
+UVVM:                HITS COVERAGE GOAL      :                            100
+UVVM:                COVERPOINTS GOAL        :                             25
+UVVM:                NUMBER OF BINS          :                              6
+UVVM:                CROSS DIMENSIONS        :                              3
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      

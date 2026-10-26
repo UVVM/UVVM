@@ -1,0 +1,5 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    enable_log_msg() ignored for ID_NEVER (not allowed). 'This shall trigger a TB_WARNING.'
+UVVM: 

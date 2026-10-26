@@ -14,7 +14,7 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
--- WARNING! This package will be deprecated and no longer receive updates or bug fixes!
+-- WARNING! This package is deprecated and no longer receive updates or bug fixes!
 -- The generic_queue_pkg in uvvm_util/src/generic_queue_pkg.vhd has replaced ti_generic_queue_pkg
 
 library ieee;
@@ -26,10 +26,11 @@ context uvvm_util.uvvm_util_context;
 
 package ti_generic_queue_pkg is
 
-  generic(type t_generic_element;
-          scope                    : string  := C_SCOPE;
-          GC_QUEUE_COUNT_MAX       : natural := 1000;
-          GC_QUEUE_COUNT_THRESHOLD : natural := 950);
+  generic(
+    type t_generic_element;
+    SCOPE                    : string  := C_SCOPE;
+    GC_QUEUE_COUNT_MAX       : natural := 1000;
+    GC_QUEUE_COUNT_THRESHOLD : natural := 950);
 
   -- When find_* doesn't find a match, they return C_NO_MATCH.
   constant C_NO_MATCH : integer := -1;
@@ -425,12 +426,12 @@ package body ti_generic_queue_pkg is
       constant instance : in integer;
       constant element  : in t_generic_element
     ) is
-      constant proc_name      : string := "add";
+      constant C_PROC_NAME    : string := "add";
       variable v_previous_ptr : t_element_ptr;
     begin
-      check_value(v_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
+      check_value(v_scope_is_defined(instance), TB_WARNING, C_PROC_NAME & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
       perform_pre_add_checks(instance);
-      check_value(v_num_elements_in_queue(instance) < v_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(v_queue_count_max(instance)) & ") when full", v_scope(instance), ID_NEVER);
+      check_value(v_num_elements_in_queue(instance) < v_queue_count_max(instance), TB_ERROR, C_PROC_NAME & "() into generic queue (of size " & to_string(v_queue_count_max(instance)) & ") when full", v_scope(instance), ID_NEVER);
 
       -- Increment v_entry_num
       v_entry_num(instance) := v_entry_num(instance) + 1;
@@ -498,6 +499,7 @@ package body ti_generic_queue_pkg is
       while v_first_element(instance) /= null loop
         v_to_be_deallocated_ptr   := v_first_element(instance);
         v_first_element(instance) := v_first_element(instance).next_element;
+        v_to_be_deallocated_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
         DEALLOCATE(v_to_be_deallocated_ptr);
       end loop;
 
@@ -698,7 +700,7 @@ package body ti_generic_queue_pkg is
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive;
       constant element           : in t_generic_element) is
-      constant proc_name               : string := "insert";
+      constant C_PROC_NAME             : string := "insert";
       variable v_element_ptr           : t_element_ptr; -- The element currently being processed
       variable v_new_element_ptr       : t_element_ptr; -- Used when creating a new element
       variable v_preceding_element_ptr : t_element_ptr; -- Used when creating a new element
@@ -706,12 +708,12 @@ package body ti_generic_queue_pkg is
       variable v_matched_position      : integer;
     begin
       -- pre insert checks
-      check_value(v_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
+      check_value(v_scope_is_defined(instance), TB_WARNING, C_PROC_NAME & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
       perform_pre_add_checks(instance);
-      check_value(v_num_elements_in_queue(instance) < v_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(v_queue_count_max(instance)) & ") when full", v_scope(instance), ID_NEVER);
-      check_value(v_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() into empty queue isn't supported. Use add() instead", v_scope(instance), ID_NEVER);
+      check_value(v_num_elements_in_queue(instance) < v_queue_count_max(instance), TB_ERROR, C_PROC_NAME & "() into generic queue (of size " & to_string(v_queue_count_max(instance)) & ") when full", v_scope(instance), ID_NEVER);
+      check_value(v_num_elements_in_queue(instance) > 0, TB_ERROR, C_PROC_NAME & "() into empty queue isn't supported. Use add() instead", v_scope(instance), ID_NEVER);
       if identifier_option = POSITION then
-        check_value(v_num_elements_in_queue(instance) >= identifier, TB_ERROR, proc_name & "() into position larger than number of elements in queue. Use add() instead when inserting at the back of the queue", v_scope(instance), ID_NEVER);
+        check_value(v_num_elements_in_queue(instance) >= identifier, TB_ERROR, C_PROC_NAME & "() into position larger than number of elements in queue. Use add() instead when inserting at the back of the queue", v_scope(instance), ID_NEVER);
       end if;
 
       -- Search from front to back element.
@@ -751,7 +753,7 @@ package body ti_generic_queue_pkg is
         v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) + 1; -- Increment number of elements
       elsif identifier_option = ENTRY_NUM then
         if (v_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
-          tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier) & ", element...", scope);
+          tb_error(C_PROC_NAME & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier) & ", element...", SCOPE);
         end if;
       end if;
 
@@ -781,16 +783,15 @@ package body ti_generic_queue_pkg is
       constant identifier_min    : in positive;
       constant identifier_max    : in positive
     ) is
-      constant proc_name               : string := "delete";
+      constant C_PROC_NAME             : string := "delete";
       variable v_matched_element_ptr   : t_element_ptr; -- The element being deleted
       variable v_element_to_delete_ptr : t_element_ptr; -- The element being deleted
-      variable v_matched_element_data  : t_generic_element; -- Return value
       variable v_preceding_element_ptr : t_element_ptr;
       variable v_matched_position      : integer;
       variable v_found_match           : boolean;
       variable v_deletes_remaining     : integer;
     begin
-      check_value(v_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
+      check_value(v_scope_is_defined(instance), TB_WARNING, C_PROC_NAME & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
 
       if (v_num_elements_in_queue(instance) < v_queue_count_threshold(instance)) then
         -- reset alert trigger if set
@@ -801,7 +802,7 @@ package body ti_generic_queue_pkg is
       -- Note that when deleting the first position, all above positions are decremented by one.
       -- Find the identifier_min, delete it, and following next_element until we reach number of positions to delete
       if (identifier_option = POSITION) then
-        check_value(v_num_elements_in_queue(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > generic queue size", v_scope(instance), ID_NEVER);
+        check_value(v_num_elements_in_queue(instance) >= identifier_max, TB_ERROR, C_PROC_NAME & " where identifier_max > generic queue size", v_scope(instance), ID_NEVER);
         check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", v_scope(instance), ID_NEVER);
         v_deletes_remaining := 1 + identifier_max - identifier_min;
 
@@ -836,6 +837,7 @@ package body ti_generic_queue_pkg is
             v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) - 1;
 
             -- Memory management
+            v_element_to_delete_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
             DEALLOCATE(v_element_to_delete_ptr);
 
             v_deletes_remaining := v_deletes_remaining - 1;
@@ -854,7 +856,7 @@ package body ti_generic_queue_pkg is
 
         else                            -- v_found_match
           if (v_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
-            tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier_min=" & to_string(identifier_min) & ", identifier_max=" & to_string(identifier_max) & ", non-matching identifier=" & to_string(identifier_min), scope);
+            tb_error(C_PROC_NAME & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier_min=" & to_string(identifier_min) & ", identifier_max=" & to_string(identifier_max) & ", non-matching identifier=" & to_string(identifier_min), SCOPE);
           end if;
         end if;                         -- v_found_match
 
@@ -863,7 +865,7 @@ package body ti_generic_queue_pkg is
       -- Entry_num is not necessarily increasing as we follow next_element pointers.
       -- This means that we must do a complete search for each entry we want to delete
       elsif (identifier_option = ENTRY_NUM) then
-        check_value(v_entry_num(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > highest entry number", v_scope(instance), ID_NEVER);
+        check_value(v_entry_num(instance) >= identifier_max, TB_ERROR, C_PROC_NAME & " where identifier_max > highest entry number", v_scope(instance), ID_NEVER);
         check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", v_scope(instance), ID_NEVER);
 
         v_deletes_remaining := 1 + identifier_max - identifier_min;
@@ -898,11 +900,12 @@ package body ti_generic_queue_pkg is
             v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) - 1;
 
             -- Memory management
+            v_element_to_delete_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
             DEALLOCATE(v_element_to_delete_ptr);
 
           else                          -- v_found_match
             if (v_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
-              tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier_min=" & to_string(identifier_min) & ", identifier_max=" & to_string(identifier_max) & ", non-matching identifier=" & to_string(identifier), scope);
+              tb_error(C_PROC_NAME & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier_min=" & to_string(identifier_min) & ", identifier_max=" & to_string(identifier_max) & ", non-matching identifier=" & to_string(identifier), SCOPE);
             end if;
           end if;                       -- v_found_match
 
@@ -982,15 +985,15 @@ package body ti_generic_queue_pkg is
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive
     ) return t_generic_element is
-      constant proc_name               : string  := "peek";
+      constant C_PROC_NAME             : string  := "peek";
       variable v_matched_element_data  : t_generic_element; -- Return value
       variable v_matched_element_ptr   : t_element_ptr; -- The element currently being processed
       variable v_preceding_element_ptr : t_element_ptr;
       variable v_matched_position      : integer; -- Keep track of POSITION when traversing the linked list
       variable v_found_match           : boolean := false;
     begin
-      check_value(v_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
-      check_value(v_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", v_scope(instance), ID_NEVER);
+      check_value(v_scope_is_defined(instance), TB_WARNING, C_PROC_NAME & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
+      check_value(v_num_elements_in_queue(instance) > 0, TB_ERROR, C_PROC_NAME & "() from generic queue when empty", v_scope(instance), ID_NEVER);
 
       match_identifier(
         instance              => instance,
@@ -1006,7 +1009,7 @@ package body ti_generic_queue_pkg is
         v_matched_element_data := v_matched_element_ptr.element_data;
       else
         if (v_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
-          tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier), scope);
+          tb_error(C_PROC_NAME & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier), SCOPE);
         end if;
       end if;
 
@@ -1051,15 +1054,15 @@ package body ti_generic_queue_pkg is
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive
     ) return t_generic_element is
-      constant proc_name               : string := "fetch";
+      constant C_PROC_NAME             : string := "fetch";
       variable v_matched_element_ptr   : t_element_ptr; -- The element being fetched
       variable v_matched_element_data  : t_generic_element; -- Return value
       variable v_preceding_element_ptr : t_element_ptr;
       variable v_matched_position      : integer;
       variable v_found_match           : boolean;
     begin
-      check_value(v_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
-      check_value(v_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", v_scope(instance), ID_NEVER);
+      check_value(v_scope_is_defined(instance), TB_WARNING, C_PROC_NAME & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
+      check_value(v_num_elements_in_queue(instance) > 0, TB_ERROR, C_PROC_NAME & "() from generic queue when empty", v_scope(instance), ID_NEVER);
 
       if (v_num_elements_in_queue(instance) < v_queue_count_threshold(instance)) then
         -- reset alert trigger if set
@@ -1095,11 +1098,12 @@ package body ti_generic_queue_pkg is
         v_num_elements_in_queue(instance) := v_num_elements_in_queue(instance) - 1;
 
         -- Memory management
+        v_matched_element_ptr.next_element := null; -- unlink, avoids retention by garbage-collecting simulators
         DEALLOCATE(v_matched_element_ptr);
 
       else
         if (v_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
-          tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier), scope);
+          tb_error(C_PROC_NAME & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier), SCOPE);
         end if;
       end if;
 
@@ -1258,9 +1262,7 @@ package body ti_generic_queue_pkg is
       constant instance : in integer
     ) is
       variable v_element_ptr     : t_element_ptr; -- The element currently being processed
-      variable v_new_element_ptr : t_element_ptr; -- Used when creating a new element
       variable v_position_ctr    : natural := 1; -- Keep track of POSITION when traversing the linked list
-      variable v_found_match     : boolean := false;
     begin
       -- Search from front to back element. Initalise pointers/counters to the first entry:
       v_element_ptr := v_first_element(instance);
@@ -1269,7 +1271,7 @@ package body ti_generic_queue_pkg is
       end if;
 
       loop
-        log(ID_UVVM_DATA_QUEUE, "Pos=" & to_string(v_position_ctr) & ", entry_num=" & to_string(v_element_ptr.entry_num), scope);
+        log(ID_UVVM_DATA_QUEUE, "Pos=" & to_string(v_position_ctr) & ", entry_num=" & to_string(v_element_ptr.entry_num), SCOPE);
 
         if v_element_ptr.next_element = null then
           exit;                         -- Last entry. All queue entries have been searched through.

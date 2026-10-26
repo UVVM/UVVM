@@ -56,7 +56,7 @@ package error_injection_pkg is
     base_value          => '0'
   );
 
-  constant C_MAX_EI_INSTANCE_NUM : natural := C_EI_VVC_MAX_INSTANCE_NUM;
+  alias C_MAX_EI_INSTANCE_NUM is C_EI_VVC_MAX_INSTANCE_NUM;
 
   type t_error_injection_config_array is array (natural range <>) of t_error_injection_config;
 

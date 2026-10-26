@@ -1,0 +1,21 @@
+Requirement,Compliance status,Reason
+REQ_NO_TCS,NON_COMPLIANT,Ticked off in non-specified testcase (TC_1)
+REQ_NO_TCS,NON_COMPLIANT,No testcases specified for requirement (mandatory in strictness 2)
+REQ_NO_TCS_NO_TICKOFFS,NON_COMPLIANT,No testcases specified for requirement (mandatory in strictness 2)
+REQ_NO_TICKOFF_IN_TC,NOT_TESTED,Missing tickoff in TC_1
+REQ_3_MISSING_TCS,NOT_TESTED,Missing tickoff in TC_NOT_RUN or TC_2
+REQ_3_MISSING_TCS,NOT_TESTED,Missing tickoff in TC_3
+REQ_ANDOR_MISSING_TC,NOT_TESTED,Missing tickoff in TC_1
+REQ_ANDOR_NONCOMPLIANT,NON_COMPLIANT,TC_FAIL failed
+REQ_EXTRA_TICKOFFS,NON_COMPLIANT,Ticked off in non-specified testcase (TC_2)
+REQ_EXTRA_TICKOFFS,NON_COMPLIANT,Ticked off in non-specified testcase (TC_3)
+REQ_WRONG_TC,NON_COMPLIANT,Ticked off in non-specified testcase (TC_1)
+REQ_TICKOFF_FAIL,NON_COMPLIANT,Requirement explicitly failed at tickoff
+REQ_COMPOUND_TICKOFF,NON_COMPLIANT,Ticked off in non-specified testcase (TC_1)
+REQ_COMPOUND_NONCOMPLIANT,NON_COMPLIANT,Sub-req REQ_NONCOMPLIANT failed
+REQ_COMPOUND_NOT_TESTED,NOT_TESTED,Sub-req REQ_NOT_TESTED not tested
+
+
+Sub-requirement,Compliance status,Reason
+REQ_NONCOMPLIANT,NON_COMPLIANT,TC_FAIL failed
+REQ_NOT_TESTED,NOT_TESTED,Missing tickoff in TC_NOT_RUN

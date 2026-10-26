@@ -1,0 +1,6 @@
+NOTE: This coverage file is only valid when the last line is 'SUMMARY, T_UART_TX, PASS'
+TESTCASE_NAME: T_UART_TX
+DELIMITER: ,
+
+FPGA_SPEC_2,T_UART_TX,PASS
+SUMMARY, T_UART_TX, PASS

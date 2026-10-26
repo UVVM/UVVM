@@ -30,15 +30,15 @@ use std.env.all;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2025.05.11";
+  constant C_UVVM_VERSION : string := "v2 2026.02.14";
 
-  -- -- ============================================================================
-  -- -- Initialisation and license
-  -- -- ============================================================================
-  --   procedure initialise_util(
-  --     constant dummy  : in t_void
-  --     );
-  --
+  -- ============================================================================
+  -- Initialization
+  -- ============================================================================
+  procedure initialize_util(
+    constant dummy : in t_void
+  );
+
   -- ============================================================================
   -- File handling (that needs to use other utility methods)
   -- ============================================================================
@@ -52,7 +52,7 @@ package methods_pkg is
     constant file_name : string := C_ALERT_FILE_NAME
   );
 
-  -- msg_id is unused. This is a deprecated overload
+  -- DEPRECATED: will be removed in v3
   procedure set_alert_file_name(
     constant file_name : string := C_ALERT_FILE_NAME;
     constant msg_id    : t_msg_id
@@ -62,7 +62,7 @@ package methods_pkg is
     constant file_name : string := C_LOG_FILE_NAME
   );
 
-  -- msg_id is unused. This is a deprecated overload
+  -- DEPRECATED: will be removed in v3
   procedure set_log_file_name(
     constant file_name : string := C_LOG_FILE_NAME;
     constant msg_id    : t_msg_id
@@ -101,19 +101,6 @@ package methods_pkg is
     log_destination     : t_log_destination    := shared_default_log_destination;
     log_file_name       : string               := C_LOG_FILE_NAME;
     open_mode           : file_open_kind       := append_mode
-  );
-
-  procedure write_to_file(
-    file_name        : string;
-    open_mode        : file_open_kind;
-    variable my_line : inout line
-  );
-
-  procedure write_line_to_log_destination(
-    variable log_line        : inout line;
-    constant log_destination : in t_log_destination := shared_default_log_destination;
-    constant log_file_name   : in string            := C_LOG_FILE_NAME;
-    constant open_mode       : in file_open_kind    := append_mode
   );
 
   procedure enable_log_msg(
@@ -339,7 +326,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -350,7 +337,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -362,7 +349,7 @@ package methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -373,7 +360,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -387,7 +374,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   ) return boolean;
 
@@ -401,7 +388,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   ) return boolean;
 
@@ -416,8 +403,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   ) return boolean;
 
   impure function check_value(
@@ -430,8 +417,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   ) return boolean;
 
   impure function check_value(
@@ -445,8 +432,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   ) return boolean;
 
   impure function check_value(
@@ -459,8 +446,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   ) return boolean;
 
   impure function check_value(
@@ -471,7 +458,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -482,7 +469,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -493,7 +480,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -504,7 +491,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -518,7 +505,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) return boolean;
 
@@ -532,7 +519,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) return boolean;
 
@@ -547,8 +534,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   ) return boolean;
 
   impure function check_value(
@@ -561,8 +548,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   ) return boolean;
 
   impure function check_value(
@@ -576,8 +563,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   ) return boolean;
 
   impure function check_value(
@@ -590,8 +577,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   ) return boolean;
 
   -- overloads for function versions of check_value (alert level optional)
@@ -601,7 +588,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -611,7 +598,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -622,7 +609,7 @@ package methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -632,7 +619,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -645,7 +632,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   ) return boolean;
 
@@ -658,7 +645,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   ) return boolean;
 
@@ -672,8 +659,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   ) return boolean;
 
   impure function check_value(
@@ -685,8 +672,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   ) return boolean;
 
   impure function check_value(
@@ -699,8 +686,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   ) return boolean;
 
   impure function check_value(
@@ -712,8 +699,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   ) return boolean;
 
   impure function check_value(
@@ -723,7 +710,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -733,7 +720,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -743,7 +730,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -753,7 +740,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean;
 
   impure function check_value(
@@ -766,7 +753,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) return boolean;
 
@@ -779,7 +766,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) return boolean;
 
@@ -793,8 +780,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   ) return boolean;
 
   impure function check_value(
@@ -806,8 +793,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   ) return boolean;
 
   impure function check_value(
@@ -820,8 +807,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   ) return boolean;
 
   impure function check_value(
@@ -833,8 +820,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   ) return boolean;
 
   -- overloads for procedure version of check_value (no return value)
@@ -845,7 +832,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -856,7 +843,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -870,7 +857,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   );
 
@@ -884,7 +871,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   );
 
@@ -899,8 +886,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   );
 
   procedure check_value(
@@ -913,8 +900,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   );
 
   procedure check_value(
@@ -928,8 +915,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   );
 
   procedure check_value(
@@ -942,8 +929,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   );
 
   procedure check_value(
@@ -954,7 +941,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -966,7 +953,7 @@ package methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   );
 
   procedure check_value(
@@ -977,7 +964,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -988,7 +975,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -999,7 +986,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1010,7 +997,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1024,7 +1011,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   );
 
@@ -1038,7 +1025,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   );
 
@@ -1053,8 +1040,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   );
 
   procedure check_value(
@@ -1067,8 +1054,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   );
 
   procedure check_value(
@@ -1082,8 +1069,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   );
 
   procedure check_value(
@@ -1096,8 +1083,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   );
 
   -- Procedure overloads for check_value without mandatory alert_level
@@ -1107,7 +1094,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1117,7 +1104,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1130,7 +1117,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   );
 
@@ -1143,7 +1130,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   );
 
@@ -1157,8 +1144,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   );
 
   procedure check_value(
@@ -1170,8 +1157,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   );
 
   procedure check_value(
@@ -1184,8 +1171,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   );
 
   procedure check_value(
@@ -1197,8 +1184,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   );
 
   procedure check_value(
@@ -1208,7 +1195,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1219,7 +1206,7 @@ package methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   );
 
   procedure check_value(
@@ -1229,7 +1216,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1239,7 +1226,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1249,7 +1236,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1259,7 +1246,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   );
 
   procedure check_value(
@@ -1272,7 +1259,7 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   );
 
@@ -1285,7 +1272,7 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   );
 
@@ -1299,8 +1286,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   );
 
   procedure check_value(
@@ -1312,8 +1299,8 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   );
 
   procedure check_value(
@@ -1326,8 +1313,8 @@ package methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   );
 
   procedure check_value(
@@ -1339,11 +1326,11 @@ package methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   );
 
-  -- 
+  --
   -- Check_value_in_range
   impure function check_value_in_range(
     constant value        : integer;
@@ -1354,8 +1341,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "integer";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "int";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) return boolean;
@@ -1369,8 +1356,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "unsigned";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "u";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean;
@@ -1384,8 +1371,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "signed";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "s";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean;
@@ -1399,7 +1386,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean;
 
   impure function check_value_in_range(
@@ -1411,7 +1398,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean;
 
   -- Function overloads for check_value_in_range without mandatory alert_level
@@ -1423,8 +1410,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "integer";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "int";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) return boolean;
@@ -1437,8 +1424,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "unsigned";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "u";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean;
@@ -1451,8 +1438,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "signed";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "s";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean;
@@ -1465,7 +1452,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean;
 
   impure function check_value_in_range(
@@ -1476,7 +1463,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean;
 
   -- Procedure overloads for check_value_in_range
@@ -1489,7 +1476,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   );
@@ -1503,7 +1490,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   );
@@ -1517,7 +1504,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   );
@@ -1531,7 +1518,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   );
 
   procedure check_value_in_range(
@@ -1543,7 +1530,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   );
 
   -- Procedure overloads for check_value_in_range without mandatory alert_level
@@ -1555,7 +1542,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   );
@@ -1568,7 +1555,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   );
@@ -1581,7 +1568,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   );
@@ -1594,7 +1581,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   );
 
   procedure check_value_in_range(
@@ -1605,7 +1592,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   );
 
   -- Check_stable
@@ -1617,8 +1604,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "boolean"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "bool"
   );
 
   procedure check_stable(
@@ -1630,7 +1617,7 @@ package methods_pkg is
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : in t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : in string         := "check_stable()";
+    constant caller_name  : in string         := "check_stable";
     constant value_type   : in string         := "slv"
   );
 
@@ -1642,7 +1629,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "slv"
   );
 
@@ -1654,8 +1641,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "u"
   );
 
   procedure check_stable(
@@ -1666,8 +1653,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "s"
   );
 
   procedure check_stable(
@@ -1678,8 +1665,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "std_logic"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "sl"
   );
 
   procedure check_stable(
@@ -1690,8 +1677,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "integer"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "int"
   );
 
   procedure check_stable(
@@ -1702,7 +1689,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "real"
   );
 
@@ -1714,8 +1701,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "boolean"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "bool"
   );
 
   procedure check_stable(
@@ -1725,7 +1712,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "slv"
   );
 
@@ -1736,8 +1723,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "u"
   );
 
   procedure check_stable(
@@ -1747,8 +1734,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "s"
   );
 
   procedure check_stable(
@@ -1758,8 +1745,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "std_logic"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "sl"
   );
 
   procedure check_stable(
@@ -1769,8 +1756,8 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "integer"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "int"
   );
 
   procedure check_stable(
@@ -1780,7 +1767,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "real"
   );
 
@@ -1793,7 +1780,7 @@ package methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   );
 
   procedure await_stable_value(
@@ -1817,7 +1804,7 @@ package methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "unsigned"
+    constant value_type   : string         := "u"
   );
 
   procedure await_stable_value(
@@ -1829,7 +1816,7 @@ package methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "signed"
+    constant value_type   : string         := "s"
   );
 
   procedure await_stable_value(
@@ -1841,7 +1828,7 @@ package methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "std_logic"
+    constant value_type   : string         := "sl"
   );
 
   procedure await_stable_value(
@@ -1853,7 +1840,7 @@ package methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "integer"
+    constant value_type   : string         := "int"
   );
 
   procedure await_stable_value(
@@ -1950,6 +1937,7 @@ package methods_pkg is
     constant scope : string := C_TB_SCOPE_DEFAULT
   );
 
+  -- DEPRECATED: will be removed in v3
   procedure randomise(
     constant seed1 : positive;
     constant seed2 : positive;
@@ -1964,28 +1952,29 @@ package methods_pkg is
     variable seed2 : out positive
   );
 
-  function convert_byte_array_to_slv(
+  impure function convert_byte_array_to_slv(
     constant byte_array      : t_byte_array;
     constant byte_endianness : t_byte_endianness
   ) return std_logic_vector;
 
-  function convert_slv_to_byte_array(
+  impure function convert_slv_to_byte_array(
     constant slv             : std_logic_vector;
     constant byte_endianness : t_byte_endianness
   ) return t_byte_array;
 
-  function convert_byte_array_to_slv_array(
+  impure function convert_byte_array_to_slv_array(
     constant byte_array      : t_byte_array;
     constant bytes_in_word   : natural;
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_slv_array;
 
-  function convert_slv_array_to_byte_array(
+  impure function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array;
 
-  function convert_slv_array_to_byte_array(
+  -- DEPRECATED: will be removed in v3
+  impure function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant ascending       : boolean           := false;
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
@@ -2024,7 +2013,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   );
 
   procedure await_change(
@@ -2036,7 +2025,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "std_logic"
+    constant value_type   : string         := "sl"
   );
 
   procedure await_change(
@@ -2060,7 +2049,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "unsigned"
+    constant value_type   : string         := "u"
   );
 
   procedure await_change(
@@ -2072,7 +2061,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "signed"
+    constant value_type   : string         := "s"
   );
 
   procedure await_change(
@@ -2084,7 +2073,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "integer"
+    constant value_type   : string         := "int"
   );
 
   procedure await_change(
@@ -2108,7 +2097,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   );
 
   procedure await_change(
@@ -2119,7 +2108,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "std_logic"
+    constant value_type   : string         := "sl"
   );
 
   procedure await_change(
@@ -2141,7 +2130,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "unsigned"
+    constant value_type   : string         := "u"
   );
 
   procedure await_change(
@@ -2152,7 +2141,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "signed"
+    constant value_type   : string         := "s"
   );
 
   procedure await_change(
@@ -2163,7 +2152,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "integer"
+    constant value_type   : string         := "int"
   );
 
   procedure await_change(
@@ -2435,7 +2424,7 @@ package methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type       : string         := "std_logic"
+    constant value_type       : string         := "sl"
   );
 
   procedure await_change_to_value(
@@ -2485,7 +2474,9 @@ package methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type       : string         := "std_logic_vector"
+    constant value_type       : string         := "slv";
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant prefix           : t_radix_prefix := INCL_RADIX
   );
 
   procedure await_change_to_value(
@@ -2534,7 +2525,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   );
 
   procedure await_change_to_value(
@@ -2559,7 +2550,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "unsigned";
+    constant value_type   : string         := "u";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   );
@@ -2588,7 +2579,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "signed";
+    constant value_type   : string         := "s";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   );
@@ -2617,7 +2608,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "integer";
+    constant value_type   : string         := "int";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   );
@@ -3150,7 +3141,7 @@ package methods_pkg is
 
   -----------------------------------------------------
   -- Adjustable Clock Generator Procedures
-  -----------------------------------------------------  
+  -----------------------------------------------------
   procedure adjustable_clock_generator(
     signal clock_signal          : inout std_logic;
     signal clock_ena             : in boolean;
@@ -3177,6 +3168,7 @@ package methods_pkg is
     signal clock_high_percentage : in natural range 0 to 100
   );
 
+  -- DEPRECATED: will be removed in v3
   procedure deallocate_line_if_exists(
     variable line_to_be_deallocated : inout line
   );
@@ -3282,7 +3274,7 @@ package methods_pkg is
     constant polynomial : in std_logic_vector
   ) return std_logic_vector;
 
-end package;
+end package methods_pkg;
 
 --=================================================================================================
 --=================================================================================================
@@ -3293,34 +3285,14 @@ package body methods_pkg is
   constant C_BURIED_SCOPE : string := "(Util buried)";
 
   -- The following constants are not used. Report statements in the given functions allow elaboration time messages
-  constant C_BITVIS_LICENSE_INITIALISED        : boolean := show_license(VOID);
-  constant C_BITVIS_LIBRARY_INFO_SHOWN         : boolean := show_uvvm_utility_library_info(VOID);
-  constant C_BITVIS_LIBRARY_RELEASE_INFO_SHOWN : boolean := show_uvvm_utility_library_release_info(VOID);
+  constant C_BITVIS_LICENSE_INITIALISED : boolean := show_license(VOID);
+  constant C_BITVIS_LIBRARY_INFO_SHOWN  : boolean := show_uvvm_utility_library_info(VOID);
 
   -- ============================================================================
-  -- Initialisation and license
+  -- Initialization
   -- ============================================================================
-  --   -- Executed a single time ONLY
-  --   procedure pot_show_license(
-  --     constant dummy  : in t_void
-  --     ) is
-  --   begin
-  --     if not shared_license_shown then
-  --       show_license(v_trial_license);
-  --       shared_license_shown := true;
-  --     end if;
-  --   end;
-  --   -- Executed a single time ONLY
-  --   procedure initialise_util(
-  --     constant dummy  : in t_void
-  --     ) is
-  --   begin
-  --     set_log_file_name(C_LOG_FILE_NAME);
-  --     set_alert_file_name(C_ALERT_FILE_NAME);
-  --     shared_license_shown.set(1);
-  --     shared_initialised_util.set(true);
-  --   end;
-  procedure pot_initialise_util(
+  -- Executed a single time ONLY
+  procedure initialize_util(
     constant dummy : in t_void
   ) is
     variable v_minimum_log_line_width : natural := 0;
@@ -3350,15 +3322,7 @@ package body methods_pkg is
         end if;
       end if;
 
-      bitvis_assert(C_LOG_LINE_WIDTH >= v_minimum_log_line_width, failure, "C_LOG_LINE_WIDTH is too low. Needs to higher than " & to_string(v_minimum_log_line_width) & ". ", C_SCOPE);
-
-      --show_license(VOID);
-      --       if C_SHOW_uvvm_utilITY_LIBRARY_INFO then
-      --         show_uvvm_utility_library_info(VOID);
-      --       end if;
-      --       if C_SHOW_uvvm_utilITY_LIBRARY_RELEASE_INFO then
-      --         show_uvvm_utility_library_release_info(VOID);
-      --       end if;
+      bitvis_assert(C_LOG_LINE_WIDTH >= v_minimum_log_line_width, failure, "C_LOG_LINE_WIDTH is too low. Needs to higher than " & to_string(v_minimum_log_line_width) & ". ", "methods_pkg.initialize_util()");
     end if;
   end procedure;
 
@@ -3366,6 +3330,7 @@ package body methods_pkg is
     variable line_to_be_deallocated : inout line
   ) is
   begin
+    deprecate(get_procedure_name_from_instance_name(deallocate_line_if_exists'instance_name), "deallocating a null-line shall have no effect according to the LRM. Just use deallocate()");
     if line_to_be_deallocated /= null then
       deallocate(line_to_be_deallocated);
     end if;
@@ -3417,7 +3382,6 @@ package body methods_pkg is
     constant file_name : string := C_ALERT_FILE_NAME;
     constant msg_id    : t_msg_id
   ) is
-    variable v_file_open_status : file_open_status;
   begin
     deprecate(get_procedure_name_from_instance_name(file_name'instance_name), "msg_id parameter is no longer in use. Please call this procedure without the msg_id parameter.");
     set_alert_file_name(file_name);
@@ -3449,9 +3413,7 @@ package body methods_pkg is
     constant msg_id    : t_msg_id
   ) is
   begin
-    -- msg_id is no longer in use. However, can not call deprecate() since Util may not
-    -- have opened a log file yet. Attempting to call deprecate() when there is no open
-    -- log file will cause a fatal error. Leaving this alone with no message.
+    deprecate(get_procedure_name_from_instance_name(file_name'instance_name), "msg_id parameter is no longer in use. Please call this procedure without the msg_id parameter.");
     set_log_file_name(file_name);
   end procedure;
 
@@ -3499,7 +3461,7 @@ package body methods_pkg is
     -- 3. Derive Time number (integer or real)
     if C_LOG_TIME_DECIMALS = 0 then
       v_time_number_width := v_delimeter_pos - 1;
-      -- v_result as is
+    -- v_result as is
     else -- i.e. a decimal value is required
       if v_found_decimal_point then
         v_result(v_value_width - 2 to v_result'right) := (others => '0'); -- Zero extend
@@ -3532,70 +3494,6 @@ package body methods_pkg is
     return v_result(1 to v_result_width);
   end function;
 
-  -- Writes Line to a file without modifying the contents of the line
-  -- Not yet available in VHDL
-  procedure tee(
-    file file_handle : text;
-    variable my_line : inout line
-  ) is
-    variable v_line : line;
-  begin
-    write(v_line, my_line.all);
-    writeline(file_handle, v_line);
-  end procedure;
-
-  -- Open, append/write to and close file. Also deallocates contents of the line
-  procedure write_to_file(
-    file_name        : string;
-    open_mode        : file_open_kind;
-    variable my_line : inout line
-  ) is
-    file v_specified_file_pointer : text;
-  begin
-    file_open(v_specified_file_pointer, file_name, open_mode);
-    writeline(v_specified_file_pointer, my_line);
-    file_close(v_specified_file_pointer);
-  end procedure;
-
-  procedure write_line_to_log_destination(
-    variable log_line        : inout line;
-    constant log_destination : in t_log_destination := shared_default_log_destination;
-    constant log_file_name   : in string            := C_LOG_FILE_NAME;
-    constant open_mode       : in file_open_kind    := append_mode) is
-  begin
-    -- Write the info string to the target file
-    if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
-      -- Output file specified, but file name was invalid.
-      alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
-    elsif log_line = null then
-      -- Line specified is null
-      alert(TB_WARNING, "log called with NULL line");
-    else
-      case log_destination is
-        when CONSOLE_AND_LOG =>
-          tee(OUTPUT, log_line); -- write to transcript, while keeping the line contents
-          -- write to file
-          if log_file_name = C_LOG_FILE_NAME then
-            -- If the log file is the default file, it is not necessary to open and close it again
-            writeline(LOG_FILE, log_line);
-          else
-            -- If the log file is a custom file name, the file will have to be opened.
-            write_to_file(log_file_name, open_mode, log_line);
-          end if;
-        when CONSOLE_ONLY =>
-          writeline(OUTPUT, log_line); -- Write to console and deallocate line
-        when LOG_ONLY =>
-          if log_file_name = C_LOG_FILE_NAME then
-            -- If the log file is the default file, it is not necessary to open and close it again
-            writeline(LOG_FILE, log_line);
-          else
-            -- If the log file is a custom file name, the file will have to be opened.
-            write_to_file(log_file_name, open_mode, log_line);
-          end if;
-      end case;
-    end if;
-  end procedure;
-
   procedure log(
     msg_id          : t_msg_id;
     msg             : string;
@@ -3619,7 +3517,7 @@ package body methods_pkg is
   begin
     -- Check if message ID is enabled
     if (msg_id_panel(msg_id) = ENABLED) then
-      pot_initialise_util(VOID); -- Only executed the first time called
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
       -- Prepare strings for msg_id and scope
       v_log_msg_id := to_upper(justify(to_string(msg_id), left, C_LOG_MSG_ID_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
@@ -3637,33 +3535,29 @@ package body methods_pkg is
       " " & align_log_time(now) & "  " & return_string_if_true(v_log_scope, C_SHOW_LOG_SCOPE) & " "); -- Optional
       v_log_pre_msg_width := v_info'length; -- Width of string preceeding the actual message
       -- Handle \r as potential initial open line
-      if msg'length > 1 then
-        if C_USE_BACKSLASH_R_AS_LF then
-          loop
-            if (C_MSG_NORMALISED(v_idx to v_idx + 1) = "\r") then
-              write(v_info_final, LF); -- Start transcript with an empty line
-              v_idx := v_idx + 2;
-            else
-              write(v_msg, remove_initial_chars(msg, v_idx - 1));
-              exit;
-            end if;
-          end loop;
-        else
-          write(v_msg, msg);
-        end if;
+      if C_USE_BACKSLASH_R_AS_LF and msg'length > 1 then
+        loop
+          if (C_MSG_NORMALISED(v_idx to v_idx + 1) = "\r") then
+            write(v_info_final, LF); -- Start transcript with an empty line
+            v_idx := v_idx + 2;
+          else
+            write(v_msg, remove_initial_chars(msg, v_idx - 1));
+            exit;
+          end if;
+        end loop;
+      else
+        write(v_msg, msg);
       end if;
 
       -- Handle dedicated ID indentation.
       write(v_msg_indent, to_string(C_MSG_ID_INDENT(msg_id)));
       v_msg_indent_width := v_msg_indent'length;
       write(v_info, v_msg_indent.all);
-      deallocate_line_if_exists(v_msg_indent);
+      deallocate(v_msg_indent);
 
-      -- Then add the message it self (after replacing \n with LF
-      if msg'length > 1 then
-        write(v_info, to_string(replace_backslash_n_with_lf(v_msg.all)));
-      end if;
-      deallocate_line_if_exists(v_msg);
+      -- Then add the message itself (after replacing \n with LF)
+      write(v_info, to_string(replace_backslash_n_with_lf(v_msg.all)));
+      deallocate(v_msg);
 
       if not C_SINGLE_LINE_LOG then
         -- Modify and align info-string if additional lines are required (after wrapping lines)
@@ -3691,7 +3585,7 @@ package body methods_pkg is
       end if;
 
       write(v_info_final, v_info.all); -- include actual info
-      deallocate_line_if_exists(v_info);
+      deallocate(v_info);
       -- Handle rest of potential log header
       if (msg_id = ID_LOG_HDR) then
         write(v_info_final, LF & fill_string('-', (C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH)));
@@ -3704,35 +3598,9 @@ package body methods_pkg is
       -- Add prefix to all lines
       prefix_lines(v_info_final);
 
-      -- Write the info string to the target file
-      if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
-        -- Output file specified, but file name was invalid.
-        alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
-      else
-        case log_destination is
-          when CONSOLE_AND_LOG =>
-            tee(OUTPUT, v_info_final); -- write to transcript, while keeping the line contents
-            -- write to file
-            if log_file_name = C_LOG_FILE_NAME then
-              -- If the log file is the default file, it is not necessary to open and close it again
-              writeline(LOG_FILE, v_info_final);
-            else
-              -- If the log file is a custom file name, the file will have to be opened.
-              write_to_file(log_file_name, open_mode, v_info_final);
-            end if;
-          when CONSOLE_ONLY =>
-            writeline(OUTPUT, v_info_final); -- Write to console and deallocate line
-          when LOG_ONLY =>
-            if log_file_name = C_LOG_FILE_NAME then
-              -- If the log file is the default file, it is not necessary to open and close it again
-              writeline(LOG_FILE, v_info_final);
-            else
-              -- If the log file is a custom file name, the file will have to be opened.
-              write_to_file(log_file_name, open_mode, v_info_final);
-            end if;
-        end case;
-        deallocate_line_if_exists(v_info_final);
-      end if;
+      -- Write the info string to the log destination
+      write_line_to_log_destination(v_info_final, log_destination, log_file_name, open_mode);
+      deallocate(v_info_final);
     end if;
   end procedure;
 
@@ -3749,7 +3617,7 @@ package body methods_pkg is
     log(C_TB_MSG_ID_DEFAULT, msg, scope, msg_id_panel, log_destination, log_file_name, open_mode);
   end procedure;
 
-  -- Logging for multi line text. Also deallocates the text_block, for consistency.
+  -- Logging for multi line text. Also empty the text_block, for consistency.
   procedure log_text_block(
     msg_id              : t_msg_id;
     variable text_block : inout line;
@@ -3769,35 +3637,16 @@ package body methods_pkg is
   begin
     if ((log_file_name'length = 0) and ((log_destination = CONSOLE_AND_LOG) or (log_destination = LOG_ONLY))) then
       alert(TB_ERROR, "log_text_block called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
-      -- Check if message ID is enabled
+    -- Check if message ID is enabled
     elsif (msg_id_panel(msg_id) = ENABLED) then
-      pot_initialise_util(VOID); -- Only executed the first time called
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
       v_text_block_is_empty := (text_block = null);
 
       if (formatting = UNFORMATTED) then
         if (not v_text_block_is_empty) then
           -- Write the info string to the target file without any header, footer or indentation
-          case log_destination is
-            when CONSOLE_AND_LOG =>
-              tee(OUTPUT, text_block); -- Write to console, but keep text_block
-              -- Write to log and deallocate text_block. Open specified file if not open.
-              if log_file_name = C_LOG_FILE_NAME then
-                writeline(LOG_FILE, text_block);
-              else
-                write_to_file(log_file_name, open_mode, text_block);
-              end if;
-            when CONSOLE_ONLY =>
-              writeline(OUTPUT, text_block); -- Write to console and deallocate text_block
-            when LOG_ONLY =>
-              -- Write to log and deallocate text_block. Open specified file if not open.
-              if log_file_name = C_LOG_FILE_NAME then
-                writeline(LOG_FILE, text_block);
-              else
-                write_to_file(log_file_name, open_mode, text_block);
-              end if;
-          end case;
-
+          write_line_to_log_destination(text_block, log_destination, log_file_name, open_mode);
         end if;
       elsif not (v_text_block_is_empty and (log_if_block_empty = SKIP_LOG_IF_BLOCK_EMPTY)) then
 
@@ -3817,46 +3666,10 @@ package body methods_pkg is
         write(v_log_body, LF & fill_string('*', (C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH)) & LF);
         prefix_lines(v_log_body);
 
-        case log_destination is
-
-          when CONSOLE_AND_LOG =>
-            -- Write header to console
-            tee(OUTPUT, v_header_line);
-            -- Write header to file, and open/close if not default log file
-            if log_file_name = C_LOG_FILE_NAME then
-              writeline(LOG_FILE, v_header_line);
-            else
-              write_to_file(log_file_name, open_mode, v_header_line);
-            end if;
-            -- Write header message to specified destination
-            log(msg_id, msg_header, scope, msg_id_panel, CONSOLE_AND_LOG, log_file_name, append_mode);
-            -- Write log body to console
-            tee(OUTPUT, v_log_body);
-            -- Write log body to specified file
-            if log_file_name = C_LOG_FILE_NAME then
-              writeline(LOG_FILE, v_log_body);
-            else
-              write_to_file(log_file_name, append_mode, v_log_body);
-            end if;
-
-          when CONSOLE_ONLY =>
-            -- Write to console and deallocate all lines
-            writeline(OUTPUT, v_header_line);
-            log(msg_id, msg_header, scope, msg_id_panel, CONSOLE_ONLY);
-            writeline(OUTPUT, v_log_body);
-
-          when LOG_ONLY =>
-            -- Write to log and deallocate text_block. Open specified file if not open.
-            if log_file_name = C_LOG_FILE_NAME then
-              writeline(LOG_FILE, v_header_line);
-              log(msg_id, msg_header, scope, msg_id_panel, LOG_ONLY);
-              writeline(LOG_FILE, v_log_body);
-            else
-              write_to_file(log_file_name, open_mode, v_header_line);
-              log(msg_id, msg_header, scope, msg_id_panel, LOG_ONLY, log_file_name, append_mode);
-              write_to_file(log_file_name, append_mode, v_log_body);
-            end if;
-        end case;
+        -- Write the info string to the log destination
+        write_line_to_log_destination(v_header_line, log_destination, log_file_name, open_mode);
+        log(msg_id, msg_header, scope, msg_id_panel, log_destination, log_file_name, append_mode);
+        write_line_to_log_destination(v_log_body, log_destination, log_file_name, append_mode);
 
         -- Deallocate text block to give writeline()-like behaviour
         -- for formatted output
@@ -3878,7 +3691,7 @@ package body methods_pkg is
     case msg_id is
       when ID_NEVER =>
         null; -- Shall not be possible to enable
-        tb_warning("enable_log_msg() ignored for " & to_upper(to_string(msg_id)) & " (not allowed). " & add_msg_delimiter(msg), scope);
+        tb_warning("enable_log_msg() ignored for " & to_upper(to_string(msg_id)) & " (not allowed)." & add_msg_delimiter(msg), scope);
       when ALL_MESSAGES =>
         for i in t_msg_id'left to t_msg_id'right loop
           msg_id_panel(i) := ENABLED;
@@ -3886,12 +3699,12 @@ package body methods_pkg is
         msg_id_panel(ID_NEVER)        := DISABLED;
         msg_id_panel(ID_BITVIS_DEBUG) := DISABLED;
         if quietness = NON_QUIET then
-          log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & "). " & add_msg_delimiter(msg), scope);
+          log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & ")." & add_msg_delimiter(msg), scope);
         end if;
       when others =>
         msg_id_panel(msg_id) := ENABLED;
         if quietness = NON_QUIET then
-          log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & "). " & add_msg_delimiter(msg), scope);
+          log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & ")." & add_msg_delimiter(msg), scope);
         end if;
     end case;
   end procedure;
@@ -3926,7 +3739,7 @@ package body methods_pkg is
     case msg_id is
       when ALL_MESSAGES =>
         if quietness = NON_QUIET then
-          log(ID_LOG_MSG_CTRL, "disable_log_msg(" & to_upper(to_string(msg_id)) & "). " & add_msg_delimiter(msg), scope);
+          log(ID_LOG_MSG_CTRL, "disable_log_msg(" & to_upper(to_string(msg_id)) & ")." & add_msg_delimiter(msg), scope);
         end if;
         for i in t_msg_id'left to t_msg_id'right loop
           msg_id_panel(i) := DISABLED;
@@ -3935,7 +3748,7 @@ package body methods_pkg is
       when others =>
         msg_id_panel(msg_id) := DISABLED;
         if quietness = NON_QUIET then
-          log(ID_LOG_MSG_CTRL, "disable_log_msg(" & to_upper(to_string(msg_id)) & "). " & add_msg_delimiter(msg), scope);
+          log(ID_LOG_MSG_CTRL, "disable_log_msg(" & to_upper(to_string(msg_id)) & ")." & add_msg_delimiter(msg), scope);
         end if;
     end case;
   end procedure;
@@ -4037,18 +3850,6 @@ package body methods_pkg is
     end if;
   end function;
 
-  -- ============================================================================
-  -- Check counters related
-  -- ============================================================================
-  -- Shared variable for all the check counters
-  shared variable protected_check_counters : t_protected_check_counters;
-
-  -- ============================================================================
-  -- Alert-related
-  -- ============================================================================
-  -- Shared variable for all the alert counters for different attention
-  shared variable protected_alert_attention_counters : t_protected_alert_attention_counters;
-
   procedure alert(
     constant alert_level : t_alert_level;
     constant msg         : string;
@@ -4059,7 +3860,7 @@ package body methods_pkg is
     constant C_ATTENTION : t_attention := get_alert_attention(alert_level);
   begin
     if alert_level /= NO_ALERT then
-      pot_initialise_util(VOID); -- Only executed the first time called
+      initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
 
       if C_ENABLE_HIERARCHICAL_ALERTS then
         -- Call the hierarchical alert function
@@ -4072,6 +3873,7 @@ package body methods_pkg is
         if get_alert_attention(alert_level) = IGNORE then
           --       protected_alert_counters.increment(alert_level, IGNORE);
           increment_alert_counter(alert_level, IGNORE);
+          deallocate(v_msg);
         else
           --protected_alert_counters.increment(alert_level, REGARD);
           increment_alert_counter(alert_level, REGARD);
@@ -4092,7 +3894,7 @@ package body methods_pkg is
             replace(v_msg, LF, ' ');
             write(v_info, to_upper(to_string(alert_level)) & " #" & to_string(get_alert_counter(alert_level)) & "  ***" & justify(to_string(now, C_LOG_TIME_BASE), right, C_LOG_TIME_WIDTH) & "   " & to_string(scope) & "        " & v_msg.all);
           end if;
-          deallocate_line_if_exists(v_msg);
+          deallocate(v_msg);
 
           -- 4. Write stop message if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) and (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
@@ -4112,10 +3914,9 @@ package body methods_pkg is
           end if;
 
           prefix_lines(v_info);
-          tee(OUTPUT, v_info);
-          tee(ALERT_FILE, v_info);
-          writeline(LOG_FILE, v_info);
-          deallocate_line_if_exists(v_info);
+          tee_and_keep_line(ALERT_FILE, v_info); -- Write to file, while keeping the line contents
+          write_line_to_log_destination(v_info);
+          deallocate(v_info);
 
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
@@ -4214,11 +4015,11 @@ package body methods_pkg is
   ) is
   begin
     if alert_level = NO_ALERT then
-      alert(TB_WARNING, "increment_expected_alerts not allowed for alert_level NO_ALERT. " & add_msg_delimiter(msg), scope);
+      alert(TB_WARNING, "increment_expected_alerts not allowed for alert_level NO_ALERT." & add_msg_delimiter(msg), scope);
     else
       if not C_ENABLE_HIERARCHICAL_ALERTS then
         increment_alert_counter(alert_level, EXPECT, number);
-        log(ID_UTIL_SETUP, "incremented expected " & to_upper(to_string(alert_level)) & "s by " & to_string(number) & ". " & add_msg_delimiter(msg), scope);
+        log(ID_UTIL_SETUP, "incremented expected " & to_upper(to_string(alert_level)) & "s by " & to_string(number) & "." & add_msg_delimiter(msg), scope);
       else
         increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, alert_level, number);
       end if;
@@ -4231,7 +4032,7 @@ package body methods_pkg is
     constant order : in t_order
   ) is
   begin
-    pot_initialise_util(VOID); -- Only executed the first time called
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     if not C_ENABLE_HIERARCHICAL_ALERTS then
       protected_alert_attention_counters.to_string(order);
     else
@@ -4254,7 +4055,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
-    pot_initialise_util(VOID); -- Only executed the first time called
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     write(v_line,
     LF &
     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
@@ -4269,12 +4070,12 @@ package body methods_pkg is
     end loop;
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
 
-    -- Write the info string to the target file
-    tee(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line);
+    -- Write the report to the log destination
+    write_line_to_log_destination(v_line);
     deallocate(v_line);
   end procedure;
 
@@ -4284,7 +4085,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
-    pot_initialise_util(VOID); -- Only executed the first time called
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     write(v_line,
     LF &
     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
@@ -4300,12 +4101,12 @@ package body methods_pkg is
     end loop;
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
 
-    -- Write the info string to the target file
-    tee(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line);
+    -- Write the report to the log destination
+    write_line_to_log_destination(v_line);
     deallocate(v_line);
   end procedure;
 
@@ -4321,7 +4122,7 @@ package body methods_pkg is
       check_value(attention = IGNORE or attention = REGARD, TB_ERROR,
       "set_alert_attention only supported for IGNORE and REGARD", C_BURIED_SCOPE, ID_NEVER);
       shared_alert_attention(alert_level) := attention;
-      log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));
+      log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & ")." & add_msg_delimiter(msg));
     end if;
   end procedure;
 
@@ -4392,8 +4193,8 @@ package body methods_pkg is
     attention   : t_attention := REGARD; -- regard, expect, ignore
     number      : natural     := 1
   ) is
-    type alert_array is array (1 to 6) of t_alert_level;
-    constant C_ALERT_CHECK_ARRAY : alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
+    type t_alert_array is array (1 to 6) of t_alert_level;
+    constant C_ALERT_CHECK_ARRAY : t_alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
     alias found_unexpected_simulation_warnings_or_worse is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
     alias found_unexpected_simulation_errors_or_worse is shared_uvvm_status.found_unexpected_simulation_errors_or_worse;
     alias mismatch_on_expected_simulation_warnings_or_worse is shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse;
@@ -4454,6 +4255,7 @@ package body methods_pkg is
     constant order : in t_order
   ) is
   begin
+    initialize_util(VOID); -- Only executed the first time called. Ensures that the log and alert files are open.
     protected_check_counters.to_string(order);
   end procedure;
 
@@ -4471,6 +4273,7 @@ package body methods_pkg is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     variable v_line   : line;
   begin
+    initialize_util(void); -- Only executed the first time called. Ensures that the log and alert files are open.
     -- Print report header
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     write(v_line, timestamp_header(now, justify("*** SUMMARY OF SCOREBOARDS***", LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
@@ -4489,9 +4292,11 @@ package body methods_pkg is
     -- Print report bottom line
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
 
-    -- Write the info string to transcript
+    -- Format the report
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
+
+    -- Write the report to the log destination
     write_line_to_log_destination(v_line);
     DEALLOCATE(v_line);
   end procedure;
@@ -4507,8 +4312,8 @@ package body methods_pkg is
   begin
     v_found := false;
     if C_DEPRECATE_SETTING /= NO_DEPRECATE then -- only perform if deprecation enabled
-      l_find_caller_name_in_list : for i in deprecated_subprogram_list'range loop
-        if deprecated_subprogram_list(i) = justify(caller_name, right, 100) then
+      l_find_caller_name_in_list : for i in shared_deprecated_subprogram_list'range loop
+        if shared_deprecated_subprogram_list(i) = justify(caller_name, right, 100) then
           v_found := true;
           exit l_find_caller_name_in_list;
         end if;
@@ -4517,20 +4322,20 @@ package body methods_pkg is
       if v_found then
         -- Has already been printed.
         if C_DEPRECATE_SETTING = ALWAYS_DEPRECATE then
-          log(ID_UTIL_SETUP, "Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
+          tb_note("Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
         else -- C_DEPRECATE_SETTING = DEPRECATE_ONCE
           null;
         end if;
       else
         -- Has not been printed yet.
-        l_insert_caller_name_in_first_available : for i in deprecated_subprogram_list'range loop
-          if deprecated_subprogram_list(i) = justify("", right, 100) then
-            deprecated_subprogram_list(i) := justify(caller_name, right, 100);
+        l_insert_caller_name_in_first_available : for i in shared_deprecated_subprogram_list'range loop
+          if shared_deprecated_subprogram_list(i) = justify("", right, 100) then
+            shared_deprecated_subprogram_list(i) := justify(caller_name, right, 100);
             exit l_insert_caller_name_in_first_available;
           end if;
         end loop;
 
-        log(ID_UTIL_SETUP, "Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
+        tb_note("Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
       end if;
     end if;
   end procedure;
@@ -4546,7 +4351,7 @@ package body methods_pkg is
     alias a_vector                 : std_logic_vector(vector'length - 1 downto 0) is vector;
     constant C_RESULT_IF_NOT_FOUND : integer := - 1; -- To indicate not found
   begin
-    bitvis_assert(vector'length > 0, error, "idx_leftmost_p1_in_p2()", "String input is empty");
+    bitvis_assert(vector'length > 0, error, "String input is empty", "methods_pkg.idx_leftmost_p1_in_p2()");
     for i in a_vector'left downto a_vector'right loop
       if (a_vector(i) = target) then
         return i;
@@ -4670,15 +4475,18 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
+    constant C_VALUE_TYPE : string := "bool";
+    constant C_VALUE_STR  : string := to_string(value);
+    constant C_EXP_STR    : string := to_string(true);
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
     if value then
-      log(msg_id, caller_name & " => OK, for boolean true. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", true) => OK. Value was true." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Boolean was false. " & add_msg_delimiter(msg), scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
     end if;
     return value;
   end function;
@@ -4691,18 +4499,19 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
-    constant C_VALUE_STR : string := to_string(value);
-    constant C_EXP_STR   : string := to_string(exp);
+    constant C_VALUE_TYPE : string := "bool";
+    constant C_VALUE_STR  : string := to_string(value);
+    constant C_EXP_STR    : string := to_string(exp);
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for boolean " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. Boolean was " & C_VALUE_STR & ". Expected " & C_EXP_STR & ". " & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -4716,9 +4525,9 @@ package body methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   ) return boolean is
-    constant C_VALUE_TYPE : string  := "std_logic";
+    constant C_VALUE_TYPE : string  := "sl";
     constant C_VALUE_STR  : string  := to_string(value);
     constant C_EXP_STR    : string  := to_string(exp);
     variable v_failed     : boolean := false;
@@ -4729,28 +4538,28 @@ package body methods_pkg is
 
       when MATCH_STD =>
         if std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " '" & C_VALUE_STR & "' (exp: '" & C_EXP_STR & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
 
       when MATCH_STD_INCL_Z =>
         if (value = 'Z' and exp = 'Z') or std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " '" & C_VALUE_STR & "' (exp: '" & C_EXP_STR & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ", MATCH_STD_INCL_Z) => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
 
       when MATCH_STD_INCL_ZXUW =>
         if (value = 'Z' and exp = 'Z') or (value = 'X' and exp = 'X') or (value = 'U' and exp = 'U') or (value = 'W' and exp = 'W') or std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " '" & C_VALUE_STR & "' (exp: '" & C_EXP_STR & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ", MATCH_STD_INCL_ZXUW) => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
 
       when others =>
         if value = exp then
-          log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " '" & C_VALUE_STR & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
@@ -4758,7 +4567,7 @@ package body methods_pkg is
     end case;
 
     if v_failed = true then
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was '" & C_VALUE_STR & "'. Expected '" & C_EXP_STR & "'" & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     else
       return true;
@@ -4773,7 +4582,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
   begin
     return check_value(value, exp, MATCH_STD, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -4790,7 +4599,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   ) return boolean is
     -- Normalise vectors to (N downto 0)
@@ -4812,15 +4621,15 @@ package body methods_pkg is
     -- Function to represent signed value as string if value_type is "signed"
     function signed_string_check(
       constant slv_value  : std_logic_vector;
-      constant radix      : t_radix;
-      constant format     : t_format_zeros;
-      constant value_type : string
+      constant slv_radix  : t_radix;
+      constant slv_format : t_format_zeros;
+      constant slv_type   : string
     ) return string is
     begin
-      if value_type = "signed" then
-        return to_string(signed(slv_value), radix, format, INCL_RADIX);
+      if slv_type = "s" then
+        return to_string(signed(slv_value), slv_radix, slv_format, INCL_RADIX);
       else
-        return to_string(slv_value, radix, format, INCL_RADIX);
+        return to_string(slv_value, slv_radix, slv_format, INCL_RADIX);
       end if;
     end function signed_string_check;
 
@@ -4830,7 +4639,6 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
       deprecate(get_procedure_name_from_instance_name(value'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
     end if;
@@ -4839,11 +4647,11 @@ package body methods_pkg is
 
     if v_check_ok then
       if C_VALUE_STR = C_EXP_STR then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & C_VALUE_STR & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(msg_id, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       else
         -- H,L or - is present in C_EXP_STR
         if match_strictness = MATCH_STD then
-          log(msg_id, caller_name & " => OK, for " & value_type & " " & C_VALUE_STR & "' (exp: " & C_EXP_STR & "'). " & add_msg_delimiter(msg),
+          log(msg_id, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg),
           scope, msg_id_panel);
         else
           v_trigger_alert := true; -- alert and log
@@ -4855,19 +4663,19 @@ package body methods_pkg is
     -- trigger alert and log message
     if v_trigger_alert then
       if C_VALUE_STR'length > C_EXP_STR'length then
-        if radix = HEX_BIN_IF_INVALID then
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & LF & msg, scope);
+        if radix = HEX_BIN_IF_INVALID or radix = DEC then
+          alert(alert_level, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & pad_short_string(C_EXP_STR, C_VALUE_STR) & "." & LF & msg, scope);
+          alert(alert_level, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & pad_short_string(C_EXP_STR, C_VALUE_STR) & "." & add_msg_delimiter(msg), scope);
         end if;
       elsif C_VALUE_STR'length < C_EXP_STR'length then
-        if radix = HEX_BIN_IF_INVALID then
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & LF & msg, scope);
+        if radix = HEX_BIN_IF_INVALID or radix = DEC then
+          alert(alert_level, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & pad_short_string(C_VALUE_STR, C_EXP_STR) & ". Expected " & C_EXP_STR & "." & LF & msg, scope);
+          alert(alert_level, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => Failed. Value was " & pad_short_string(C_VALUE_STR, C_EXP_STR) & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
         end if;
       else
-        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & LF & msg, scope);
+        alert(alert_level, caller_name & "(" & value_type & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
       end if;
     end if;
 
@@ -4884,13 +4692,9 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   ) return boolean is
-    -- Normalise vectors to (N downto 0)
-    alias a_value       : std_logic_vector(value'length - 1 downto 0) is value;
-    alias a_exp         : std_logic_vector(exp'length - 1 downto 0) is exp;
-    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     return check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end function;
@@ -4906,8 +4710,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -4926,8 +4730,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -4947,8 +4751,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -4967,8 +4771,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -4985,7 +4789,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     constant C_VALUE_TYPE : string := "int";
     constant C_VALUE_STR  : string := to_string(value);
@@ -4994,10 +4798,10 @@ package body methods_pkg is
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was " & C_VALUE_STR & ". Expected " & C_EXP_STR & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -5010,7 +4814,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     constant C_VALUE_TYPE : string := "real";
     constant C_VALUE_STR  : string := to_string(value);
@@ -5019,10 +4823,10 @@ package body methods_pkg is
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was " & C_VALUE_STR & ". Expected " & C_EXP_STR & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & C_EXP_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -5035,7 +4839,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     constant C_VALUE_TYPE : string := "time";
     variable v_value_line : line;
@@ -5050,10 +4854,10 @@ package body methods_pkg is
     write(v_exp_line, exp, right, 0, v_time_unit);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " " & v_value_line.all & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & v_exp_line.all & ") => OK. Value was " & v_value_line.all & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       v_return_val := true;
     else
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was " & v_value_line.all & ". Expected " & v_exp_line.all & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & v_exp_line.all & ") => Failed. Value was " & v_value_line.all & ". Expected " & v_exp_line.all & "." & add_msg_delimiter(msg), scope);
       v_return_val := false;
     end if;
     DEALLOCATE(v_value_line);
@@ -5069,17 +4873,17 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     constant C_VALUE_TYPE : string := "string";
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " '" & value & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", '" & exp & "') => OK. Value was '" & value & "'." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was '" & value & "'. Expected '" & exp & "'" & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", '" & exp & "') => Failed. Value was '" & value & "'. Expected '" & exp & "'" & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -5095,7 +4899,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) return boolean is
     variable v_len_check_ok : boolean := (value'length = exp'length);
@@ -5116,7 +4920,7 @@ package body methods_pkg is
           return false;
         end if;
       end loop;
-    else -- lenght or direction check not ok 
+    else -- lenght or direction check not ok
       return false;
     end if;
 
@@ -5133,7 +4937,7 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) return boolean is
     variable v_check_ok : boolean;
@@ -5153,8 +4957,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   ) return boolean is
     variable v_len_check_ok : boolean := (value'length = exp'length);
     variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
@@ -5191,8 +4995,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -5211,8 +5015,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   ) return boolean is
     variable v_len_check_ok : boolean := (value'length = exp'length);
     variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
@@ -5244,8 +5048,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -5263,7 +5067,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -5278,7 +5082,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -5294,7 +5098,7 @@ package body methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
   begin
@@ -5309,7 +5113,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
   begin
@@ -5327,7 +5131,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
@@ -5345,7 +5149,7 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
@@ -5364,8 +5168,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -5383,8 +5187,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -5403,8 +5207,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
   begin
@@ -5422,8 +5226,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
   begin
@@ -5439,7 +5243,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
     variable v_check_ok : boolean := true; -- as default prior to checking
   begin
@@ -5454,9 +5258,9 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking     
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
@@ -5469,9 +5273,9 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking     
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
@@ -5484,9 +5288,9 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking     
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
@@ -5502,10 +5306,10 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5520,10 +5324,10 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5539,10 +5343,10 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5557,10 +5361,10 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5576,10 +5380,10 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5594,10 +5398,10 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   ) return boolean is
-    variable v_check_ok : boolean := true; -- as default prior to checking      
+    variable v_check_ok : boolean := true; -- as default prior to checking
   begin
     v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
@@ -5614,7 +5418,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5629,7 +5433,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5645,7 +5449,7 @@ package body methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5660,7 +5464,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5678,7 +5482,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   ) is
     variable v_check_ok : boolean;
@@ -5696,7 +5500,7 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   ) is
     variable v_check_ok : boolean;
@@ -5715,8 +5519,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5733,8 +5537,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5752,8 +5556,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5770,8 +5574,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5786,7 +5590,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5801,7 +5605,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5816,7 +5620,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5831,7 +5635,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5849,7 +5653,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) is
     variable v_check_ok     : boolean;
@@ -5860,8 +5664,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope, ID_NEVER, msg_id_panel);
-    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
     -- do not count called CHECK_VALUE
     protected_check_counters.decrement(CHECK_VALUE, 2);
 
@@ -5884,7 +5688,7 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) is
     variable v_check_ok : boolean;
@@ -5903,8 +5707,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   ) is
     variable v_check_ok     : boolean;
     variable v_len_check_ok : boolean := (value'length = exp'length);
@@ -5938,8 +5742,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -5957,8 +5761,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   ) is
     variable v_check_ok     : boolean;
     variable v_len_check_ok : boolean := (value'length = exp'length);
@@ -5992,8 +5796,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -6009,7 +5813,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6022,7 +5826,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6036,7 +5840,7 @@ package body methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()"
+    constant caller_name      : string         := "check_value"
   ) is
   begin
     check_value(value, exp, match_strictness, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6049,7 +5853,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, exp, MATCH_STD, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6065,7 +5869,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "slv"
   ) is
   begin
@@ -6081,7 +5885,7 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "slv"
   ) is
   begin
@@ -6098,8 +5902,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "unsigned"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "u"
   ) is
   begin
     check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6114,8 +5918,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "u"
   ) is
   begin
     check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6131,8 +5935,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "signed"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "s"
   ) is
   begin
     check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6147,8 +5951,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "s"
   ) is
   begin
     check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6161,7 +5965,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6174,7 +5978,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6187,7 +5991,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6200,7 +6004,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()"
+    constant caller_name  : string         := "check_value"
   ) is
   begin
     check_value(value, exp, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6216,7 +6020,7 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
+    constant caller_name      : string         := "check_value";
     constant value_type       : string         := "t_slv_array"
   ) is
   begin
@@ -6232,7 +6036,7 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
+    constant caller_name  : string         := "check_value";
     constant value_type   : string         := "t_slv_array"
   ) is
   begin
@@ -6249,8 +6053,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_signed_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_s_array"
   ) is
   begin
     check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6265,8 +6069,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_signed_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_s_array"
   ) is
   begin
     check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6282,8 +6086,8 @@ package body methods_pkg is
     constant format           : t_format_zeros := KEEP_LEADING_0;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name      : string         := "check_value()";
-    constant value_type       : string         := "t_unsigned_array"
+    constant caller_name      : string         := "check_value";
+    constant value_type       : string         := "t_u_array"
   ) is
   begin
     check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6298,8 +6102,8 @@ package body methods_pkg is
     constant format       : t_format_zeros := KEEP_LEADING_0;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_unsigned_array"
+    constant caller_name  : string         := "check_value";
+    constant value_type   : string         := "t_u_array"
   ) is
   begin
     check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -6317,29 +6121,28 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "integer";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "int";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) return boolean is
     constant C_VALUE_STR     : string := to_string(value, radix, prefix);
     constant C_MIN_VALUE_STR : string := to_string(min_value, radix, prefix);
     constant C_MAX_VALUE_STR : string := to_string(max_value, radix, prefix);
-    variable v_check_ok      : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & add_msg_delimiter(msg), ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -6353,29 +6156,28 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "unsigned";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "u";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean is
     constant C_VALUE_STR     : string := to_string(value, radix, prefix => prefix);
     constant C_MIN_VALUE_STR : string := to_string(min_value, radix, prefix => prefix);
     constant C_MAX_VALUE_STR : string := to_string(max_value, radix, prefix => prefix);
-    variable v_check_ok : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & add_msg_delimiter(msg), ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -6389,8 +6191,8 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "signed";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "s";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean is
@@ -6402,15 +6204,15 @@ package body methods_pkg is
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & "." & add_msg_delimiter(msg), ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -6424,13 +6226,12 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean is
     constant C_VALUE_TYPE     : string := "time";
     variable v_value_line     : line;
     variable v_min_value_line : line;
     variable v_max_value_line : line;
-    variable v_check_ok       : boolean;
     variable v_time_unit      : time;
     variable v_return_val     : boolean;
   begin
@@ -6443,15 +6244,15 @@ package body methods_pkg is
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-    " => min_value (" & v_min_value_line.all & ") must be less than max_value(" & v_max_value_line.all & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    " => min_value (" & v_min_value_line.all & ") must be less than max_value(" & v_max_value_line.all & ")" & add_msg_delimiter(msg), ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " " & v_value_line.all & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & v_min_value_line.all & ", " & v_max_value_line.all & ") => OK. Value was " & v_value_line.all & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       v_return_val := true;
     else
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was " & v_value_line.all & ". Expected between " & v_min_value_line.all & " and " & v_max_value_line.all & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & v_min_value_line.all & ", " & v_max_value_line.all & ") => Failed. Value was " & v_value_line.all & ". Expected between " & v_min_value_line.all & " and " & v_max_value_line.all & "." & add_msg_delimiter(msg), scope);
       v_return_val := false;
     end if;
     DEALLOCATE(v_value_line);
@@ -6469,28 +6270,27 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean is
     constant C_VALUE_TYPE    : string := "real";
     constant C_VALUE_STR     : string := to_string(value);
     constant C_MIN_VALUE_STR : string := to_string(min_value);
     constant C_MAX_VALUE_STR : string := to_string(max_value);
-    variable v_check_ok      : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR,
-    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & LF & msg, scope,
+    " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & add_msg_delimiter(msg), scope,
     ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & C_VALUE_TYPE & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & C_VALUE_TYPE & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => OK. Value was " & C_VALUE_STR & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & C_VALUE_TYPE & "  Was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & C_VALUE_TYPE & ", " & C_MIN_VALUE_STR & ", " & C_MAX_VALUE_STR & ") => Failed. Value was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & "." & add_msg_delimiter(msg), scope);
       return false;
     end if;
   end function;
@@ -6504,14 +6304,14 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "integer";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "int";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) return boolean is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type, radix, prefix);
     return v_check_ok;
   end function;
 
@@ -6523,14 +6323,14 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "unsigned";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "u";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type, radix, prefix);
     return v_check_ok;
   end function;
 
@@ -6542,14 +6342,14 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
-    constant value_type   : string         := "signed";
+    constant caller_name  : string         := "check_value_in_range";
+    constant value_type   : string         := "s";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) return boolean is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type, radix, prefix);
     return v_check_ok;
   end function;
 
@@ -6561,7 +6361,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -6577,7 +6377,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) return boolean is
     variable v_check_ok : boolean;
   begin
@@ -6597,7 +6397,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) is
@@ -6614,7 +6414,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) is
@@ -6631,7 +6431,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) is
@@ -6648,7 +6448,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -6663,7 +6463,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) is
     variable v_check_ok : boolean;
   begin
@@ -6679,7 +6479,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) is
@@ -6694,7 +6494,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) is
@@ -6709,7 +6509,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()";
+    constant caller_name  : string         := "check_value_in_range";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) is
@@ -6724,7 +6524,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) is
   begin
     check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6737,7 +6537,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value_in_range()"
+    constant caller_name  : string         := "check_value_in_range"
   ) is
   begin
     check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name);
@@ -6754,20 +6554,21 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "boolean"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "bool"
   ) is
     constant C_VALUE_STRING       : string := to_string(target);
     constant C_LAST_VALUE_STRING  : string := to_string(target'last_value);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK. Stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -6780,21 +6581,22 @@ package body methods_pkg is
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : in t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : in string         := "check_stable()";
+    constant caller_name  : in string         := "check_stable";
     constant value_type   : in string         := "slv"
   ) is
-    constant C_VALUE_STRING       : string := 'x' & to_string(target, HEX);
-    constant C_LAST_VALUE_STRING  : string := 'x' & to_string(target'last_value, HEX);
+    constant C_VALUE_STRING       : string := to_string(target, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX);
+    constant C_LAST_VALUE_STRING  : string := to_string(target'last_value, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
     success := true;
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK. Stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
       success := false;
     end if;
   end procedure;
@@ -6807,7 +6609,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "slv"
   ) is
     variable v_success : boolean;
@@ -6823,20 +6625,21 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "u"
   ) is
-    constant C_VALUE_STRING       : string := 'x' & to_string(target, HEX);
-    constant C_LAST_VALUE_STRING  : string := 'x' & to_string(target'last_value, HEX);
+    constant C_VALUE_STRING       : string := to_string(target, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX);
+    constant C_LAST_VALUE_STRING  : string := to_string(target'last_value, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK. Stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -6848,20 +6651,21 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "s"
   ) is
-    constant C_VALUE_STRING       : string := 'x' & to_string(target, HEX);
-    constant C_LAST_VALUE_STRING  : string := 'x' & to_string(target'last_value, HEX);
+    constant C_VALUE_STRING       : string := to_string(target, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX);
+    constant C_LAST_VALUE_STRING  : string := to_string(target'last_value, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK. Stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -6873,20 +6677,21 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "std_logic"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "sl"
   ) is
     constant C_VALUE_STRING       : string := to_string(target);
     constant C_LAST_VALUE_STRING  : string := to_string(target'last_value);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK. Stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -6898,20 +6703,21 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "integer"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "int"
   ) is
     constant C_VALUE_STRING       : string := to_string(target);
     constant C_LAST_VALUE_STRING  : string := to_string(target'last_value);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK." & C_VALUE_STRING & " stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -6923,20 +6729,21 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "real"
   ) is
     constant C_VALUE_STRING       : string := to_string(target);
     constant C_LAST_VALUE_STRING  : string := to_string(target'last_value);
     constant C_LAST_CHANGE        : time   := target'last_event;
     constant C_LAST_CHANGE_STRING : string := to_string(C_LAST_CHANGE, get_time_unit(C_LAST_CHANGE));
+    constant C_STABLE_REQ_STRING  : string := to_string(stable_req, get_time_unit(stable_req));
   begin
     protected_check_counters.increment(CHECK_STABLE);
 
     if (C_LAST_CHANGE >= stable_req) then
-      log(msg_id, caller_name & " => OK." & C_VALUE_STRING & " stable at " & C_VALUE_STRING & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => OK. Value " & C_VALUE_STRING & " was stable for " & C_LAST_CHANGE_STRING & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-      alert(alert_level, caller_name & " => Failed. Switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & to_string(stable_req, get_time_unit(stable_req)) & LF & msg, scope);
+      alert(alert_level, caller_name & "(" & value_type & ", " & C_STABLE_REQ_STRING & ") => Failed. Value switched from " & C_LAST_VALUE_STRING & " to " & C_VALUE_STRING & " " & C_LAST_CHANGE_STRING & " ago. Expected stable for " & C_STABLE_REQ_STRING & "." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -6948,8 +6755,8 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "boolean"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "bool"
   ) is
   begin
     check_stable(target, stable_req, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
@@ -6962,7 +6769,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "slv"
   ) is
   begin
@@ -6976,8 +6783,8 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "unsigned"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "u"
   ) is
   begin
     check_stable(target, stable_req, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
@@ -6990,8 +6797,8 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "signed"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "s"
   ) is
   begin
     check_stable(target, stable_req, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
@@ -7004,8 +6811,8 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "std_logic"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "sl"
   ) is
   begin
     check_stable(target, stable_req, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
@@ -7018,8 +6825,8 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
-    constant value_type   : string         := "integer"
+    constant caller_name  : string         := "check_stable";
+    constant value_type   : string         := "int"
   ) is
   begin
     check_stable(target, stable_req, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
@@ -7032,7 +6839,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "check_stable";
     constant value_type   : string         := "real"
   ) is
   begin
@@ -7048,12 +6855,12 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7069,9 +6876,9 @@ package body methods_pkg is
     constant value_type   : string         := "slv"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & add_msg_delimiter(msg), scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7084,12 +6891,12 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "unsigned"
+    constant value_type   : string         := "u"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & add_msg_delimiter(msg), scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7102,12 +6909,12 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "signed"
+    constant value_type   : string         := "s"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & add_msg_delimiter(msg), scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7120,12 +6927,12 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "std_logic"
+    constant value_type   : string         := "sl"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7138,12 +6945,12 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "await_stable_value()";
-    constant value_type   : string         := "integer"
+    constant value_type   : string         := "int"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & "." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7159,9 +6966,9 @@ package body methods_pkg is
     constant value_type   : string         := "real"
   ) is
   begin
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect." & "." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     wait for stable_req;
-    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, msg_id, msg_id_panel, caller_name);
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end procedure;
 
@@ -7191,17 +6998,17 @@ package body methods_pkg is
     check_is_ok := true;
 
     -- Sanity check
-    check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & LF & msg, scope, ID_NEVER, msg_id_panel, name);
+    check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, name);
     -- do not count CHECK_VALUE from CHECK_TIME_WINDOW
     protected_check_counters.decrement(CHECK_VALUE);
 
     if elapsed_time < min_time then
-      alert(alert_level, name & " => Failed. Condition occurred too early, after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, name & " => Failed. Condition occurred too early, after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       check_is_ok := false;
     elsif success then
-      log(msg_id, name & " => OK. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, name & " => OK. Condition occurred after " & to_string(elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     else -- max_time reached with no success
-      alert(alert_level, name & " => Failed. Timed out after " & to_string(max_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, name & " => Failed. Timed out after " & to_string(max_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope);
       check_is_ok := false;
     end if;
   end procedure;
@@ -7510,14 +7317,14 @@ package body methods_pkg is
     for i in 1 to C_STR_LEN / 2 loop
       seed1 := (seed1 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
     end loop;
-      seed2 := (seed2 + seed1) mod C_MAX_POS;
+    seed2 := (seed2 + seed1) mod C_MAX_POS;
     for i in C_STR_LEN / 2 + 1 to C_STR_LEN loop
       seed2 := (seed2 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
     end loop;
   end procedure;
 
   -- Converts a t_byte_array (ascending) to a std_logic_vector
-  function convert_byte_array_to_slv(
+  impure function convert_byte_array_to_slv(
     constant byte_array      : t_byte_array;
     constant byte_endianness : t_byte_endianness
   ) return std_logic_vector is
@@ -7526,6 +7333,10 @@ package body methods_pkg is
     variable v_slv              : std_logic_vector(8 * C_NUM_BYTES - 1 downto 0);
   begin
     assert byte_array'ascending report "byte_array must be ascending" severity error;
+    if byte_endianness = FIRST_BYTE_LEFT or byte_endianness = FIRST_BYTE_RIGHT then
+      deprecate(get_procedure_name_from_instance_name(byte_array'instance_name),
+        "byte_endianness 'FIRST_BYTE_LEFT' and 'FIRST_BYTE_RIGHT' have been deprecated. Use LOWER_BYTE_LEFT or LOWER_BYTE_RIGHT.");
+    end if;
 
     for byte_idx in 0 to C_NUM_BYTES - 1 loop
       if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
@@ -7538,7 +7349,7 @@ package body methods_pkg is
   end function;
 
   -- Converts a std_logic_vector to a t_byte_array (ascending)
-  function convert_slv_to_byte_array(
+  impure function convert_slv_to_byte_array(
     constant slv             : std_logic_vector;
     constant byte_endianness : t_byte_endianness
   ) return t_byte_array is
@@ -7548,6 +7359,11 @@ package body methods_pkg is
     variable v_slv_idx     : integer := normalized_slv'high;
     variable v_slv_idx_min : integer;
   begin
+    if byte_endianness = FIRST_BYTE_LEFT or byte_endianness = FIRST_BYTE_RIGHT then
+      deprecate(get_procedure_name_from_instance_name(slv'instance_name),
+        "byte_endianness 'FIRST_BYTE_LEFT' and 'FIRST_BYTE_RIGHT' have been deprecated. Use LOWER_BYTE_LEFT or LOWER_BYTE_RIGHT.");
+    end if;
+
     -- Adjust value if there was no remainder
     if (slv'length mod 8) = 0 then
       v_num_bytes := v_num_bytes - 1;
@@ -7555,7 +7371,7 @@ package body methods_pkg is
 
     for byte_idx in 0 to v_num_bytes - 1 loop
       for bit_idx in 7 downto 0 loop
-        if v_slv_idx =- 1 then
+        if v_slv_idx = - 1 then
           v_byte_array(byte_idx)(bit_idx) := 'Z'; -- Pads 'Z'
         else
           if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
@@ -7572,7 +7388,7 @@ package body methods_pkg is
   end function;
 
   -- Converts a t_byte_array (any direction) to a t_slv_array (same direction)
-  function convert_byte_array_to_slv_array(
+  impure function convert_byte_array_to_slv_array(
     constant byte_array      : t_byte_array;
     constant bytes_in_word   : natural;
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
@@ -7582,6 +7398,11 @@ package body methods_pkg is
     variable v_descending_array : t_slv_array(C_NUM_WORDS - 1 downto 0)((8 * bytes_in_word) - 1 downto 0);
     variable v_byte_idx         : integer := 0;
   begin
+    if byte_endianness = FIRST_BYTE_LEFT or byte_endianness = FIRST_BYTE_RIGHT then
+      deprecate(get_procedure_name_from_instance_name(byte_array'instance_name),
+        "byte_endianness 'FIRST_BYTE_LEFT' and 'FIRST_BYTE_RIGHT' have been deprecated. Use LOWER_BYTE_LEFT or LOWER_BYTE_RIGHT.");
+    end if;
+
     for slv_idx in 0 to C_NUM_WORDS - 1 loop
       if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
         for byte_in_word in bytes_in_word downto 1 loop
@@ -7606,7 +7427,7 @@ package body methods_pkg is
   end function;
 
   -- Converts a t_slv_array (any direction) to a t_byte_array (same direction)
-  function convert_slv_array_to_byte_array(
+  impure function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array is
@@ -7618,6 +7439,11 @@ package body methods_pkg is
     variable v_byte_idx            : integer := 0;
     variable v_offset              : natural := 0;
   begin
+    if byte_endianness = FIRST_BYTE_LEFT or byte_endianness = FIRST_BYTE_RIGHT then
+      deprecate(get_procedure_name_from_instance_name(slv_array'instance_name),
+        "byte_endianness 'FIRST_BYTE_LEFT' and 'FIRST_BYTE_RIGHT' have been deprecated. Use LOWER_BYTE_LEFT or LOWER_BYTE_RIGHT.");
+    end if;
+
     -- Use this offset in case the slv_array doesn't start at 0
     v_offset := slv_array'low;
 
@@ -7654,7 +7480,7 @@ package body methods_pkg is
     end if;
   end function;
 
-  function convert_slv_array_to_byte_array(
+  impure function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant ascending       : boolean           := false;
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
@@ -7666,10 +7492,12 @@ package body methods_pkg is
     variable v_ascending_vector  : boolean := false;
     variable v_byte_number       : integer := 0;
   begin
+    deprecate(get_procedure_name_from_instance_name(slv_array'instance_name), "Please call this function without the ascending parameter");
+
     -- The ascending parameter should match the array direction. We could also just remove the ascending
     -- parameter and use the t'ascending attribute.
     bitvis_assert((slv_array'ascending and ascending) or (not (slv_array'ascending) and not (ascending)), ERROR,
-    "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
+      "slv_array direction doesn't match ascending parameter", "methods_pkg.convert_slv_array_to_byte_array()");
 
     v_ascending_vector := slv_array(0)'ascending;
 
@@ -7711,34 +7539,34 @@ package body methods_pkg is
   function reverse_vector(
     constant value : std_logic_vector
   ) return std_logic_vector is
-    variable return_val : std_logic_vector(value'range);
+    variable v_return_val : std_logic_vector(value'range);
   begin
     for i in 0 to value'length - 1 loop
-      return_val(value'low + i) := value(value'high - i);
+      v_return_val(value'low + i) := value(value'high - i);
     end loop;
-    return return_val;
+    return v_return_val;
   end function;
 
   impure function reverse_vectors_in_array(
     constant value : t_slv_array
   ) return t_slv_array is
-    variable return_val : t_slv_array(value'range)(value(value'low)'range);
+    variable v_return_val : t_slv_array(value'range)(value(value'low)'range);
   begin
     for i in value'range loop
-      return_val(i) := reverse_vector(value(i));
+      v_return_val(i) := reverse_vector(value(i));
     end loop;
-    return return_val;
+    return v_return_val;
   end function;
 
   function log2(
     constant num : positive)
     return natural is
-    variable return_val : natural := 0;
+    variable v_return_val : natural := 0;
   begin
-    while (2 ** return_val < num) and (return_val < 31) loop
-      return_val := return_val + 1;
+    while (2 ** v_return_val < num) and (v_return_val < 31) loop
+      v_return_val := v_return_val + 1;
     end loop;
-    return return_val;
+    return v_return_val;
   end function;
 
   -- ============================================================================
@@ -7757,7 +7585,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   ) is
     constant C_NAME       : string := "await_change(" & value_type & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     constant C_START_TIME : time   := now;
@@ -7775,7 +7603,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "std_logic"
+    constant value_type   : string         := "sl"
   ) is
     constant C_NAME       : string := "await_change(" & value_type & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     constant C_START_TIME : time   := now;
@@ -7811,7 +7639,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "unsigned"
+    constant value_type   : string         := "u"
   ) is
     constant C_NAME       : string := "await_change(" & value_type & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     constant C_START_TIME : time   := now;
@@ -7830,7 +7658,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "signed"
+    constant value_type   : string         := "s"
   ) is
     constant C_NAME       : string := "await_change(" & value_type & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     constant C_START_TIME : time   := now;
@@ -7848,7 +7676,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "integer"
+    constant value_type   : string         := "int"
   ) is
     constant C_NAME       : string := "await_change(" & value_type & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     constant C_START_TIME : time   := now;
@@ -7884,7 +7712,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   ) is
   begin
     await_change(target, min_time, max_time, error, msg, scope, msg_id, msg_id_panel, value_type);
@@ -7898,7 +7726,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "std_logic"
+    constant value_type   : string         := "sl"
   ) is
   begin
     await_change(target, min_time, max_time, error, msg, scope, msg_id, msg_id_panel, value_type);
@@ -7926,7 +7754,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "unsigned"
+    constant value_type   : string         := "u"
   ) is
   begin
     await_change(target, min_time, max_time, error, msg, scope, msg_id, msg_id_panel, value_type);
@@ -7940,7 +7768,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "signed"
+    constant value_type   : string         := "s"
   ) is
   begin
     await_change(target, min_time, max_time, error, msg, scope, msg_id, msg_id_panel, value_type);
@@ -7954,7 +7782,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "integer"
+    constant value_type   : string         := "int"
   ) is
   begin
     await_change(target, min_time, max_time, error, msg, scope, msg_id, msg_id_panel, value_type);
@@ -7998,9 +7826,9 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE : string := "boolean";
+    constant C_VALUE_TYPE : string := "bool";
     constant C_START_TIME : time   := now;
-    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & ", " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     if (target /= exp) then
       wait until (target = exp) for max_time;
@@ -8020,9 +7848,9 @@ package body methods_pkg is
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE : string  := "std_logic";
+    constant C_VALUE_TYPE : string  := "sl";
     constant C_START_TIME : time    := now;
-    constant C_NAME       : string  := "await_value(" & C_VALUE_TYPE & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string  := "await_value(" & C_VALUE_TYPE & ", " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_success    : boolean := false;
   begin
     v_success := false;
@@ -8101,7 +7929,7 @@ package body methods_pkg is
     constant C_VALUE_TYPE : string := "slv";
     constant C_START_TIME : time   := now;
     constant C_EXP_STR    : string := to_string(exp, radix, format, INCL_RADIX);
-    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & " " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & ", " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_proc_call  : line;
   begin
     if caller_name'length = 0 then
@@ -8110,7 +7938,6 @@ package body methods_pkg is
       write(v_proc_call, caller_name);
     end if;
 
-    -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
       deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
     end if;
@@ -8140,7 +7967,7 @@ package body methods_pkg is
       end if;
 
     else
-      alert(alert_level, v_proc_call.all & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+      alert(alert_level, v_proc_call.all & " => Failed. Widths did not match." & add_msg_delimiter(msg), scope);
       success := false;
     end if;
     DEALLOCATE(v_proc_call);
@@ -8195,12 +8022,11 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE : string := "unsigned";
+    constant C_VALUE_TYPE : string := "u";
     constant C_START_TIME : time   := now;
     constant C_EXP_STR    : string := to_string(exp, radix, format, INCL_RADIX);
-    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & " " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & ", " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
-    -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
       deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
     end if;
@@ -8211,7 +8037,7 @@ package body methods_pkg is
       end if;
       check_time_window(matching_values(target, exp), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
     else
-      alert(alert_level, C_NAME & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_NAME & " => Failed. Widths did not match." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -8228,12 +8054,11 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE : string := "signed";
+    constant C_VALUE_TYPE : string := "s";
     constant C_START_TIME : time   := now;
     constant C_EXP_STR    : string := to_string(exp, radix, format, INCL_RADIX);
-    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & " " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & ", " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
-    -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
       deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
     end if;
@@ -8244,7 +8069,7 @@ package body methods_pkg is
       end if;
       check_time_window(matching_values(target, exp), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
     else
-      alert(alert_level, C_NAME & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_NAME & " => Failed. Widths did not match." & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -8259,9 +8084,9 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE : string := "integer";
+    constant C_VALUE_TYPE : string := "int";
     constant C_START_TIME : time   := now;
-    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & ", " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     if (target /= exp) then
       wait until (target = exp) for max_time;
@@ -8282,7 +8107,7 @@ package body methods_pkg is
   ) is
     constant C_VALUE_TYPE : string := "real";
     constant C_START_TIME : time   := now;
-    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME       : string := "await_value(" & C_VALUE_TYPE & ", " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     if (target /= exp) then
       wait until (target = exp) for max_time;
@@ -8429,7 +8254,7 @@ package body methods_pkg is
 
   -- Await Change to Value
   -- Wait until target to change (regardless of value) and then wait until it changes to the expected value
-  -- Unlike await_value, this procedure is a non fall-through procedure and requires the signal to change before it can check the value  
+  -- Unlike await_value, this procedure is a non fall-through procedure and requires the signal to change before it can check the value
 
   -- main std_logic version (cannot be sendt into std_logic_vector bc of signal)
   procedure await_change_to_value(
@@ -8443,10 +8268,10 @@ package body methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type       : string         := "std_logic"
+    constant value_type       : string         := "sl"
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
@@ -8533,16 +8358,18 @@ package body methods_pkg is
     constant scope            : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type       : string         := "std_logic_vector"
+    constant value_type       : string         := "slv";
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant prefix           : t_radix_prefix := INCL_RADIX
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value, radix, prefix => prefix) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
   begin
     while (now - C_START_TIME) < min_time loop
-      wait on target for min_time;
+      wait on target for (min_time - (now - C_START_TIME));
       v_match             := check_value(target, exp_value, match_strictness, NO_ALERT, "check_value within: " & C_NAME, scope);
       v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
       exit when (target'event and (target = exp_value));
@@ -8613,8 +8440,8 @@ package body methods_pkg is
 
   -- main boolean version
   procedure await_change_to_value(
-    signal target      : boolean;
-    constant exp_value : boolean;
+    signal target         : boolean;
+    constant exp_value    : boolean;
     -- match_strictness does not apply to boolean (and will result in an error if used on boolean)
     constant min_time     : time;
     constant max_time     : time;
@@ -8623,10 +8450,10 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "boolean"
+    constant value_type   : string         := "bool"
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
@@ -8679,12 +8506,12 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "unsigned";
+    constant value_type   : string         := "u";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value, radix, prefix => prefix) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value, radix, prefix => prefix) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
@@ -8739,12 +8566,12 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "signed";
+    constant value_type   : string         := "s";
     constant radix        : t_radix        := HEX_BIN_IF_INVALID;
     constant prefix       : t_radix_prefix := INCL_RADIX
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value, radix, prefix => prefix) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value, radix, prefix => prefix) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
@@ -8799,12 +8626,12 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant value_type   : string         := "integer";
+    constant value_type   : string         := "int";
     constant radix        : t_radix        := DEC;
     constant prefix       : t_radix_prefix := EXCL_RADIX
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value, radix, prefix) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
@@ -8863,7 +8690,7 @@ package body methods_pkg is
     constant value_type   : string         := "real"
   ) is
     constant C_START_TIME        : time    := now;
-    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & ", " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_no_alert_min_time : boolean := true;
     variable v_ch_to_exp_value   : boolean := false;
     variable v_match             : boolean := false;
@@ -8937,7 +8764,7 @@ package body methods_pkg is
       -- so we can subtract this in the FROM_NOW version.
       stable_req_from_now := stable_req - target_last_event;
     else
-      alert(tb_error, caller_name & " => Unknown stable_req_from. " & add_msg_delimiter(msg), scope);
+      alert(tb_error, caller_name & " => Unknown stable_req_from." & add_msg_delimiter(msg), scope);
       stable_req_success := false;
     end if;
 
@@ -8947,19 +8774,19 @@ package body methods_pkg is
     elsif timeout_from = FROM_LAST_EVENT then
       timeout_from_await_stable_entry := timeout - target_last_event;
     else
-      alert(tb_error, caller_name & " => Unknown timeout_from. " & add_msg_delimiter(msg), scope);
+      alert(tb_error, caller_name & " => Unknown timeout_from." & add_msg_delimiter(msg), scope);
       stable_req_success := false;
     end if;
 
     -- Check if requirement is already OK
     if (stable_req_from_now <= 0 ns) then
-      log(msg_id, caller_name & " => OK. Condition occurred immediately. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK. Condition occurred immediately." & add_msg_delimiter(msg), scope, msg_id_panel);
       stable_req_met := true;
     end if;
 
     -- Check if it is impossible to achieve stable_req before timeout
     if (stable_req_from_now > timeout_from_await_stable_entry) then
-      alert(alert_level, caller_name & " => Failed immediately: Stable for stable_req = " & to_string(stable_req_from_now, ns) & " is not possible before timeout = " & to_string(timeout_from_await_stable_entry, ns) & ". " & add_msg_delimiter(msg), scope);
+      alert(alert_level, caller_name & " => Failed immediately: Stable for stable_req = " & to_string(stable_req_from_now, ns) & " is not possible before timeout = " & to_string(timeout_from_await_stable_entry, ns) & "." & add_msg_delimiter(msg), scope);
       stable_req_met     := true;
       stable_req_success := false;
     end if;
@@ -9012,7 +8839,7 @@ package body methods_pkg is
 
     -- Check if target has been stable for stable_req
     if (time_since_last_event >= stable_req_from_now) then
-      log(msg_id, caller_name & " => OK. Condition occurred after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK. Condition occurred after " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
       stable_req_met     := true;
       stable_req_success := true;
     end if;
@@ -9027,7 +8854,7 @@ package body methods_pkg is
 
       -- Check if it is impossible to achieve stable_req before timeout
       if (stable_req_from_now > v_time_left) then
-        alert(alert_level, caller_name & " => Failed. After " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ", stable for stable_req = " & to_string(stable_req_from_now, ns) & " is not possible before timeout = " & to_string(timeout_from_await_stable_entry, ns) & "(time since last event = " & to_string(time_since_last_event, ns) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, caller_name & " => Failed. After " & to_string(v_elapsed_time, C_LOG_TIME_BASE) & ", stable for stable_req = " & to_string(stable_req_from_now, ns) & " is not possible before timeout = " & to_string(timeout_from_await_stable_entry, ns) & "(time since last event = " & to_string(time_since_last_event, ns) & "." & add_msg_delimiter(msg), scope);
         stable_req_met     := true;
         stable_req_success := false;
       end if;
@@ -9075,7 +8902,7 @@ package body methods_pkg is
     constant msg_id          : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE              : string := "boolean";
+    constant C_VALUE_TYPE              : string := "bool";
     constant C_START_TIME              : time   := now;
     constant C_NAME                    : string := "await_stable(" & C_VALUE_TYPE & ", " & to_string(stable_req, ns) & ", " & to_string(timeout, ns) & ")";
     variable v_stable_req_from_now     : time; -- Stable_req relative to now.
@@ -9137,7 +8964,7 @@ package body methods_pkg is
     constant msg_id          : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE              : string := "std_logic";
+    constant C_VALUE_TYPE              : string := "sl";
     constant C_START_TIME              : time   := now;
     constant C_NAME                    : string := "await_stable(" & C_VALUE_TYPE & ", " & to_string(stable_req, ns) & ", " & to_string(timeout, ns) & ")";
     variable v_stable_req_from_now     : time; -- Stable_req relative to now.
@@ -9199,7 +9026,7 @@ package body methods_pkg is
     constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel;
     constant caller_name     : in string         := ""
   ) is
-    constant C_VALUE_TYPE              : string := "std_logic_vector";
+    constant C_VALUE_TYPE              : string := "slv";
     constant C_START_TIME              : time   := now;
     constant C_NAME                    : string := "await_stable(" & C_VALUE_TYPE & ", " & to_string(stable_req, ns) & ", " & to_string(timeout, ns) & ")";
     variable v_stable_req_from_now     : time; -- Stable_req relative to now.
@@ -9285,7 +9112,7 @@ package body methods_pkg is
     constant msg_id          : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE              : string := "unsigned";
+    constant C_VALUE_TYPE              : string := "u";
     constant C_START_TIME              : time   := now;
     constant C_NAME                    : string := "await_stable(" & C_VALUE_TYPE & ", " & to_string(stable_req, ns) & ", " & to_string(timeout, ns) & ")";
     variable v_stable_req_from_now     : time; -- Stable_req relative to now.
@@ -9345,7 +9172,7 @@ package body methods_pkg is
     constant msg_id          : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE              : string := "signed";
+    constant C_VALUE_TYPE              : string := "s";
     constant C_START_TIME              : time   := now;
     constant C_NAME                    : string := "await_stable(" & C_VALUE_TYPE & ", " & to_string(stable_req, ns) & ", " & to_string(timeout, ns) & ")";
     variable v_stable_req_from_now     : time; -- Stable_req relative to now.
@@ -9405,7 +9232,7 @@ package body methods_pkg is
     constant msg_id          : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant C_VALUE_TYPE              : string := "integer";
+    constant C_VALUE_TYPE              : string := "int";
     constant C_START_TIME              : time   := now;
     constant C_NAME                    : string := "await_stable(" & C_VALUE_TYPE & ", " & to_string(stable_req, ns) & ", " & to_string(timeout, ns) & ")";
     variable v_stable_req_from_now     : time; -- Stable_req relative to now.
@@ -9666,6 +9493,7 @@ package body methods_pkg is
         elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
           report_alert_counters(FINAL);
         end if;
+        deallocate(v_line);
         return true;
       end if;
     else
@@ -9714,15 +9542,16 @@ package body methods_pkg is
     constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
     constant ext_proc_call        : string                  := ""
   ) is
-    constant C_NAME         : string := "await_sb_completion()";
+    constant C_NAME         : string := "await_sb_completion";
     variable v_elapsed_time : time   := 0 ns;
     variable v_line         : line;
     variable v_proc_call    : line;
+    variable v_timed_out    : boolean := false;
   begin
     -- Called directly from sequencer
     if ext_proc_call = "" then
       write(v_proc_call, C_NAME);
-      -- Called from another procedure
+    -- Called from another procedure
     else
       write(v_proc_call, ext_proc_call);
     end if;
@@ -9731,12 +9560,16 @@ package body methods_pkg is
     check_value(timeout > 0 ns, TB_FAILURE, "timeout must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(sb_poll_time > 0 ns, TB_FAILURE, "sb_poll_time must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     if timeout <= 0 ns or sb_poll_time <= 0 ns then
+      deallocate(v_proc_call);
       return;
     end if;
 
     -- Wait until the scoreboards are empty or a timeout occurs
     loop
-      if check_sb_completion(TB_ERROR, ext_proc_call => v_proc_call.all) or v_elapsed_time >= timeout then
+      if check_sb_completion(TB_ERROR, ext_proc_call => v_proc_call.all) then
+        exit;
+      elsif v_elapsed_time >= timeout then
+        v_timed_out := true;
         exit;
       else
         wait for sb_poll_time;
@@ -9745,18 +9578,18 @@ package body methods_pkg is
     end loop;
 
     -- Print success/fail log message
-    if v_elapsed_time >= timeout then
+    if v_timed_out then
       for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
         if protected_sb_activity_register.is_enabled(idx) and protected_sb_activity_register.get_sb_element_cnt(idx) > 0 then
           write(v_line, "  " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) & LF);
         end if;
       end loop;
-      alert(alert_level, v_proc_call.all & " => Failed. The following UVVM scoreboard(s) still have pending data after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)) & ":\n" & v_line.all, scope);
+      alert(alert_level, v_proc_call.all & "() => Failed. The following UVVM scoreboard(s) still have pending data after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)) & ":\n" & v_line.all, scope);
     else
       if protected_sb_activity_register.get_num_enabled_sb(void) = 0 then
-        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & " => OK. There are no UVVM scoreboards enabled.", scope, msg_id_panel);
+        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & "() => OK. There are no UVVM scoreboards enabled.", scope, msg_id_panel);
       else
-        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & " => OK. All UVVM scoreboards are empty. Condition occurred after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)), scope, msg_id_panel);
+        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & "() => OK. All UVVM scoreboards are empty. Condition occurred after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)), scope, msg_id_panel);
       end if;
 
       -- Print reports
@@ -9792,7 +9625,7 @@ package body methods_pkg is
   ) is
     constant C_INIT_VALUE : std_logic := target;
   begin
-    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & "." & add_msg_delimiter(msg), scope, ID_NEVER);
     target <= pulse_value; -- Generate pulse
 
     if (blocking_mode = BLOCKING) then
@@ -9802,7 +9635,7 @@ package body methods_pkg is
       check_value(pulse_duration /= 0 ns, TB_ERROR, "gen_pulse: The combination of NON_BLOCKING mode and 0 ns pulse duration results in the pulse being ignored.", scope, ID_NEVER);
       target <= transport C_INIT_VALUE after pulse_duration;
     end if;
-    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & "." & add_msg_delimiter(msg), scope);
     wait for 0 ns; -- wait a delta cycle for signal to update
   end procedure;
 
@@ -9865,7 +9698,7 @@ package body methods_pkg is
     constant C_INIT_VALUE : std_logic := target;
   begin
     wait until falling_edge(clock_signal);
-    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & "." & add_msg_delimiter(msg), scope, ID_NEVER);
 
     target <= pulse_value; -- Generate pulse
     if (num_periods > 0) then
@@ -9875,7 +9708,7 @@ package body methods_pkg is
     end if;
 
     target <= C_INIT_VALUE;
-    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(num_periods) & " clk cycles." & add_msg_delimiter(msg), scope);
     wait for 0 ns; -- wait a delta cycle for signal to update
   end procedure;
 
@@ -9906,7 +9739,7 @@ package body methods_pkg is
   ) is
     constant C_INIT_VALUE : boolean := target;
   begin
-    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & "." & add_msg_delimiter(msg), scope, ID_NEVER);
 
     target <= pulse_value; -- Generate pulse
     if (blocking_mode = BLOCKING) then
@@ -9916,7 +9749,7 @@ package body methods_pkg is
       check_value(pulse_duration /= 0 ns, TB_ERROR, "gen_pulse: The combination of NON_BLOCKING mode and 0 ns pulse duration results in the pulse being ignored.", scope, ID_NEVER);
       target <= transport C_INIT_VALUE after pulse_duration;
     end if;
-    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & "." & add_msg_delimiter(msg), scope);
     wait for 0 ns; -- wait a delta cycle for signal to update
   end procedure;
 
@@ -9978,7 +9811,7 @@ package body methods_pkg is
     constant C_INIT_VALUE : boolean := target;
   begin
     wait until falling_edge(clock_signal);
-    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & "." & add_msg_delimiter(msg), scope, ID_NEVER);
 
     target <= pulse_value; -- Generate pulse
     if (num_periods > 0) then
@@ -9988,7 +9821,7 @@ package body methods_pkg is
     end if;
 
     target <= C_INIT_VALUE;
-    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(num_periods) & " clk cycles." & add_msg_delimiter(msg), scope);
     wait for 0 ns; -- wait a delta cycle for signal to update
   end procedure;
 
@@ -10027,7 +9860,7 @@ package body methods_pkg is
     variable v_target     : std_logic_vector(target'length - 1 downto 0)      := target;
     variable v_pulse      : std_logic_vector(pulse_value'length - 1 downto 0) := pulse_value;
   begin
-    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & "." & add_msg_delimiter(msg), scope, ID_NEVER);
 
     for i in 0 to (v_target'length - 1) loop
       if v_pulse(i) /= '-' then
@@ -10043,7 +9876,7 @@ package body methods_pkg is
       check_value(pulse_duration /= 0 ns, TB_ERROR, "gen_pulse: The combination of NON_BLOCKING mode and 0 ns pulse duration results in the pulse being ignored.", scope, ID_NEVER);
       target <= transport C_INIT_VALUE after pulse_duration;
     end if;
-    log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
+    log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, KEEP_LEADING_0, INCL_RADIX) & " for " & to_string(pulse_duration) & "." & add_msg_delimiter(msg), scope);
     wait for 0 ns; -- wait a delta cycle for signal to update
   end procedure;
 
@@ -10110,7 +9943,7 @@ package body methods_pkg is
     variable v_target     : std_logic_vector(target'length - 1 downto 0)      := target;
   begin
     wait until falling_edge(clock_signal);
-    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & "." & add_msg_delimiter(msg), scope, ID_NEVER);
 
     for i in 0 to (v_target'length - 1) loop
       if C_PULSE(i) /= '-' then
@@ -10126,7 +9959,7 @@ package body methods_pkg is
     end if;
 
     target <= C_INIT_VALUE;
-    log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+    log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, KEEP_LEADING_0, INCL_RADIX) & " for " & to_string(num_periods) & " clk cycles." & add_msg_delimiter(msg), scope);
     wait for 0 ns; -- wait a delta cycle for signal to update
   end procedure;
 
@@ -10569,16 +10402,16 @@ package body methods_pkg is
     -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
     if (v_is_array_full = true) then
-      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
+      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg." & add_msg_delimiter(msg), scope);
     else -- Block flag
       if (v_is_new = true) then
-        log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added." & add_msg_delimiter(msg), scope);
       else
         -- Check if the flag to be blocked already is blocked
         if (shared_flag_array(v_idx).is_blocked = true) then
-          alert(already_blocked_severity, "The flag " & flag_name & " was already blocked. " & add_msg_delimiter(msg), scope);
+          alert(already_blocked_severity, "The flag " & flag_name & " was already blocked." & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, flag_name & ": Blocking flag. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Blocking flag." & add_msg_delimiter(msg), scope);
         end if;
       end if;
       shared_flag_array(v_idx).is_blocked := true;
@@ -10598,16 +10431,16 @@ package body methods_pkg is
     -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
     if (v_is_array_full = true) then
-      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
+      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg." & add_msg_delimiter(msg), scope);
     else -- Unblock flag
       if (v_is_new = true) then
-        log(ID_BLOCKING, flag_name & ": New unblocked synchronization flag added. " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": New unblocked synchronization flag added." & add_msg_delimiter(msg), scope);
       else
-        log(ID_BLOCKING, flag_name & ": Unblocking flag. " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": Unblocking flag." & add_msg_delimiter(msg), scope);
       end if;
       shared_flag_array(v_idx).is_blocked := false;
       -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
-      gen_pulse(trigger, 0 ns, "pulsing global_trigger. " & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
+      gen_pulse(trigger, 0 ns, "pulsing global_trigger." & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
     end if;
   end procedure;
 
@@ -10629,7 +10462,7 @@ package body methods_pkg is
     -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
     if (v_is_array_full = true) then
-      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
+      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg." & add_msg_delimiter(msg), scope);
     else -- Waits only if the flag is found and is blocked. Will wait when a new flag is added, as it is default blocked.
       v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
       if (v_flag_is_blocked = false) then
@@ -10637,15 +10470,15 @@ package body methods_pkg is
           -- wait for all sequencer that are waiting for that flag before reseting it
           wait for 0 ns;
           shared_flag_array(v_idx).is_blocked := true;
-          log(ID_BLOCKING, flag_name & ": Was already unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Was already unblocked. Returned to blocked." & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, flag_name & ": Was already unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Was already unblocked." & add_msg_delimiter(msg), scope);
         end if;
       else -- Flag is blocked (or a new flag was added), starts waiting. log before while loop. Otherwise the message will be printed everytime the global_trigger was triggered.
         if (v_is_new = true) then
-          log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. Waiting to be unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. Waiting to be unblocked." & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, flag_name & ": Waiting to be unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Waiting to be unblocked." & add_msg_delimiter(msg), scope);
         end if;
       end if;
 
@@ -10653,7 +10486,7 @@ package body methods_pkg is
       while v_flag_is_blocked = true loop
         if (timeout /= 0 ns) then
           wait until rising_edge(global_trigger) for ((C_START_TIME + timeout) - now);
-          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out. " & add_msg_delimiter(msg), scope, ID_NEVER);
+          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out." & add_msg_delimiter(msg), scope, ID_NEVER);
           if global_trigger /= '1' then
             exit;
           end if;
@@ -10687,7 +10520,7 @@ package body methods_pkg is
   begin
     -- set barrier signal to 0
     barrier_signal <= '0';
-    log(ID_BLOCKING, "Waiting for barrier. " & add_msg_delimiter(msg), scope);
+    log(ID_BLOCKING, "Waiting for barrier." & add_msg_delimiter(msg), scope);
     -- wait until all sequencer using that barrier_signal wait for it
     if timeout = 0 ns then
       wait until barrier_signal = '0';
@@ -10696,9 +10529,9 @@ package body methods_pkg is
     end if;
     if barrier_signal /= '0' then
       -- timeout
-      alert(timeout_severity, "Timeout while waiting for barrier signal. " & add_msg_delimiter(msg), scope);
+      alert(timeout_severity, "Timeout while waiting for barrier signal." & add_msg_delimiter(msg), scope);
     else
-      log(ID_BLOCKING, "Barrier received. " & add_msg_delimiter(msg), scope);
+      log(ID_BLOCKING, "Barrier received." & add_msg_delimiter(msg), scope);
     end if;
     barrier_signal <= '1';
   end procedure;
@@ -10747,7 +10580,7 @@ package body methods_pkg is
     -- without it, they wouldn't print the first log message.
     wait for 0 ns;
 
-    log(ID_WATCHDOG, "Starting general watchdog: " & to_string(timeout) & ". " & msg);
+    log(ID_WATCHDOG, "Starting general watchdog: " & to_string(timeout) & "." & LF & msg);
     v_prev_timeout := 0 ns;
     v_timeout      := timeout;
 
@@ -10756,23 +10589,23 @@ package body methods_pkg is
       -- Watchdog was extended
       if watchdog_ctrl.extend then
         if watchdog_ctrl.extension = 0 ns then
-          log(ID_WATCHDOG, "Extending general watchdog by default value: " & to_string(timeout) & ". " & msg);
+          log(ID_WATCHDOG, "Extending general watchdog by default value: " & to_string(timeout) & "." & LF & msg);
           v_timeout := (v_prev_timeout + v_timeout - now) + timeout;
         else
-          log(ID_WATCHDOG, "Extending general watchdog by " & to_string(watchdog_ctrl.extension) & ". " & msg);
+          log(ID_WATCHDOG, "Extending general watchdog by " & to_string(watchdog_ctrl.extension) & "." & LF & msg);
           v_timeout := (v_prev_timeout + v_timeout - now) + watchdog_ctrl.extension;
         end if;
         v_prev_timeout := now;
-        -- Watchdog was reinitialized
+      -- Watchdog was reinitialized
       elsif watchdog_ctrl.restart then
-        log(ID_WATCHDOG, "Reinitializing general watchdog: " & to_string(watchdog_ctrl.new_timeout) & ". " & msg);
+        log(ID_WATCHDOG, "Reinitializing general watchdog: " & to_string(watchdog_ctrl.new_timeout) & "." & LF & msg);
         v_timeout      := watchdog_ctrl.new_timeout;
         v_prev_timeout := now;
       else
         -- Watchdog was terminated
         if watchdog_ctrl.terminate then
           log(ID_WATCHDOG, "Terminating general watchdog. " & msg);
-          -- Watchdog has timed out
+        -- Watchdog has timed out
         else
           alert(alert_level, "General watchdog timer ended! " & msg);
         end if;
@@ -10859,4 +10692,4 @@ package body methods_pkg is
     return v_crc_out;
   end function;
 
-end package body;
+end package body methods_pkg;

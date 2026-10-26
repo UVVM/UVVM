@@ -11,7 +11,10 @@ Functional Parameters
 | Name                    | Type                         | Description                                             |
 +=========================+==============================+=========================================================+
 | instance                | integer                      | One generic queue variable can have multiple independent|
-|                         |                              | queues referred to as instances                         |
+|                         |                              | queues referred to as instances.                        |
+|                         |                              |                                                         |
+|                         |                              | The maximum number of instances is defined by           |
+|                         |                              | C_MAX_QUEUE_INSTANCE_NUM in adaptations_pkg.            |
 +-------------------------+------------------------------+---------------------------------------------------------+
 | identifier_option       | :ref:`t_identifier_option`   | Defines how to identify the queue element               |
 +-------------------------+------------------------------+---------------------------------------------------------+
@@ -38,13 +41,8 @@ Functional Parameters
 | alert_level             | :ref:`t_alert_level`         | The alert level is raised when the number of elements   |
 |                         |                              | in the queue exceeds queue_count_alert_level            |
 +-------------------------+------------------------------+---------------------------------------------------------+
-| void                    | t_void                       | Unused, empty input parameter                           |
+| void                    | :ref:`t_void`                | Unused, empty input parameter                           |
 +-------------------------+------------------------------+---------------------------------------------------------+
-
-.. note::
-
-    Default queue size is 2048 bits and the size can be adjusted with the C_NUMBER_OF_BITS_IN_DATA_BUFFER located in the 
-    adaptations package.
 
 **********************************************************************************************************************************
 Generics
@@ -128,7 +126,7 @@ get()
 ----------------------------------------------------------------------------------------------------------------------------------
 .. warning::
 
-   This function is deprecated. Use fetch.
+   This function is deprecated and will be removed in v3. Use fetch.
     
 .. code-block::
 

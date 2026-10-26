@@ -24,12 +24,13 @@ UVVM consists currently of the following elements:
    uvvm_intro.rst
    uvvm_getting_started.rst
    utility_library.rst
+   data_structures.rst
    rand_pkg_overview.rst
    func_cov_pkg_overview.rst
    optimized_rand.rst
+   uvvm_assertions.rst
    vvc_framework.rst
-   fifo_collection.rst
-   generic_queue.rst
+   vip_apb.rst
    vip_avalon_mm.rst
    vip_avalon_st.rst
    vip_axi.rst
@@ -50,3 +51,4 @@ UVVM consists currently of the following elements:
    vip_uart.rst
    vip_wishbone.rst
    tool_compatibility.rst
+   faq.rst

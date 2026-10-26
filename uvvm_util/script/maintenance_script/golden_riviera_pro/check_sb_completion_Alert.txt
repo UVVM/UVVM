@@ -1,0 +1,58 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:             0 ns   DEMO SB 4,1
+UVVM:                    check_received() => MISMATCH, expected: x"55"; received: x"AA". 'checking received'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    check_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data:
+UVVM:                      DEMO SB 8,1
+UVVM:                      DEMO SB 7,2
+UVVM:                      DEMO SB 7,3
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

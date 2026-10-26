@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enhanced Randomization &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -20,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="t_rand (protected)" href="rand_pkg_t_rand.html" />
-    <link rel="prev" title="t_alert_level" href="types_pkg.html" /> 
+    <link rel="prev" title="UVVM Association List" href="association_list.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structures.html">Data Structures</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Enhanced Randomization</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#single-method-approach">Single-method approach</a><ul>
@@ -71,6 +73,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-report">Configuration report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clearing-configuration">Clearing configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#questa-one-extended-features">Questa One extended features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#additional-constraints-for-multi-method-approach">Additional constraints for multi-method approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linking-of-variables">Linking of variables</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-info">Additional info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rand-pkg">rand_pkg</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="rand_pkg_t_rand.html">t_rand (protected)</a></li>
@@ -81,9 +88,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -104,6 +111,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
         </div>
@@ -139,7 +147,7 @@
 <p>For a more balanced randomization between small and large ranges/sets, the <a class="reference internal" href="optimized_rand.html#optimized-randomization"><span class="std std-ref">Optimized Randomization</span></a> under <em>uvvm_util/src/func_cov_pkg.vhd</em>
 may be used.</p>
 <p>To generate a random value using Enhanced Randomization it is necessary to import the utility library, create a variable with the
-protected type <em>t_rand</em> and call either the <code class="docutils literal notranslate"><span class="pre">rand()</span></code> or the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function from the variable depending on which approach
+protected type <strong>t_rand</strong> and call either the <code class="docutils literal notranslate"><span class="pre">rand()</span></code> or the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function from the variable depending on which approach
 is being used:</p>
 <p><strong>1. Single-method approach:</strong> The <code class="docutils literal notranslate"><span class="pre">rand()</span></code> function is constrained by the parameters it receives plus additional configuration
 values. This approach is useful for simple constraints or constraints which are not repeated constantly throughout the code.</p>
@@ -275,7 +283,7 @@ is not recommended to mix them.</p>
 <section id="id1">
 <h3>Constraints<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>By using the following procedures, different combinations of constraints can be added for the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function. Note that when
-reusing the same <em>my_rand</em> variable, the <code class="docutils literal notranslate"><span class="pre">clear_constraints()</span></code> procedure must be called to remove any previous constraints.</p>
+reusing the same <code class="docutils literal notranslate"><span class="pre">my_rand</span></code> variable, the <code class="docutils literal notranslate"><span class="pre">clear_constraints()</span></code> procedure must be called to remove any previous constraints.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Single range</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span>
 <span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:99]</span>
@@ -369,7 +377,7 @@ generated. The procedure <code class="docutils literal notranslate"><span class=
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#randm-slv"><span class="std std-ref">std_logic_vector</span></a></p></li>
 </ul>
 </div></blockquote>
-<p>For <em>std_logic</em> and <em>boolean</em> types use the <code class="docutils literal notranslate"><span class="pre">rand(VOID)</span></code> function, since they do not require any constraints.</p>
+<p>For <strong>std_logic</strong> and <strong>boolean</strong> types use the <code class="docutils literal notranslate"><span class="pre">rand(VOID)</span></code> function, since they do not require any constraints.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
@@ -514,7 +522,8 @@ will be used instead when the range of values is greater than C_RAND_CYCLIC_LIST
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>When using the dynamic queue implementation, the simulation might slow down after a few thousand iterations due to the
-parsing of the growing queue.</p>
+parsing of the growing queue. This warning can be configured by C_RAND_CYCLIC_QUEUE_MAX_ALERT and
+C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE in adaptations_pkg.</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -545,7 +554,7 @@ of values would be rarely generated due to the large number of values within a r
 <ul class="simple">
 <li><p>The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned,
 signed and std_logic_vector lengths bigger than 32 bits are not supported however.</p></li>
-<li><p>The types <em>time</em> and <em>time_vector</em> are not supported, use instead <em>integer</em> and multiply by the time unit.</p></li>
+<li><p>The types <strong>time</strong> and <strong>time_vector</strong> are not supported, use instead <strong>integer</strong> and multiply by the time unit.</p></li>
 <li><p>Only single range (min/max) constraints are supported, i.e. no multiple ranges or set of values are supported.</p></li>
 <li><p>Cannot be combined with CYCLIC or UNIQUE configurations.</p></li>
 <li><p>Cannot be combined with weighted randomization methods.</p></li>
@@ -746,6 +755,60 @@ The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined i
 <h2>Clearing configuration<a class="headerlink" href="#clearing-configuration" title="Link to this heading"></a></h2>
 <p>To clear the complete configuration in the random generator use the <code class="docutils literal notranslate"><span class="pre">clear_config()</span></code> procedure.</p>
 </section>
+<section id="questa-one-extended-features">
+<span id="questa-rand"></span><h2>Questa One extended features<a class="headerlink" href="#questa-one-extended-features" title="Link to this heading"></a></h2>
+<p>Questa One v. 2026.1 and newer offers support for some extended functionality in UVVM Randomization.</p>
+<p>See <a class="reference internal" href="uvvm_getting_started.html#questa-enabling"><span class="std std-ref">Getting Started - Questa One Extended Features</span></a> for information about how to enable the extended functionality.</p>
+<section id="additional-constraints-for-multi-method-approach">
+<h3>Additional constraints for multi-method approach<a class="headerlink" href="#additional-constraints-for-multi-method-approach" title="Link to this heading"></a></h3>
+<p>The Questa One extended features adds support for a set of additional constraint methods for UVVM Enhanced Randomization. See
+<a class="reference internal" href="rand_pkg_t_rand.html#questa-rand-methods"><span class="std std-ref">Questa One randomization methods</span></a> for description of these methods.</p>
+</section>
+<section id="linking-of-variables">
+<h3>Linking of variables<a class="headerlink" href="#linking-of-variables" title="Link to this heading"></a></h3>
+<p>Linking of variables allows for the definition of a relationship between two randomized variables. For instance, a link constrain
+between randomized variables <em>v1</em> and <em>v2</em> can be set so that the value of <em>v1</em> is always greater than the value of <em>v2</em>.</p>
+<p>The linking relationship is added to the constraint set of one of the randomized variables. When this variable is randomized through a
+call to randm(), a randomized value for the other (linked) variable is automatically generated at the same time. This linked value is
+stored in the randomization (<em>t_rand</em>) object of the linked variable, and can be fetched using the get_value() method.</p>
+<p>Say that we want to generate two randomized integers, v_integer_v1 and v_integer_v2, and we always want v_integer_v1 to be larger than
+v_integer_v2. This is done by first defining a t_rand object for each of the randomized integers.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_rand_v1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_rand</span><span class="p">;</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_rand_v2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_rand</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Optionally, we can apply other constraints, e.g. range constraints, to each of these t_rand objects:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">v_rand_v1</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Constrain v1 to range 0-10</span>
+<span class="n">v_rand_v2</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w">  </span><span class="c1">-- Constrain v2 to range 0-5</span>
+</pre></div>
+</div>
+<p>Now, we want to define a link between the two variables, saying that <em>v1 &gt; v2</em>. This linking needs to be done through a reference
+handle to one of the t_rand objects. Through this handle, other t_rand objects can trigger the genereation of a linked randomized value
+inside the referenced object. We define a randomization handle for v_rand_v2, and use this handle to add a relationship constraint to
+v_rand_v1.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">v_handle_v2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">v_rand_v2</span><span class="p">.</span><span class="n">create_rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Create randomization handle for v_rand_v2.</span>
+<span class="n">v_rand_v1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">v_handle_v2</span><span class="p">);</span><span class="w">            </span><span class="c1">-- Creates relational link to v_rand_v2 in constraint set of v_rand_v1</span>
+</pre></div>
+</div>
+<p>Now that a link to v2 has been added in v_rand_v1, calling v_rand_v1.randm() will result in the generation of two randomized values,
+v1 and v2. These values satisfy the condition v1 &gt; v2, in addition to meeting the individual constraints defined in v_rand_v1 and
+v_rand_v2, respectively. Value v1 is returned by the v_rand_v1.randm() call. Subsequently calling v_rand_v2.get_value() will return
+value v2.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Full example: v1 &gt; v2</span>
+<span class="c1">-- Generates two random variables v1 and v2, where the value of v1 is always greater than the value of v2</span>
+<span class="c1">-- my_rand_v1 and my_rand_v2 are randomization objects of type t_rand.</span>
+<span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">my_rand_v1</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Constrain v1 to range 0-10</span>
+<span class="n">my_rand_v2</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w">  </span><span class="c1">-- constrain v2 to range 0-5</span>
+<span class="n">v_link_handle_v2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">v_rand_v2</span><span class="p">.</span><span class="n">create_rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Create randomization handle to v_rand_v2</span>
+<span class="n">v_rand_v1</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">v_link_handle_v2</span><span class="p">);</span><span class="w">  </span><span class="c1">-- Add v1 &gt; v2 as link constraint to v_rand_v1</span>
+<span class="n">v_integer_v1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">v_rand_v1</span><span class="p">.</span><span class="n">randm</span><span class="p">();</span><span class="w">     </span><span class="c1">-- Get value v1</span>
+<span class="n">v_integer_v2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">v_rand_v2</span><span class="p">.</span><span class="n">get_value</span><span class="p">();</span><span class="w"> </span><span class="c1">-- Get value v2</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="additional-info">
 <h2>Additional info<a class="headerlink" href="#additional-info" title="Link to this heading"></a></h2>
 <p>Log messages within the procedures and functions in the <em>rand_pkg</em> use the following message IDs (disabled by default):</p>
@@ -764,7 +827,7 @@ functionality in SystemVerilog and OSVVM.</p>
 </section>
 <section id="rand-pkg">
 <span id="id3"></span><h2>rand_pkg<a class="headerlink" href="#rand-pkg" title="Link to this heading"></a></h2>
-<p>The following links contain information regarding the API of the protected type <em>t_rand</em> and all the type definitions inside
+<p>The following links contain information regarding the API of the protected type <strong>t_rand</strong> and all the type definitions inside
 <em>rand_pkg</em>.</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -786,14 +849,14 @@ otherwise, arising from, out of or in connection with this IP.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="types_pkg.html" class="btn btn-neutral float-left" title="t_alert_level" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="association_list.html" class="btn btn-neutral float-left" title="UVVM Association List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="rand_pkg_t_rand.html" class="btn btn-neutral float-right" title="t_rand (protected)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

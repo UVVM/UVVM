@@ -9,9 +9,10 @@
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
---========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
---========================================================================================================================
+
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -96,20 +97,11 @@ package vvc_methods_pkg is
   type t_transaction_info is record
     operation : t_operation;
     msg       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    --<USER_INPUT> Fields that could be useful to track in the waveview can be placed in this record.
-    -- Example:
-    -- addr            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    -- data            : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
   end record;
 
   type t_transaction_info_array is array (natural range <>) of t_transaction_info;
 
   constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    --<USER_INPUT> Set the data fields added to the t_transaction_info record to
-    -- their default values here.
-    -- Example:
-    -- addr                => (others => '0'),
-    -- data                => (others => '0'),
     operation => NO_OPERATION,
     msg       => (others => ' ')
   );
@@ -171,11 +163,11 @@ package body vvc_methods_pkg is
     constant msg              : in string;
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name : string := "start_clock";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ")";
+    constant C_PROC_NAME : string := "start_clock";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ")";
   begin
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, START_CLOCK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, START_CLOCK);
     send_command_to_vvc(VVCT, scope => scope);
   end procedure start_clock;
 
@@ -185,11 +177,11 @@ package body vvc_methods_pkg is
     constant msg              : in string;
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name : string := "stop_clock";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ")";
+    constant C_PROC_NAME : string := "stop_clock";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ")";
   begin
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, STOP_CLOCK);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, STOP_CLOCK);
     send_command_to_vvc(VVCT, scope => scope);
   end procedure stop_clock;
 
@@ -200,11 +192,11 @@ package body vvc_methods_pkg is
     constant msg              : in string;
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name : string := "set_clock_period";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(clock_period) & ")";
+    constant C_PROC_NAME : string := "set_clock_period";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(clock_period) & ")";
   begin
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SET_CLOCK_PERIOD);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SET_CLOCK_PERIOD);
     shared_vvc_cmd.clock_period := clock_period;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure set_clock_period;
@@ -216,11 +208,11 @@ package body vvc_methods_pkg is
     constant msg              : in string;
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name : string := "set_clock_high_time";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(clock_high_time) & ")";
+    constant C_PROC_NAME : string := "set_clock_high_time";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(clock_high_time) & ")";
   begin
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SET_CLOCK_HIGH_TIME);
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SET_CLOCK_HIGH_TIME);
     shared_vvc_cmd.clock_high_time := clock_high_time;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure set_clock_high_time;

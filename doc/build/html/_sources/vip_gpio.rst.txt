@@ -23,8 +23,6 @@ Bitvis VIP GPIO
   * :ref:`gpio_expect_stable_vvc`
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
@@ -41,22 +39,26 @@ Default value for the record is C_GPIO_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| clock_period                 | time                         | -1 ns           | Specifies the clock period                      |
+| clock_period                 | time                         | C_UNDEFINED_TIME| Specifies the clock period                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_STD       | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+| id_for_bfm                   | :ref:`t_msg_id <message_ids>`| ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| timeout                      | time                         | -1 ns           | Timeout value for the expected procedures. This |
-|                              |                              |                 | is only used if no timeout parameter is given   |
-|                              |                              |                 | in the procedures.                              |
+| id_for_bfm_wait              | :ref:`t_msg_id <message_ids>`| ID_BFM_WAIT     | DEPRECATED                                      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| timeout                      | time                         | C_UNDEFINED_TIME| The maximum time to pass before the expected    |
+|                              |                              |                 | data must be found. This value can be overridden|
+|                              |                              |                 | by the timeout parameter in the procedure call. |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
@@ -90,7 +92,8 @@ bits set to "don't care" ('-').
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
@@ -128,7 +131,8 @@ Reads data from the DUT.
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
@@ -175,7 +179,8 @@ Reads the DUT register and compares the data with the expected data in 'data_exp
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
@@ -227,7 +232,8 @@ stable for the 'stable_req' time (see :ref:`checking_stability`).
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
@@ -269,8 +275,8 @@ Reads the DUT register until the expected data in 'data_exp' is matched or until
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
 |          |                    |        |                              | be found. A timeout results in an alert with severity   |
-|          |                    |        |                              | 'alert_level'. Default value is -1 ns which means no    |
-|          |                    |        |                              | timeout.                                                |
+|          |                    |        |                              | 'alert_level'. Default value is C_UNDEFINED_TIME which  |
+|          |                    |        |                              | leads to using the timeout from the BFM config parameter|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -278,7 +284,8 @@ Reads the DUT register until the expected data in 'data_exp' is matched or until
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
@@ -327,8 +334,8 @@ the DUT register remains stable for the 'stable_req' time sampled after the 'sta
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
 |          |                    |        |                              | be found. A timeout results in an alert with severity   |
-|          |                    |        |                              | 'alert_level'. Default value is -1 ns which means no    |
-|          |                    |        |                              | timeout.                                                |
+|          |                    |        |                              | 'alert_level'. Default value is C_UNDEFINED_TIME which  |
+|          |                    |        |                              | leads to using the timeout from the BFM config parameter|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -336,7 +343,8 @@ the DUT register remains stable for the 'stable_req' time sampled after the 'sta
 |          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
-|          |                    |        |                              | value is shared_msg_id_panel.                           |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
 |          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
@@ -419,13 +427,11 @@ certain time. There are different scenarios where we could check stability:
    :align: center
 
 
-.. include:: rst_snippets/subtitle_1_division.rst
-
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 * VVC functionality is implemented in gpio_vvc.vhd
-* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+* For general information see :ref:`vvc_framework_vvc_mechanisms_and_features`.
 
 Entity
 ==================================================================================================================================
@@ -438,7 +444,9 @@ Generics
 +==============================+==============================+=================+=================================================+
 | GC_DATA_WIDTH                | natural                      | N/A             | Width of the GPIO data word                     |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC               |
+| GC_INSTANCE_IDX              | natural                      | N/A             | Instance number to assign the VVC. Maximum value|
+|                              |                              |                 | is defined by C_GPIO_VVC_MAX_INSTANCE_NUM       |
+|                              |                              |                 | in adaptations_pkg.                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_DEFAULT_LINE_VALUE        | std_logic_vector             | N/A             | Default value of input or output GPIO           |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -470,22 +478,29 @@ Generics
 |                              |                              | D_SEVERITY      |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
+.. note::
+
+    Default values for the cmd/result queue generics are defined in adaptations_pkg.
+
 Signals
 ----------------------------------------------------------------------------------------------------------------------------------
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| signal   | gpio_vvc_if        | inout  | std_logic_vector             | | This interface can be used as input, output or inout. |
-|          |                    |        |                              | | If the GC_DEFAULT_LINE_VALUE is set to 'Z', 'H' or 'L'|
-|          |                    |        |                              |   , the interface can be used as an input, output or    |
-|          |                    |        |                              |   inout.                                                |
-|          |                    |        |                              | | If the default is set to '1', '0' or 'U', the         |
-|          |                    |        |                              |   interface must be used as an output.                  |
-|          |                    |        |                              | | When using the interface as inout, the process        |
-|          |                    |        |                              |   currently driving the signal (DUT or VVC) must set it |
-|          |                    |        |                              |   to 'Z' after it is finished in order to release the   |
-|          |                    |        |                              |   interface so that the other process can drive it.     |
+| signal   | gpio_vvc_if        | inout  | std_logic_vector             | This interface can be used as input, output or inout.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If the GC_DEFAULT_LINE_VALUE is set to 'Z', 'H' or 'L', |
+|          |                    |        |                              | the interface can be used as an input, output or        |
+|          |                    |        |                              | inout.                                                  |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If the default is set to '1', '0' or 'U', the           |
+|          |                    |        |                              | interface must be used as an output.                    |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | When using the interface as inout, the process          |
+|          |                    |        |                              | currently driving the signal (DUT or VVC) must set it   |
+|          |                    |        |                              | to 'Z' after it is finished in order to release the     |
+|          |                    |        |                              | interface so that the other process can drive it.       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 Configuration Record
@@ -495,16 +510,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_GPIO_INTER_BF\| | Delay between any requested BFM accesses      |
-|                              |                              | M_DELAY_DEFAULT |   towards the DUT.                              |
-|                              |                              |                 | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_GPIO_INTER_BF\| Delay between any requested BFM accesses        |
+|                              |                              | M_DELAY_DEFAULT | towards the DUT.                                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -540,7 +558,7 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
 |                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+|                              |                              |                 | disabled with NO_ALERT severity by default.     |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -564,6 +582,16 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
+.. note::
+
+    Some parameters in the VVC procedures are unconstrained for flexibility. However, the maximum sizes of such parameters need to 
+    be defined for the VVC framework. For this VVC, the following maximum values can be configured from adaptations_pkg:
+
+      +--------------------------------------------+--------------------------------------+
+      | C_GPIO_VVC_CMD_DATA_MAX_LENGTH             | Maximum **data** length              |
+      +--------------------------------------------+--------------------------------------+
+      | C_GPIO_VVC_CMD_STRING_MAX_LENGTH           | Maximum **msg** length               |
+      +--------------------------------------------+--------------------------------------+
 
 .. _gpio_set_vvc:
 
@@ -589,7 +617,8 @@ command is scheduled to run, the executor calls the BFM :ref:`gpio_set_bfm` proc
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -627,20 +656,21 @@ checked against the expected value (provided by the testbench).
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    gpio_get(GPI_VVCT, 0, "Read baud-rate", C_SCOPE);
-    gpio_get(GPI_VVCT, 0, TO_SB, "Read baud-rate and send to Scoreboard", C_SCOPE);
+    gpio_get(GPIO_VVCT, 0, "Read baud-rate", C_SCOPE);
+    gpio_get(GPIO_VVCT, 0, TO_SB, "Read baud-rate and send to Scoreboard", C_SCOPE);
 
     -- Example with fetch_result() call: Result is placed in v_result
     variable v_cmd_idx : natural;                       -- Command index for the last receive
     variable v_result  : work.vvc_cmd_pkg.t_vvc_result; -- Result from receive.
     ...
-    gpio_get(GPI_VVCT, 0, "Read baud-rate");
+    gpio_get(GPIO_VVCT, 0, "Read baud-rate");
     v_cmd_idx := get_last_received_cmd_idx(GPIO_VVCT, 0);
     await_completion(GPIO_VVCT, 0, v_cmd_idx, 1 us, "Wait for receive to finish");
     fetch_result(GPIO_VVCT, 0, v_cmd_idx, v_result, "Fetching result from receive operation");
@@ -676,7 +706,8 @@ command is scheduled to run, the executor calls the BFM :ref:`gpio_check_bfm` pr
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -717,7 +748,8 @@ the command is scheduled to run, the executor calls the BFM :ref:`gpio_check_sta
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -735,7 +767,7 @@ command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_bfm` p
 
 .. code-block::
 
-    gpio_expect(VVCT, vvc_instance_idx, data_exp, timeout, msg, [alert_level, [scope]])
+    gpio_expect(VVCT, vvc_instance_idx, data_exp, [timeout, [msg, [alert_level, [scope]]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
@@ -749,20 +781,22 @@ command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_bfm` p
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
 |          |                    |        |                              | be found. A timeout results in an alert with severity   |
-|          |                    |        |                              | 'alert_level'.                                          |
+|          |                    |        |                              | 'alert_level'. Default value is C_UNDEFINED_TIME which  |
+|          |                    |        |                              | leads to using the timeout from the BFM config parameter|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    gpio_expect(GPIO_VVCT, 1, x"0D", 2 ms, "Read UART RX until CR is found or timeout", ERROR, C_SCOPE);
+    gpio_expect(GPIO_VVCT, 0, x"0D", 2 ms, "Read UART RX until CR is found or timeout", ERROR, C_SCOPE);
 
 
 .. _gpio_expect_stable_vvc:
@@ -774,7 +808,7 @@ the command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_st
 
 .. code-block::
 
-    gpio_expect_stable(VVCT, vvc_instance_idx, data_exp, stable_req, stable_req_from, msg, [alert_level, [scope]])
+    gpio_expect_stable(VVCT, vvc_instance_idx, data_exp, stable_req, stable_req_from, [timeout, [msg, [alert_level, [scope]]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
@@ -794,18 +828,24 @@ the command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_st
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | stable_req_from    | in     | :ref:`t_from_point_in_time`  | The point in time where stable_req starts               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
+|          |                    |        |                              | be found. A timeout results in an alert with severity   |
+|          |                    |        |                              | 'alert_level'. Default value is C_UNDEFINED_TIME which  |
+|          |                    |        |                              | leads to using the timeout from the BFM config parameter|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
-|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    gpio_expect_stable(GPIO_VVCT, 1, x"0D", 100 us, FROM_NOW, 2 ms, "Read UART RX until CR is found and check that it remains stable for 100 us", ERROR, C_SCOPE);
+    gpio_expect_stable(GPIO_VVCT, 0, x"0D", 100 us, FROM_NOW, 2 ms, "Read UART RX until CR is found and check that it remains stable for 100 us", ERROR, C_SCOPE);
 
 
 Activity Watchdog
@@ -838,7 +878,7 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | transaction_status           | t_transaction_status         | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
@@ -849,18 +889,18 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. gpio_get(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable GPIO_VVC_SB, located in the 
-vvc_methods_pkg.vhd, e.g. ::
+TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable ``gpio_vvc_sb``, located in 
+the vvc_methods_pkg.vhd, e.g. ::
 
-    GPIO_VVC_SB.add_expected(C_GPIO_VVC_IDX, pad_gpio_sb(v_expected), "Adding expected");
+    gpio_vvc_sb.add_expected(C_GPIO_VVC_IDX, pad_gpio_sb(v_expected), "Adding expected");
 
 The GPIO scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the 
 data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_gpio_sb() function, e.g. ::
 
-    GPIO_VVC_SB.add_expected(<GPIO VVC instance number>, pad_gpio_sb(<exp data>));
+    gpio_vvc_sb.add_expected(<GPIO VVC instance number>, pad_gpio_sb(<exp data>));
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the GPIO VVC scoreboard using the GPIO_VVC_SB.
+Scoreboard commands are available for the GPIO VVC scoreboard using the ``gpio_vvc_sb``.
 
 
 Unwanted Activity Detection

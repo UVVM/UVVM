@@ -48,8 +48,8 @@ package transaction_pkg is
   alias C_VVC_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_DATA_MAX_LENGTH;
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_UART_VVC_CMD_STRING_MAX_LENGTH;
-  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_UART_VVC_MAX_INSTANCE_NUM;
+  alias C_VVC_CMD_STRING_MAX_LENGTH is C_UART_VVC_CMD_STRING_MAX_LENGTH;
+  alias C_VVC_MAX_INSTANCE_NUM      is C_UART_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --

@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------
 
 context uvvm_util_context is
-  library uvvm_util;
+library uvvm_util;
   use uvvm_util.types_pkg.all;
   use uvvm_util.global_signals_and_shared_variables_pkg.all;
   use uvvm_util.hierarchy_linked_list_pkg.all;

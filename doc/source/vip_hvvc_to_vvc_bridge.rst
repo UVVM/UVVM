@@ -41,46 +41,6 @@ Interface
 * Data from HVVC to HVVC-to-VVC Bridge is of type :ref:`t_hvvc_to_bridge`, and data from HVVC-to-VVC Bridge to HVVC is of type 
   :ref:`t_bridge_to_hvvc`.
 
-.. _t_hvvc_to_bridge:
-
-t_hvvc_to_bridge
-==================================================================================================================================
-
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| Record element               | Type                         | Description                                                       |
-+==============================+==============================+===================================================================+
-| trigger                      | boolean                      | Trigger signal                                                    |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| operation                    | t_vvc_operation              | Operation of the VVC, e.g. RECEIVE or TRANSMIT                    |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| num_data_words               | positive                     | Number of data words transferred                                  |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| data_words                   | t_slv_array                  | Data sent to the VVC                                              |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| dut_if_field_idx             | natural                      | Index of the interface field                                      |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| dut_if_field_pos             | t_field_position             | Position of the interface field within the packet, e.g. FIRST,    |
-|                              |                              | MIDDLE, LAST or FIRST_AND_LAST.                                   |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| msg_id_panel                 | t_msg_id_panel               | HVVC dedicated message ID panel. See                              |
-|                              |                              | :ref:`vvc_framework_verbosity_ctrl` for how to use verbosity      |
-|                              |                              | control.                                                          |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-
-.. _t_bridge_to_hvvc:
-
-t_bridge_to_hvvc
-==================================================================================================================================
-
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| Record element               | Type                         | Description                                                       |
-+==============================+==============================+===================================================================+
-| trigger                      | boolean                      | Trigger signal                                                    |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| data_words                   | t_slv_array                  | Data received from the VVC                                        |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-
-
 **********************************************************************************************************************************
 Generics
 **********************************************************************************************************************************
@@ -103,7 +63,7 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_SCOPE                     | string                       | N/A             | Scope of the HVVC-to-VVC Bridge                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| GC_WORD_ENDIANNESS           | t_word_endianness            | LOWER_WORD_LEFT | Word endianness when converting between         |
+| GC_WORD_ENDIANNESS           | :ref:`t_word_endianness`     | LOWER_WORD_LEFT | Word endianness when converting between         |
 |                              |                              |                 | different slv array widths, e.g. LOWER_WORD_LEFT|
 |                              |                              |                 | or LOWER_WORD_RIGHT                             |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -117,26 +77,6 @@ An array of :ref:`t_dut_if_field_config` records is defined by the user and pass
 of the HVVC and HVVC-to-VVC Bridge. When a transmit or receive operation is sent to the HVVC-to-VVC Bridge the index of the DUT IF 
 field config is specified in *dut_if_field_idx* in the hvvc_to_bridge port. The specified DUT IF field config states the address 
 that shall be accessed. The address associated with each field can easily be changed by changing the DUT IF configuration.
-
-.. _t_dut_if_field_config:
-
-t_dut_if_field_config
-----------------------------------------------------------------------------------------------------------------------------------
-
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| Record element               | Type                         | Description                                                       |
-+==============================+==============================+===================================================================+
-| dut_address                  | unsigned                     | Address of the DUT IF field                                       |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| dut_address_increment        | integer                      | Increment of the address on each access                           |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| data_width                   | positive                     | Width of the data per transfer, must be <= than bus width         |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| use_field                    | boolean                      | Used by the HVVC to send/request fields to/from the bridge or     |
-|                              |                              | ignore them when not applicable (e.g. preamble in SBI).           |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
-| field_description            | string                       | Description of the DUT IF field                                   |
-+------------------------------+------------------------------+-------------------------------------------------------------------+
 
 **********************************************************************************************************************************
 User implementation
@@ -184,7 +124,7 @@ the HVVC from the test harness/testbench. Additional interfaces can be added by 
 .. code-block::
 
     gen_hvvc_bridge : if GC_PHY_INTERFACE = GMII generate
-      i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(GMII)
+      i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(gmii)
         generic map(
           GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
           GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
@@ -220,7 +160,7 @@ sequencer until it is done.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | signal   | bridge_to_hvvc     | in     | :ref:`t_bridge_to_hvvc`      | Data transmitted from the bridge to the HVVC            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | data_words         | in     | t_slv_array                  | Data to be sent to the bridge                           |
+| constant | data_words         | in     | :ref:`t_slv_array`           | Data to be sent to the bridge                           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dut_if_field_idx   | in     | integer                      | Index of the interface field                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -229,7 +169,8 @@ sequencer until it is done.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope             |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. For more   |
+|          |                    |        |                              | information see :ref:`vvc_framework_verbosity_ctrl`.    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -263,7 +204,8 @@ sequencer until it is done.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope             |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. For more   |
+|          |                    |        |                              | information see :ref:`vvc_framework_verbosity_ctrl`.    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::

@@ -39,7 +39,7 @@ end entity error_injection_slv;
 architecture behave of error_injection_slv is
 begin
 
-  p_error_injection : process
+  p_error_injection : process is
     constant C_INITIAL_VALUE_DONT_CARE : std_logic_vector(ei_in'length - 1 downto 0) := (others => '-');
     constant C_IS_VECTOR               : boolean                                     := (ei_in'length > 1);
     -- helper variables
@@ -69,11 +69,11 @@ begin
     end function get_error_injection_timing;
 
     -- Computes if input interval number is a error inject interval
-    impure function is_valid_interval(counter : natural; error_type : t_error_injection_types) return boolean is
+    impure function is_valid_interval(counter : natural; error_injection_type : t_error_injection_types) return boolean is
     begin
       if (counter mod ei_config.interval) = 0 then
         return true;
-      elsif error_type = BYPASS then
+      elsif error_injection_type = BYPASS then
         return true;
       else
         return false;

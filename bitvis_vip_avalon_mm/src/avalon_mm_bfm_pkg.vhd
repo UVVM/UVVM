@@ -38,7 +38,7 @@ package avalon_mm_bfm_pkg is
     -- Avalon MM BFM to DUT signals
     reset         : std_logic;
     address       : std_logic_vector;
-    begintransfer : std_logic;          -- optional, Altera recommends not to use
+    begintransfer : std_logic; -- Optional, Altera recommends not to use
     byte_enable   : std_logic_vector;
     chipselect    : std_logic;
     write         : std_logic;
@@ -50,41 +50,40 @@ package avalon_mm_bfm_pkg is
     readdata      : std_logic_vector;
     response      : std_logic_vector(1 downto 0); -- Set use_response_signal to false if not in use
     waitrequest   : std_logic;
-    readdatavalid : std_logic;          -- might be used, might not.. If not used, fixed latency is a given
-                                        -- (same for read and write), unless waitrequest is used.
+    readdatavalid : std_logic; -- Might be used, might not.. If not used, fixed latency is a given (same for read and write), unless waitrequest is used.
     irq           : std_logic;
   end record;
 
   -- Configuration record to be assigned in the test harness.
   type t_avalon_mm_bfm_config is record
-    max_wait_cycles          : integer; -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
-    max_wait_cycles_severity : t_alert_level; -- The above timeout will have this severity
-    clock_period             : time;    -- Period of the clock signal.
-    clock_period_margin      : time;    -- Input clock period accuracy margin to specified clock_period
-    clock_margin_severity    : t_alert_level; -- The above margin will have this severity
-    setup_time               : time;    -- Setup time for generated signals, set to clock_period/4
-    hold_time                : time;    -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                 : t_bfm_sync; -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    max_wait_cycles          : natural;            -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
+    max_wait_cycles_severity : t_alert_level;      -- The above timeout will have this severity
+    clock_period             : time;               -- Period of the clock signal.
+    clock_period_margin      : time;               -- Input clock period accuracy margin to specified clock_period
+    clock_margin_severity    : t_alert_level;      -- The above margin will have this severity
+    setup_time               : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                : time;               -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                 : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
     match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    num_wait_states_read     : natural; -- use_waitrequest = false -> this controls the (fixed) latency for read
-    num_wait_states_write    : natural; -- use_waitrequest = false -> this controls the (fixed) latency for write
-    use_waitrequest          : boolean; -- slave uses waitrequest
-    use_readdatavalid        : boolean; -- slave uses readdatavalid (variable latency)
-    use_response_signal      : boolean; -- Whether or not to check the response signal on read
-    use_begintransfer        : boolean; -- Whether or not to assert begintransfer on start of transfer (Altera recommends not to use)
-    id_for_bfm               : t_msg_id; -- The message ID used as a general message ID in the Avalon BFM
-    id_for_bfm_wait          : t_msg_id; -- The message ID used for logging waits in the Avalon BFM
-    id_for_bfm_poll          : t_msg_id; -- The message ID used for logging polling in the Avalon BFM
+    num_wait_states_read     : natural;            -- use_waitrequest = false -> this controls the (fixed) latency for read
+    num_wait_states_write    : natural;            -- use_waitrequest = false -> this controls the (fixed) latency for write
+    use_waitrequest          : boolean;            -- slave uses waitrequest
+    use_readdatavalid        : boolean;            -- slave uses readdatavalid (variable latency)
+    use_response_signal      : boolean;            -- Whether or not to check the response signal on read
+    use_begintransfer        : boolean;            -- Whether or not to assert begintransfer on start of transfer (Altera recommends not to use)
+    id_for_bfm               : t_msg_id;           -- The message ID used as a general message ID in the Avalon BFM
+    id_for_bfm_wait          : t_msg_id;           -- DEPRECATED: will be removed in v3
+    id_for_bfm_poll          : t_msg_id;           -- DEPRECATED: will be removed in v3
   end record;
 
   constant C_AVALON_MM_BFM_CONFIG_DEFAULT : t_avalon_mm_bfm_config := (
-    max_wait_cycles          => 10,
+    max_wait_cycles          => 1000,
     max_wait_cycles_severity => TB_FAILURE,
-    clock_period             => -1 ns,
+    clock_period             => C_UNDEFINED_TIME,
     clock_period_margin      => 0 ns,
     clock_margin_severity    => TB_ERROR,
-    setup_time               => -1 ns,
-    hold_time                => -1 ns,
+    setup_time               => C_UNDEFINED_TIME,
+    hold_time                => C_UNDEFINED_TIME,
     bfm_sync                 => SYNC_ON_CLOCK_ONLY,
     match_strictness         => MATCH_EXACT,
     num_wait_states_read     => 0,
@@ -105,13 +104,13 @@ package avalon_mm_bfm_pkg is
     time_of_falling_edge : time;
   end record;
   constant C_AVALON_CLOCK_PERIOD_DEFAULT : t_avalon_clock_period := (
-    time_of_rising_edge  => -1 ns,
-    time_of_falling_edge => -1 ns
+    time_of_rising_edge  => C_UNDEFINED_TIME,
+    time_of_falling_edge => C_UNDEFINED_TIME
   );
 
   -- Used for detecting clock period for BFM exit, updated by Write request and Read Request procedures.
   shared variable shared_avalon_clock_period : t_avalon_clock_period := C_AVALON_CLOCK_PERIOD_DEFAULT;
-  shared variable shared_avalon_last_response_timestamp : time := -1 ns;
+  shared variable shared_avalon_last_response_timestamp : time := C_UNDEFINED_TIME;
 
   ----------------------------------------------------
   -- BFM procedures
@@ -254,30 +253,30 @@ package body avalon_mm_bfm_pkg is
     data_width : natural;
     lock_value : std_logic := '0'
   ) return t_avalon_mm_if is
-    variable result : t_avalon_mm_if(address(addr_width - 1 downto 0),
-                                     byte_enable((data_width / 8) - 1 downto 0),
-                                     writedata(data_width - 1 downto 0),
-                                     readdata(data_width - 1 downto 0));
+    variable v_result : t_avalon_mm_if(address(addr_width - 1 downto 0),
+                                       byte_enable((data_width / 8) - 1 downto 0),
+                                       writedata(data_width - 1 downto 0),
+                                       readdata(data_width - 1 downto 0));
   begin
     -- BFM to DUT signals
-    result.reset         := '0';
-    result.address       := (result.address'range => '0');
-    result.begintransfer := '0';
-    result.byte_enable   := (result.byte_enable'range => '1');
-    result.chipselect    := '0';
-    result.write         := '0';
-    result.writedata     := (result.writedata'range => '0');
-    result.read          := '0';
-    result.lock          := lock_value;
+    v_result.reset         := '0';
+    v_result.address       := (v_result.address'range => '0');
+    v_result.begintransfer := '0';
+    v_result.byte_enable   := (v_result.byte_enable'range => '1');
+    v_result.chipselect    := '0';
+    v_result.write         := '0';
+    v_result.writedata     := (v_result.writedata'range => '0');
+    v_result.read          := '0';
+    v_result.lock          := lock_value;
 
     -- DUT to BFM signals
-    result.readdata      := (result.readdata'range => 'Z');
-    result.response      := (result.response'range => 'Z');
-    result.waitrequest   := 'Z';
-    result.readdatavalid := 'Z';
-    result.irq           := 'Z';
+    v_result.readdata      := (v_result.readdata'range => 'Z');
+    v_result.response      := (v_result.response'range => 'Z');
+    v_result.waitrequest   := 'Z';
+    v_result.readdatavalid := 'Z';
+    v_result.irq           := 'Z';
 
-    return result;
+    return v_result;
   end function;
 
   function to_avalon_mm_response_status(
@@ -325,21 +324,21 @@ package body avalon_mm_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name         : string                                                       := "avalon_mm_write";
-    constant proc_call         : string                                                       := "avalon_mm_write(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_NAME       : string                                                       := "avalon_mm_write";
+    constant C_PROC_CALL       : string                                                       := "avalon_mm_write(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     -- normalize_and_check to the DUT addr/data widths
     variable v_normalized_addr : std_logic_vector(avalon_mm_if.address'length - 1 downto 0)   := normalize_and_check(std_logic_vector(addr_value), avalon_mm_if.address, ALLOW_NARROWER, "address", "avalon_mm_if.address", msg);
     variable v_normalized_data : std_logic_vector(avalon_mm_if.writedata'length - 1 downto 0) := normalize_and_check(data_value, avalon_mm_if.writedata, ALLOW_NARROWER, "data", "avalon_mm_if.writedata", msg);
 
-    variable v_time_of_rising_edge  : time    := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time    := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_rising_edge  : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_timeout              : boolean := false;
 
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_name);
-      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
-      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
     end if;
 
     -- Wait according to config.bfm_sync setup
@@ -356,10 +355,9 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     wait until rising_edge(clk);        -- wait for DUT update of signal
-    v_time_of_rising_edge := now;
 
-    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                              config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+
     -- Set the clock period for avalon_mm_read_response()
     shared_avalon_clock_period.time_of_falling_edge := v_time_of_falling_edge;
     shared_avalon_clock_period.time_of_rising_edge  := v_time_of_rising_edge;
@@ -384,7 +382,7 @@ package body avalon_mm_bfm_pkg is
 
       -- did we v_timeout?
       if v_timeout then
-        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for waitrequest " & add_msg_delimiter(msg), scope);
+        alert(config.max_wait_cycles_severity, C_PROC_CALL & "=> Failed. Timeout waiting for waitrequest during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope);
       end if;
 
     else                                -- not waitrequest. num_wait_states_write will be used as number of wait cycles in fixed wait-states
@@ -398,7 +396,7 @@ package body avalon_mm_bfm_pkg is
 
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock);
 
-    log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure avalon_mm_write;
 
   function is_readdatavalid_active(
@@ -450,9 +448,9 @@ package body avalon_mm_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call : string := "avalon_mm_check(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := "avalon_mm_check(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
   begin
-    avalon_mm_read_request(addr_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_call);
+    avalon_mm_read_request(addr_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, C_PROC_CALL);
     avalon_mm_check_response(addr_value, data_exp, msg, clk, avalon_mm_if, alert_level, scope, msg_id_panel, config);
   end procedure avalon_mm_check;
 
@@ -465,9 +463,9 @@ package body avalon_mm_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call : string := "avalon_mm_reset(num_rst_cycles=" & to_string(num_rst_cycles) & ")";
+    constant C_PROC_CALL : string := "avalon_mm_reset(num_rst_cycles=" & to_string(num_rst_cycles) & ")";
   begin
-    log(config.id_for_bfm, proc_call & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     avalon_mm_if       <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length);
     avalon_mm_if.reset <= '1';
     for i in 1 to num_rst_cycles loop
@@ -492,29 +490,29 @@ package body avalon_mm_bfm_pkg is
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     -- local_proc_* used if called from sequencer or VVC
-    constant local_proc_name   : string                                                     := "avalon_mm_read_request";
-    constant local_proc_call   : string                                                     := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_LOCAL_PROC_NAME : string                                                     := "avalon_mm_read_request";
+    constant C_LOCAL_PROC_CALL : string                                                     := C_LOCAL_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_timeout         : boolean                                                    := false;
     variable v_proc_call       : line;  -- Current proc_call, external or local
     variable v_normalized_addr : std_logic_vector(avalon_mm_if.address'length - 1 downto 0) := normalize_and_check(std_logic_vector(addr_value), avalon_mm_if.address, ALLOW_NARROWER, "addr", "avalon_mm_if.address", msg);
 
-    variable v_time_of_rising_edge    : time := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge   : time := -1 ns; -- time stamp for clk period checking
-    variable v_clock_period           : time := -1 ns;
+    variable v_time_of_rising_edge    : time := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time := C_UNDEFINED_TIME; -- time stamp for clk period checking
+    variable v_clock_period           : time := C_UNDEFINED_TIME;
     variable v_add_wait_request_delay : boolean := false;
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, local_proc_name);
-      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_name);
-      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_name);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_NAME);
+      check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_NAME);
+      check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, C_LOCAL_PROC_NAME);
     end if;
 
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'avalon_mm_read_request...'
-      write(v_proc_call, local_proc_call);
+      write(v_proc_call, C_LOCAL_PROC_CALL);
     else
       -- Called from another BFM procedure, log 'ext_proc_call while executing avalon_mm_read_request...'
-      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+      write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
     end if;
 
     -- Wait according to config.bfm_sync setup
@@ -527,10 +525,8 @@ package body avalon_mm_bfm_pkg is
     avalon_mm_if.chipselect                                                <= '1';
 
     wait until rising_edge(clk);        -- wait for DUT update of signal
-    v_time_of_rising_edge := now;
 
-    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                              config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
     -- Get the clock period from the clk signal in case it is not configured
     v_clock_period := abs (v_time_of_rising_edge - v_time_of_falling_edge) * 2;
@@ -557,7 +553,7 @@ package body avalon_mm_bfm_pkg is
 
       -- did we timeout?
       if v_timeout then
-        alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout waiting for waitrequest" & add_msg_delimiter(msg), scope);
+        alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout waiting for waitrequest during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope);
       end if;
 
     else                                -- not waitrequest - issue read, wait num_wait_states_read before finishing the read
@@ -575,7 +571,7 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;
@@ -594,7 +590,7 @@ package body avalon_mm_bfm_pkg is
     constant config       : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT;
     constant proc_name    : in string                 := "avalon_mm_read_response" -- Overwrite if called from another procedure
   ) is
-    constant proc_call : string := "avalon_mm_read_response(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := "avalon_mm_read_response(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     -- normalize_and_check to the DUT addr/data widths
     variable v_normalized_data      : std_logic_vector(avalon_mm_if.readdata'length - 1 downto 0) := normalize_and_check(data_value, avalon_mm_if.readdata, ALLOW_NARROWER, "data", "avalon_mm_if.readdata", msg);
@@ -605,7 +601,7 @@ package body avalon_mm_bfm_pkg is
 
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
-      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_name);
+      check_value(config.clock_period /= C_UNDEFINED_TIME, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_name);
       check_value(config.setup_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
       check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
     end if;
@@ -635,7 +631,7 @@ package body avalon_mm_bfm_pkg is
 
       -- did we timeout?
       if v_timeout then
-        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for readdatavalid. " & add_msg_delimiter(msg), scope);
+        alert(config.max_wait_cycles_severity, C_PROC_CALL & "=> Failed. Timeout waiting for readdatavalid during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope);
       end if;
     end if;
 
@@ -651,7 +647,7 @@ package body avalon_mm_bfm_pkg is
     shared_avalon_last_response_timestamp := now;
 
     if proc_name = "avalon_mm_read_response" then
-      log(config.id_for_bfm, proc_call & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure avalon_mm_read_response;
 
@@ -666,8 +662,8 @@ package body avalon_mm_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "avalon_mm_check_response";
-    constant proc_call : string := proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_NAME : string := "avalon_mm_check_response";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     -- normalize_and_check to the DUT addr/data widths
     variable v_normalized_data : std_logic_vector(avalon_mm_if.readdata'length - 1 downto 0) := normalize_and_check(data_exp, avalon_mm_if.readdata, ALLOW_NARROWER, "data", "avalon_mm_if.readdata", msg);
@@ -678,7 +674,7 @@ package body avalon_mm_bfm_pkg is
     variable v_alert_radix : t_radix;
   begin
 
-    avalon_mm_read_response(addr_value, v_data_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_name);
+    avalon_mm_read_response(addr_value, v_data_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, C_PROC_NAME);
 
     for i in v_normalized_data'range loop
       -- Allow don't care in expected value and use match strictness from config for comparison
@@ -693,9 +689,9 @@ package body avalon_mm_bfm_pkg is
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, KEEP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, C_PROC_CALL & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure avalon_mm_check_response;
 
@@ -706,9 +702,9 @@ package body avalon_mm_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call : string := "avalon_mm_lock()";
+    constant C_PROC_CALL : string := "avalon_mm_lock()";
   begin
-    log(config.id_for_bfm, proc_call & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     avalon_mm_if.lock <= '1';
   end procedure avalon_mm_lock;
 
@@ -719,9 +715,9 @@ package body avalon_mm_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_mm_bfm_config := C_AVALON_MM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_call : string := "avalon_mm_unlock()";
+    constant C_PROC_CALL : string := "avalon_mm_unlock()";
   begin
-    log(config.id_for_bfm, proc_call & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_CALL & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     avalon_mm_if.lock <= '0';
   end procedure avalon_mm_unlock;
 

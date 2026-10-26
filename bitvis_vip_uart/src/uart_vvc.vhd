@@ -85,5 +85,5 @@ begin
       uart_vvc_tx => uart_vvc_tx
     );
 
-end struct;
+end architecture struct;
 

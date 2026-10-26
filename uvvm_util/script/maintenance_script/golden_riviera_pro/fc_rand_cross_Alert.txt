@@ -1,0 +1,114 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((200, 201, 202)), bin((205, 206, 207)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((210, 211, 212)), bin((215, 216, 217)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((220, 221, 222)), bin((225, 226, 227)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((230, 231, 232)), bin((235, 236, 237)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((240, 241, 242)), bin((245, 246, 247)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(300, 304), bin_range(305, 309), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(310, 314), bin_range(315, 319), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(320, 324), bin_range(325, 329), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(330, 334), bin_range(335, 339), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(340, 344), bin_range(345, 349), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((400, 402, 404)), bin_transition((405, 407, 409)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((410, 412, 414)), bin_transition((415, 417, 419)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((420, 422, 424)), bin_transition((425, 427, 429)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((430, 432, 434)), bin_transition((439, 437, 435)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((440, 442, 442)), bin_transition((445, 445, 449)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #16  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin(60), bin((250, 251, 252, 253, 254)), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #17  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin(70), bin_range(352, 355), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their
+UVVM:                    coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #18  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((450, 452, 454, 456, 458)), bin(80), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is not
+UVVM:                    recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #19  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(360, 369), bin_transition((466, 463, 463, 464, 461)), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 

@@ -2,8 +2,8 @@
 -- Description
 -----------------------------------------------------------
 
-This is NOT an example of how to implement a UART. 
-This is just a simple test vehicle that can be used to 
+This is NOT an example of how to implement a UART.
+This is just a simple test vehicle that can be used to
 demonstrate the functionality of the UVVM VVC Framework.
 
 Modelsim compile scripts are part of this release, see
@@ -14,11 +14,11 @@ following shell scripts:
   ghdl_compile_all_and_simulate.sh
 
 -----------------------------------------------------------
--- Directory structure                                   -- 
+-- Directory structure                                   --
 -----------------------------------------------------------
 
 - bitvis_uart     : An example Design Under Test (DUT) delivered with UVVM in order to illustrate usage and debugging support provided by the library.
   - doc           : Documentation
   - script        : UART compile scripts
   - src           : UART source code
-  - tb            : UART Test bench
+  - tb            : UART testbenches and demo

@@ -1,0 +1,21 @@
+/* custom.css */
+
+/* Add a horizontal divider after every h1 */
+h1::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 4px;              /* thickness of the line */
+  background-color: #ccc;   /* color of the line */
+  margin: 0.5em 0 1em 0;    /* spacing above and below */
+}
+
+/* Add a horizontal divider after every h2 */
+h2::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;              /* thickness of the line */
+  background-color: #ccc;   /* color of the line */
+  margin: 0.5em 0 1em 0;    /* spacing above and below */
+}

@@ -43,6 +43,7 @@ UVVM consists currently of the following elements:
    vip_gpio.rst
    vip_hvvc_to_vvc_bridge.rst
    vip_i2c.rst
+   vip_mdio.rst
    vip_rgmii.rst
    vip_sbi.rst
    vip_scoreboard.rst

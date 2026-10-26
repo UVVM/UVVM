@@ -507,6 +507,11 @@ package adaptations_pkg is
   constant C_I2C_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
   constant C_I2C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
+  -- MDIO
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_MDIO_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_MDIO_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
   -- RGMII
   -- Constants for the maximum sizes to use in the VVC.
   constant C_RGMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;

@@ -1,0 +1,9 @@
+P2L2 VIP MDIO - Overview on Versions and Changes
+==============================================================
+
+v1.0.0
+----------
+Released: 2026-10-14
+- Initial version of MDIO VIP (IEEE 802.3 Clause 22 and Clause 45).
+- BFM procedures for STA (station management) and PHY (MMD) mode.
+- VVC supporting STA and PHY mode, including unwanted activity detection.

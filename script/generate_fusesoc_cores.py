@@ -299,19 +299,19 @@ def main():
             tb_deps=tb_deps, toplevel=toplevel,
         )
         core_path = uvvm_root / comp / f'{comp}.core'
-        core_path.write_text(dump_core(core_dict))
+        core_path.write_bytes(dump_core(core_dict).encode())
         print(f'  Wrote {core_path.relative_to(uvvm_root)}')
 
     # Generate aggregate uvvm.core (uses uvvm_util version as the UVVM release version)
     aggregate_version = versions['uvvm_util']
     agg_dict = build_aggregate_dict(aggregate_version, all_vlnvs)
     aggregate_path = uvvm_root / 'uvvm.core'
-    aggregate_path.write_text(dump_core(agg_dict))
+    aggregate_path.write_bytes(dump_core(agg_dict).encode())
     print(f'  Wrote {aggregate_path.relative_to(uvvm_root)}')
 
     # Generate fusesoc.conf at the UVVM root
     conf_path = uvvm_root / 'fusesoc.conf'
-    conf_path.write_text(generate_fusesoc_conf_content())
+    conf_path.write_bytes(generate_fusesoc_conf_content().encode())
     print(f'  Wrote {conf_path.relative_to(uvvm_root)}')
 
     print(f'\nDone. Generated {len(all_vlnvs) + 1} core files + fusesoc.conf.')

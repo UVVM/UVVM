@@ -1,0 +1,34 @@
+CAPI=2:
+name: uvvm:uvvm:bitvis_vip_error_injection:2.0.0
+filesets:
+  rtl:
+    files:
+    - ./src/error_injection_pkg.vhd
+    - ./src/error_injection_slv.vhd
+    - ./src/error_injection_sl.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_vip_error_injection
+    depend:
+    - uvvm:uvvm:uvvm_util:2.21.4
+  tb:
+    files:
+    - ./tb/ei_demo_tb.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_vip_error_injection
+    depend:
+    - uvvm:uvvm:uvvm_util:2.21.4
+    - uvvm:uvvm:uvvm_vvc_framework:2.12.15
+targets:
+  default:
+    filesets:
+    - rtl
+  sim:
+    filesets:
+    - rtl
+    - tb
+    toplevel: bitvis_vip_error_injection.ei_demo_tb
+    default_tool: ghdl
+    tools:
+      ghdl:
+        analyze_options:
+        - -frelaxed

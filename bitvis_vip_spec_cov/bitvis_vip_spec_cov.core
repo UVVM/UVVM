@@ -1,0 +1,16 @@
+CAPI=2:
+name: uvvm:uvvm:bitvis_vip_spec_cov:2.0.2
+filesets:
+  rtl:
+    files:
+    - ./src/csv_file_reader_pkg.vhd
+    - ./src/spec_cov_pkg.vhd
+    - ./src/spec_cov_context.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_vip_spec_cov
+    depend:
+    - uvvm:uvvm:uvvm_util:2.21.4
+targets:
+  default:
+    filesets:
+    - rtl

@@ -35,6 +35,9 @@ transcript
 __pycache__/
 .pytest_cache/
 
+# FuseSoC build output
+/build/
+
 # rst
 *.doctree
 *.pickle

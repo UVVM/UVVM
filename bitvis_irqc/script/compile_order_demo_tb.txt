@@ -1,0 +1,3 @@
+# library bitvis_irqc
+# toplevel: irqc_demo_tb
+../tb/irqc_demo_tb.vhd

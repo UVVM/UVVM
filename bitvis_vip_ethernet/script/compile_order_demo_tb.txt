@@ -1,0 +1,6 @@
+# library bitvis_vip_ethernet
+# toplevel: ethernet_sbi_gmii_demo_tb
+../tb/ethernet_mac_pkg.vhd
+../tb/ethernet_mac.vhd
+../tb/ethernet_sbi_gmii_demo_th.vhd
+../tb/ethernet_sbi_gmii_demo_tb.vhd

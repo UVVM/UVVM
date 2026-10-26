@@ -1,0 +1,31 @@
+CAPI=2:
+name: uvvm:uvvm:bitvis_vip_axilite:4.1.2
+filesets:
+  rtl:
+    files:
+    - ./src/axilite_bfm_pkg.vhd
+    - ./src/axilite_channel_handler_pkg.vhd
+    - ./src/transaction_pkg.vhd
+    - ./src/vvc_cmd_pkg.vhd
+    - ../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd:
+        copyto: src/td_target_support_pkg.vhd
+    - ../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd:
+        copyto: src/td_vvc_framework_common_methods_pkg.vhd
+    - ./src/vvc_sb_pkg.vhd
+    - ./src/vvc_methods_pkg.vhd
+    - ../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd:
+        copyto: src/td_queue_pkg.vhd
+    - ../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd:
+        copyto: src/td_vvc_entity_support_pkg.vhd
+    - ./src/axilite_vvc.vhd
+    - ./src/vvc_context.vhd
+    file_type: vhdlSource-2008
+    logical_name: bitvis_vip_axilite
+    depend:
+    - uvvm:uvvm:bitvis_vip_scoreboard:2.3.4
+    - uvvm:uvvm:uvvm_util:2.21.4
+    - uvvm:uvvm:uvvm_vvc_framework:2.12.15
+targets:
+  default:
+    filesets:
+    - rtl

@@ -17,6 +17,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;                 -- for uniform
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -38,6 +39,7 @@ entity clock_generator_vvc is
     GC_CLOCK_NAME                            : string        := "clk";
     GC_CLOCK_PERIOD                          : time          := 10 ns;
     GC_CLOCK_HIGH_TIME                       : time          := 5 ns;
+    GC_CLOCK_MAX_JITTER                      : time          := 0 ns;
     GC_CMD_QUEUE_COUNT_MAX                   : natural       := C_CMD_QUEUE_COUNT_MAX;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := C_CMD_QUEUE_COUNT_THRESHOLD;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
@@ -77,6 +79,7 @@ architecture behave of clock_generator_vvc is
   alias clock_name      : string is vvc_config.clock_name;
   alias clock_period    : time is vvc_config.clock_period;
   alias clock_high_time : time is vvc_config.clock_high_time;
+  alias clock_max_jitter : time is vvc_config.clock_max_jitter;
 
 begin
 
@@ -104,6 +107,7 @@ begin
     clock_name(1 to GC_CLOCK_NAME'length)         := GC_CLOCK_NAME;
     clock_period                                  := GC_CLOCK_PERIOD;
     shared_clock_generator_vvc_config(GC_INSTANCE_IDX).clock_high_time := GC_CLOCK_HIGH_TIME; -- Use the shared variable directly to avoid an issue with Riviera-PRO 2025.04
+    clock_max_jitter                              := GC_CLOCK_MAX_JITTER;
     wait;
   end process;
   --========================================================================================================================
@@ -256,6 +260,13 @@ begin
           end if;
           log(ID_CLOCK_GEN, "Clock '" & clock_name & "' high time set to " & to_string(clock_high_time), C_SCOPE);
 
+        when SET_CLOCK_MAX_JITTER =>
+          clock_max_jitter := v_cmd.clock_max_jitter;
+          if clock_ena then
+            wait until clk = '1';
+          end if;
+          log(ID_CLOCK_GEN, "Clock '" & clock_name & "' max jitter set to " & to_string(clock_max_jitter), C_SCOPE);
+
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
@@ -298,33 +309,53 @@ begin
   -- - Process that generates the clock signal
   --========================================================================================================================
   p_clock_generator : process is
-    variable v_clock_period    : time;
-    variable v_clock_high_time : time;
-    variable v_clock_low_time  : time;
+    variable v_clock_period        : time;
+    variable v_clock_high_time     : time;
+    variable v_clock_low_time      : time;
+    variable v_clock_max_jitter    : time;
+    variable v_seed1               : positive := GC_INSTANCE_IDX + 1; -- Different seeds for each instance
+    variable v_seed2               : positive := 1;
+    variable v_rand                : real;
+    variable v_rising_edge_jitter  : time     := 0 ns; -- Offset of the next rising edge from its nominal time
+    variable v_falling_edge_jitter : time;
   begin
     wait for 0 ns;                      -- wait for clock_ena to be set
     loop
 
       if not clock_ena then
-        clk <= '0';
+        clk                  <= '0';
+        v_rising_edge_jitter := 0 ns;   -- The first rising edge after starting the clock has no jitter
         wait until clock_ena;
       end if;
 
       -- Clock period is sampled so it won't change during a clock cycle and potentialy introduce negative time in
       -- last wait statement
-      v_clock_period    := clock_period;
-      v_clock_high_time := clock_high_time;
-      v_clock_low_time  := v_clock_period - v_clock_high_time;
+      v_clock_period     := clock_period;
+      v_clock_high_time  := clock_high_time;
+      v_clock_low_time   := v_clock_period - v_clock_high_time;
+      v_clock_max_jitter := clock_max_jitter;
 
       if v_clock_high_time >= v_clock_period then
         tb_error(clock_name & ": clock period must be larger than clock high time; clock period: " & to_string(v_clock_period) & ", clock high time: " & to_string(clock_high_time), C_SCOPE);
         v_clock_low_time := 0 ns; -- Avoid failure from waiting a negative time
       end if;
 
-      clk <= '1';
-      wait for v_clock_high_time;
-      clk <= '0';
-      wait for v_clock_low_time;
+      if v_clock_max_jitter > 0 ns and (v_clock_max_jitter >= v_clock_high_time or v_clock_max_jitter >= v_clock_low_time) then
+        tb_error(clock_name & ": clock max jitter must be less than clock high time and clock low time; clock high time: " & to_string(v_clock_high_time) &
+                 ", clock low time: " & to_string(v_clock_low_time) & ", clock max jitter: " & to_string(v_clock_max_jitter), C_SCOPE);
+        v_clock_max_jitter := 0 ns; -- Avoid failure from waiting a negative time
+      end if;
+
+      -- Each clock edge is moved randomly by up to +/- half the max jitter from its nominal time
+      uniform(v_seed1, v_seed2, v_rand);
+      v_falling_edge_jitter := (v_rand - 0.5) * v_clock_max_jitter;
+
+      clk                  <= '1';
+      wait for v_clock_high_time - v_rising_edge_jitter + v_falling_edge_jitter;
+      uniform(v_seed1, v_seed2, v_rand);
+      v_rising_edge_jitter := (v_rand - 0.5) * v_clock_max_jitter;
+      clk                  <= '0';
+      wait for v_clock_low_time - v_falling_edge_jitter + v_rising_edge_jitter;
     end loop;
   end process;
 --========================================================================================================================

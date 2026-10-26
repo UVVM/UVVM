@@ -97,6 +97,34 @@ begin
       log(ID_SEQUENCER, "Check of clock period and clock high time PASSED.", C_SCOPE);
     end procedure;
 
+    -- Check that the clock period and high time vary, but stay within the max jitter
+    procedure check_clock_jitter(
+      signal   clock          : std_logic;
+      constant clk_period     : time;
+      constant clk_high_time  : time;
+      constant clk_max_jitter : time
+    ) is
+      variable v_rising_edge : time;
+      variable v_jitter_seen : boolean := false;
+    begin
+      -- Align with clock
+      await_value(clock, '0', 0 ns, 2 * clk_period, error, "Jitter check, await falling edge", C_SCOPE, ID_NEVER);
+      await_value(clock, '1', 0 ns, 2 * clk_period, error, "Jitter check, await rising edge", C_SCOPE, ID_NEVER);
+      v_rising_edge := now;
+      for i in 0 to 49 loop
+        await_value(clock, '0', 0 ns, 2 * clk_period, error, "Jitter check, await falling edge", C_SCOPE, ID_NEVER);
+        check_value_in_range(now - v_rising_edge, clk_high_time - clk_max_jitter, clk_high_time + clk_max_jitter, error, "Jitter check, check clock high time", C_SCOPE, ID_NEVER);
+        await_value(clock, '1', 0 ns, 2 * clk_period, error, "Jitter check, await rising edge", C_SCOPE, ID_NEVER);
+        check_value_in_range(now - v_rising_edge, clk_period - clk_max_jitter, clk_period + clk_max_jitter, error, "Jitter check, check clock period", C_SCOPE, ID_NEVER);
+        if now - v_rising_edge /= clk_period then
+          v_jitter_seen := true;
+        end if;
+        v_rising_edge := now;
+      end loop;
+      check_value(v_jitter_seen, error, "Jitter check, check that the clock period varies", C_SCOPE, ID_NEVER);
+      log(ID_SEQUENCER, "Check of clock jitter PASSED.", C_SCOPE);
+    end procedure;
+
     procedure check_clock_not_running(
       signal   clock      : std_logic;
       constant clk_period : time
@@ -235,6 +263,35 @@ begin
     start_clock(CLOCK_GENERATOR_VVCT, 3, "Start clock 3", C_SCOPE);
     wait for C_CLK_3_PERIOD;
     check_clock_period_and_high_time(clk_3, C_CLK_3_PERIOD, C_CLK_3_HIGH_PERIOD);
+
+    log(ID_LOG_HDR, "Set max jitter of clock 3", C_SCOPE);
+    -- The jittered clock edges are not on whole ns, so the first log after one gives a TB_WARNING about the truncated time stamp
+    increment_expected_alerts(tb_warning, 1);
+    set_clock_max_jitter(CLOCK_GENERATOR_VVCT, 3, 4 ns, "Set max jitter to 4 ns");
+    await_completion(CLOCK_GENERATOR_VVCT, 3, 1 us, "Waiting for clock generator update", C_SCOPE);
+    check_clock_jitter(clk_3, C_CLK_3_PERIOD, C_CLK_3_HIGH_PERIOD, 4 ns);
+
+    log(ID_LOG_HDR, "Restart clock 3 with jitter, check that the first rising edge is not delayed", C_SCOPE);
+    stop_clock(CLOCK_GENERATOR_VVCT, 3, "Stop clock 3", C_SCOPE);
+    await_completion(CLOCK_GENERATOR_VVCT, 3, 1 us, "Waiting for clock generator update", C_SCOPE);
+    wait for C_CLK_3_PERIOD;
+    check_clock_not_running(clk_3, C_CLK_3_PERIOD);
+    start_clock(CLOCK_GENERATOR_VVCT, 3, "Start clock 3", C_SCOPE);
+    await_completion(CLOCK_GENERATOR_VVCT, 3, 1 us, "Waiting for clock generator update", C_SCOPE);
+    check_value(clk_3, '1', error, "Check that clock 3 starts with a rising edge", C_SCOPE);
+    check_clock_jitter(clk_3, C_CLK_3_PERIOD, C_CLK_3_HIGH_PERIOD, 4 ns);
+
+    log(ID_LOG_HDR, "Set max jitter of clock 3 to 0 ns", C_SCOPE);
+    set_clock_max_jitter(CLOCK_GENERATOR_VVCT, 3, 0 ns, "Set max jitter to 0 ns");
+    await_completion(CLOCK_GENERATOR_VVCT, 3, 1 us, "Waiting for clock generator update", C_SCOPE);
+    wait for C_CLK_3_PERIOD;            -- the rising edge after the update can still have jitter
+    check_clock_period_and_high_time(clk_3, C_CLK_3_PERIOD, C_CLK_3_HIGH_PERIOD);
+
+    log(ID_LOG_HDR, "Set clock 3 max jitter to same as clock high time, expect tb_error", C_SCOPE);
+    increment_expected_alerts(tb_error, 1);
+    set_clock_max_jitter(CLOCK_GENERATOR_VVCT, 3, C_CLK_3_HIGH_PERIOD, "Set max jitter to clock high time");
+    await_completion(CLOCK_GENERATOR_VVCT, 3, 1 us, "Waiting for clock generator update", C_SCOPE);
+    stop_clock(CLOCK_GENERATOR_VVCT, 3, "Stop clock 3", C_SCOPE);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

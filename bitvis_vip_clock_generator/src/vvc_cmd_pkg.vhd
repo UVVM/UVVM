@@ -47,7 +47,8 @@ package vvc_cmd_pkg is
     START_CLOCK,
     STOP_CLOCK,
     SET_CLOCK_PERIOD,
-    SET_CLOCK_HIGH_TIME
+    SET_CLOCK_HIGH_TIME,
+    SET_CLOCK_MAX_JITTER
   );
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
@@ -63,6 +64,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     clock_period        : time;
     clock_high_time     : time;
+    clock_max_jitter    : time;
     -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation           : t_operation;
     proc_call           : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -84,6 +86,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     clock_period        => 10 ns,
     clock_high_time     => 5 ns,
+    clock_max_jitter    => 0 ns,
     -- Common VVC fields
     operation           => NO_OPERATION,
     proc_call           => (others => NUL),

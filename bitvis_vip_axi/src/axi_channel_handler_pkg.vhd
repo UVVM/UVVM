@@ -283,21 +283,21 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    if(v_await_awready) then
-        awid            <= (awid'range => '0');
-        awaddr          <= (awaddr'range => '0');
-        awlen           <= (others => '0');
-        awsize          <= (others => '0');
-        awburst         <= (others => '0');
-        awlock          <= '0';
-        awcache         <= (others => '0');
-        awprot          <= (others => '0');
-        awqos           <= (others => '0');
-        awregion        <= (others => '0');
-        awuser          <= (awuser'range => '0');
-        awvalid         <= '0';
-    end if;
     check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    if v_await_awready then
+      awid     <= (awid'range => '0');
+      awaddr   <= (awaddr'range => '0');
+      awlen    <= (others => '0');
+      awsize   <= (others => '0');
+      awburst  <= (others => '0');
+      awlock   <= '0';
+      awcache  <= (others => '0');
+      awprot   <= (others => '0');
+      awqos    <= (others => '0');
+      awregion <= (others => '0');
+      awuser   <= (awuser'range => '0');
+      awvalid  <= '0';
+    end if;
     log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_address_channel_write;
 
@@ -367,14 +367,14 @@ package body axi_channel_handler_pkg is
           exit;
         end if;
       end loop;
-      if (v_await_wready) then
-          wdata          <= (wdata'range => '0');
-          wstrb          <= (wstrb'range => '0');
-          wuser          <= (wuser'range => '0');
-          wlast          <= '0';
-          wvalid         <= '0';
-      end if;
       check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+      if v_await_wready then
+        wdata  <= (wdata'range => '0');
+        wstrb  <= (wstrb'range => '0');
+        wuser  <= (wuser'range => '0');
+        wlast  <= '0';
+        wvalid <= '0';
+      end if;
     end loop;
     log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_data_channel_write;
@@ -442,10 +442,10 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
-    if (v_await_bvalid) then
-        bready         <= '0';
-    end if;
     check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if v_await_bvalid then
+      bready <= '0';
+    end if;
 
     if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -546,21 +546,21 @@ package body axi_channel_handler_pkg is
       end if;
     end loop;
     check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
-    log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
-    if (v_await_arready) then
-        arid            <= (arid'range => '0');
-        araddr          <= (araddr'range => '0');
-        arlen           <= (others => '0');
-        arsize          <= (others => '0');
-        arburst         <= (others => '0');
-        arlock          <= '0';
-        arcache         <= (others => '0');
-        arprot          <= (others => '0');
-        arqos           <= (others => '0');
-        arregion        <= (others => '0');
-        aruser          <= (aruser'range => '0');
-        arvalid         <= '0';
+    if v_await_arready then
+      arid     <= (arid'range => '0');
+      araddr   <= (araddr'range => '0');
+      arlen    <= (others => '0');
+      arsize   <= (others => '0');
+      arburst  <= (others => '0');
+      arlock   <= '0';
+      arcache  <= (others => '0');
+      arprot   <= (others => '0');
+      arqos    <= (others => '0');
+      arregion <= (others => '0');
+      aruser   <= (aruser'range => '0');
+      arvalid  <= '0';
     end if;
+    log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure read_address_channel_write;
 
   procedure read_data_channel_receive(

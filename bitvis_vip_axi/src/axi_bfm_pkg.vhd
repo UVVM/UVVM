@@ -680,7 +680,14 @@ package body axi_bfm_pkg is
       check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
       check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
-      if v_await_awready or v_await_wready then
+      if v_await_wready then
+        axi_if.write_data_channel.wdata  <= (axi_if.write_data_channel.wdata'range => '0');
+        axi_if.write_data_channel.wstrb  <= (axi_if.write_data_channel.wstrb'range => '0');
+        axi_if.write_data_channel.wlast  <= '0';
+        axi_if.write_data_channel.wuser  <= (axi_if.write_data_channel.wuser'range => '0');
+        axi_if.write_data_channel.wvalid <= '0';
+      end if;
+      if v_await_awready then
         axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0');
         axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0');
         axi_if.write_address_channel.awlen    <= (others => '0');
@@ -851,18 +858,18 @@ package body axi_bfm_pkg is
 
     check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     if v_await_arready then
-        axi_if.read_address_channel.arid     <= (axi_if.read_address_channel.arid'range => '0');
-        axi_if.read_address_channel.araddr   <= (axi_if.read_address_channel.araddr'range => '0');
-        axi_if.read_address_channel.arlen    <= (others => '0');
-        axi_if.read_address_channel.arsize   <= (others => '0');
-        axi_if.read_address_channel.arburst  <= (others => '0');
-        axi_if.read_address_channel.arlock   <= '0';
-        axi_if.read_address_channel.arcache  <= (others => '0');
-        axi_if.read_address_channel.arprot   <= (others => '0');
-        axi_if.read_address_channel.arqos    <= (others => '0');
-        axi_if.read_address_channel.arregion <= (others => '0');
-        axi_if.read_address_channel.aruser   <= (axi_if.read_address_channel.aruser'range => '0');
-        axi_if.read_address_channel.arvalid  <= '0';
+      axi_if.read_address_channel.arid     <= (axi_if.read_address_channel.arid'range => '0');
+      axi_if.read_address_channel.araddr   <= (axi_if.read_address_channel.araddr'range => '0');
+      axi_if.read_address_channel.arlen    <= (others => '0');
+      axi_if.read_address_channel.arsize   <= (others => '0');
+      axi_if.read_address_channel.arburst  <= (others => '0');
+      axi_if.read_address_channel.arlock   <= '0';
+      axi_if.read_address_channel.arcache  <= (others => '0');
+      axi_if.read_address_channel.arprot   <= (others => '0');
+      axi_if.read_address_channel.arqos    <= (others => '0');
+      axi_if.read_address_channel.arregion <= (others => '0');
+      axi_if.read_address_channel.aruser   <= (axi_if.read_address_channel.aruser'range => '0');
+      axi_if.read_address_channel.arvalid  <= '0';
     end if;
 
     for read_transfer_num in 0 to to_integer(unsigned(arlen_value)) loop
@@ -894,9 +901,9 @@ package body axi_bfm_pkg is
         end if;
       end loop;
       check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-      if not v_await_rvalid then
-          axi_if.read_data_channel.rready <= '0';
-          exit;
+      if v_await_rvalid then
+        axi_if.read_data_channel.rready <= '0';
+        exit;
       end if;
       v_await_rvalid := true;
     end loop;

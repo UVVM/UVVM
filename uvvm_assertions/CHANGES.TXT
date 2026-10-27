@@ -1,6 +1,12 @@
 UVVM Assertions Library - Overview on Versions and Changes
 ==============================================================
 
+v0.1.2 BETA
+----------
+Released: 2026-10-27
+- Replaced t_boolean_array and t_integer_array with the VHDL-2008 types boolean_vector and integer_vector.
+  assert_one_of() for integer now takes allowed_values as integer_vector.
+
 v0.1.1 BETA
 ----------
 Released: 2025-11-28

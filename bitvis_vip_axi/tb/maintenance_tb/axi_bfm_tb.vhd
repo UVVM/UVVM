@@ -55,6 +55,13 @@ architecture tb of axi_bfm_tb is
                                              rdata(32 - 1 downto 0),
                                              ruser(8 - 1 downto 0)));
 
+  -- Use non-record signals so that forcing the axi_if signals from the sequencer doesn't affect the slave model
+  signal slave_awready : std_logic;
+  signal slave_wready  : std_logic;
+  signal slave_bvalid  : std_logic;
+  signal slave_arready : std_logic;
+  signal slave_rvalid  : std_logic;
+
 begin
 
   clock_generator(clk, C_CLK_PERIOD);
@@ -106,24 +113,30 @@ begin
       rd_port_in.rready   => axi_if.read_data_channel.rready,
       -- Outputs
       -- write address channel
-      wr_port_out.awready => axi_if.write_address_channel.awready,
+      wr_port_out.awready => slave_awready,
       -- write data channel
-      wr_port_out.wready  => axi_if.write_data_channel.wready,
+      wr_port_out.wready  => slave_wready,
       -- write response channel
       wr_port_out.bid     => axi_if.write_response_channel.bid,
       wr_port_out.bresp   => axi_if.write_response_channel.bresp,
       wr_port_out.buser   => axi_if.write_response_channel.buser,
-      wr_port_out.bvalid  => axi_if.write_response_channel.bvalid,
+      wr_port_out.bvalid  => slave_bvalid,
       -- read address channel
-      rd_port_out.arready => axi_if.read_address_channel.arready,
+      rd_port_out.arready => slave_arready,
       -- read data channel
       rd_port_out.rid     => axi_if.read_data_channel.rid,
       rd_port_out.rdata   => axi_if.read_data_channel.rdata,
       rd_port_out.rresp   => axi_if.read_data_channel.rresp,
       rd_port_out.rlast   => axi_if.read_data_channel.rlast,
       rd_port_out.ruser   => axi_if.read_data_channel.ruser,
-      rd_port_out.rvalid  => axi_if.read_data_channel.rvalid
+      rd_port_out.rvalid  => slave_rvalid
     );
+
+  axi_if.write_address_channel.awready <= slave_awready;
+  axi_if.write_data_channel.wready     <= slave_wready;
+  axi_if.write_response_channel.bvalid <= slave_bvalid;
+  axi_if.read_address_channel.arready  <= slave_arready;
+  axi_if.read_data_channel.rvalid      <= slave_rvalid;
 
   p_main : process
     variable axi_bfm_config       : t_axi_bfm_config                   := C_AXI_BFM_CONFIG_DEFAULT;
@@ -417,6 +430,127 @@ begin
       check_value(v_rresp_value(i) = OKAY, "Checking rresp value", C_SCOPE);
       check_value(v_ruser_wide(i), x"000", "Checking ruser value", C_SCOPE);
     end loop;
+
+    --------------------------------------------------------------------------------------------------------------------
+    -- Testing that the channels are released after a timeout
+    --------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing that the channels are released after a timeout");
+    axi_bfm_config.max_wait_cycles          := 10;
+    axi_bfm_config.max_wait_cycles_severity := ERROR;
+    v_write_data(0)                         := x"AAAAAAAA";
+
+    log(ID_SEQUENCER, "Timeout waiting for AWREADY", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for AWREADY", C_SCOPE);
+    axi_if.write_address_channel.awready <= force '0';
+    axi_write(awaddr_value => x"00000600",
+              awlen_value  => x"00",
+              awsize_value => 4,
+              wdata_value  => v_write_data(0 to 0),
+              buser_value  => v_buser_value,
+              bresp_value  => v_bresp_value,
+              msg          => "Write with AWREADY held low",
+              clk          => clk,
+              axi_if       => axi_if,
+              scope        => C_SCOPE,
+              config       => axi_bfm_config);
+    axi_if.write_address_channel.awready <= release;
+    wait until rising_edge(clk);
+    check_value(axi_if.write_address_channel.awvalid, '0', ERROR, "Checking that AWVALID is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for WREADY", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for WREADY", C_SCOPE);
+    axi_if.write_data_channel.wready <= force '0';
+    axi_write(awaddr_value => x"00000600",
+              awlen_value  => x"00",
+              awsize_value => 4,
+              wdata_value  => v_write_data(0 to 0),
+              buser_value  => v_buser_value,
+              bresp_value  => v_bresp_value,
+              msg          => "Write with WREADY held low",
+              clk          => clk,
+              axi_if       => axi_if,
+              scope        => C_SCOPE,
+              config       => axi_bfm_config);
+    axi_if.write_data_channel.wready <= release;
+    wait until rising_edge(clk);
+    check_value(axi_if.write_data_channel.wvalid, '0', ERROR, "Checking that WVALID is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for BVALID", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for BVALID", C_SCOPE);
+    axi_if.write_response_channel.bvalid <= force '0';
+    axi_write(awaddr_value => x"00000600",
+              awlen_value  => x"00",
+              awsize_value => 4,
+              wdata_value  => v_write_data(0 to 0),
+              buser_value  => v_buser_value,
+              bresp_value  => v_bresp_value,
+              msg          => "Write with BVALID held low",
+              clk          => clk,
+              axi_if       => axi_if,
+              scope        => C_SCOPE,
+              config       => axi_bfm_config);
+    axi_if.write_response_channel.bvalid <= release;
+    wait until rising_edge(clk);
+    check_value(axi_if.write_response_channel.bready, '0', ERROR, "Checking that BREADY is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for ARREADY", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for ARREADY", C_SCOPE);
+    axi_if.read_address_channel.arready <= force '0';
+    axi_read(araddr_value => x"00000600",
+             arlen_value  => x"01",
+             arsize_value => 4,
+             rdata_value  => v_rdata_value,
+             rresp_value  => v_rresp_value,
+             ruser_value  => v_ruser_value,
+             msg          => "Read with ARREADY held low",
+             clk          => clk,
+             axi_if       => axi_if,
+             scope        => C_SCOPE,
+             config       => axi_bfm_config);
+    axi_if.read_address_channel.arready <= release;
+    wait until rising_edge(clk);
+    check_value(axi_if.read_address_channel.arvalid, '0', ERROR, "Checking that ARVALID is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for RVALID", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for RVALID on the first transfer only", C_SCOPE);
+    axi_if.read_data_channel.rvalid <= force '0';
+    axi_read(araddr_value => x"00000600",
+             arlen_value  => x"01",
+             arsize_value => 4,
+             rdata_value  => v_rdata_value,
+             rresp_value  => v_rresp_value,
+             ruser_value  => v_ruser_value,
+             msg          => "Read with RVALID held low",
+             clk          => clk,
+             axi_if       => axi_if,
+             scope        => C_SCOPE,
+             config       => axi_bfm_config);
+    axi_if.read_data_channel.rvalid <= release;
+    wait until rising_edge(clk);
+    check_value(axi_if.read_data_channel.rready, '0', ERROR, "Checking that RREADY is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Checking that the bus works after the timeouts", C_SCOPE);
+    v_write_data(0) := x"CCCCCCCC";
+    axi_write(awaddr_value => x"00000610",
+              awlen_value  => x"00",
+              awsize_value => 4,
+              wdata_value  => v_write_data(0 to 0),
+              buser_value  => v_buser_value,
+              bresp_value  => v_bresp_value,
+              msg          => "Write after the timeouts",
+              clk          => clk,
+              axi_if       => axi_if,
+              scope        => C_SCOPE,
+              config       => axi_bfm_config);
+    axi_check(araddr_value => x"00000610",
+              arlen_value  => x"00",
+              arsize_value => 4,
+              rdata_exp    => v_write_data(0 to 0),
+              msg          => "Check after the timeouts",
+              clk          => clk,
+              axi_if       => axi_if,
+              scope        => C_SCOPE,
+              config       => axi_bfm_config);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

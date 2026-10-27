@@ -1,6 +1,11 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.15
+----------
+Released: 2026-10-27
+- Removed outdated ghdl_compile_all_and_simulate.sh. Use compile_all_and_simulate.sh with ghdl as simulator instead.
+
 v1.0.14
 ----------
 Released: 2025-09-17

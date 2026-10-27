@@ -51,6 +51,23 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_avalon_mm_unwanted_transaction is record
+    readdata      : t_alert_level;
+    response      : t_alert_level;
+    waitrequest   : t_alert_level;
+    readdatavalid : t_alert_level;
+    irq           : t_alert_level;
+  end record t_avalon_mm_unwanted_transaction;
+
+  constant C_AVALON_MM_UNWANTED_TRANSACTION : t_avalon_mm_unwanted_transaction := (
+    readdata      => NO_ALERT,
+    response      => NO_ALERT,
+    waitrequest   => NO_ALERT,
+    readdatavalid => ERROR,
+    irq           => NO_ALERT
+  );
+
   type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural; -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
@@ -64,7 +81,8 @@ package vvc_methods_pkg is
     num_pipeline_stages                   : natural; -- Max read_requests in pipeline
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
-    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
+    unwanted_transaction_checking_enabled : boolean; -- Enable unwanted transaction checking
+    unwanted_transaction_severity         : t_avalon_mm_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -82,7 +100,8 @@ package vvc_methods_pkg is
     num_pipeline_stages                   => 5,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
-    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
+    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,
+    unwanted_transaction_severity         => C_AVALON_MM_UNWANTED_TRANSACTION
   );
 
   type t_vvc_status is record
@@ -212,7 +231,8 @@ package vvc_methods_pkg is
   );
 
   --==============================================================================
-  -- Transactino info methods
+  -- Transaction info methods
+  -- READ/CHECK are used for the request phase. READ_RESPONSE/CHECK_RESPONSE are used for the response phase.
   --==============================================================================
   procedure set_global_vvc_transaction_info(
     signal   vvc_transaction_info_trigger : inout std_logic;
@@ -266,6 +286,8 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, WRITE);
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.write               := '1';
+    shared_vvc_cmd.read                := '0';
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -298,6 +320,8 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.byte_enable         := v_normalised_byte_ena;
+    shared_vvc_cmd.write               := '1';
+    shared_vvc_cmd.read                := '0';
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -327,6 +351,8 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_LOCAL_PROC_CALL, msg, QUEUED, READ);
     shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.write               := '0';
+    shared_vvc_cmd.read                := '1';
     shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
@@ -373,6 +399,8 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, CHECK);
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.write               := '0';
+    shared_vvc_cmd.read                := '1';
     shared_vvc_cmd.alert_level         := alert_level;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
@@ -399,6 +427,8 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, RESET);
     shared_vvc_cmd.gen_integer_array(0) := num_rst_cycles;
+    shared_vvc_cmd.write                := '0';
+    shared_vvc_cmd.read                 := '0';
     shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -422,6 +452,8 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, LOCK);
+    shared_vvc_cmd.write               := '0';
+    shared_vvc_cmd.read                := '0';
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -445,6 +477,8 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, UNLOCK);
+    shared_vvc_cmd.write               := '0';
+    shared_vvc_cmd.read                := '0';
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -468,19 +502,37 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
         vvc_transaction_info_group.bt.addr               := vvc_cmd.addr;
         vvc_transaction_info_group.bt.data               := vvc_cmd.data;
+        vvc_transaction_info_group.bt.write              := vvc_cmd.write;
+        vvc_transaction_info_group.bt.read               := vvc_cmd.read;
         vvc_transaction_info_group.bt.byte_enable        := vvc_cmd.byte_enable;
+        vvc_transaction_info_group.bt.response           := "00";
         vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
         vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when READ | CHECK =>
-        vvc_transaction_info_group.st.operation          := vvc_cmd.operation;
-        vvc_transaction_info_group.st.addr               := vvc_cmd.addr;
-        vvc_transaction_info_group.st.data               := vvc_cmd.data;
-        vvc_transaction_info_group.st.vvc_meta.msg       := vvc_cmd.msg;
-        vvc_transaction_info_group.st.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.st.transaction_status := transaction_status;
+        vvc_transaction_info_group.st_request.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_request.addr               := vvc_cmd.addr;
+        vvc_transaction_info_group.st_request.data               := vvc_cmd.data;
+        vvc_transaction_info_group.st_request.write              := vvc_cmd.write;
+        vvc_transaction_info_group.st_request.read               := vvc_cmd.read;
+        vvc_transaction_info_group.st_request.byte_enable        := vvc_cmd.byte_enable;
+        vvc_transaction_info_group.st_request.response           := "00";
+        vvc_transaction_info_group.st_request.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.st_request.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_request.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when READ_RESPONSE | CHECK_RESPONSE =>
+        vvc_transaction_info_group.st_response.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_response.data               := vvc_cmd.data;
+        vvc_transaction_info_group.st_response.read               := vvc_cmd.read;
+        vvc_transaction_info_group.st_response.byte_enable        := vvc_cmd.byte_enable;
+        vvc_transaction_info_group.st_response.response           := "00";
+        vvc_transaction_info_group.st_response.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.st_response.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_response.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>
@@ -500,8 +552,20 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when READ =>
-        vvc_transaction_info_group.st.data               := vvc_result;
-        vvc_transaction_info_group.st.transaction_status := transaction_status;
+        -- Non-pipelined read: the request sub-transaction carries the read data on completion
+        vvc_transaction_info_group.st_request.data               := vvc_result;
+        vvc_transaction_info_group.st_request.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when READ_RESPONSE | CHECK_RESPONSE =>
+        vvc_transaction_info_group.st_response.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_response.data               := vvc_result;
+        vvc_transaction_info_group.st_response.read               := vvc_cmd.read;
+        vvc_transaction_info_group.st_response.byte_enable        := vvc_cmd.byte_enable;
+        vvc_transaction_info_group.st_response.response           := "00";
+        vvc_transaction_info_group.st_response.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.st_response.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_response.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>
@@ -520,7 +584,10 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when READ | CHECK =>
-        vvc_transaction_info_group.st := C_SUB_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.st_request := C_ST_REQUEST_TRANSACTION_SET_DEFAULT;
+
+      when READ_RESPONSE | CHECK_RESPONSE =>
+        vvc_transaction_info_group.st_response := C_ST_RESPONSE_TRANSACTION_SET_DEFAULT;
 
       when others =>
         null;

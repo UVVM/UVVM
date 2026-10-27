@@ -30,7 +30,7 @@ use std.env.all;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2026.02.14";
+  constant C_UVVM_VERSION : string := "v2 2026.10.27";
 
   -- ============================================================================
   -- Initialization
@@ -3917,6 +3917,7 @@ package body methods_pkg is
           tee_and_keep_line(ALERT_FILE, v_info); -- Write to file, while keeping the line contents
           write_line_to_log_destination(v_info);
           deallocate(v_info);
+          report_alert_to_simulator(alert_level);
 
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
@@ -4038,7 +4039,10 @@ package body methods_pkg is
     else
       print_hierarchical_log(order);
     end if;
-
+    -- Same conclusion as printed above: passed when there is no mismatch on serious alerts
+    if order = FINAL then
+      shared_uvvm_status.simulation_status := shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse;
+    end if;
   end procedure;
 
   -- This version (with the t_void argument) is kept for backwards compatibility
@@ -4235,6 +4239,10 @@ package body methods_pkg is
           end if;
         end loop;
 
+        -- Keep the simulation status up to date for alerts after report_alert_counters(FINAL)
+        if shared_uvvm_status.simulation_status /= 2 then
+          shared_uvvm_status.simulation_status := mismatch_on_expected_simulation_errors_or_worse;
+        end if;
       end if;
     end if;
   end procedure;

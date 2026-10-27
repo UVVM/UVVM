@@ -18,7 +18,7 @@ UVVM: ID_CLOCK_GEN                     100.0 ns  TB seq.                        
 UVVM: ID_CLOCK_GEN                     100.0 ns  TB seq.                        Starting clock Clk100M_60p_duty
 UVVM: ID_CLOCK_GEN                     100.0 ns  TB seq.                        Starting clock Clk100M_9t_duty
 UVVM: ID_CLOCK_GEN                     100.0 ns  TB seq.                        Starting clock Clk100M_90p_duty
-UVVM: ID_POS_ACK                       100.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       105.0 ns  TB seq.(uvvm)                  check_stable(sl, 5 ns) => OK. Value 1 was stable for 5 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -33,7 +33,7 @@ UVVM: ID_CLOCK_GEN                     120.0 ns  TB seq.                        
 UVVM: ID_CLOCK_GEN                     120.0 ns  TB seq.                        Stopping clock Clk100M_4t_duty
 UVVM: ID_CLOCK_GEN                     120.0 ns  TB seq.                        Stopping clock Clk100M_1t_duty
 UVVM: ID_CLOCK_GEN                     120.0 ns  TB seq.                        Stopping clock Clk100M_10p_duty
-UVVM: ID_POS_ACK                       220.0 ns  TB seq.(uvvm)                  check_stable(sl, 100 ns) => OK. Value 0 was stable for 105 ns. 'Check that clock actually
+UVVM: ID_POS_ACK                       220.0 ns  TB seq.(uvvm)                  check_stable(sl, :0 ns) => OK. Value 0 was stable for 105 ns. 'Check that clock actually
 UVVM:                                                                           stopped'
 UVVM: 
 UVVM: 
@@ -43,7 +43,7 @@ UVVM: ID_CLOCK_GEN                     225.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                       270.0 ns  TB seq.(uvvm)                  check_stable(sl, 45 ns) => OK. Value 0 was stable for 47.5 ns. 'Check that clock is quiet when
 UVVM:                                                                           disabled'
 UVVM: ID_CLOCK_GEN                     270.0 ns  TB seq.                        Starting clock Clk200M
-UVVM: ID_POS_ACK                       270.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 5 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       270.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, 5 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       272.5 ns  TB seq.(uvvm)                  check_stable(sl, 2.5 ns) => OK. Value 1 was stable for 2.5 ns. 'Clock generator, check clock
 UVVM:                                                                           high duration'
@@ -52,22 +52,22 @@ UVVM: ID_POS_ACK                       275.0 ns  TB seq.(uvvm)                  
 UVVM:                                                                           low duration'
 UVVM: ID_POS_ACK                       275.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
 UVVM: ID_CLOCK_GEN                     280.0 ns  TB seq.                        Stopping clock Clk200M
-UVVM: ID_POS_ACK                       380.0 ns  TB seq.(uvvm)                  check_stable(sl, 100 ns) => OK. Value 0 was stable for 102.5 ns. 'Check that clock actually
+UVVM: ID_POS_ACK                       380.0 ns  TB seq.(uvvm)                  check_stable(sl, :0 ns) => OK. Value 0 was stable for 102.5 ns. 'Check that clock actually
 UVVM:                                                                           stopped'
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                       380.0 ns  TB seq.                        Verify CLK50M
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_POS_ACK                       380.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 11 ns) => OK. Condition occurred after 0 ns. 'Wait until Clk50M goes
+UVVM: ID_POS_ACK                       380.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, 11 ns) => OK. Condition occurred after -0 ns. 'Wait until Clk50M goes
 UVVM:                                                                           high'
-UVVM: ID_POS_ACK                       390.0 ns  TB seq.(uvvm)                  await_value(sl, 0, 0 ns, 11 ns) => OK. Condition occurred after 10 ns. 'Wait until Clk50M goes
+UVVM: ID_POS_ACK                       390.0 ns  TB seq.(uvvm)                  await_value(sl, 0, -0 ns, 11 ns) => OK. Condition occurred after : ns. 'Wait until Clk50M goes
 UVVM:                                                                           low'
-UVVM: ID_POS_ACK                       400.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 20 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       400.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, 20 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
-UVVM: ID_POS_ACK                       410.0 ns  TB seq.(uvvm)                  check_stable(sl, 10 ns) => OK. Value 1 was stable for 10 ns. 'Clock generator, check clock high
+UVVM: ID_POS_ACK                       410.0 ns  TB seq.(uvvm)                  check_stable(sl, : ns) => OK. Value 1 was stable for : ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       410.0 ns  TB seq.(uvvm)                  check_value(sl, 0) => OK. Value was 0. 'Clock generator. Check high to low transition'
-UVVM: ID_POS_ACK                       420.0 ns  TB seq.(uvvm)                  check_stable(sl, 10 ns) => OK. Value 0 was stable for 10 ns. 'Clock generator, check clock low
+UVVM: ID_POS_ACK                       420.0 ns  TB seq.(uvvm)                  check_stable(sl, : ns) => OK. Value 0 was stable for : ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       420.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
 UVVM: 
@@ -81,7 +81,7 @@ UVVM: ID_CLOCK_GEN                     420.0 ns  TB seq.                        
 UVVM: ID_CLOCK_GEN                     420.0 ns  TB seq.                        Starting clock Clk100M_60p_duty
 UVVM: ID_CLOCK_GEN                     420.0 ns  TB seq.                        Starting clock Clk100M_90p_duty
 UVVM: ID_CLOCK_GEN                     420.0 ns  TB seq.                        Starting clock Clk100M_9t_duty
-UVVM: ID_POS_ACK                       420.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       420.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       426.0 ns  TB seq.(uvvm)                  check_stable(sl, 6 ns) => OK. Value 1 was stable for 6 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -89,7 +89,7 @@ UVVM: ID_POS_ACK                       426.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       430.0 ns  TB seq.(uvvm)                  check_stable(sl, 4 ns) => OK. Value 0 was stable for 4 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       430.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       430.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       430.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       431.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -97,7 +97,7 @@ UVVM: ID_POS_ACK                       431.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       440.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 0 was stable for 9 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       440.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       440.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       440.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       449.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 1 was stable for 9 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -105,7 +105,7 @@ UVVM: ID_POS_ACK                       449.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       450.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       450.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       450.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       450.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       456.0 ns  TB seq.(uvvm)                  check_stable(sl, 6 ns) => OK. Value 1 was stable for 6 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -113,7 +113,7 @@ UVVM: ID_POS_ACK                       456.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       460.0 ns  TB seq.(uvvm)                  check_stable(sl, 4 ns) => OK. Value 0 was stable for 4 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       460.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       460.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       460.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       461.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -121,7 +121,7 @@ UVVM: ID_POS_ACK                       461.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       470.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 0 was stable for 9 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       470.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       470.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       470.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       479.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 1 was stable for 9 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -129,7 +129,7 @@ UVVM: ID_POS_ACK                       479.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       480.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       480.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       480.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       480.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       484.0 ns  TB seq.(uvvm)                  check_stable(sl, 4 ns) => OK. Value 1 was stable for 4 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -137,7 +137,7 @@ UVVM: ID_POS_ACK                       484.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       490.0 ns  TB seq.(uvvm)                  check_stable(sl, 6 ns) => OK. Value 0 was stable for 6 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       490.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       490.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       490.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       491.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -145,7 +145,7 @@ UVVM: ID_POS_ACK                       491.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       500.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 0 was stable for 9 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       500.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       500.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       500.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       509.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 1 was stable for 9 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -153,7 +153,7 @@ UVVM: ID_POS_ACK                       509.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       510.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       510.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       510.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       510.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       514.0 ns  TB seq.(uvvm)                  check_stable(sl, 4 ns) => OK. Value 1 was stable for 4 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -161,7 +161,7 @@ UVVM: ID_POS_ACK                       514.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       520.0 ns  TB seq.(uvvm)                  check_stable(sl, 6 ns) => OK. Value 0 was stable for 6 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       520.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       520.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       520.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       521.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -169,7 +169,7 @@ UVVM: ID_POS_ACK                       521.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                       530.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 0 was stable for 9 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                       530.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                       530.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 10 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                       530.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, : ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                       539.0 ns  TB seq.(uvvm)                  check_stable(sl, 9 ns) => OK. Value 1 was stable for 9 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -216,8 +216,8 @@ UVVM:                                                                           
 UVVM: ID_POS_ACK                       710.0 ns  TB seq.(uvvm)                  check_value(time, 100 ps) => OK. Value was 100 ps. 'Checking falling edge.'
 UVVM: ID_POS_ACK                       710.0 ns  TB seq.(uvvm)                  check_value(sl, 0) => OK. Value was 0. 'Check that adjustable clock is set to low during the
 UVVM:                                                                           period, high: 9900000 fs, low: 100000 fs'
-UVVM: ID_POS_ACK                       710.0 ns  TB seq.(uvvm)                  check_stable(sl, 100 ps) => OK. Value 0 was stable for 100 ps. 'Check adjustable clock is
-UVVM:                                                                           stable during low period, high: 9900000 fs, low: 100000 fs'
+UVVM: ID_POS_ACK                       710.0 ns  TB seq.(uvvm)                  check_stable(sl, :0 ps) => OK. Value 0 was stable for :0 ps. 'Check adjustable clock is stable
+UVVM:                                                                           during low period, high: 9900000 fs, low: 100000 fs'
 UVVM: ID_CLOCK_GEN                     720.0 ns  TB seq.                        Stopping clock: adj_clk100M
 UVVM: 
 UVVM: 
@@ -258,7 +258,7 @@ UVVM: ID_CLOCK_GEN                    1840.0 ns  TB seq.                        
 UVVM: ID_CLOCK_GEN                    1840.0 ns  TB seq.                        Starting clock Clk10M_1p_duty
 UVVM: ID_CLOCK_GEN                    1840.0 ns  TB seq.                        Starting clock Clk10M_99t_duty
 UVVM: ID_CLOCK_GEN                    1840.0 ns  TB seq.                        Starting clock Clk10M_99p_duty
-UVVM: ID_POS_ACK                      1840.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      1840.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      1939.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 1 was stable for 99 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -266,7 +266,7 @@ UVVM: ID_POS_ACK                      1939.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      1940.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      1940.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      1940.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      1940.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      1941.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -274,7 +274,7 @@ UVVM: ID_POS_ACK                      1941.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      2040.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 0 was stable for 99 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      2040.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      2040.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      2040.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      2139.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 1 was stable for 99 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -282,7 +282,7 @@ UVVM: ID_POS_ACK                      2139.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      2140.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      2140.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      2140.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      2140.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      2141.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -290,7 +290,7 @@ UVVM: ID_POS_ACK                      2141.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      2240.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 0 was stable for 99 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      2240.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      2240.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      2240.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      2339.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 1 was stable for 99 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -298,7 +298,7 @@ UVVM: ID_POS_ACK                      2339.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      2340.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      2340.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      2340.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      2340.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      2341.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -306,7 +306,7 @@ UVVM: ID_POS_ACK                      2341.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      2440.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 0 was stable for 99 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      2440.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      2440.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      2440.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      2539.0 ns  TB seq.(uvvm)                  check_stable(sl, 99 ns) => OK. Value 1 was stable for 99 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'
@@ -314,7 +314,7 @@ UVVM: ID_POS_ACK                      2539.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                      2540.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 0 was stable for 1 ns. 'Clock generator, check clock low
 UVVM:                                                                           duration'
 UVVM: ID_POS_ACK                      2540.0 ns  TB seq.(uvvm)                  check_value(sl, 1) => OK. Value was 1. 'Clock generator. Check low to high transition'
-UVVM: ID_POS_ACK                      2540.0 ns  TB seq.(uvvm)                  await_value(sl, 1, 0 ns, 100 ns) => OK. Condition occurred after 0 ns. 'Clock generator, check
+UVVM: ID_POS_ACK                      2540.0 ns  TB seq.(uvvm)                  await_value(sl, 1, -0 ns, :0 ns) => OK. Condition occurred after -0 ns. 'Clock generator, check
 UVVM:                                                                           that clock started'
 UVVM: ID_POS_ACK                      2541.0 ns  TB seq.(uvvm)                  check_stable(sl, 1 ns) => OK. Value 1 was stable for 1 ns. 'Clock generator, check clock high
 UVVM:                                                                           duration'

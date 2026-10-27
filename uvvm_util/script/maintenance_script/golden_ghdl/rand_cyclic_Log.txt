@@ -256,7 +256,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:5, RANGE:[-2:2], UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:5, RANGE:[-2:2], UNIQUE, CYCLIC)=> (2, -1, -2, 0, 1)
@@ -278,7 +278,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:5, ONLY:(-2, -1, 0, 1, 2), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:5, ONLY:(-2, -1, 0, 1, 2), UNIQUE, CYCLIC)=> (-2, 1, -1, 0, 2)
@@ -300,7 +300,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #3  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:5, RANGE:[-1:1], ADD:(-5, 6), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:5, RANGE:[-1:1], ADD:(-5, 6), UNIQUE, CYCLIC)=> (-1, -5, 0, 6, 1)
@@ -318,7 +318,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #4  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:5, RANGE:[-3:4], EXCL:(-1, 0, 1), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:5, RANGE:[-3:4], EXCL:(-1, 0, 1), UNIQUE, CYCLIC)=> (4, 2, -3, 3, -2)
@@ -340,7 +340,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #5  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:5, RANGE:[-2:2], ADD:(-5, 6, 8), EXCL:(-1, 0, 1), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:5, RANGE:[-2:2], ADD:(-5, 6, 8), EXCL:(-1, 0, 1), UNIQUE, CYCLIC)=> (-2, 6, 8, 2, -5)
@@ -349,7 +349,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #6  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:5, RANGE:[-1:1], EXCL:(-1), ADD:(-5, 6, 8), UNIQUE, CYCLIC)=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:5, RANGE:[-1:1], EXCL:(-1), ADD:(-5, 6, 8), UNIQUE, CYCLIC)=> (1, 0, 6, 8, -5)
@@ -796,13 +796,13 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 2.
 UVVM: 
 UVVM: ***  TB_WARNING #7  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:128, CYCLIC)=> Vector is too big for cyclic mode. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:128, CYCLIC)=> x"95577178AA2CC56495AA22C56A0DD168"
 UVVM: 
 UVVM: ***  TB_WARNING #8  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:32, EXCL:(0, 1, 2), CYCLIC)=> Range is too big for cyclic mode (min: 0, max: 2**32-1)
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:32, EXCL:(0, 1, 2), CYCLIC)=> x"7A7EC526"
@@ -1256,13 +1256,13 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 2.
 UVVM: 
 UVVM: ***  TB_WARNING #9  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:128, CYCLIC)=> Vector is too big for cyclic mode. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:128, CYCLIC)=> x"340E535E40AD4B03A83A2BED59CCC234"
 UVVM: 
 UVVM: ***  TB_WARNING #10  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:33, EXCL:(0, 1, 2), CYCLIC)=> Range is too big for cyclic mode (min: -2**32, max: 2**32-1)
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:33, EXCL:(0, 1, 2), CYCLIC)=> x"16DC95915"
@@ -1707,13 +1707,13 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 2.
 UVVM: 
 UVVM: ***  TB_WARNING #11  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:128, CYCLIC)=> Vector is too big for cyclic mode. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:128, CYCLIC)=> x"5550D1428E657D623184F172E76B162A"
 UVVM: 
 UVVM: ***  TB_WARNING #12  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    rand(LEN:32, EXCL:(0, 1, 2), CYCLIC)=> Range is too big for cyclic mode (min: 0, max: 2**32-1)
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(LEN:32, EXCL:(0, 1, 2), CYCLIC)=> x"8FBFAEDD"

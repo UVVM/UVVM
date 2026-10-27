@@ -18,16 +18,24 @@ def find_python3_executable():
 
 python_exe = find_python3_executable()
 
+# Each entry is (argv, expected_rc). run_spec_cov.py returns a status code:
+# 0 = all listed requirements compliant, 1 = technical failure,
+# 2 = non-compliant requirement(s), 3 = incomplete coverage or warnings.
 test_list = [
-    [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_general_strict_0.txt"],
-    [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_general_strict_1.txt"],
-    [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_general_strict_2.txt"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_error_before_tc.csv", "-s", "../sim/sc_error_before_tc.csv"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_error_during_tc.csv", "-s", "../sim/sc_error_during_tc.csv"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_list_single_tickoff.csv", "-s", "../sim/sc_list_single_tickoff.csv"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_cond_tickoff.csv", "-s", "../sim/sc_cond_tickoff.csv"],
-    [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_mix_strict_1.txt"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-p", "../sim/pc_no_req_file.csv", "-s", "../sim/sc_no_req_file.csv"]
+    ([python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_general_strict_0.txt"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_general_strict_1.txt"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_general_strict_2.txt"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_error_before_tc.csv", "-s", "../sim/sc_error_before_tc.csv"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_error_during_tc.csv", "-s", "../sim/sc_error_during_tc.csv"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_list_single_tickoff.csv", "-s", "../sim/sc_list_single_tickoff.csv"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/tb_tests_req_file.csv", "-p", "../sim/pc_cond_tickoff.csv", "-s", "../sim/sc_cond_tickoff.csv"], 3),
+    ([python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_mix_strict_1.txt"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-p", "../sim/pc_no_req_file.csv", "-s", "../sim/sc_no_req_file.csv"], 0),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file_no_req_file_tc.csv", "-p", "../sim/pc_no_req_file.csv", "-s", "../sim/sc_listed_no_req_file.csv"], 0),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-p", "../sim/pc_tc_fail.csv", "-s", "../sim/sc_unlisted_tc_fail.csv"], 2),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-p", "../sim/pc_does_not_exist.csv", "-s", "../sim/sc_does_not_exist.csv"], 1),
+    ([python_exe, "../script/run_spec_cov.py", "--strictness", "5", "-p", "../sim/pc_no_req_file.csv", "-s", "../sim/sc_invalid_strictness.csv"], 1),
+    ([python_exe, "../script/run_spec_cov.py", "--help"], 0)
 ]
 
 
@@ -54,20 +62,34 @@ def move_partial_coverage_files():
 
 def run_tests():
     print("Running tests...")
-    output = None
-    for idx, test in enumerate(test_list):
+    rc_mismatches = 0
+    for idx, (test, expected_rc) in enumerate(test_list):
         print("Test %d : %s" % (idx, test))
 
-        try:
-            output = subprocess.check_output(test, stderr=subprocess.PIPE)
-            # Save output for golden check
-            with open("output_" + str(idx + 1) + ".txt", "w", newline='\n') as file:
-                file.write(str(output, "utf-8"))
-        except subprocess.CalledProcessError as e:
-            print("ERROR: %s" % (e))
+        result = subprocess.run(
+            test,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        output = result.stdout
+        actual_rc = result.returncode
+
+        # Save output for golden check (output is bytes in both branches)
+        with open("output_" + str(idx + 1) + ".txt", "w", newline='\n') as file:
+            file.write(str(output, "utf-8"))
+
+        # Assert the return code matches the expected status code
+        if actual_rc != expected_rc:
+            print("ERROR: Test %d returned code %d, expected %d" % (idx, actual_rc, expected_rc))
+            if result.stderr:
+                print(str(result.stderr, "utf-8"))
+            rc_mismatches += 1
+
+    return rc_mismatches
 
 
-def verify_test_results(python_exe):
+def verify_test_results(python_exe, rc_mismatches=0):
     print("Verify test results...")
     num_errors = 0
     try:
@@ -76,10 +98,14 @@ def verify_test_results(python_exe):
         num_errors = int(e.returncode)
     if num_errors != 0:
         print("Golden failed with %d errors!" % (num_errors))
-    sys.exit(num_errors)
+    # Fold return-code mismatches into the failure count so an unexpected exit
+    # code fails the harness rather than passing silently.
+    if rc_mismatches != 0:
+        print("Return-code assertion failed for %d test(s)!" % (rc_mismatches))
+    sys.exit(num_errors + rc_mismatches)
 
 
 remove_specification_coverage_files()
 move_partial_coverage_files()
-run_tests()
-verify_test_results(python_exe)
+rc_mismatches = run_tests()
+verify_test_results(python_exe, rc_mismatches)

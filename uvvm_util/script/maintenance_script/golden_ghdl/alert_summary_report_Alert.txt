@@ -1,32 +1,32 @@
 UVVM: 
 UVVM: ***  NOTE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -34,7 +34,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -42,7 +42,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -50,7 +50,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 

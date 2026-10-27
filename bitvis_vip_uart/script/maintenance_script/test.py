@@ -52,6 +52,17 @@ hr.add_files("../../../bitvis_uart/src/*.vhd", "bitvis_uart")
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_uart")
 hr.add_files("../../tb/*.vhd", "bitvis_vip_uart")
 
+# Sweep UART data width 5..9 across the VVC and monitor maintenance TBs.
+# uvvm_demo_tb is tuned to the default 8-bit width; running it through the
+# matrix exposes width-8-specific assumptions in its demo procedures
+# (error-injection RNG sequence, alert counts, p_model SB semantics).
+# The GC_DATA_WIDTH sweep is covered by uart_vvc_tb and uart_monitor_tb.
+# The demo TB still carries the GC_DATA_WIDTH generic so it can be run
+# manually at non-default widths.
+for entity in ("uart_vvc_tb", "uart_monitor_tb"):
+    for width in (5, 6, 7, 8, 9):
+        hr.add_generics(entity=entity, generics=["GC_DATA_WIDTH", width])
+
 # Set simulator name and options
 sim_options = None
 simulator_name = hr.settings.get_simulator_name()

@@ -1,5 +1,5 @@
 CAPI=2:
-name: uvvm:uvvm:external_vip_apb:1.0.0
+name: uvvm:uvvm:external_vip_apb:1.0.1
 filesets:
   rtl:
     files:
@@ -22,8 +22,8 @@ filesets:
     logical_name: external_vip_apb
     depend:
     - uvvm:uvvm:bitvis_vip_scoreboard:2.3.4
-    - uvvm:uvvm:uvvm_util:2.21.4
-    - uvvm:uvvm:uvvm_vvc_framework:2.12.15
+    - uvvm:uvvm:uvvm_util:2.22.0
+    - uvvm:uvvm:uvvm_vvc_framework:2.12.16
 targets:
   default:
     filesets:

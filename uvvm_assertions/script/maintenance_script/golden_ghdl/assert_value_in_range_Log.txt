@@ -1,8 +1,8 @@
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION).
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -13,7 +13,7 @@ UVVM:
 UVVM: ID_LOG_HDR                       140.0 ns  TB seq.                        Testing Normal Operation (unsigned)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION                140.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (5) was in range [5..10]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                     150.0 ns  TB seq.                        tracked_value = 5
 UVVM: ID_SEQUENCER                     160.0 ns  TB seq.                        tracked_value = 6
 UVVM: ID_SEQUENCER                     170.0 ns  TB seq.                        tracked_value = 7
@@ -30,7 +30,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
 UVVM:           250 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [5..10]. Occurred after 110 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [5..10]. Occurred after 110 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -39,7 +39,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
 UVVM:           260 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [5..10]. Occurred after 120 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [5..10]. Occurred after 120 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -48,7 +48,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #3  ***
 UVVM:           270 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [5..10]. Occurred after 130 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [5..10]. Occurred after 130 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -57,7 +57,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
 UVVM:           280 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [5..10]. Occurred after 140 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [5..10]. Occurred after 140 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -66,7 +66,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
 UVVM:           290 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [5..10]. Occurred after 150 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [5..10]. Occurred after 150 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -76,7 +76,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #6  ***
 UVVM:           340 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (4) was not in range [5..10]. Occurred after 200 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (4) was not in range [5..10]. Occurred after 200 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -85,7 +85,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #7  ***
 UVVM:           350 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (3) was not in range [5..10]. Occurred after 210 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (3) was not in range [5..10]. Occurred after 210 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -94,7 +94,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #8  ***
 UVVM:           360 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (2) was not in range [5..10]. Occurred after 220 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (2) was not in range [5..10]. Occurred after 220 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -103,7 +103,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #9  ***
 UVVM:           370 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1) was not in range [5..10]. Occurred after 230 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1) was not in range [5..10]. Occurred after 230 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -112,7 +112,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #10  ***
 UVVM:           380 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (0) was not in range [5..10]. Occurred after 240 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (0) was not in range [5..10]. Occurred after 240 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -122,19 +122,19 @@ UVVM: ID_LOG_HDR                       430.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                     430.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
 UVVM: ID_UVVM_ASSERTION                440.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (5) was in range [5..10]. Condition occurred after
-UVVM:                                                                           0 ns. 
+UVVM:                                                                           -0 ns.
 UVVM: ID_UVVM_ASSERTION                450.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (5) was in range [5..10]. Condition occurred after
-UVVM:                                                                           10 ns. 
+UVVM:                                                                           : ns.
 UVVM: ID_UVVM_ASSERTION                460.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (5) was in range [5..10]. Condition occurred after
-UVVM:                                                                           20 ns. 
+UVVM:                                                                           20 ns.
 UVVM: ID_UVVM_ASSERTION                470.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (5) was in range [5..10]. Condition occurred after
-UVVM:                                                                           30 ns. 
+UVVM:                                                                           30 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                       560.0 ns  TB seq.                        Testing Normal Operation (signed)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION                560.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0) was in range [0..5]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                     570.0 ns  TB seq.                        tracked_value = 0
 UVVM: ID_SEQUENCER                     580.0 ns  TB seq.                        tracked_value = 1
 UVVM: ID_SEQUENCER                     590.0 ns  TB seq.                        tracked_value = 2
@@ -151,7 +151,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #11  ***
 UVVM:           670 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (6) was not in range [0..5]. Occurred after 110 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (6) was not in range [0..5]. Occurred after 110 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -160,7 +160,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #12  ***
 UVVM:           680 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (7) was not in range [0..5]. Occurred after 120 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (7) was not in range [0..5]. Occurred after 120 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -169,7 +169,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #13  ***
 UVVM:           690 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..5]. Occurred after 130 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..5]. Occurred after 130 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -178,7 +178,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #14  ***
 UVVM:           700 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..5]. Occurred after 140 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..5]. Occurred after 140 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -187,7 +187,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #15  ***
 UVVM:           710 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..5]. Occurred after 150 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..5]. Occurred after 150 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -197,7 +197,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #16  ***
 UVVM:           760 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..5]. Occurred after 200 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..5]. Occurred after 200 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -206,7 +206,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #17  ***
 UVVM:           770 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..5]. Occurred after 210 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..5]. Occurred after 210 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -215,7 +215,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #18  ***
 UVVM:           780 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..5]. Occurred after 220 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..5]. Occurred after 220 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -224,7 +224,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #19  ***
 UVVM:           790 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..5]. Occurred after 230 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..5]. Occurred after 230 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -233,7 +233,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #20  ***
 UVVM:           800 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..5]. Occurred after 240 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..5]. Occurred after 240 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -243,19 +243,19 @@ UVVM: ID_LOG_HDR                       850.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                     850.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
 UVVM: ID_UVVM_ASSERTION                860.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..5]. Condition occurred after
-UVVM:                                                                           0 ns. 
+UVVM:                                                                           -0 ns.
 UVVM: ID_UVVM_ASSERTION                870.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..5]. Condition occurred after
-UVVM:                                                                           10 ns. 
+UVVM:                                                                           : ns.
 UVVM: ID_UVVM_ASSERTION                880.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..5]. Condition occurred after
-UVVM:                                                                           20 ns. 
+UVVM:                                                                           20 ns.
 UVVM: ID_UVVM_ASSERTION                890.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..5]. Condition occurred after
-UVVM:                                                                           30 ns. 
+UVVM:                                                                           30 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                       980.0 ns  TB seq.                        Testing Normal Operation (real)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION                980.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                     990.0 ns  TB seq.                        tracked_value = 0.0
 UVVM: ID_SEQUENCER                    1000.0 ns  TB seq.                        tracked_value = 1.0
 UVVM: ID_SEQUENCER                    1010.0 ns  TB seq.                        tracked_value = 2.0
@@ -277,7 +277,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #21  ***
 UVVM:          1140 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.1e1) was not in range [0.0..1.0e1]. Occurred after 160 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.1e1) was not in range [0.0..1.0e1]. Occurred after 160 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -286,7 +286,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #22  ***
 UVVM:          1150 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.2e1) was not in range [0.0..1.0e1]. Occurred after 170 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.2e1) was not in range [0.0..1.0e1]. Occurred after 170 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -295,7 +295,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #23  ***
 UVVM:          1160 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.3e1) was not in range [0.0..1.0e1]. Occurred after 180 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.3e1) was not in range [0.0..1.0e1]. Occurred after 180 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -304,7 +304,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #24  ***
 UVVM:          1170 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.4e1) was not in range [0.0..1.0e1]. Occurred after 190 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.4e1) was not in range [0.0..1.0e1]. Occurred after 190 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -313,7 +313,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #25  ***
 UVVM:          1180 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.5e1) was not in range [0.0..1.0e1]. Occurred after 200 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.5e1) was not in range [0.0..1.0e1]. Occurred after 200 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -322,7 +322,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #26  ***
 UVVM:          1190 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.6e1) was not in range [0.0..1.0e1]. Occurred after 210 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.6e1) was not in range [0.0..1.0e1]. Occurred after 210 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -331,7 +331,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #27  ***
 UVVM:          1200 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.7e1) was not in range [0.0..1.0e1]. Occurred after 220 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.7e1) was not in range [0.0..1.0e1]. Occurred after 220 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -340,7 +340,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #28  ***
 UVVM:          1210 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.8e1) was not in range [0.0..1.0e1]. Occurred after 230 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.8e1) was not in range [0.0..1.0e1]. Occurred after 230 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -349,7 +349,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #29  ***
 UVVM:          1220 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.9e1) was not in range [0.0..1.0e1]. Occurred after 240 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.9e1) was not in range [0.0..1.0e1]. Occurred after 240 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -358,7 +358,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #30  ***
 UVVM:          1230 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (2.0e1) was not in range [0.0..1.0e1]. Occurred after 250 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (2.0e1) was not in range [0.0..1.0e1]. Occurred after 250 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -368,7 +368,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #31  ***
 UVVM:          1280 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0) was not in range [0.0..1.0e1]. Occurred after 300 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0) was not in range [0.0..1.0e1]. Occurred after 300 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -377,7 +377,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #32  ***
 UVVM:          1290 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2.0) was not in range [0.0..1.0e1]. Occurred after 310 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2.0) was not in range [0.0..1.0e1]. Occurred after 310 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -386,7 +386,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #33  ***
 UVVM:          1300 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3.0) was not in range [0.0..1.0e1]. Occurred after 320 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3.0) was not in range [0.0..1.0e1]. Occurred after 320 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -395,7 +395,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #34  ***
 UVVM:          1310 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4.0) was not in range [0.0..1.0e1]. Occurred after 330 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4.0) was not in range [0.0..1.0e1]. Occurred after 330 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -404,7 +404,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #35  ***
 UVVM:          1320 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5.0) was not in range [0.0..1.0e1]. Occurred after 340 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5.0) was not in range [0.0..1.0e1]. Occurred after 340 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -413,7 +413,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #36  ***
 UVVM:          1330 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6.0) was not in range [0.0..1.0e1]. Occurred after 350 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6.0) was not in range [0.0..1.0e1]. Occurred after 350 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -422,7 +422,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #37  ***
 UVVM:          1340 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7.0) was not in range [0.0..1.0e1]. Occurred after 360 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7.0) was not in range [0.0..1.0e1]. Occurred after 360 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -431,7 +431,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #38  ***
 UVVM:          1350 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8.0) was not in range [0.0..1.0e1]. Occurred after 370 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8.0) was not in range [0.0..1.0e1]. Occurred after 370 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -440,7 +440,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #39  ***
 UVVM:          1360 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-9.0) was not in range [0.0..1.0e1]. Occurred after 380 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-9.0) was not in range [0.0..1.0e1]. Occurred after 380 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -449,7 +449,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #40  ***
 UVVM:          1370 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0e1) was not in range [0.0..1.0e1]. Occurred after 390 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0e1) was not in range [0.0..1.0e1]. Occurred after 390 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -459,19 +459,19 @@ UVVM: ID_LOG_HDR                      1420.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    1420.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
 UVVM: ID_UVVM_ASSERTION               1430.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_UVVM_ASSERTION               1440.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 10 ns. 
+UVVM:                                                                           occurred after : ns.
 UVVM: ID_UVVM_ASSERTION               1450.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 20 ns. 
+UVVM:                                                                           occurred after 20 ns.
 UVVM: ID_UVVM_ASSERTION               1460.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 30 ns. 
+UVVM:                                                                           occurred after 30 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      1550.0 ns  TB seq.                        Testing Normal Operation (time)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               1550.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0 fs) was in range [0 fs..10000000 fs].
-UVVM:                                                                           Condition occurred after 0 ns. 
+UVVM:                                                                           Condition occurred after -0 ns.
 UVVM: ID_SEQUENCER                    1560.0 ns  TB seq.                        tracked_value = 0 fs
 UVVM: ID_SEQUENCER                    1570.0 ns  TB seq.                        tracked_value = 1000000 fs
 UVVM: ID_SEQUENCER                    1580.0 ns  TB seq.                        tracked_value = 2000000 fs
@@ -493,7 +493,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #41  ***
 UVVM:          1710 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (11000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 160 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (11000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 160 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -502,7 +502,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #42  ***
 UVVM:          1720 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (12000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 170 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (12000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 170 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -511,7 +511,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #43  ***
 UVVM:          1730 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (13000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 180 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (13000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 180 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -520,7 +520,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #44  ***
 UVVM:          1740 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (14000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 190 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (14000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 190 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -529,7 +529,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #45  ***
 UVVM:          1750 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (15000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 200 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (15000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 200 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -538,7 +538,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #46  ***
 UVVM:          1760 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (16000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 210 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (16000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 210 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -547,7 +547,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #47  ***
 UVVM:          1770 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (17000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 220 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (17000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 220 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -556,7 +556,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #48  ***
 UVVM:          1780 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (18000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 230 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (18000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 230 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -565,7 +565,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #49  ***
 UVVM:          1790 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (19000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 240 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (19000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 240 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -574,7 +574,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #50  ***
 UVVM:          1800 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (20000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 250 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (20000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 250 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -584,7 +584,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #51  ***
 UVVM:          1850 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 300 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 300 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -593,7 +593,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #52  ***
 UVVM:          1860 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 310 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 310 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -602,7 +602,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #53  ***
 UVVM:          1870 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 320 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 320 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -611,7 +611,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #54  ***
 UVVM:          1880 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 330 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 330 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -620,7 +620,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #55  ***
 UVVM:          1890 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 340 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 340 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -629,7 +629,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #56  ***
 UVVM:          1900 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 350 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 350 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -638,7 +638,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #57  ***
 UVVM:          1910 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 360 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 360 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -647,7 +647,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #58  ***
 UVVM:          1920 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 370 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 370 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -656,7 +656,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #59  ***
 UVVM:          1930 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-9000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 380 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-9000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 380 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -665,7 +665,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #60  ***
 UVVM:          1940 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-10000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 390 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-10000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 390 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -675,19 +675,19 @@ UVVM: ID_LOG_HDR                      1990.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    1990.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
 UVVM: ID_UVVM_ASSERTION               2000.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0 fs) was in range [0 fs..10000000 fs]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_UVVM_ASSERTION               2010.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0 fs) was in range [0 fs..10000000 fs]. Condition
-UVVM:                                                                           occurred after 10 ns. 
+UVVM:                                                                           occurred after : ns.
 UVVM: ID_UVVM_ASSERTION               2020.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0 fs) was in range [0 fs..10000000 fs]. Condition
-UVVM:                                                                           occurred after 20 ns. 
+UVVM:                                                                           occurred after 20 ns.
 UVVM: ID_UVVM_ASSERTION               2030.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0 fs) was in range [0 fs..10000000 fs]. Condition
-UVVM:                                                                           occurred after 30 ns. 
+UVVM:                                                                           occurred after 30 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      2120.0 ns  TB seq.                        Testing Normal Operation (integer)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               2120.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0) was in range [0..10]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                    2130.0 ns  TB seq.                        tracked_value = 0
 UVVM: ID_SEQUENCER                    2140.0 ns  TB seq.                        tracked_value = 1
 UVVM: ID_SEQUENCER                    2150.0 ns  TB seq.                        tracked_value = 2
@@ -709,7 +709,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #61  ***
 UVVM:          2280 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [0..10]. Occurred after 160 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [0..10]. Occurred after 160 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -718,7 +718,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #62  ***
 UVVM:          2290 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [0..10]. Occurred after 170 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [0..10]. Occurred after 170 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -727,7 +727,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #63  ***
 UVVM:          2300 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [0..10]. Occurred after 180 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [0..10]. Occurred after 180 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -736,7 +736,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #64  ***
 UVVM:          2310 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [0..10]. Occurred after 190 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [0..10]. Occurred after 190 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -745,7 +745,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #65  ***
 UVVM:          2320 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [0..10]. Occurred after 200 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [0..10]. Occurred after 200 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -754,7 +754,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #66  ***
 UVVM:          2330 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (16) was not in range [0..10]. Occurred after 210 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (16) was not in range [0..10]. Occurred after 210 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -763,7 +763,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #67  ***
 UVVM:          2340 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (17) was not in range [0..10]. Occurred after 220 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (17) was not in range [0..10]. Occurred after 220 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -772,7 +772,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #68  ***
 UVVM:          2350 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (18) was not in range [0..10]. Occurred after 230 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (18) was not in range [0..10]. Occurred after 230 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -781,7 +781,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #69  ***
 UVVM:          2360 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (19) was not in range [0..10]. Occurred after 240 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (19) was not in range [0..10]. Occurred after 240 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -790,7 +790,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #70  ***
 UVVM:          2370 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (20) was not in range [0..10]. Occurred after 250 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (20) was not in range [0..10]. Occurred after 250 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -800,7 +800,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #71  ***
 UVVM:          2420 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 300 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 300 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -809,7 +809,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #72  ***
 UVVM:          2430 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..10]. Occurred after 310 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..10]. Occurred after 310 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -818,7 +818,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #73  ***
 UVVM:          2440 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..10]. Occurred after 320 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..10]. Occurred after 320 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -827,7 +827,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #74  ***
 UVVM:          2450 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..10]. Occurred after 330 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..10]. Occurred after 330 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -836,7 +836,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #75  ***
 UVVM:          2460 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..10]. Occurred after 340 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..10]. Occurred after 340 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -845,7 +845,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #76  ***
 UVVM:          2470 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..10]. Occurred after 350 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..10]. Occurred after 350 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -854,7 +854,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #77  ***
 UVVM:          2480 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..10]. Occurred after 360 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..10]. Occurred after 360 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -863,7 +863,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #78  ***
 UVVM:          2490 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..10]. Occurred after 370 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..10]. Occurred after 370 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -872,7 +872,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #79  ***
 UVVM:          2500 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-9) was not in range [0..10]. Occurred after 380 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-9) was not in range [0..10]. Occurred after 380 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -881,7 +881,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #80  ***
 UVVM:          2510 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-10) was not in range [0..10]. Occurred after 390 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-10) was not in range [0..10]. Occurred after 390 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -891,13 +891,13 @@ UVVM: ID_LOG_HDR                      2560.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    2560.0 ns  TB seq.                        Expecting a positive acknowledge on each rising clock edge
 UVVM: ID_UVVM_ASSERTION               2570.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..10]. Condition occurred after
-UVVM:                                                                           0 ns. 
+UVVM:                                                                           -0 ns.
 UVVM: ID_UVVM_ASSERTION               2580.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..10]. Condition occurred after
-UVVM:                                                                           10 ns. 
+UVVM:                                                                           : ns.
 UVVM: ID_UVVM_ASSERTION               2590.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..10]. Condition occurred after
-UVVM:                                                                           20 ns. 
+UVVM:                                                                           20 ns.
 UVVM: ID_UVVM_ASSERTION               2600.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (0) was in range [0..10]. Condition occurred after
-UVVM:                                                                           30 ns. 
+UVVM:                                                                           30 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      2650.0 ns  TB seq.                        Testing Assertion Enable (integer)
@@ -907,7 +907,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #81  ***
 UVVM:          2650 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 0 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after -0 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -916,7 +916,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #82  ***
 UVVM:          2710 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 0 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after -0 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -931,7 +931,7 @@ UVVM:
 UVVM: ID_LOG_HDR                      2918.0 ns  TB seq.                        Testing Normal Operation (unsigned non-clocked)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               2918.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (5) was in range [5..10]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                    2925.0 ns  TB seq.                        tracked_value = 5
 UVVM: ID_SEQUENCER                    2934.0 ns  TB seq.                        tracked_value = 6
 UVVM: ID_SEQUENCER                    2940.0 ns  TB seq.                        tracked_value = 7
@@ -948,7 +948,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #83  ***
 UVVM:          3000 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [5..10]. Occurred after 82 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [5..10]. Occurred after 82 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -957,7 +957,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #84  ***
 UVVM:          3008 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [5..10]. Occurred after 90 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [5..10]. Occurred after 90 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -966,7 +966,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #85  ***
 UVVM:          3016 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [5..10]. Occurred after 98 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [5..10]. Occurred after 98 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -975,7 +975,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #86  ***
 UVVM:          3025 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [5..10]. Occurred after 107 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [5..10]. Occurred after 107 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -984,7 +984,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #87  ***
 UVVM:          3032 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [5..10]. Occurred after 114 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [5..10]. Occurred after 114 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -994,7 +994,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #88  ***
 UVVM:          3066 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (4) was not in range [5..10]. Occurred after 148 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (4) was not in range [5..10]. Occurred after 148 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1003,7 +1003,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #89  ***
 UVVM:          3075 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (3) was not in range [5..10]. Occurred after 157 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (3) was not in range [5..10]. Occurred after 157 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1012,7 +1012,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #90  ***
 UVVM:          3084 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (2) was not in range [5..10]. Occurred after 166 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (2) was not in range [5..10]. Occurred after 166 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1021,7 +1021,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #91  ***
 UVVM:          3090 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1) was not in range [5..10]. Occurred after 172 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1) was not in range [5..10]. Occurred after 172 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1030,7 +1030,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #92  ***
 UVVM:          3096 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (0) was not in range [5..10]. Occurred after 178 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (0) was not in range [5..10]. Occurred after 178 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1041,19 +1041,19 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    3139.0 ns  TB seq.                        A positive acknowledgment is expected each time tracked_value changes to a value within the
 UVVM:                                                                           range
 UVVM: ID_UVVM_ASSERTION               3148.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (6) was in range [5..10]. Condition occurred after
-UVVM:                                                                           0 ns. 
+UVVM:                                                                           -0 ns.
 UVVM: ID_UVVM_ASSERTION               3155.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (7) was in range [5..10]. Condition occurred after
-UVVM:                                                                           7 ns. 
+UVVM:                                                                           7 ns.
 UVVM: ID_UVVM_ASSERTION               3162.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (8) was in range [5..10]. Condition occurred after
-UVVM:                                                                           14 ns. 
+UVVM:                                                                           14 ns.
 UVVM: ID_UVVM_ASSERTION               3169.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (9) was in range [5..10]. Condition occurred after
-UVVM:                                                                           21 ns. 
+UVVM:                                                                           21 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      3226.0 ns  TB seq.                        Testing Normal Operation (signed non-clocked)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               3226.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0) was in range [0..5]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                    3233.0 ns  TB seq.                        tracked_value = 0
 UVVM: ID_SEQUENCER                    3240.0 ns  TB seq.                        tracked_value = 1
 UVVM: ID_SEQUENCER                    3248.0 ns  TB seq.                        tracked_value = 2
@@ -1070,7 +1070,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #93  ***
 UVVM:          3300 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (6) was not in range [0..5]. Occurred after 74 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (6) was not in range [0..5]. Occurred after 74 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1079,7 +1079,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #94  ***
 UVVM:          3309 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (7) was not in range [0..5]. Occurred after 83 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (7) was not in range [0..5]. Occurred after 83 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1088,7 +1088,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #95  ***
 UVVM:          3317 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..5]. Occurred after 91 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..5]. Occurred after 91 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1097,7 +1097,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #96  ***
 UVVM:          3326 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..5]. Occurred after 100 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..5]. Occurred after :0 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1106,7 +1106,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #97  ***
 UVVM:          3332 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..5]. Occurred after 106 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..5]. Occurred after 106 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1116,7 +1116,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #98  ***
 UVVM:          3366 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..5]. Occurred after 140 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..5]. Occurred after 140 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1125,7 +1125,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #99  ***
 UVVM:          3372 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..5]. Occurred after 146 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..5]. Occurred after 146 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1134,7 +1134,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #100  ***
 UVVM:          3381 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..5]. Occurred after 155 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..5]. Occurred after 155 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1143,7 +1143,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #101  ***
 UVVM:          3388 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..5]. Occurred after 162 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..5]. Occurred after 162 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1152,7 +1152,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #102  ***
 UVVM:          3394 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..5]. Occurred after 168 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..5]. Occurred after 168 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1163,19 +1163,19 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    3430.0 ns  TB seq.                        A positive acknowledgment is expected each time tracked_value changes to a value within the
 UVVM:                                                                           range
 UVVM: ID_UVVM_ASSERTION               3436.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (1) was in range [0..5]. Condition occurred after
-UVVM:                                                                           0 ns. 
+UVVM:                                                                           -0 ns.
 UVVM: ID_UVVM_ASSERTION               3443.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (2) was in range [0..5]. Condition occurred after
-UVVM:                                                                           7 ns. 
+UVVM:                                                                           7 ns.
 UVVM: ID_UVVM_ASSERTION               3450.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (3) was in range [0..5]. Condition occurred after
-UVVM:                                                                           14 ns. 
+UVVM:                                                                           14 ns.
 UVVM: ID_UVVM_ASSERTION               3456.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (4) was in range [0..5]. Condition occurred after
-UVVM:                                                                           20 ns. 
+UVVM:                                                                           20 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      3520.0 ns  TB seq.                        Testing Normal Operation (real non-clocked)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               3520.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                    3528.0 ns  TB seq.                        tracked_value = 0.0
 UVVM: ID_SEQUENCER                    3537.0 ns  TB seq.                        tracked_value = 1.0
 UVVM: ID_SEQUENCER                    3546.0 ns  TB seq.                        tracked_value = 2.0
@@ -1197,7 +1197,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #103  ***
 UVVM:          3654 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.1e1) was not in range [0.0..1.0e1]. Occurred after 134 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.1e1) was not in range [0.0..1.0e1]. Occurred after 134 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1206,7 +1206,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #104  ***
 UVVM:          3661 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.2e1) was not in range [0.0..1.0e1]. Occurred after 141 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.2e1) was not in range [0.0..1.0e1]. Occurred after 141 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1215,7 +1215,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #105  ***
 UVVM:          3667 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.3e1) was not in range [0.0..1.0e1]. Occurred after 147 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.3e1) was not in range [0.0..1.0e1]. Occurred after 147 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1224,7 +1224,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #106  ***
 UVVM:          3673 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.4e1) was not in range [0.0..1.0e1]. Occurred after 153 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.4e1) was not in range [0.0..1.0e1]. Occurred after 153 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1233,7 +1233,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #107  ***
 UVVM:          3681 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.5e1) was not in range [0.0..1.0e1]. Occurred after 161 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.5e1) was not in range [0.0..1.0e1]. Occurred after 161 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1242,7 +1242,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #108  ***
 UVVM:          3689 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.6e1) was not in range [0.0..1.0e1]. Occurred after 169 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.6e1) was not in range [0.0..1.0e1]. Occurred after 169 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1251,7 +1251,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #109  ***
 UVVM:          3695 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.7e1) was not in range [0.0..1.0e1]. Occurred after 175 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.7e1) was not in range [0.0..1.0e1]. Occurred after 175 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1260,7 +1260,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #110  ***
 UVVM:          3703 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.8e1) was not in range [0.0..1.0e1]. Occurred after 183 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.8e1) was not in range [0.0..1.0e1]. Occurred after 183 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1269,7 +1269,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #111  ***
 UVVM:          3712 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (1.9e1) was not in range [0.0..1.0e1]. Occurred after 192 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (1.9e1) was not in range [0.0..1.0e1]. Occurred after 192 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1278,7 +1278,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #112  ***
 UVVM:          3721 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (2.0e1) was not in range [0.0..1.0e1]. Occurred after 201 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (2.0e1) was not in range [0.0..1.0e1]. Occurred after 201 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1288,7 +1288,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #113  ***
 UVVM:          3759 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0) was not in range [0.0..1.0e1]. Occurred after 239 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0) was not in range [0.0..1.0e1]. Occurred after 239 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1297,7 +1297,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #114  ***
 UVVM:          3768 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2.0) was not in range [0.0..1.0e1]. Occurred after 248 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2.0) was not in range [0.0..1.0e1]. Occurred after 248 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1306,7 +1306,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #115  ***
 UVVM:          3775 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3.0) was not in range [0.0..1.0e1]. Occurred after 255 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3.0) was not in range [0.0..1.0e1]. Occurred after 255 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1315,7 +1315,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #116  ***
 UVVM:          3782 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4.0) was not in range [0.0..1.0e1]. Occurred after 262 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4.0) was not in range [0.0..1.0e1]. Occurred after 262 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1324,7 +1324,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #117  ***
 UVVM:          3791 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5.0) was not in range [0.0..1.0e1]. Occurred after 271 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5.0) was not in range [0.0..1.0e1]. Occurred after 271 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1333,7 +1333,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #118  ***
 UVVM:          3797 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6.0) was not in range [0.0..1.0e1]. Occurred after 277 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6.0) was not in range [0.0..1.0e1]. Occurred after 277 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1342,7 +1342,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #119  ***
 UVVM:          3803 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7.0) was not in range [0.0..1.0e1]. Occurred after 283 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7.0) was not in range [0.0..1.0e1]. Occurred after 283 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1351,7 +1351,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #120  ***
 UVVM:          3810 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8.0) was not in range [0.0..1.0e1]. Occurred after 290 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8.0) was not in range [0.0..1.0e1]. Occurred after 290 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1360,7 +1360,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #121  ***
 UVVM:          3816 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-9.0) was not in range [0.0..1.0e1]. Occurred after 296 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-9.0) was not in range [0.0..1.0e1]. Occurred after 296 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1369,7 +1369,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #122  ***
 UVVM:          3825 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0e1) was not in range [0.0..1.0e1]. Occurred after 305 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1.0e1) was not in range [0.0..1.0e1]. Occurred after 305 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1380,19 +1380,19 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    3864.0 ns  TB seq.                        A positive acknowledgment is expected each time tracked_value changes to a value within the
 UVVM:                                                                           range
 UVVM: ID_UVVM_ASSERTION               3870.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (1.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_UVVM_ASSERTION               3878.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (2.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 8 ns. 
+UVVM:                                                                           occurred after 8 ns.
 UVVM: ID_UVVM_ASSERTION               3884.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (3.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 14 ns. 
+UVVM:                                                                           occurred after 14 ns.
 UVVM: ID_UVVM_ASSERTION               3892.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (4.0) was in range [0.0..1.0e1]. Condition
-UVVM:                                                                           occurred after 22 ns. 
+UVVM:                                                                           occurred after 22 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      3951.0 ns  TB seq.                        Testing Normal Operation (time non-clocked)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               3951.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0 fs) was in range [0 fs..10000000 fs].
-UVVM:                                                                           Condition occurred after 0 ns. 
+UVVM:                                                                           Condition occurred after -0 ns.
 UVVM: ID_SEQUENCER                    3960.0 ns  TB seq.                        tracked_value = 0 fs
 UVVM: ID_SEQUENCER                    3969.0 ns  TB seq.                        tracked_value = 1000000 fs
 UVVM: ID_SEQUENCER                    3975.0 ns  TB seq.                        tracked_value = 2000000 fs
@@ -1414,7 +1414,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #123  ***
 UVVM:          4078 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (11000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 127 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (11000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 127 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1423,7 +1423,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #124  ***
 UVVM:          4085 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (12000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 134 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (12000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 134 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1432,7 +1432,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #125  ***
 UVVM:          4092 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (13000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 141 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (13000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 141 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1441,7 +1441,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #126  ***
 UVVM:          4101 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (14000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 150 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (14000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 150 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1450,7 +1450,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #127  ***
 UVVM:          4109 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (15000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 158 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (15000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 158 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1459,7 +1459,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #128  ***
 UVVM:          4117 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (16000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 166 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (16000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 166 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1468,7 +1468,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #129  ***
 UVVM:          4125 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (17000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 174 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (17000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 174 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1477,7 +1477,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #130  ***
 UVVM:          4133 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (18000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 182 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (18000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 182 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1486,7 +1486,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #131  ***
 UVVM:          4140 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (19000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 189 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (19000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 189 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1495,7 +1495,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #132  ***
 UVVM:          4146 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (20000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 195 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (20000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 195 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1505,7 +1505,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #133  ***
 UVVM:          4190 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 239 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 239 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1514,7 +1514,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #134  ***
 UVVM:          4198 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 247 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 247 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1523,7 +1523,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #135  ***
 UVVM:          4205 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 254 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 254 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1532,7 +1532,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #136  ***
 UVVM:          4212 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 261 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 261 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1541,7 +1541,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #137  ***
 UVVM:          4220 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 269 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 269 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1550,7 +1550,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #138  ***
 UVVM:          4226 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 275 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 275 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1559,7 +1559,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #139  ***
 UVVM:          4232 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 281 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 281 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1568,7 +1568,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #140  ***
 UVVM:          4239 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 288 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 288 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1577,7 +1577,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #141  ***
 UVVM:          4245 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-9000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 294 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-9000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 294 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1586,7 +1586,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #142  ***
 UVVM:          4252 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-10000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 301 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-10000000 fs) was not in range [0 fs..10000000 fs]. Occurred after 301 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1597,19 +1597,19 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    4288.0 ns  TB seq.                        A positive acknowledgment is expected each time tracked_value changes to a value within the
 UVVM:                                                                           range
 UVVM: ID_UVVM_ASSERTION               4294.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (1000000 fs) was in range [0 fs..10000000 fs].
-UVVM:                                                                           Condition occurred after 0 ns. 
+UVVM:                                                                           Condition occurred after -0 ns.
 UVVM: ID_UVVM_ASSERTION               4300.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (2000000 fs) was in range [0 fs..10000000 fs].
-UVVM:                                                                           Condition occurred after 6 ns. 
+UVVM:                                                                           Condition occurred after 6 ns.
 UVVM: ID_UVVM_ASSERTION               4309.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (3000000 fs) was in range [0 fs..10000000 fs].
-UVVM:                                                                           Condition occurred after 15 ns. 
+UVVM:                                                                           Condition occurred after 15 ns.
 UVVM: ID_UVVM_ASSERTION               4316.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (4000000 fs) was in range [0 fs..10000000 fs].
-UVVM:                                                                           Condition occurred after 22 ns. 
+UVVM:                                                                           Condition occurred after 22 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      4382.0 ns  TB seq.                        Testing Normal Operation (integer non-clocked)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UVVM_ASSERTION               4382.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK (first), tracked_value (0) was in range [0..10]. Condition
-UVVM:                                                                           occurred after 0 ns. 
+UVVM:                                                                           occurred after -0 ns.
 UVVM: ID_SEQUENCER                    4391.0 ns  TB seq.                        tracked_value = 0
 UVVM: ID_SEQUENCER                    4400.0 ns  TB seq.                        tracked_value = 1
 UVVM: ID_SEQUENCER                    4407.0 ns  TB seq.                        tracked_value = 2
@@ -1631,7 +1631,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #143  ***
 UVVM:          4510 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [0..10]. Occurred after 128 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (11) was not in range [0..10]. Occurred after 128 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1640,7 +1640,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #144  ***
 UVVM:          4519 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [0..10]. Occurred after 137 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (12) was not in range [0..10]. Occurred after 137 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1649,7 +1649,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #145  ***
 UVVM:          4525 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [0..10]. Occurred after 143 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (13) was not in range [0..10]. Occurred after 143 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1658,7 +1658,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #146  ***
 UVVM:          4531 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [0..10]. Occurred after 149 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (14) was not in range [0..10]. Occurred after 149 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1667,7 +1667,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #147  ***
 UVVM:          4537 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [0..10]. Occurred after 155 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (15) was not in range [0..10]. Occurred after 155 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1676,7 +1676,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #148  ***
 UVVM:          4543 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (16) was not in range [0..10]. Occurred after 161 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (16) was not in range [0..10]. Occurred after 161 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1685,7 +1685,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #149  ***
 UVVM:          4551 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (17) was not in range [0..10]. Occurred after 169 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (17) was not in range [0..10]. Occurred after 169 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1694,7 +1694,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #150  ***
 UVVM:          4559 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (18) was not in range [0..10]. Occurred after 177 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (18) was not in range [0..10]. Occurred after 177 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1703,7 +1703,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #151  ***
 UVVM:          4568 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (19) was not in range [0..10]. Occurred after 186 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (19) was not in range [0..10]. Occurred after 186 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1712,7 +1712,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #152  ***
 UVVM:          4577 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (20) was not in range [0..10]. Occurred after 195 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (20) was not in range [0..10]. Occurred after 195 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1722,7 +1722,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #153  ***
 UVVM:          4585 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 203 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 203 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1731,7 +1731,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #154  ***
 UVVM:          4594 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..10]. Occurred after 212 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-2) was not in range [0..10]. Occurred after 212 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1740,7 +1740,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #155  ***
 UVVM:          4603 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..10]. Occurred after 221 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-3) was not in range [0..10]. Occurred after 221 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1749,7 +1749,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #156  ***
 UVVM:          4611 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..10]. Occurred after 229 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-4) was not in range [0..10]. Occurred after 229 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1758,7 +1758,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #157  ***
 UVVM:          4617 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..10]. Occurred after 235 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-5) was not in range [0..10]. Occurred after 235 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1767,7 +1767,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #158  ***
 UVVM:          4624 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..10]. Occurred after 242 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-6) was not in range [0..10]. Occurred after 242 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1776,7 +1776,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #159  ***
 UVVM:          4632 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..10]. Occurred after 250 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-7) was not in range [0..10]. Occurred after 250 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1785,7 +1785,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #160  ***
 UVVM:          4638 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..10]. Occurred after 256 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-8) was not in range [0..10]. Occurred after 256 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1794,7 +1794,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #161  ***
 UVVM:          4646 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-9) was not in range [0..10]. Occurred after 264 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-9) was not in range [0..10]. Occurred after 264 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1803,7 +1803,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #162  ***
 UVVM:          4652 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-10) was not in range [0..10]. Occurred after 270 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-10) was not in range [0..10]. Occurred after 270 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1814,13 +1814,13 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                    4661.0 ns  TB seq.                        A positive acknowledgment is expected each time tracked_value changes to a value within the
 UVVM:                                                                           range
 UVVM: ID_UVVM_ASSERTION               4668.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (1) was in range [0..10]. Condition occurred after
-UVVM:                                                                           0 ns. 
+UVVM:                                                                           -0 ns.
 UVVM: ID_UVVM_ASSERTION               4674.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (2) was in range [0..10]. Condition occurred after
-UVVM:                                                                           6 ns. 
+UVVM:                                                                           6 ns.
 UVVM: ID_UVVM_ASSERTION               4683.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (3) was in range [0..10]. Condition occurred after
-UVVM:                                                                           15 ns. 
+UVVM:                                                                           15 ns.
 UVVM: ID_UVVM_ASSERTION               4691.0 ns  TB seq.(uvvm)                  assert_value_in_range() => OK, tracked_value (4) was in range [0..10]. Condition occurred after
-UVVM:                                                                           23 ns. 
+UVVM:                                                                           23 ns.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      4727.0 ns  TB seq.                        Testing Assertion Enable (integer non-clocked)
@@ -1830,7 +1830,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #163  ***
 UVVM:          4727 ns   TB seq.(uvvm)
-UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after 0 ns. 
+UVVM:                    assert_value_in_range() => Failed, tracked_value (-1) was not in range [0..10]. Occurred after -0 ns.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

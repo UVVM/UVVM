@@ -1,6 +1,19 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v5.1.0
+----------
+Released: 2026-10-27
+- Extended num_data_bits range in t_uart_bfm_config and t_uart_interface_config from 7-8 to 5-9 bits. (Default setting remains 8)
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Removed outdated ghdl_compile_all_and_simulate.sh.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v5.0.1
 ----------
 Released: 2026-02-14
@@ -74,7 +87,7 @@ Released: 2023-09-16
 v2.8.6
 ----------
 Released: 2023-03-21
-- Renamed C_SCOPE to C_SCOPE_BFM in BFM package. 
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
 
 v2.8.5
 ----------
@@ -84,7 +97,7 @@ Released: 2022-05-05
 v2.8.4
 ----------
 Released: 2021-10-22
-- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util
   packages.
 
 v2.8.3
@@ -130,7 +143,7 @@ Released: 2020-05-19
 - Added shared_uart_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 
 v2.6.1
@@ -155,14 +168,14 @@ Released: 2020-02-16
 v2.5.0
 ----------
 Released: 2020-01-24
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
-  
+
 v2.4.0
 ----------
 Released: 2019-12-04
 - Updated VVC src and quick reference with activity watchdog name changes.
-- Added several new functions to VVC, see quick reference and 
+- Added several new functions to VVC, see quick reference and
   UVVM VVC Framework Essential Mechanisms document for more details.
 - Added UART Monitor (beta)
 - Corrected parameters in QR for UART BFM calls.
@@ -170,7 +183,7 @@ Released: 2019-12-04
 v2.3.1
 ----------
 Released: 2019-11-25
-- Fixed issue with compile script failing. 
+- Fixed issue with compile script failing.
 
 v2.3.0
 ----------

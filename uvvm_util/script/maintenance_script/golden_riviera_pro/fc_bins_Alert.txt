@@ -437,6 +437,15 @@ UVVM:
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    bin_range(-2147483648, 2147483647, num_bins:0)=> Failed. Number of bins (>2147483647) added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.
+UVVM:                     Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
 UVVM:           100 ns   TB seq.
 UVVM:                    set_scope(scope)=> Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.

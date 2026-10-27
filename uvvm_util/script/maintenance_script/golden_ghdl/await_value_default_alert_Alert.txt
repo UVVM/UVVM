@@ -26,7 +26,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #4  ***
 UVVM:            44 ns   TB seq.(uvvm)
-UVVM:                    await_value(slv, x"80", 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, min_time>0ns, Fail. '
+UVVM:                    await_value(slv, x"80", 1 ns, 2 ns) => Failed. Condition occurred too early, after -0 ns. 'Val=exp already, min_time>0ns, Fail. '
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -34,7 +34,8 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #5  ***
 UVVM:            86 ns   TB seq.(uvvm)
-UVVM:                    await_value(slv, x"BX" (b"1011000Z"), 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including Z, Fail'
+UVVM:                    await_value(slv, x"BX" (b"1011000Z"), 3 ns, 5 ns) => Failed. Condition occurred too early, after -0 ns. 'Different values, STD match including Z,
+UVVM:                    Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -98,7 +99,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #13  ***
 UVVM:           185 ns   TB seq.(uvvm)
-UVVM:                    await_value(bool, true, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, min_time>0ns, Fail. '
+UVVM:                    await_value(bool, true, 1 ns, 2 ns) => Failed. Condition occurred too early, after -0 ns. 'Val=exp already, min_time>0ns, Fail. '
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -122,7 +123,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #16  ***
 UVVM:           225 ns   TB seq.(uvvm)
-UVVM:                    await_value(sl, 1, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, min_time>0ns, Fail. '
+UVVM:                    await_value(sl, 1, 1 ns, 2 ns) => Failed. Condition occurred too early, after -0 ns. 'Val=exp already, min_time>0ns, Fail. '
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -146,7 +147,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #19  ***
 UVVM:           305 ns   TB seq.(uvvm)
-UVVM:                    await_value(sl, Z, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including Z, Fail'
+UVVM:                    await_value(sl, Z, 3 ns, 5 ns) => Failed. Condition occurred too early, after -0 ns. 'Different values, STD match including Z, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -154,7 +155,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #20  ***
 UVVM:           320 ns   TB seq.(uvvm)
-UVVM:                    await_value(sl, Z, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 2'
+UVVM:                    await_value(sl, Z, 3 ns, 5 ns) => Failed. Condition occurred too early, after -0 ns. 'Different values, STD match including ZXUW, Fail 2'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -162,7 +163,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #21  ***
 UVVM:           335 ns   TB seq.(uvvm)
-UVVM:                    await_value(sl, X, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 3'
+UVVM:                    await_value(sl, X, 3 ns, 5 ns) => Failed. Condition occurred too early, after -0 ns. 'Different values, STD match including ZXUW, Fail 3'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -170,7 +171,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #22  ***
 UVVM:           350 ns   TB seq.(uvvm)
-UVVM:                    await_value(sl, U, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 4'
+UVVM:                    await_value(sl, U, 3 ns, 5 ns) => Failed. Condition occurred too early, after -0 ns. 'Different values, STD match including ZXUW, Fail 4'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -178,7 +179,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #23  ***
 UVVM:           365 ns   TB seq.(uvvm)
-UVVM:                    await_value(sl, W, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 5'
+UVVM:                    await_value(sl, W, 3 ns, 5 ns) => Failed. Condition occurred too early, after -0 ns. 'Different values, STD match including ZXUW, Fail 5'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -202,7 +203,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #26  ***
 UVVM:           395 ns   TB seq.(uvvm)
-UVVM:                    await_value(int, 17, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, Min_time>0ns, Fail. '
+UVVM:                    await_value(int, 17, 1 ns, 2 ns) => Failed. Condition occurred too early, after -0 ns. 'Val=exp already, Min_time>0ns, Fail. '
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -226,7 +227,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #29  ***
 UVVM:           425 ns   TB seq.(uvvm)
-UVVM:                    await_value(real, 1.7e1, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, Min_time>0ns, Fail. '
+UVVM:                    await_value(real, 1.7e1, 1 ns, 2 ns) => Failed. Condition occurred too early, after -0 ns. 'Val=exp already, Min_time>0ns, Fail. '
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

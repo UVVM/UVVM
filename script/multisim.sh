@@ -43,8 +43,8 @@ compile () {
         echo "supported simulators: ghdl, nvc, vsim, xsim"
         exit 1
     fi
-    _dir=$(abspath $TARGET_DIR/$SIM)
-    ( mkdir -p $_dir && cd $_dir && echo "${cmd}" && bash -c "$cmd" )
+    mkdir -p $TARGET_DIR/$SIM && _dir=$(abspath $TARGET_DIR/$SIM)
+    ( cd $_dir && echo "${cmd}" && bash -c "$cmd" )
 }
 
 # compile sources for specified UVVM component, using its compile_order.txt file
@@ -79,6 +79,6 @@ simulate () {
         echo "supported simulators: ghdl, nvc, vsim, xsim"
         exit 1
     fi
-    _dir=$(abspath $TARGET_DIR/$SIM)
-    ( mkdir -p $_dir && cd $_dir && echo "${cmd}" && bash -c "$cmd" )
+    mkdir -p $TARGET_DIR/$SIM && _dir=$(abspath $TARGET_DIR/$SIM)
+    ( cd $_dir && echo "${cmd}" && bash -c "$cmd" )
 }

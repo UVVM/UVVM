@@ -71,6 +71,15 @@ package vvc_methods_pkg is
     alert_level => WARNING
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_uart_unwanted_transaction is record
+    uart_vvc_rx : t_alert_level;
+  end record t_uart_unwanted_transaction;
+
+  constant C_UART_UNWANTED_TRANSACTION : t_uart_unwanted_transaction := (
+    uart_vvc_rx => ERROR
+  );
+
   type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural; -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
@@ -84,7 +93,8 @@ package vvc_methods_pkg is
     error_injection                       : t_vvc_error_injection;
     bit_rate_checker                      : t_bit_rate_checker;
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
-    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT TX output is detected
+    unwanted_transaction_checking_enabled : boolean; -- Enable unwanted transaction checking
+    unwanted_transaction_severity         : t_uart_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT TX output is detected
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -102,7 +112,8 @@ package vvc_methods_pkg is
     error_injection                       => C_VVC_ERROR_INJECTION_INACTIVE,
     bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT,
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
-    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
+    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,
+    unwanted_transaction_severity         => C_UART_UNWANTED_TRANSACTION
   );
 
   type t_vvc_status is record

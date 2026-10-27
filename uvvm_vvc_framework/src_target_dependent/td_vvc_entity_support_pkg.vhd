@@ -463,7 +463,7 @@ package body td_vvc_entity_support_pkg is
     variable v_was_broadcast : boolean := false;
     variable v_msg_id_panel  : t_msg_id_panel;
 
-    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_vvc_idx_in_activity_register : integer_vector(0 to C_MAX_TB_VVC_NUM)  := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM    := 0;
     variable v_vvc_instance_idx             : integer                                := vvc_labels.instance_idx;
     variable v_vvc_channel                  : t_channel                              := vvc_labels.channel;

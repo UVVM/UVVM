@@ -1,6 +1,24 @@
 Bitvis VIP Avalon MM (Memory Mapped) - Overview on Versions and Changes
 ==============================================================
 
+v4.2.0
+----------
+Released: 2026-10-27
+- Added separate READ_RESPONSE and CHECK_RESPONSE operations so pipelined read and check
+  requests and their responses are distinguishable in the transaction info.
+- Split the transaction info sub-transaction into a request (st_request) and a response
+  (st_response) sub-transaction, replacing the previous single st. The pipelined read/check
+  response is now reported via st_response.
+- Changed the VVC transaction info trigger default value from '0' to 'Z' to fix multiple executor-issue.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Fixed the decoding of the response signal in the BFM: "01" is RESERVED, "10" is SLAVEERROR and "11" is DECODEERROR.
+- Fixed the type of the lock_value parameter of init_avalon_mm_if_signals() in the documentation (std_logic).
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v4.1.2
 ----------
 Released: 2026-02-14
@@ -100,7 +118,7 @@ Released: 2020-05-19
   and clock_period was not configured.
 - Added shared_avalon_mm_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 - Updated quick reference Activity Watchdog section and BFM config record description.
 
@@ -131,12 +149,12 @@ Released: 2020-01-24
 - Added new BFM synchronisation methods with default SYNC_ON_CLOCK_ONLY.
   The BFM will synchronise and start with falling edge, detect clock period, and
   exit after a quarter clock period.
-- BFM config defaults setup_time, hold_time and clock_period are now 
+- BFM config defaults setup_time, hold_time and clock_period are now
   default -1 ns, i.e. will require user configuration if BFM synchronisation is
   used with other than SYNC_ON_CLOCK_ONLY.
-- VVC command insert_delay() will raise a TB_ERROR when called if the 
-  bfm_config.clock_period has not been set.  
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- VVC command insert_delay() will raise a TB_ERROR when called if the
+  bfm_config.clock_period has not been set.
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
 
 
@@ -144,7 +162,7 @@ v2.4.0
 ----------
 Released: 2019-12-04
 - Added transaction package.
-- Updated VVC src and quick reference with activity watchdog name changes. 
+- Updated VVC src and quick reference with activity watchdog name changes.
 - Added a set of new features, see UVVM VVC Framework Essential Mechanisms document.
 
 

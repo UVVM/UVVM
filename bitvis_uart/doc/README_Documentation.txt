@@ -29,13 +29,13 @@ The following registers are available for usage of the module:
 +---------------+-----+------------------------------+---------+-----------------------------------+
 | Name          | R/W | Type                         | Address | Description                       |
 +===============+=====+==============================+=========+===================================+
-| RX_DATA       | RO  | std_logic_vector(7 downto 0) | 0       | Rx data                           |
+| RX_DATA       | RO  | std_logic_vector(8 downto 0) | 0       | Rx data                           |
 +---------------+-----+------------------------------+---------+-----------------------------------+
 | RX_DATA_VALID | RO  | std_logic                    | 1       | Rx data valid                     |
 +---------------+-----+------------------------------+---------+-----------------------------------+
-| TX_DATA       | WO  | std_logic_vector(7 downto 0) | 2       | Tx data                           |
+| TX_DATA       | WO  | std_logic_vector(8 downto 0) | 2       | Tx data                           |
 +---------------+-----+------------------------------+---------+-----------------------------------+
-| TX_DATA_READY | RO  | std_logic                    | 3       | Tx data ready                     |
+| TX_READY      | RO  | std_logic                    | 3       | Tx data ready                     |
 +---------------+-----+------------------------------+---------+-----------------------------------+
-| NUM_DATA_BITS | RW  | positive range 7 to 8        | 4       | Number of data bits in UART frame |
+| NUM_DATA_BITS | RW  | positive range 5 to 9        | 4       | Number of data bits in UART frame |
 +---------------+-----+------------------------------+---------+-----------------------------------+

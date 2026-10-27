@@ -24,6 +24,7 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.uart_bfm_pkg.all;
 use work.transaction_pkg.all;
 use work.vvc_cmd_pkg.all;
 
@@ -31,8 +32,6 @@ use work.vvc_cmd_pkg.all;
 --=================================================================================================
 --=================================================================================================
 package monitor_cmd_pkg is
-
-  constant C_MAX_BITS_IN_DATA : positive := 8;
 
   constant C_UART_MONITOR_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_MONITOR => ENABLED,
@@ -45,7 +44,7 @@ package monitor_cmd_pkg is
   --===============================================================================================
   type t_uart_interface_config is record
     bit_time      : time;
-    num_data_bits : positive range 7 to 8;
+    num_data_bits : positive range 5 to C_MAX_NUM_DATA_BITS;
     parity        : t_parity;
     num_stop_bits : t_stop_bits;
   end record t_uart_interface_config;

@@ -63,6 +63,17 @@ architecture func of avalon_mm_vvc_pipeline_tb is
   signal debug_received_data : std_logic_vector(31 downto 0);
   signal debug_data_to_send  : std_logic_vector(31 downto 0);
 
+  -- Count completed request/response sub-transactions seen on the global transaction info,
+  -- and record the cmd_idx of each so request/response linkage can be checked.
+  signal read_req_done_cnt    : natural := 0;
+  signal check_req_done_cnt   : natural := 0;
+  signal read_resp_done_cnt   : natural := 0;
+  signal check_resp_done_cnt  : natural := 0;
+  signal read_req_cmd_idx     : integer := -1;
+  signal check_req_cmd_idx    : integer := -1;
+  signal read_resp_cmd_idx    : integer := -1;
+  signal check_resp_cmd_idx   : integer := -1;
+
   component fpga4u_sdram_controller
     port(
       signal clk, reset          : in    std_logic;
@@ -174,6 +185,39 @@ begin
   i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
   ------------------------------------------------
+  -- Count completed request/response sub-transactions on the transaction info.
+  -- Counts on the transition into COMPLETED so a sub-transaction is counted once.
+  ------------------------------------------------
+  p_response_transaction_monitor : process is
+    variable v_prev_req_status  : t_transaction_status := INACTIVE;
+    variable v_prev_resp_status : t_transaction_status := INACTIVE;
+  begin
+    wait until global_avalon_mm_vvc_transaction_trigger(1) = '1';
+    -- Request sub-transaction
+    if shared_avalon_mm_vvc_transaction_info(1).st_request.transaction_status = COMPLETED and v_prev_req_status /= COMPLETED then
+      if shared_avalon_mm_vvc_transaction_info(1).st_request.operation = READ then
+        read_req_done_cnt <= read_req_done_cnt + 1;
+        read_req_cmd_idx  <= shared_avalon_mm_vvc_transaction_info(1).st_request.vvc_meta.cmd_idx;
+      elsif shared_avalon_mm_vvc_transaction_info(1).st_request.operation = CHECK then
+        check_req_done_cnt <= check_req_done_cnt + 1;
+        check_req_cmd_idx  <= shared_avalon_mm_vvc_transaction_info(1).st_request.vvc_meta.cmd_idx;
+      end if;
+    end if;
+    v_prev_req_status := shared_avalon_mm_vvc_transaction_info(1).st_request.transaction_status;
+    -- Response sub-transaction
+    if shared_avalon_mm_vvc_transaction_info(1).st_response.transaction_status = COMPLETED and v_prev_resp_status /= COMPLETED then
+      if shared_avalon_mm_vvc_transaction_info(1).st_response.operation = READ_RESPONSE then
+        read_resp_done_cnt <= read_resp_done_cnt + 1;
+        read_resp_cmd_idx  <= shared_avalon_mm_vvc_transaction_info(1).st_response.vvc_meta.cmd_idx;
+      elsif shared_avalon_mm_vvc_transaction_info(1).st_response.operation = CHECK_RESPONSE then
+        check_resp_done_cnt <= check_resp_done_cnt + 1;
+        check_resp_cmd_idx  <= shared_avalon_mm_vvc_transaction_info(1).st_response.vvc_meta.cmd_idx;
+      end if;
+    end if;
+    v_prev_resp_status := shared_avalon_mm_vvc_transaction_info(1).st_response.transaction_status;
+  end process;
+
+  ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
   p_main : process
@@ -184,6 +228,10 @@ begin
     variable v_prev_data_int : natural;
     variable v_data          : std_logic_vector(1023 downto 0);
     variable v_is_ok         : boolean;
+    variable v_read_req_cnt  : natural;
+    variable v_check_req_cnt : natural;
+    variable v_read_resp_cnt : natural;
+    variable v_check_resp_cnt : natural;
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -350,6 +398,37 @@ begin
     fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_data, v_is_ok, "Fetching read-result");
     check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
     check_value(v_data(31 downto 0), x"10100011", ERROR, "Readback data via fetch_result()");
+
+    --------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Test that pipelined read and check publish separate request and response sub-transactions");
+    --------------------------------------------------------------------------------------
+    -- A single pipelined read, in isolation, must complete one READ request sub-transaction and
+    -- one READ_RESPONSE response sub-transaction, both carrying the same cmd_idx.
+    v_read_req_cnt  := read_req_done_cnt;
+    v_read_resp_cnt := read_resp_done_cnt;
+    debug_data_to_send <= x"0ABBA000";
+    avalon_mm_read(AVALON_MM_VVCT, 1, x"0", "Pipelined read: READ request + READ_RESPONSE response");
+    v_cmd_idx := get_last_received_cmd_idx(AVALON_MM_VVCT, 1);
+    await_completion(AVALON_MM_VVCT, 1, 1 us, "Awaiting completion of read");
+    wait for 1 us;
+    check_value(read_req_done_cnt, v_read_req_cnt + 1, ERROR, "Pipelined read completes exactly one READ request sub-transaction", C_SCOPE);
+    check_value(read_resp_done_cnt, v_read_resp_cnt + 1, ERROR, "Pipelined read completes exactly one READ_RESPONSE response sub-transaction", C_SCOPE);
+    check_value(read_req_cmd_idx, v_cmd_idx, ERROR, "READ request sub-transaction carries the issued cmd_idx", C_SCOPE);
+    check_value(read_resp_cmd_idx, v_cmd_idx, ERROR, "READ_RESPONSE response sub-transaction carries the same cmd_idx as the request", C_SCOPE);
+
+    -- A single pipelined check, in isolation, must complete one CHECK request sub-transaction and
+    -- one CHECK_RESPONSE response sub-transaction, both carrying the same cmd_idx.
+    v_check_req_cnt  := check_req_done_cnt;
+    v_check_resp_cnt := check_resp_done_cnt;
+    debug_data_to_send <= x"0ABBA000";
+    avalon_mm_check(AVALON_MM_VVCT, 1, x"0", x"0ABBA000", "Pipelined check: CHECK request + CHECK_RESPONSE response");
+    v_cmd_idx := get_last_received_cmd_idx(AVALON_MM_VVCT, 1);
+    await_completion(AVALON_MM_VVCT, 1, 1 us, "Awaiting completion of check");
+    wait for 1 us;
+    check_value(check_req_done_cnt, v_check_req_cnt + 1, ERROR, "Pipelined check completes exactly one CHECK request sub-transaction", C_SCOPE);
+    check_value(check_resp_done_cnt, v_check_resp_cnt + 1, ERROR, "Pipelined check completes exactly one CHECK_RESPONSE response sub-transaction", C_SCOPE);
+    check_value(check_req_cmd_idx, v_cmd_idx, ERROR, "CHECK request sub-transaction carries the issued cmd_idx", C_SCOPE);
+    check_value(check_resp_cmd_idx, v_cmd_idx, ERROR, "CHECK_RESPONSE response sub-transaction carries the same cmd_idx as the request", C_SCOPE);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

@@ -1,6 +1,17 @@
 External VIP APB - Overview on Versions and Changes
 ==============================================================
 
+v1.0.1
+----------
+Released: 2026-10-27
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v1.0.0
 ----------
 Released: 2026-02-14

@@ -375,10 +375,10 @@ begin
   --===============================================================================================
 
   --==========================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transaction from the DUT
   --==========================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -397,16 +397,18 @@ begin
 
       wait on rgmii_vvc_rx_if.rxd, rgmii_vvc_rx_if.rx_ctl, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        -- Skip checking the changes if the rx_ctl signal goes low within one clock period after the VVC becomes inactive
-        if not (falling_edge(rgmii_vvc_rx_if.rx_ctl) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(rgmii_vvc_rx_if.rx_ctl, vvc_config.unwanted_activity_severity, "rx_ctl", C_SCOPE);
-          check_unwanted_activity(rgmii_vvc_rx_if.rxd, vvc_config.unwanted_activity_severity, "rxd", C_SCOPE);
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          -- Skip checking the changes if the rx_ctl signal goes low within one clock period after the VVC becomes inactive
+          if not (falling_edge(rgmii_vvc_rx_if.rx_ctl) and global_trigger_vvc_activity_register'last_event < clock_period) then
+            check_unwanted_transaction(rgmii_vvc_rx_if.rx_ctl, vvc_config.unwanted_transaction_severity.rx_ctl, "rx_ctl", C_SCOPE);
+            check_unwanted_transaction(rgmii_vvc_rx_if.rxd, vvc_config.unwanted_transaction_severity.rxd, "rxd", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --==========================================================================================
 
 end architecture behave;

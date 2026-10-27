@@ -136,6 +136,20 @@ package gpio_bfm_pkg is
     constant config          : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
 
+  ---------------------------------------------------------------------------------
+  -- pulse data
+  ---------------------------------------------------------------------------------
+  -- Pulse data for specified duration of time, then return to initial value
+  procedure gpio_pulse(
+    constant data_value     : in std_logic_vector; -- '-' means don't change
+    constant pulse_duration : in time;
+    constant msg            : in string;
+    signal   data_port      : inout std_logic_vector;
+    constant scope          : in string            := C_BFM_SCOPE;
+    constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config         : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
+  );
+
 end package gpio_bfm_pkg;
 
 --=================================================================================
@@ -337,6 +351,26 @@ package body gpio_bfm_pkg is
     if v_data_ok and v_stable_ok then
       log(config.id_for_bfm, C_PROC_NAME & "=> OK, expected data = " & to_string(data_port, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX) & " after " & to_string(v_time_lapse) & ", stable for " & to_string(stable_req) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
+  end procedure;
+
+  ---------------------------------------------------------------------------------
+  -- pulse data
+  ---------------------------------------------------------------------------------
+  procedure gpio_pulse(
+    constant data_value     : in std_logic_vector;
+    constant pulse_duration : in time;
+    constant msg            : in string;
+    signal   data_port      : inout std_logic_vector;
+    constant scope          : in string            := C_BFM_SCOPE;
+    constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config         : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
+  ) is
+    constant C_PROC_NAME      : string                            := "gpio_pulse(" & to_string(data_value, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(pulse_duration) & ")";
+    constant C_PULSE_VALUE    : std_logic_vector(data_port'range) := data_value;
+  begin
+    check_value(pulse_duration > 0 ns, TB_ERROR, C_PROC_NAME & " => pulse_duration must be positive." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+    gen_pulse(data_port, C_PULSE_VALUE, pulse_duration, msg, scope, config.id_for_bfm, msg_id_panel);
+    log(config.id_for_bfm, C_PROC_NAME & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
 end package body gpio_bfm_pkg;

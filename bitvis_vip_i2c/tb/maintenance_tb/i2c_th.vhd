@@ -49,7 +49,9 @@ entity i2c_th is
     GC_SBI_BFM_CONFIG             : t_sbi_bfm_config
   );
   port(
-    arst : in std_logic
+    arst            : in std_logic;
+    i2c_disturb_sda : in std_logic := 'Z';
+    i2c_disturb_scl : in std_logic := 'Z'
   );
 end entity i2c_th;
 
@@ -89,9 +91,11 @@ begin
   sbi_vvc_if.ready <= sbi_ready_slave_dut_1 or sbi_ready_slave_dut_2 or sbi_ready_slave_dut_3 or sbi_ready_slave_dut_4;
 
   -- pull ups on sda and scl
-  -- Use non-record signals to be able to force them from the tb
+  -- Use non-record signals so the TB can inject unwanted transaction.
   i2c_vvc_if_1_sda <= 'H';
   i2c_vvc_if_1_scl <= 'H';
+  i2c_vvc_if_1_sda <= i2c_disturb_sda;
+  i2c_vvc_if_1_scl <= i2c_disturb_scl;
   i2c_vvc_if_1.sda <= i2c_vvc_if_1_sda;
   i2c_vvc_if_1.scl <= i2c_vvc_if_1_scl;
 

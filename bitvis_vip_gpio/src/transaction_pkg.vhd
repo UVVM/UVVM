@@ -42,7 +42,7 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    SET, GET, CHECK, CHECK_STABLE, EXPECT, EXPECT_STABLE
+    SET, GET, CHECK, CHECK_STABLE, EXPECT, EXPECT_STABLE, PULSE
   );
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
@@ -72,6 +72,7 @@ package transaction_pkg is
     operation          : t_operation;
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     data_exp           : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    pulse_duration     : time;
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
   end record;
@@ -80,6 +81,7 @@ package transaction_pkg is
     operation          => NO_OPERATION,
     data               => (others => '0'),
     data_exp           => (others => '0'),
+    pulse_duration     => 0 ns,
     vvc_meta           => C_VVC_META_DEFAULT,
     transaction_status => INACTIVE
   );
@@ -96,7 +98,7 @@ package transaction_pkg is
   -- Type is defined as array to coincide with channel based VVCs
   type t_gpio_transaction_trigger_array is array (natural range <>) of std_logic;
   -- Global transaction info trigger signal
-  signal global_gpio_vvc_transaction_trigger : t_gpio_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
+  signal global_gpio_vvc_transaction_trigger : t_gpio_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => 'Z');
 
   -- Shared transaction info variable
   type t_gpio_transaction_group_array is array (natural range <>) of t_transaction_group;

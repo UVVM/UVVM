@@ -19,14 +19,14 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_rand_dist_mean()
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    get_rand_dist_mean()=> mean has not been configured, using default
 UVVM: 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.0) => OK. Value was 0.0. 'Checking mean config was cleared'
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_rand_dist_std_deviation()
 UVVM: 
 UVVM: ***  TB_NOTE #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    get_rand_dist_std_deviation()=> std_deviation has not been configured, using default
 UVVM: 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.0) => OK. Value was 0.0. 'Checking std_deviation config was cleared'
@@ -687,7 +687,8 @@ UVVM:
 UVVM: 
 UVVM: ***  TB_WARNING #58  ***
 UVVM:         10400 ns   TB seq.
-UVVM:                    rand_val_weight((0 fs,30),(1 fs,20),(2 fs,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN configuration.
+UVVM:                    rand_val_weight((-0 fs,30),(1 fs,20),(2 fs,50))=> GAUSSIAN distribution and weighted randomization cannot be combined. Ignoring GAUSSIAN
+UVVM:                    configuration.
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #59  ***

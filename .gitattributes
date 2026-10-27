@@ -1,0 +1,42 @@
+# Let Git detect text files and normalize them to LF in the repository
+* text=auto
+
+# Source and script files are always text
+*.vhd      text
+*.vhdl     text
+*.v        text
+*.py       text
+*.do       text
+*.tcl      text
+*.txt      text
+*.csv      text
+*.md       text
+*.rst      text
+*.yml      text
+*.yaml     text
+
+# Scripts that must keep their line endings regardless of platform
+*.sh       text eol=lf
+Makefile*  text eol=lf
+*.mk       text eol=lf
+*.bat      text eol=crlf
+*.cmd      text eol=crlf
+
+# Binary files
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.pdf      binary
+*.doc      binary
+*.docx     binary
+*.ppt      binary
+*.pps      binary
+*.ppsx     binary
+*.vsdx     binary
+*.zip      binary
+*.pickle   binary
+*.eot      binary
+*.ttf      binary
+*.woff     binary
+*.woff2    binary

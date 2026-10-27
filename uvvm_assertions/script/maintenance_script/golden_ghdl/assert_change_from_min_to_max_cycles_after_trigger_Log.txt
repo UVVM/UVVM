@@ -1,8 +1,8 @@
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION).
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -16,7 +16,7 @@ UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                     140.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
 UVVM: ID_SEQUENCER                     190.0 ns  TB seq.                        Change the value from "HHHH" to "LLLL", window (7-cycles to 10-cycles)
 UVVM: ID_UVVM_ASSERTION                280.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
-UVVM:                                                                           in window. OK after 90 ns. First change event happened in cycle-9. 
+UVVM:                                                                           in window. OK after 90 ns. First change event happened in cycle-9.
 UVVM: ID_SEQUENCER                     330.0 ns  TB seq.                        Change the value from "HHHH" to "WWWW", window (7-cycles to 10-cycles)
 UVVM: ID_SEQUENCER                     470.0 ns  TB seq.                        Change the value from "HHHH" to "ZZZZ", window (7-cycles to 10-cycles)
 UVVM: ID_SEQUENCER                     610.0 ns  TB seq.                        Change the value from "HHHH" to "0000", window (7-cycles to 10-cycles)
@@ -76,7 +76,7 @@ UVVM: ID_SEQUENCER                    8030.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                    8030.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 1
 UVVM: ID_SEQUENCER                    8080.0 ns  TB seq.                        Change the value from "HHHH" to "LLLL", window (0-cycles to 1-cycles)
 UVVM: ID_UVVM_ASSERTION               8090.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
-UVVM:                                                                           in window. OK after 10 ns. First change event happened in cycle-1. 
+UVVM:                                                                           in window. OK after : ns. First change event happened in cycle-1.
 UVVM: ID_SEQUENCER                    8140.0 ns  TB seq.                        Change the value from "HHHH" to "WWWW", window (0-cycles to 1-cycles)
 UVVM: ID_SEQUENCER                    8200.0 ns  TB seq.                        Change the value from "HHHH" to "ZZZZ", window (0-cycles to 1-cycles)
 UVVM: ID_SEQUENCER                    8260.0 ns  TB seq.                        Change the value from "HHHH" to "0000", window (0-cycles to 1-cycles)
@@ -135,7 +135,7 @@ UVVM: ID_SEQUENCER                   11380.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                   11440.0 ns  TB seq.                        Testing multiple triggers within the window
 UVVM: ID_SEQUENCER                   11440.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
 UVVM: ID_UVVM_ASSERTION              11500.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
-UVVM:                                                                           in window. OK after 10 ns. First change event happened in cycle-1. 
+UVVM:                                                                           in window. OK after : ns. First change event happened in cycle-1.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                     11600.0 ns  TB seq.                        Testing Triggering Assertion (std_logic_vector)
@@ -147,7 +147,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
 UVVM:         11750 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (HHHH) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (HHHH) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -156,7 +156,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
 UVVM:         11900 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (LLLL) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (LLLL) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -165,7 +165,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #3  ***
 UVVM:         12050 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (WWWW) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (WWWW) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -174,7 +174,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
 UVVM:         12200 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (ZZZZ) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (ZZZZ) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -183,7 +183,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
 UVVM:         12350 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0000) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0000) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -192,7 +192,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #6  ***
 UVVM:         12500 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1111) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1111) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -201,7 +201,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #7  ***
 UVVM:         12650 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (XXXX) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (XXXX) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -210,7 +210,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #8  ***
 UVVM:         12800 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -220,7 +220,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #9  ***
 UVVM:         12940 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -228,7 +228,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #10  ***
 UVVM:         12960 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (UUUU) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -240,19 +240,19 @@ UVVM: ID_SEQUENCER                   13010.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                   13010.0 ns  TB seq.                        Setting min_cycles = 10, max_cycles = 20
 UVVM: ID_SEQUENCER                   13060.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (10-cycles to 20-cycles)
 UVVM: ID_UVVM_ASSERTION              13250.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 190 ns. First change event happened in cycle-19. 
+UVVM:                                                                           window. OK after 190 ns. First change event happened in cycle-19.
 UVVM: ID_SEQUENCER                   13300.0 ns  TB seq.                        Setting min_cycles = 20, max_cycles = 30
 UVVM: ID_SEQUENCER                   13350.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (20-cycles to 30-cycles)
 UVVM: ID_UVVM_ASSERTION              13640.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 290 ns. First change event happened in cycle-29. 
+UVVM:                                                                           window. OK after 290 ns. First change event happened in cycle-29.
 UVVM: ID_SEQUENCER                   13690.0 ns  TB seq.                        Setting min_cycles = 30, max_cycles = 40
 UVVM: ID_SEQUENCER                   13740.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (30-cycles to 40-cycles)
 UVVM: ID_UVVM_ASSERTION              14130.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 390 ns. First change event happened in cycle-39. 
+UVVM:                                                                           window. OK after 390 ns. First change event happened in cycle-39.
 UVVM: ID_SEQUENCER                   14180.0 ns  TB seq.                        Setting min_cycles = 40, max_cycles = 50
 UVVM: ID_SEQUENCER                   14230.0 ns  TB seq.                        Change the value from "UUUU" to "1111", window (40-cycles to 50-cycles)
 UVVM: ID_UVVM_ASSERTION              14720.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 490 ns. First change event happened in cycle-49. 
+UVVM:                                                                           window. OK after 490 ns. First change event happened in cycle-49.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                     14850.0 ns  TB seq.                        Testing Normal Operation (std_logic)
@@ -261,7 +261,7 @@ UVVM: ID_SEQUENCER                   14850.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                   14850.0 ns  TB seq.                        Setting min_cycles = 7, max_cycles = 10
 UVVM: ID_SEQUENCER                   14900.0 ns  TB seq.                        Change the value from 'U' to 'X', window (7-cycles to 10-cycles)
 UVVM: ID_UVVM_ASSERTION              14990.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
-UVVM:                                                                           in window. OK after 90 ns. First change happened in cycle-9. 
+UVVM:                                                                           in window. OK after 90 ns. First change happened in cycle-9.
 UVVM: ID_SEQUENCER                   15040.0 ns  TB seq.                        Change the value from 'U' to '1', window (7-cycles to 10-cycles)
 UVVM: ID_SEQUENCER                   15180.0 ns  TB seq.                        Change the value from 'U' to '0', window (7-cycles to 10-cycles)
 UVVM: ID_SEQUENCER                   15320.0 ns  TB seq.                        Change the value from 'U' to 'Z', window (7-cycles to 10-cycles)
@@ -321,7 +321,7 @@ UVVM: ID_SEQUENCER                   22740.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                   22740.0 ns  TB seq.                        Setting min_cycles = 0, max_cycles = 1
 UVVM: ID_SEQUENCER                   22790.0 ns  TB seq.                        Change the value from 'U' to 'X', window (0-cycles to 1-cycles)
 UVVM: ID_UVVM_ASSERTION              22800.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
-UVVM:                                                                           in window. OK after 10 ns. First change happened in cycle-1. 
+UVVM:                                                                           in window. OK after : ns. First change happened in cycle-1.
 UVVM: ID_SEQUENCER                   22850.0 ns  TB seq.                        Change the value from 'U' to '1', window (0-cycles to 1-cycles)
 UVVM: ID_SEQUENCER                   22910.0 ns  TB seq.                        Change the value from 'U' to '0', window (0-cycles to 1-cycles)
 UVVM: ID_SEQUENCER                   22970.0 ns  TB seq.                        Change the value from 'U' to 'Z', window (0-cycles to 1-cycles)
@@ -380,7 +380,7 @@ UVVM: ID_SEQUENCER                   26090.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                   26150.0 ns  TB seq.                        Testing multiple triggers within the window
 UVVM: ID_SEQUENCER                   26150.0 ns  TB seq.                        Setting min_cycles = 1, max_cycles = 4
 UVVM: ID_UVVM_ASSERTION              26210.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK (first). tracked_value had a change
-UVVM:                                                                           in window. OK after 10 ns. First change happened in cycle-1. 
+UVVM:                                                                           in window. OK after : ns. First change happened in cycle-1.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                     26310.0 ns  TB seq.                        Testing Triggering Assertion (std_logic)
@@ -392,7 +392,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #11  ***
 UVVM:         26460 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -401,7 +401,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #12  ***
 UVVM:         26610 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (X) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (X) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -410,7 +410,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #13  ***
 UVVM:         26760 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (1) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -419,7 +419,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #14  ***
 UVVM:         26910 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (0) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -428,7 +428,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #15  ***
 UVVM:         27060 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (Z) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (Z) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -437,7 +437,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #16  ***
 UVVM:         27210 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (W) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (W) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -446,7 +446,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #17  ***
 UVVM:         27360 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (L) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (L) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -455,7 +455,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #18  ***
 UVVM:         27510 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (H) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (H) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -465,7 +465,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #19  ***
 UVVM:         27650 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -473,7 +473,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #20  ***
 UVVM:         27670 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -485,19 +485,19 @@ UVVM: ID_SEQUENCER                   27720.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                   27720.0 ns  TB seq.                        Setting min_cycles = 10, max_cycles = 20
 UVVM: ID_SEQUENCER                   27770.0 ns  TB seq.                        Change the value from 'U' to '1', window (10-cycles to 20-cycles)
 UVVM: ID_UVVM_ASSERTION              27960.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 190 ns. First change event happened in cycle-19. 
+UVVM:                                                                           window. OK after 190 ns. First change event happened in cycle-19.
 UVVM: ID_SEQUENCER                   28010.0 ns  TB seq.                        Setting min_cycles = 20, max_cycles = 30
 UVVM: ID_SEQUENCER                   28060.0 ns  TB seq.                        Change the value from 'U' to '1', window (20-cycles to 30-cycles)
 UVVM: ID_UVVM_ASSERTION              28350.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 290 ns. First change event happened in cycle-29. 
+UVVM:                                                                           window. OK after 290 ns. First change event happened in cycle-29.
 UVVM: ID_SEQUENCER                   28400.0 ns  TB seq.                        Setting min_cycles = 30, max_cycles = 40
 UVVM: ID_SEQUENCER                   28450.0 ns  TB seq.                        Change the value from 'U' to '1', window (30-cycles to 40-cycles)
 UVVM: ID_UVVM_ASSERTION              28840.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 390 ns. First change event happened in cycle-39. 
+UVVM:                                                                           window. OK after 390 ns. First change event happened in cycle-39.
 UVVM: ID_SEQUENCER                   28890.0 ns  TB seq.                        Setting min_cycles = 40, max_cycles = 50
 UVVM: ID_SEQUENCER                   28940.0 ns  TB seq.                        Change the value from 'U' to '1', window (40-cycles to 50-cycles)
 UVVM: ID_UVVM_ASSERTION              29430.0 ns  TB seq.(uvvm)                  assert_change_from_min_to_max_cycles_after_trigger() => OK. tracked_value had a change in
-UVVM:                                                                           window. OK after 490 ns. First change event happened in cycle-49. 
+UVVM:                                                                           window. OK after 490 ns. First change event happened in cycle-49.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                     29520.0 ns  TB seq.                        Testing Assertion Enable (std_logic)
@@ -508,7 +508,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #21  ***
 UVVM:         30020 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -518,7 +518,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #22  ***
 UVVM:         30620 ns   TB seq.(uvvm)
-UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window. 
+UVVM:                    assert_change_from_min_to_max_cycles_after_trigger() => Failed. tracked_value (U) never changed in window.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

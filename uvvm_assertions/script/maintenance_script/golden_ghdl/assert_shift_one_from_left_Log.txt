@@ -1,8 +1,8 @@
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
-UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR_LARGE).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_LOG_HDR).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER).
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_UVVM_ASSERTION).
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -14,7 +14,7 @@ UVVM: ID_LOG_HDR                       150.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                     150.0 ns  TB seq.                        Testing single sequence: 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_UVVM_ASSERTION                180.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK (first). tracked_value '0001' had a full ripple from left to
-UVVM:                                                                           right. 
+UVVM:                                                                           right.
 UVVM: ID_SEQUENCER                     220.0 ns  TB seq.                        Testing two consecutive sequences: 1000 -> 0100 -> 0010 -> 0001 -> 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_SEQUENCER                     330.0 ns  TB seq.                        Testing pipeline 2 sequences: 1000 -> 1100 -> 0110 -> 0011 -> 0001
 UVVM: ID_SEQUENCER                     410.0 ns  TB seq.                        Testing pipeline 3 sequences: 1000 -> 1100 -> 1110 -> 0111 -> 0011 -> 0001
@@ -36,7 +36,7 @@ UVVM: ID_SEQUENCER                     990.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:          1000 ns   TB seq.(uvvm)
+UVVM:           :00 ns   TB seq.(uvvm)
 UVVM:                    assert_shift_one_from_left() => Failed (pipeline num:3). tracked_value '1000' was not X1XX at the 2-cycle. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9951,7 +9951,7 @@ UVVM: ID_LOG_HDR                     60990.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                   60990.0 ns  TB seq.                        Testing single sequence: 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_UVVM_ASSERTION              61020.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK (first). tracked_value '0001' had a full ripple from left to
-UVVM:                                                                           right. 
+UVVM:                                                                           right.
 UVVM: ID_SEQUENCER                   61060.0 ns  TB seq.                        Testing two consecutive sequences: 1000 -> 0100 -> 0010 -> 0001 -> 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_SEQUENCER                   61170.0 ns  TB seq.                        Testing pipeline 2 sequences: 1000 -> 1100 -> 0110 -> 0011 -> 0001
 UVVM: ID_SEQUENCER                   61250.0 ns  TB seq.                        Testing pipeline 3 sequences: 1000 -> 1100 -> 1110 -> 0111 -> 0011 -> 0001
@@ -12192,7 +12192,7 @@ UVVM: ID_LOG_HDR                    121830.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                  121830.0 ns  TB seq.                        Testing single sequence: 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_UVVM_ASSERTION             121860.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK (first). tracked_value '0001' had a full ripple from left to
-UVVM:                                                                           right. 
+UVVM:                                                                           right.
 UVVM: ID_SEQUENCER                  121900.0 ns  TB seq.                        Testing two consecutive sequences: 1000 -> 0100 -> 0010 -> 0001 -> 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_SEQUENCER                  122010.0 ns  TB seq.                        Testing pipeline 2 sequences: 1000 -> 1100 -> 0110 -> 0011 -> 0001
 UVVM: ID_SEQUENCER                  122090.0 ns  TB seq.                        Testing pipeline 3 sequences: 1000 -> 1100 -> 1110 -> 0111 -> 0011 -> 0001
@@ -17241,7 +17241,7 @@ UVVM: ID_LOG_HDR                    182670.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                  182670.0 ns  TB seq.                        Testing single sequence: 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_UVVM_ASSERTION             182700.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK (first). tracked_value '0001' had a full ripple from left to
-UVVM:                                                                           right. 
+UVVM:                                                                           right.
 UVVM: ID_SEQUENCER                  182740.0 ns  TB seq.                        Testing two consecutive sequences: 1000 -> 0100 -> 0010 -> 0001 -> 1000 -> 0100 -> 0010 -> 0001
 UVVM: ID_SEQUENCER                  182850.0 ns  TB seq.                        Testing pipeline 2 sequences: 1000 -> 1100 -> 0110 -> 0011 -> 0001
 UVVM: ID_SEQUENCER                  182930.0 ns  TB seq.                        Testing pipeline 3 sequences: 1000 -> 1100 -> 1110 -> 0111 -> 0011 -> 0001
@@ -18961,10 +18961,10 @@ UVVM:
 UVVM: ID_LOG_HDR                    243460.0 ns  TB seq.                        Testing pos_ack_kind: EVERY
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                  243460.0 ns  TB seq.                        Expecting a positive acknowledge on each successful cycle sequence
-UVVM: ID_UVVM_ASSERTION             243540.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '1111' had a full ripple from left to right. 
-UVVM: ID_UVVM_ASSERTION             243550.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '0111' had a full ripple from left to right. 
-UVVM: ID_UVVM_ASSERTION             243560.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '0011' had a full ripple from left to right. 
-UVVM: ID_UVVM_ASSERTION             243570.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '0001' had a full ripple from left to right. 
+UVVM: ID_UVVM_ASSERTION             243540.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '1111' had a full ripple from left to right.
+UVVM: ID_UVVM_ASSERTION             243550.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '0111' had a full ripple from left to right.
+UVVM: ID_UVVM_ASSERTION             243560.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '0011' had a full ripple from left to right.
+UVVM: ID_UVVM_ASSERTION             243570.0 ns  TB seq.(uvvm)                  assert_shift_one_from_left() => OK. tracked_value '0001' had a full ripple from left to right.
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                    243620.0 ns  TB seq.                        Testing Assertion Enable

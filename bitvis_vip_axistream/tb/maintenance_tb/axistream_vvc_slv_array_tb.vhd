@@ -639,7 +639,7 @@ begin
     ------------------------------------------------------------
     log(ID_LOG_HDR, "TC: axistream transmit when tready=0 from DUT at start of transfer  ");
     ------------------------------------------------------------
-    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to transmit with inactive slave
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors due to transmit with inactive slave
     -- Fill DUT FIFO to provoke tready=0
     v_numBytes := 1;
     for i in 0 to GC_DUT_FIFO_DEPTH - 1 loop
@@ -648,7 +648,7 @@ begin
     end loop;
     await_completion(AXISTREAM_VVCT, 0, 1 ms);
     wait for 100 ns;
-    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_transaction_checking_enabled := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_transaction_checking_enabled;
 
     -- DUT FIFO is now full. Schedule the transmit which will wait for tready until DUT is read from later
     v_data_array_1_byte(0) := x"D0";

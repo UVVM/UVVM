@@ -9,15 +9,15 @@ filesets:
     file_type: vhdlSource-2008
     logical_name: bitvis_vip_error_injection
     depend:
-    - uvvm:uvvm:uvvm_util:2.21.4
+    - uvvm:uvvm:uvvm_util:2.22.0
   tb:
     files:
     - ./tb/ei_demo_tb.vhd
     file_type: vhdlSource-2008
     logical_name: bitvis_vip_error_injection
     depend:
-    - uvvm:uvvm:uvvm_util:2.21.4
-    - uvvm:uvvm:uvvm_vvc_framework:2.12.15
+    - uvvm:uvvm:uvvm_util:2.22.0
+    - uvvm:uvvm:uvvm_vvc_framework:2.12.16
 targets:
   default:
     filesets:

@@ -1,6 +1,21 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v6.0.0
+----------
+Released: 2026-10-27
+- Added range normalization in BFM.
+- Added bit_order to BFM config.
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Fixed TB_ERROR "command_type is not IMMEDIATE or QUEUED" when SPI VVC commands are sent from two processes in the same
+  delta cycle.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v5.1.4
 ----------
 Released: 2026-02-14
@@ -108,7 +123,7 @@ Released: 2020-05-19
 - Added shared_spi_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 
 v3.7.1
@@ -128,13 +143,13 @@ Released: 2020-03-30
 v3.6.0
 ----------
 Released: 2020-01-24
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
 
 v3.5.0
 ----------
 Released: 2019-12-04
-- Added transaction package. 
+- Added transaction package.
 - Updated VVC src and quick reference with activity watchdog name changes.
 - Added a set of new features, see UVVM VVC Framework Essential Mechanisms document.
 

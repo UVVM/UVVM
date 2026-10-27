@@ -445,6 +445,16 @@ package body axilite_bfm_pkg is
     check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
+    if v_await_wready then
+      axilite_if.write_data_channel.wdata  <= (axilite_if.write_data_channel.wdata'range => '0');
+      axilite_if.write_data_channel.wstrb  <= (axilite_if.write_data_channel.wstrb'range => '0');
+      axilite_if.write_data_channel.wvalid <= '0';
+    end if;
+    if v_await_awready then
+      axilite_if.write_address_channel.awaddr  <= (axilite_if.write_address_channel.awaddr'range => '0');
+      axilite_if.write_address_channel.awvalid <= '0';
+    end if;
+
     for cycle in 0 to config.max_wait_cycles loop
 
       -- Wait according to config.bfm_sync setup
@@ -472,6 +482,9 @@ package body axilite_bfm_pkg is
     end loop;
 
     check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    if v_await_bvalid then
+      axilite_if.write_response_channel.bready <= '0';
+    end if;
 
     log(config.id_for_bfm, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure axilite_write;
@@ -550,6 +563,11 @@ package body axilite_bfm_pkg is
     end loop;
 
     check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles. ", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if v_await_arready then
+      axilite_if.read_address_channel.araddr  <= (axilite_if.read_address_channel.araddr'range => '0');
+      axilite_if.read_address_channel.arprot  <= (others => '0');
+      axilite_if.read_address_channel.arvalid <= '0';
+    end if;
 
     for cycle in 0 to config.max_wait_cycles loop
 
@@ -578,6 +596,9 @@ package body axilite_bfm_pkg is
     end loop;
 
     check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles. ", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if v_await_rvalid then
+      axilite_if.read_data_channel.rready <= '0';
+    end if;
 
     data_value := v_data_value;
 

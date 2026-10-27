@@ -1252,6 +1252,18 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing randomization of a bin with a very large range of values
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] delete_coverpoint()
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_17] add_bins(bin_range(-2147483647, 2147483646), "large_range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_17] Adding bins: (-2147483647 to 2147483646), min_hits:1, rand_weight:1, "large_range"
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking randomized values cover the lower part
+UVVM:                                                                           of the range'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking randomized values cover the upper part
+UVVM:                                                                           of the range'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking large range bin is covered'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***

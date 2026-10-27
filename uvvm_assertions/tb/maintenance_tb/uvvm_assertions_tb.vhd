@@ -83,7 +83,7 @@ architecture func of uvvm_assertions_tb is
   signal allowed_values_slv_array       : t_slv_array(0 to 1)(3 downto 0)      := (others => (others => '0')); -- Set of allowed values in assert_one_of (std_logic_vector)
   signal allowed_values_unsigned_array  : t_unsigned_array(0 to 1)(3 downto 0) := (others => (others => '0')); -- Set of allowed values in assert_one_of (unsigned)
   signal allowed_values_signed_array    : t_signed_array(0 to 1)(3 downto 0)   := (others => (others => '0')); -- Set of allowed values in assert_one_of (signed)
-  signal allowed_values_int_array       : t_integer_array(0 to 1)              := (0, 0);                      -- Set of allowed values in assert_one_of (integer)
+  signal allowed_values_int_array       : integer_vector(0 to 1)               := (0, 0);                      -- Set of allowed values in assert_one_of (integer)
   signal allowed_values_real_array      : real_vector(0 to 1)                  := (0.0, 0.0);                  -- Set of allowed values in assert_one_of (real)
   signal allowed_values_time_array      : time_vector(0 to 1)                  := (0 ns, 0 ns);                -- Set of allowed values in assert_one_of (time)
 

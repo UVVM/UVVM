@@ -340,10 +340,10 @@ package ti_vvc_framework_support_pkg is
   );
 
   -- ============================================================================
-  -- Unwanted Activity Detection
+  -- Unwanted Transaction Detection
   -- ============================================================================
-  -- Checks for unwanted activity and issues an alert of severity
-  procedure check_unwanted_activity(
+  -- Checks for unwanted transaction and issues an alert of severity
+  procedure check_unwanted_transaction(
     signal   tracked_signal : std_logic;
     constant alert_level    : t_alert_level;
     constant signal_name    : string;
@@ -351,7 +351,7 @@ package ti_vvc_framework_support_pkg is
   );
 
   -- Overload for std_logic_vector signal
-  procedure check_unwanted_activity(
+  procedure check_unwanted_transaction(
     signal   tracked_signal : std_logic_vector;
     constant alert_level    : t_alert_level;
     constant signal_name    : string;
@@ -846,7 +846,7 @@ package body ti_vvc_framework_support_pkg is
     constant C_PROC_CALL_SHORT              : string                                      := C_PROC_NAME & "(" & to_upper(to_string(vvc_select)) & "," & to_string(timeout, ns) & ")";
     constant C_INDEX_NOT_FOUND              : integer                                     := -1;
     constant C_VVC_LIST_LENGTH              : natural                                     := vvc_list.priv_get_num_vvc_in_list;
-    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM)      := (others => -1);
+    variable v_vvc_idx_in_activity_register : integer_vector(0 to C_MAX_TB_VVC_NUM)       := (others => -1);
     variable v_num_vvc_instances            : natural                                     := 0;
     variable v_tot_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM         := 0;
     variable v_vvc_logged                   : std_logic_vector(0 to C_MAX_TB_VVC_NUM - 1) := (others => '0');
@@ -1076,10 +1076,10 @@ package body ti_vvc_framework_support_pkg is
   end procedure activity_watchdog;
 
   -- ============================================================================
-  -- Unwanted Activity Detection
+  -- Unwanted Transaction Detection
   -- ============================================================================
   -------------------------------------------------------------------------------
-  procedure check_unwanted_activity(
+  procedure check_unwanted_transaction(
     signal   tracked_signal : std_logic;
     constant alert_level    : t_alert_level;
     constant signal_name    : string;
@@ -1096,22 +1096,22 @@ package body ti_vvc_framework_support_pkg is
            (v_last_value = 'X' and tracked_signal = '0') or
            (v_last_value = 'X' and tracked_signal = '1')) then
       if tracked_signal'event then
-        alert(alert_level, "Unwanted activity detected. " & signal_name & " changed from " &
+        alert(alert_level, "Unwanted transaction detected. " & signal_name & " changed from " &
           to_string(tracked_signal'last_value) & " to " & to_string(tracked_signal), scope);
       end if;
     end if;
   end procedure;
 
-  procedure check_unwanted_activity(
+  procedure check_unwanted_transaction(
     signal   tracked_signal : std_logic_vector;
     constant alert_level    : t_alert_level;
     constant signal_name    : string;
     constant scope          : string
   ) is
-    variable v_is_unwanted_activity : boolean := false;
+    variable v_is_unwanted_transaction : boolean := false;
     variable v_last_value           : std_logic_vector(tracked_signal'range) := tracked_signal'last_value;
   begin
-    -- Loop through each bit in the vector and check for unwanted activity
+    -- Loop through each bit in the vector and check for unwanted transaction
     for i in 0 to tracked_signal'length - 1 loop
       -- Exclude signal transitions from 'U', 'L' to/from '0', 'H' to/from '1', 'X' to '0'/'1'
       if not (v_last_value(i) = 'U' or
@@ -1121,13 +1121,13 @@ package body ti_vvc_framework_support_pkg is
              (v_last_value(i) = '1' and tracked_signal(i) = 'H') or
              (v_last_value(i) = 'X' and tracked_signal(i) = '0') or
              (v_last_value(i) = 'X' and tracked_signal(i) = '1')) then
-        v_is_unwanted_activity := true;
+        v_is_unwanted_transaction := true;
       end if;
     end loop;
 
-    if v_is_unwanted_activity then
+    if v_is_unwanted_transaction then
       if tracked_signal'event then
-        alert(alert_level, "Unwanted activity detected. " & signal_name & " changed from " &
+        alert(alert_level, "Unwanted transaction detected. " & signal_name & " changed from " &
           to_string(tracked_signal'last_value, HEX, KEEP_LEADING_0, INCL_RADIX) & " to " & to_string(tracked_signal, HEX, KEEP_LEADING_0, INCL_RADIX), scope);
       end if;
     end if;

@@ -46,7 +46,7 @@ end entity i2c_vvc_tb;
 
 -------------------------------------------------------------------------------
 
-architecture behav of i2c_vvc_tb is
+architecture behave of i2c_vvc_tb is
   constant C_SCOPE : string := "I2C_VVC_TB";
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
@@ -64,7 +64,9 @@ architecture behav of i2c_vvc_tb is
 
   constant C_DUMMY_SLAVE_DUT_ADDR : unsigned(6 downto 0) := "1100110";
 
-  signal arst : std_logic := '0';
+  signal arst            : std_logic := '0';
+  signal i2c_disturb_sda : std_logic := 'Z';
+  signal i2c_disturb_scl : std_logic := 'Z';
 
   constant C_I2C_BFM_CONFIG_DEFAULT : t_i2c_bfm_config := (
     enable_10_bits_addressing       => false,
@@ -76,6 +78,7 @@ architecture behav of i2c_vvc_tb is
     max_wait_sda_change             => 10 ms,
     max_wait_sda_change_severity    => failure,
     i2c_bit_time                    => 1100 ns, -- approx. 1 MHz
+    data_hold_time                  => C_UNDEFINED_TIME,
     i2c_bit_time_severity           => failure,
     acknowledge_severity            => failure,
     slave_mode_address              => "000" & C_I2C_SLAVE_DUT_ADDR_0,
@@ -98,6 +101,7 @@ architecture behav of i2c_vvc_tb is
     max_wait_sda_change             => 10 ms,
     max_wait_sda_change_severity    => failure,
     i2c_bit_time                    => 1100 ns, -- approx. 1 MHz
+    data_hold_time                  => C_UNDEFINED_TIME,
     i2c_bit_time_severity           => failure,
     acknowledge_severity            => failure,
     slave_mode_address              => "101" & C_I2C_SLAVE_DUT_ADDR_0,
@@ -674,7 +678,7 @@ architecture behav of i2c_vvc_tb is
     await_completion(I2C_VVCT, 3, 50 ms);
   end procedure vvc_to_slave_dut_read_virtual_memory_location;
 
-begin                                   -- architecture behav
+begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
@@ -693,7 +697,11 @@ begin                                   -- architecture behav
                 GC_I2C_BFM_CONFIG_10_BIT_ADDR => C_I2C_BFM_CONFIG_10_BIT_ADDRESSING,
                 GC_WISHBONE_MASTER_BFM_CONFIG => C_WISHBONE_MASTER_BFM_CONFIG_DEFAULT,
                 GC_SBI_BFM_CONFIG             => C_SBI_BFM_CONFIG)
-    port map(arst => arst);
+    port map(
+      arst            => arst,
+      i2c_disturb_sda => i2c_disturb_sda,
+      i2c_disturb_scl => i2c_disturb_scl
+    );
 
   i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
@@ -709,56 +717,74 @@ begin                                   -- architecture behav
     variable v_result_from_fetch : bitvis_vip_i2c.vvc_cmd_pkg.t_vvc_result; -- t_byte_array(0 to 63);
     variable v_master_byte_array : t_byte_array(0 to 1);
     variable v_slave_byte_array  : t_byte_array(0 to 1);
-    variable v_alert_level       : t_alert_level;
+    variable v_alert_config      : t_i2c_unwanted_transaction;
 
-    -- DUT ports towards VVC interface. Towards the master VVC: dut_sda, towards the slave VVC: dut_sda and dut_scl.
     constant C_NUM_VVC_SIGNALS : natural := 3;
-    alias dut_sda is << signal i_test_harness.i2c_vvc_if_1_sda : std_logic >>;
-    alias dut_scl is << signal i_test_harness.i2c_vvc_if_1_scl : std_logic >>;
 
     -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
     procedure toggle_vvc_if (
-      constant alert_level : in t_alert_level
+      constant alert_config : in t_i2c_unwanted_transaction
     ) is
-      variable v_num_expected_alerts : natural;
-      variable v_rand                : t_rand;
+      -- Alert counter array including NO_ALERT (ignored in checks) for easier indexing
+      type t_alert_counters_arr is array(t_alert_level) of natural;
+      variable v_expected_alert_counters : t_alert_counters_arr;  
+      variable v_rand                    : t_rand;
     begin
+      -- Populate local alert counters
+      for alert_level in v_expected_alert_counters'range loop
+        v_expected_alert_counters(alert_level) := get_alert_counter(alert_level);
+      end loop;
       -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
-      if alert_level /= NO_ALERT then
-        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      if alert_config.sda /= NO_ALERT then
+        -- Double expected for sda since a change in SDA triggers for both controller and target VVC
+        increment_expected_alerts_and_stop_limit(alert_config.sda, 8);
+      end if;
+      if alert_config.scl /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.scl, 4);
       end if;
       for i in 0 to C_NUM_VVC_SIGNALS - 1 loop
-        -- Force new value
-        v_num_expected_alerts := get_alert_counter(alert_level);
+        -- Update expected alert counters
         case i is
-          when 0 => dut_sda <= force not dut_sda;
-                    dut_scl <= force not dut_scl;
-          when 1 => dut_sda <= force not dut_sda;
-          when 2 => dut_scl <= force not dut_scl;
+          when 0 => v_expected_alert_counters(alert_config.sda) := v_expected_alert_counters(alert_config.sda) + 2; -- A change in SDA triggers for both controller and target VVC
+                    v_expected_alert_counters(alert_config.scl) := v_expected_alert_counters(alert_config.scl) + 1;
+          when 1 => v_expected_alert_counters(alert_config.sda) := v_expected_alert_counters(alert_config.sda) + 2;
+          when 2 => v_expected_alert_counters(alert_config.scl) := v_expected_alert_counters(alert_config.scl) + 1;
+        end case;
+        -- Inject unwanted transaction on SDA/SCL using dedicated disturbance drivers.
+        case i is
+          when 0 => i2c_disturb_sda <= '0';
+                    i2c_disturb_scl <= '0';
+          when 1 => i2c_disturb_sda <= '0';
+          when 2 => i2c_disturb_scl <= '0';
         end case;
         wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 2 when i = 1 else                 -- A change in SDA triggers for both master and slave VVC
-                                 v_num_expected_alerts + 1;
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
-        -- Set back original value
-        v_num_expected_alerts := get_alert_counter(alert_level);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
+        -- Update expected alert counters
         case i is
-          when 0 => dut_sda <= release;
-                    dut_scl <= release;
-          when 1 => dut_sda <= release;
-          when 2 => dut_scl <= release;
+          when 0 => v_expected_alert_counters(alert_config.sda) := v_expected_alert_counters(alert_config.sda) + 2; -- A change in SDA triggers for both controller and target VVC
+                    v_expected_alert_counters(alert_config.scl) := v_expected_alert_counters(alert_config.scl) + 1;
+          when 1 => v_expected_alert_counters(alert_config.sda) := v_expected_alert_counters(alert_config.sda) + 2;
+          when 2 => v_expected_alert_counters(alert_config.scl) := v_expected_alert_counters(alert_config.scl) + 1;
+        end case;
+        -- Set back original value
+        case i is
+          when 0 => i2c_disturb_sda <= 'Z';
+                    i2c_disturb_scl <= 'Z';
+          when 1 => i2c_disturb_sda <= 'Z';
+          when 2 => i2c_disturb_scl <= 'Z';
         end case;
         wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
         wait for 0 ns;
         wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 2 when i = 1 else                 -- A change in SDA triggers for both master and slave VVC
-                                 v_num_expected_alerts + 1;
         wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
       end loop;
     end procedure;
 
@@ -806,8 +832,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     if GC_TESTCASE = "master_to_slave_VVC-to-VVC_7_bit_addressing" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
 
       -- There is only one interface, so transmission goes from Master to Slave or Slave to Master
       -- Master needs to act first to avoid problem with master pulling down SDA
@@ -834,8 +860,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "slave_to_master_VVC-to-VVC_7_bit_addressing" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
 
       for iteration in 0 to 100 loop
         v_rx_byte := random(C_I2C_DATA_WIDTH);
@@ -850,8 +876,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "master_to_slave_VVC-to-VVC_10_bit_addressing" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(0).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(0).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
 
       -- There is only one interface, so transmission goes from Master to Slave or Slave to Master
       for iteration in 0 to 100 loop
@@ -867,8 +893,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "slave_to_master_VVC-to-VVC_10_bit_addressing" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(0).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(0).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
 
       for iteration in 0 to 100 loop
         v_rx_byte := random(C_I2C_DATA_WIDTH);
@@ -883,8 +909,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "single-byte_communication_with_master_dut" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- -- **************** Simulation using an OpenCores I2C master **************************
       transmit_single_byte_from_i2c_master_dut_to_vvc(WISHBONE_VVCT, I2C_VVCT, x"55");
@@ -908,8 +934,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "single-byte_communication_with_single_slave_dut" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- **************** Simulation using a GitHub I2C slave ***************************
       transmit_single_byte_from_i2c_slave_dut_to_vvc(SBI_VVCT, I2C_VVCT, x"55");
@@ -933,8 +959,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "single-byte_communication_with_multiple_slave_duts" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- -- *************** Simulation with multiple slaves *******************************
       -- Increment expected warnings by 60 since we are using reserved addresses for the
@@ -947,40 +973,40 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_transmit_to_i2c_master_dut" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       transmit_multi_byte_from_vvc_to_i2c_master_dut(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_receive_from_i2c_master_dut" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       transmit_multi_byte_from_i2c_master_dut_to_vvc(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_transmit_to_i2c_slave_dut" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       transmit_multi_byte_from_vvc_to_i2c_slave_dut(SBI_VVCT, I2C_VVCT, v_byte_array);
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_receive_from_i2c_slave_dut" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       transmit_multi_byte_from_i2c_slave_dut_to_vvc(SBI_VVCT, I2C_VVCT, v_byte_array);
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_receive_from_i2c_slave_VVC-to-VVC" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type    := TIME_START2START;
@@ -996,8 +1022,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_transaction_with_i2c_master_dut_with_repeated_start_conditions" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- master dut writes to a slave with a data byte. We pretend that the data byte is an address for a register inside our virtual slave.
       -- no stop condition is generated.
@@ -1009,8 +1035,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "single-byte_communication_with_multiple_slave_duts_without_stop_condition_in_between" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- Increment expected warnings by 30 since we are using reserved addresses for the
       -- DUTs
@@ -1021,24 +1047,24 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_transmit_to_i2c_master_dut_10_bit_addressing" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       transmit_multi_byte_from_vvc_to_i2c_master_dut_10_bit_addressing(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte_receive_from_i2c_master_dut_10_bit_addressing" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       transmit_multi_byte_from_i2c_master_dut_to_vvc_10_bit_addressing(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "receive_and_fetch_result" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type    := TIME_START2START;
@@ -1063,8 +1089,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "multi-byte-send-and-receive-with-restart" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       log(ID_LOG_HDR, "Checking multi-byte read/write between master and slave with restart condition", C_TB_SCOPE_DEFAULT);
       -- Need higher inter-bfm delay for multi-byte
@@ -1091,8 +1117,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "master-slave-vvc-quick-command" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       log(ID_LOG_HDR, "Checking Quick Command between VVCs", C_TB_SCOPE_DEFAULT);
       -- Need higher inter-bfm delay for multi-byte
@@ -1112,8 +1138,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "master_quick_cmd_I2C_7bit_dut_test" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
-      shared_i2c_vvc_config(6).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(6).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       log(ID_LOG_HDR, "Checking Quick Command as pinging of slave", C_TB_SCOPE_DEFAULT);
 
@@ -1122,7 +1148,7 @@ begin                                   -- architecture behav
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave");
       await_completion(I2C_VVCT, 3, 50 ms);
       wait for 10 * C_CLK_PERIOD;       -- let slave rest for some clock cycles
-      i2c_master_quick_command(I2C_VVCT, 3, C_DUMMY_SLAVE_DUT_ADDR, "Pinging nonexistant I2C slave", '0', false);
+      i2c_master_quick_command(I2C_VVCT, 3, C_DUMMY_SLAVE_DUT_ADDR, "Pinging nonexistent I2C slave", '0', false);
       await_completion(I2C_VVCT, 3, 50 ms);
       wait for 10 * C_CLK_PERIOD;       -- let slave rest for some clock cycles
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave");
@@ -1143,8 +1169,8 @@ begin                                   -- architecture behav
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "scoreboard_test" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_2 interface
 
       log(ID_LOG_HDR, "Checking internal scoreboard", C_TB_SCOPE_DEFAULT);
       -- Need higher inter-bfm delay for multi-byte
@@ -1171,24 +1197,34 @@ begin                                   -- architecture behav
       i2c_vvc_sb.report_counters(ALL_INSTANCES);
 
     ------------------------------------------------------------------------------------------------------------------------------
-    elsif GC_TESTCASE = "test_unwanted_activity" then
+    elsif GC_TESTCASE = "test_unwanted_transaction" then
     ------------------------------------------------------------------------------------------------------------------------------
-      shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
-      shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(0).unwanted_transaction_checking_enabled := true;  
+      shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := true;
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
 
-      log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
-      for i in 0 to 2 loop
+      log(ID_LOG_HDR, "Testing Unwanted Transaction Detection in VVC", C_SCOPE);
+        for i in 0 to 4 loop
         -- Test different alert severity configurations
         if i = 0 then
-          v_alert_level := C_I2C_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to default");
+          v_alert_config := C_I2C_VVC_CONFIG_DEFAULT.unwanted_transaction_severity;
         elsif i = 1 then
-          v_alert_level := FAILURE;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to ERROR");
+        v_alert_config := (others => ERROR);
+        elsif i = 2 then
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to FAILURE");
+          v_alert_config := (others => FAILURE);
+        elsif i = 3 then
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to NO_ALERT");
+          v_alert_config := (others => NO_ALERT);
         else
-          v_alert_level := NO_ALERT;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to different values");
+          v_alert_config := (FAILURE, others => ERROR);  
         end if;
-        log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
-        shared_i2c_vvc_config(0).unwanted_activity_severity := v_alert_level;
-        shared_i2c_vvc_config(1).unwanted_activity_severity := v_alert_level;
+        shared_i2c_vvc_config(0).unwanted_transaction_severity := v_alert_config;
+        shared_i2c_vvc_config(1).unwanted_transaction_severity := v_alert_config;
 
         log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
         v_tx_byte := random(C_I2C_DATA_WIDTH);
@@ -1208,8 +1244,64 @@ begin                                   -- architecture behav
         end if;
 
         log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
-        toggle_vvc_if(v_alert_level);
+        toggle_vvc_if(v_alert_config);
       end loop;
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- Corner-case tests for data_hold_time (issue #92)
+    ------------------------------------------------------------------------------------------------------------------------------
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- Verifies that a transaction completes correctly when data_hold_time is
+    -- set to 0 ns (the I2C-spec minimum hold).
+    ------------------------------------------------------------------------------------------------------------------------------
+    elsif GC_TESTCASE = "data_hold_time_zero_ns" then
+      log(ID_LOG_HDR, "Test data_hold_time = 0 ns (I2C-spec minimum hold)", C_SCOPE);
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(0).bfm_config.data_hold_time := 0 ns;
+      shared_i2c_vvc_config(1).bfm_config.data_hold_time := 0 ns;
+      i2c_slave_check(I2C_VVCT, 1, x"AB", "Slave check byte at hold = 0 ns");
+      i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, x"AB", "Master TX byte at hold = 0 ns");
+      await_completion(I2C_VVCT, 0, 50 ms);
+      await_completion(I2C_VVCT, 1, 50 ms);
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- Verifies that the validation bound is strict: data_hold_time =
+    -- i2c_bit_time/2 is rejected (hold must be < i2c_bit_time/2, otherwise the
+    -- SDA setup window before the SCL rising edge would be 0 ns).
+    ------------------------------------------------------------------------------------------------------------------------------
+    elsif GC_TESTCASE = "data_hold_time_half_bit_time" then
+      log(ID_LOG_HDR, "Test data_hold_time = i2c_bit_time/2 is rejected (bound is strict)", C_SCOPE);
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      -- A single 7-bit master transmit invokes the hold-time bound check four
+      -- times (address byte + ACK, data byte + ACK); each rejects the invalid
+      -- hold with a TB_ERROR. The slave uses a valid hold so only the master
+      -- contributes the expected alerts.
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 4);
+      shared_i2c_vvc_config(0).bfm_config.data_hold_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time / 2;
+      shared_i2c_vvc_config(1).bfm_config.data_hold_time := 0 ns;
+      i2c_slave_check(I2C_VVCT, 1, x"5A", "Slave check byte (valid hold)");
+      i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, x"5A", "Master TX byte at hold = i2c_bit_time/2 (rejected)");
+      await_completion(I2C_VVCT, 0, 50 ms);
+      await_completion(I2C_VVCT, 1, 50 ms);
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- Verifies that the I2C-spec fast-mode minimum data setup time of 100 ns
+    -- is reachable: with i2c_bit_time = 1100 ns and data_hold_time = 450 ns,
+    -- the remaining setup window inside the SCL-low half is exactly 100 ns.
+    ------------------------------------------------------------------------------------------------------------------------------
+    elsif GC_TESTCASE = "data_hold_time_for_100ns_setup" then
+      log(ID_LOG_HDR, "Test data_hold_time configured for 100 ns setup (I2C fast-mode minimum)", C_SCOPE);
+      shared_i2c_vvc_config(4).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(5).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors in other VVCs using common i2c_vvc_if_1 interface
+      shared_i2c_vvc_config(0).bfm_config.data_hold_time := 450 ns;
+      shared_i2c_vvc_config(1).bfm_config.data_hold_time := 450 ns;
+      i2c_slave_check(I2C_VVCT, 1, x"3C", "Slave check byte with setup = 100 ns");
+      i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, x"3C", "Master TX byte with setup = 100 ns");
+      await_completion(I2C_VVCT, 0, 50 ms);
+      await_completion(I2C_VVCT, 1, 50 ms);
 
     end if;
 
@@ -1231,4 +1323,4 @@ begin                                   -- architecture behav
     std.env.stop;
     wait;                               -- to stop completely
   end process p_main;
-end architecture behav;
+end architecture behave;

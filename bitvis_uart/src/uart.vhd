@@ -24,6 +24,7 @@ entity uart is
   generic(
     GC_START_BIT                 : std_logic := '0';
     GC_STOP_BIT                  : std_logic := '1';
+    GC_DATA_WIDTH                : integer   := 8;
     GC_CLOCKS_PER_BIT            : integer   := 16;
     GC_MIN_EQUAL_SAMPLES_PER_BIT : integer   := 15); -- Number of equal samples needed for valid bit, uart samples on every clock
   port(
@@ -35,8 +36,8 @@ entity uart is
     addr  : in  unsigned(2 downto 0);
     wr    : in  std_logic;
     rd    : in  std_logic;
-    wdata : in  std_logic_vector(7 downto 0);
-    rdata : out std_logic_vector(7 downto 0) := (others => '0');
+    wdata : in  std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    rdata : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     -- UART related signals
     rx_a  : in  std_logic;
     tx    : out std_logic
@@ -50,12 +51,15 @@ end entity uart;
 architecture rtl of uart is
 
   -- PIF-core interface
-  signal p2c : t_p2c;
-  signal c2p : t_c2p;
+  signal p2c : t_p2c(awo_tx_data(GC_DATA_WIDTH - 1 downto 0));
+  signal c2p : t_c2p(aro_rx_data(GC_DATA_WIDTH - 1 downto 0));
 
 begin
 
   i_uart_pif : entity work.uart_pif
+    generic map (
+      GC_DATA_WIDTH => GC_DATA_WIDTH
+    )
     port map(
       arst  => arst,
       clk   => clk,
@@ -75,6 +79,7 @@ begin
     generic map(
       GC_START_BIT                 => GC_START_BIT,
       GC_STOP_BIT                  => GC_STOP_BIT,
+      GC_DATA_WIDTH                => GC_DATA_WIDTH,
       GC_CLOCKS_PER_BIT            => GC_CLOCKS_PER_BIT,
       GC_MIN_EQUAL_SAMPLES_PER_BIT => GC_MIN_EQUAL_SAMPLES_PER_BIT
     )

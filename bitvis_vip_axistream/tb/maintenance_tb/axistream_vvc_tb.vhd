@@ -128,7 +128,7 @@ begin
     variable v_dest_array           : t_dest_array(v_data_array'range) := (others => (others => '0'));
     variable v_cmd_idx              : natural;
     variable v_result_from_fetch    : bitvis_vip_axistream.vvc_cmd_pkg.t_vvc_result;
-    variable v_alert_level          : t_alert_level;
+    variable v_alert_config         : t_axistream_unwanted_transaction;
 
     -- DUT ports towards VVC interface
     constant C_NUM_VVC_SIGNALS : natural := 8;
@@ -143,18 +143,63 @@ begin
 
     -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
     procedure toggle_vvc_if (
-      constant alert_level : in t_alert_level
+      constant alert_config : in t_axistream_unwanted_transaction
     ) is
-      variable v_num_expected_alerts : natural;
-      variable v_rand                : t_rand;
+      -- Alert counter array including NO_ALERT (ignored in checks) for easier indexing
+      type t_alert_counters_arr is array(t_alert_level) of natural;
+      variable v_expected_alert_counters : t_alert_counters_arr;
+      variable v_rand                    : t_rand;
     begin
+      -- Populate local alert counters
+      for alert_level in v_expected_alert_counters'range loop
+        v_expected_alert_counters(alert_level) := get_alert_counter(alert_level);
+      end loop;
       -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
-      if alert_level /= NO_ALERT then
-        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      if alert_config.tdata /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tdata, 4);
+      end if;
+      if alert_config.tkeep /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tkeep, 4);
+      end if;
+      if alert_config.tuser /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tuser, 4);
+      end if;
+      if alert_config.tvalid /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tvalid, 4);
+      end if;
+      if alert_config.tlast /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tlast, 4);
+      end if;
+      if alert_config.tstrb /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tstrb, 4);
+      end if;
+      if alert_config.tid /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tid, 4);
+      end if;
+      if alert_config.tdest /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.tdest, 4);
       end if;
       for i in 0 to C_NUM_VVC_SIGNALS loop
+        -- Update expected alert counters
+        case i is
+          when 0 => v_expected_alert_counters(alert_config.tdata)  := v_expected_alert_counters(alert_config.tdata) + 1;
+                    v_expected_alert_counters(alert_config.tkeep)  := v_expected_alert_counters(alert_config.tkeep) + 1;
+                    v_expected_alert_counters(alert_config.tuser)  := v_expected_alert_counters(alert_config.tuser) + 1;
+                    v_expected_alert_counters(alert_config.tvalid) := v_expected_alert_counters(alert_config.tvalid) + 1;
+                    v_expected_alert_counters(alert_config.tlast)  := v_expected_alert_counters(alert_config.tlast) + 1;
+                    v_expected_alert_counters(alert_config.tstrb)  := v_expected_alert_counters(alert_config.tstrb) + 1;
+                    v_expected_alert_counters(alert_config.tid)    := v_expected_alert_counters(alert_config.tid) + 1;
+                    v_expected_alert_counters(alert_config.tdest)  := v_expected_alert_counters(alert_config.tdest) + 1;
+          when 1 => v_expected_alert_counters(alert_config.tdata)  := v_expected_alert_counters(alert_config.tdata) + 1;
+          when 2 => v_expected_alert_counters(alert_config.tkeep)  := v_expected_alert_counters(alert_config.tkeep) + 1;
+          when 3 => v_expected_alert_counters(alert_config.tuser)  := v_expected_alert_counters(alert_config.tuser) + 1;
+          when 4 => v_expected_alert_counters(alert_config.tvalid) := v_expected_alert_counters(alert_config.tvalid) + 1;
+          when 5 => v_expected_alert_counters(alert_config.tlast)  := v_expected_alert_counters(alert_config.tlast) + 1;
+          when 6 => v_expected_alert_counters(alert_config.tstrb)  := v_expected_alert_counters(alert_config.tstrb) + 1;
+          when 7 => v_expected_alert_counters(alert_config.tid)    := v_expected_alert_counters(alert_config.tid) + 1;
+          when 8 => v_expected_alert_counters(alert_config.tdest)  := v_expected_alert_counters(alert_config.tdest) + 1;
+        end case;
         -- Force new value
-        v_num_expected_alerts := get_alert_counter(alert_level);
         case i is
           when 0 => dut_m_tdata  <= force not dut_m_tdata;
                     dut_m_tkeep  <= force not dut_m_tkeep;
@@ -174,12 +219,30 @@ begin
           when 8 => dut_m_tdest  <= force not dut_m_tdest;
         end case;
         wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 1;
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
+        -- Update expected alert counters
+        case i is
+          when 0 => v_expected_alert_counters(alert_config.tdata)  := v_expected_alert_counters(alert_config.tdata) + 1;
+                    v_expected_alert_counters(alert_config.tkeep)  := v_expected_alert_counters(alert_config.tkeep) + 1;
+                    v_expected_alert_counters(alert_config.tuser)  := v_expected_alert_counters(alert_config.tuser) + 1;
+                    v_expected_alert_counters(alert_config.tvalid) := v_expected_alert_counters(alert_config.tvalid) + 1;
+                    v_expected_alert_counters(alert_config.tlast)  := v_expected_alert_counters(alert_config.tlast) + 1;
+                    v_expected_alert_counters(alert_config.tstrb)  := v_expected_alert_counters(alert_config.tstrb) + 1;
+                    v_expected_alert_counters(alert_config.tid)    := v_expected_alert_counters(alert_config.tid) + 1;
+                    v_expected_alert_counters(alert_config.tdest)  := v_expected_alert_counters(alert_config.tdest) + 1;
+          when 1 => v_expected_alert_counters(alert_config.tdata)  := v_expected_alert_counters(alert_config.tdata) + 1;
+          when 2 => v_expected_alert_counters(alert_config.tkeep)  := v_expected_alert_counters(alert_config.tkeep) + 1;
+          when 3 => v_expected_alert_counters(alert_config.tuser)  := v_expected_alert_counters(alert_config.tuser) + 1;
+          when 4 => v_expected_alert_counters(alert_config.tvalid) := v_expected_alert_counters(alert_config.tvalid) + 1;
+          when 5 => v_expected_alert_counters(alert_config.tlast)  := v_expected_alert_counters(alert_config.tlast) + 1;
+          when 6 => v_expected_alert_counters(alert_config.tstrb)  := v_expected_alert_counters(alert_config.tstrb) + 1;
+          when 7 => v_expected_alert_counters(alert_config.tid)    := v_expected_alert_counters(alert_config.tid) + 1;
+          when 8 => v_expected_alert_counters(alert_config.tdest)  := v_expected_alert_counters(alert_config.tdest) + 1;
+        end case;
         -- Set back original value
-        v_num_expected_alerts := get_alert_counter(alert_level);
         case i is
           when 0 => dut_m_tdata  <= release;
                     dut_m_tkeep  <= release;
@@ -201,11 +264,11 @@ begin
         wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
         wait for 0 ns;
         wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 1;
         wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
       end loop;
     end procedure;
 
@@ -405,7 +468,7 @@ begin
     ------------------------------------------------------------
     log(ID_LOG_HDR, "TC: axistream transmit when tready=0 from DUT at start of transfer  ");
     ------------------------------------------------------------
-    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to transmit with inactive slave
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors due to transmit with inactive slave
     -- Fill DUT FIFO to provoke tready=0
     v_numBytes := 1;
     for i in 0 to C_DUT_FIFO_DEPTH - 1 loop
@@ -414,7 +477,7 @@ begin
     end loop;
     await_completion(AXISTREAM_VVCT, 0, 1 ms);
     wait for 100 ns;
-    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_transaction_checking_enabled := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_transaction_checking_enabled;
 
     -- DUT FIFO is now full. Schedule the transmit which will wait for tready until DUT is read from later
     v_data_array(0) := x"D0";
@@ -643,20 +706,28 @@ begin
     end loop;
 
     ------------------------------------------------------------------------------------------------------------------------------
-    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+    log(ID_LOG_HDR, "Testing Unwanted Transaction Detection in VVC", C_SCOPE);
     ------------------------------------------------------------------------------------------------------------------------------
-    for i in 0 to 2 loop
+    for i in 0 to 4 loop
       -- Test different alert severity configurations
       if i = 0 then
-        v_alert_level := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to default");
+        v_alert_config := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_transaction_severity;
       elsif i = 1 then
-        v_alert_level := FAILURE;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to ERROR");
+        v_alert_config := (others => ERROR);
+      elsif i = 2 then
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to FAILURE");
+        v_alert_config := (others => FAILURE);
+      elsif i = 3 then
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to NO_ALERT");
+        v_alert_config := (others => NO_ALERT);
       else
-        v_alert_level := NO_ALERT;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to different values");
+        v_alert_config := (FAILURE, others => ERROR);  
       end if;
-      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
-      shared_axistream_vvc_config(C_FIFO2VVC_MASTER).unwanted_activity_severity := v_alert_level;
-      shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity  := v_alert_level;
+      shared_axistream_vvc_config(C_FIFO2VVC_MASTER).unwanted_transaction_severity := v_alert_config;
+      shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_transaction_severity := v_alert_config;
 
       log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
       for byte in 0 to 7 loop
@@ -673,7 +744,7 @@ begin
       end if;
 
       log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
-      toggle_vvc_if(v_alert_level);
+      toggle_vvc_if(v_alert_config);
     end loop;
 
     -----------------------------------------------------------------------------

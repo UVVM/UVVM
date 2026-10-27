@@ -514,10 +514,10 @@ begin
   --===============================================================================================
 
   --===============================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transaction from the DUT
   --===============================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -540,17 +540,19 @@ begin
         wait on i2c_vvc_if.scl, i2c_vvc_if.sda, global_trigger_vvc_activity_register;
       end if;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        if GC_MASTER_MODE then
-          check_unwanted_activity(i2c_vvc_if.sda, vvc_config.unwanted_activity_severity, "sda", C_SCOPE);
-        else
-          check_unwanted_activity(i2c_vvc_if.scl, vvc_config.unwanted_activity_severity, "This can be caused by multiple slave VVCs with a common bus connected to the same DUT. See documentation.\nscl", C_SCOPE);
-          check_unwanted_activity(i2c_vvc_if.sda, vvc_config.unwanted_activity_severity, "This can be caused by multiple slave VVCs with a common bus connected to the same DUT. See documentation.\nsda", C_SCOPE);
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          if GC_MASTER_MODE then
+            check_unwanted_transaction(i2c_vvc_if.sda, vvc_config.unwanted_transaction_severity.sda, "sda", C_SCOPE);
+          else
+            check_unwanted_transaction(i2c_vvc_if.scl, vvc_config.unwanted_transaction_severity.scl, "This can be caused by multiple slave VVCs with a common bus connected to the same DUT. See documentation.\nscl", C_SCOPE);
+            check_unwanted_transaction(i2c_vvc_if.sda, vvc_config.unwanted_transaction_severity.sda, "This can be caused by multiple slave VVCs with a common bus connected to the same DUT. See documentation.\nsda", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --===============================================================================================
 
 end architecture behave;

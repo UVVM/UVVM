@@ -288,9 +288,9 @@ package body avalon_mm_bfm_pkg is
     case response is
       when "00" =>
         return OKAY;
-      when "10" =>
+      when "01" =>
         return RESERVED;
-      when "11" =>
+      when "10" =>
         return SLAVEERROR;
       when others =>
         return DECODEERROR;

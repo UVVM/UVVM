@@ -24,7 +24,7 @@ UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    
 UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    enable() => SB enabled. 
 UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    enable_log_msg() => message id id_data enabled. 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (enabled, no expected)
-UVVM: ID_AWAIT_UVVM_COMPLETION           0.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION           0.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                                  
@@ -55,14 +55,14 @@ UVVM: ID_DATA                            0.0 ns  DEMO SB 2,1                    
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 'Increment for await sb completion alert'
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:       1000000 ns   TB seq.(uvvm)
+UVVM:        :00000 ns   TB seq.(uvvm)
 UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
 UVVM:                      DEMO SB 1,1
 UVVM:                    
 UVVM: 
 UVVM: ID_SEQUENCER                 1000000.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (with received)
 UVVM: ID_DATA                      1000000.0 ns  DEMO SB 2,1                    check_received() => MATCH, for received: x"55". 'checking received'
-UVVM: ID_AWAIT_UVVM_COMPLETION     1000000.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION     1000000.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM: ID_CTRL                      1000000.0 ns  DEMO SB 2,1                    disable() => SB disabled. 
 UVVM: 
 UVVM: 
@@ -81,7 +81,7 @@ UVVM:                      DEMO SB 1,1
 UVVM:                    
 UVVM: 
 UVVM: ID_DATA                      2000050.0 ns  DEMO SB 3,1                    check_received() => MATCH, for received: x"55". 'checking received 1'
-UVVM: ID_AWAIT_UVVM_COMPLETION     2000100.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 100 ns
+UVVM: ID_AWAIT_UVVM_COMPLETION     2000100.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after :0 ns
 UVVM: ID_CTRL                      2000300.0 ns  DEMO SB 3,1                    disable() => SB disabled. 
 UVVM: 
 UVVM: 
@@ -92,7 +92,7 @@ UVVM: ID_CTRL                      2000300.0 ns  DEMO SB 4,1                    
 UVVM: ID_SEQUENCER                 2000300.0 ns  TB seq.(uvvm)                  Resetting Scoreboard
 UVVM: ID_DATA                      2000300.0 ns  DEMO SB 4,1                    add_expected() => expected: x"AA".  'adding expected 1'
 UVVM: ID_CTRL                      2000300.0 ns  DEMO SB 4,1                    reset() => reseting SB. 
-UVVM: ID_AWAIT_UVVM_COMPLETION     2000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION     2000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      2000300 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
@@ -111,7 +111,7 @@ UVVM:
 UVVM: ID_SEQUENCER                 2000300.0 ns  TB seq.(uvvm)                  Flushing Scoreboard
 UVVM: ID_DATA                      2000300.0 ns  DEMO SB 4,1                    add_expected() => expected: x"55".  'adding expected 3'
 UVVM: ID_DATA                      2000300.0 ns  DEMO SB 4,1                    flush() => flushing SB. 
-UVVM: ID_AWAIT_UVVM_COMPLETION     2000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION     2000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      2000300 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
@@ -163,7 +163,7 @@ UVVM: ==========================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_DATA                      4000300.0 ns  DEMO SB 5,1                    flush() => flushing SB. 
-UVVM: ID_AWAIT_UVVM_COMPLETION     4000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION     4000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      4000300 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
@@ -202,7 +202,7 @@ UVVM: ID_POS_ACK                   5000300.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                 5000300.0 ns  TB seq.(uvvm)                  Remove both 1 and 2 by use of check_received
 UVVM: ID_DATA                      5000300.0 ns  DEMO SB 6,1                    check_received() => MATCH, for received: x"55". 'checking received 1'
 UVVM: ID_DATA                      5000300.0 ns  DEMO SB 6,1                    check_received() => MATCH, for received: x"AA". 'checking received 2'
-UVVM: ID_AWAIT_UVVM_COMPLETION     5000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION     5000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM: ID_CTRL                      5000300.0 ns  DEMO SB 6,1                    disable() => SB disabled. 
 UVVM: 
 UVVM: 
@@ -216,7 +216,7 @@ UVVM: ID_CTRL                      5000300.0 ns  DEMO SB 8,1                    
 UVVM: ID_CTRL                      5000300.0 ns  DEMO SB 7,2                    enable() => SB enabled.
 UVVM: ID_CTRL                      5000300.0 ns  DEMO SB 7,3                    enable() => SB enabled.
 UVVM: ID_CTRL                      5000300.0 ns  DEMO SB 7                      enable_log_msg() => message id id_data enabled for all instances.
-UVVM: ID_AWAIT_UVVM_COMPLETION     5000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 fs
+UVVM: ID_AWAIT_UVVM_COMPLETION     5000300.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after -0 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      5000300 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            

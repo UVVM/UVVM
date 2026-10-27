@@ -57,75 +57,117 @@ begin
   ------------------------------------------------
   p_main : process
     -- Sequencer constants and variables
-    constant C_SCOPE       : string                       := C_TB_SCOPE_DEFAULT;
-    variable v_cmd_idx     : natural;
-    variable v_data        : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
-    variable v_data_8      : std_logic_vector(7 downto 0) := (others => '0');
-    variable v_is_ok       : boolean;
-    variable v_timestamp   : time;
-    variable v_alert_level : t_alert_level;
+    constant C_SCOPE        : string                       := C_TB_SCOPE_DEFAULT;
+    variable v_cmd_idx      : natural;
+    variable v_data         : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    variable v_data_8       : std_logic_vector(7 downto 0) := (others => '0');
+    variable v_is_ok        : boolean;
+    variable v_timestamp    : time;
+    variable v_alert_config : t_avalon_mm_unwanted_transaction;
 
     -- DUT ports towards VVC interface
     constant C_NUM_VVC_SIGNALS : natural := 5;
-    alias dut_readdata      is << signal i_test_harness.avalon_fifo_single_clock_fifo_1.q : std_logic_vector >>;
-    alias dut_response      is << signal i_test_harness.response_1                        : std_logic_vector >>;
-    alias dut_waitrequest   is << signal i_test_harness.waitrequest_1                     : std_logic >>;
-    alias dut_readdatavalid is << signal i_test_harness.readdatavalid_1                   : std_logic >>;
-    alias dut_irq           is << signal i_test_harness.irq_1                             : std_logic >>;
+    alias dut_readdata           is << signal i_test_harness.avalon_fifo_single_clock_fifo_1.q : std_logic_vector >>;
+    alias dut_response           is << signal i_test_harness.response_1                        : std_logic_vector >>;
+    alias dut_waitrequest        is << signal i_test_harness.waitrequest_1                     : std_logic >>;
+    alias dut_readdatavalid      is << signal i_test_harness.readdatavalid_1                   : std_logic >>;
+    alias dut_irq                is << signal i_test_harness.irq_1                             : std_logic >>;
 
     -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
     procedure toggle_vvc_if (
-      constant alert_level : in t_alert_level
+      constant alert_config : in t_avalon_mm_unwanted_transaction
     ) is
-      variable v_num_expected_alerts : natural;
-      variable v_rand                : t_rand;
+      -- Alert counter array including NO_ALERT (ignored in checks) for easier indexing
+      type t_alert_counters_arr is array(t_alert_level) of natural;
+      variable v_expected_alert_counters : t_alert_counters_arr;
+      variable v_rand                    : t_rand;
     begin
+      -- Populate local alert counters
+      for alert_level in v_expected_alert_counters'range loop
+        v_expected_alert_counters(alert_level) := get_alert_counter(alert_level);
+      end loop;
       -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
-      if alert_level /= NO_ALERT then
-        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      if alert_config.readdata /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.readdata, 4);
+      end if;
+      if alert_config.response /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.response, 4);
+      end if;
+      if alert_config.waitrequest /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.waitrequest, 4);
+      end if;
+      if alert_config.readdatavalid /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.readdatavalid, 4);
+      end if;
+      if alert_config.irq /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.irq, 4);
       end if;
       for i in 0 to C_NUM_VVC_SIGNALS loop
-        -- Force new value
-        v_num_expected_alerts := get_alert_counter(alert_level);
+        -- Update expected alert counters
         case i is
-          when 0 => dut_readdata      <= force not dut_readdata;
-                    dut_response      <= force not dut_response;
-                    dut_waitrequest   <= force not dut_waitrequest;
-                    dut_readdatavalid <= force not dut_readdatavalid;
-                    dut_irq           <= force not dut_irq;
-          when 1 => dut_readdata      <= force not dut_readdata;
-          when 2 => dut_response      <= force not dut_response;
-          when 3 => dut_waitrequest   <= force not dut_waitrequest;
-          when 4 => dut_readdatavalid <= force not dut_readdatavalid;
-          when 5 => dut_irq           <= force not dut_irq;
+          when 0 => v_expected_alert_counters(alert_config.readdata)           := v_expected_alert_counters(alert_config.readdata) + 1;
+                    v_expected_alert_counters(alert_config.response)           := v_expected_alert_counters(alert_config.response) + 1;
+                    v_expected_alert_counters(alert_config.waitrequest)        := v_expected_alert_counters(alert_config.waitrequest) + 1;
+                    v_expected_alert_counters(alert_config.readdatavalid)      := v_expected_alert_counters(alert_config.readdatavalid) + 1;
+                    v_expected_alert_counters(alert_config.irq)                := v_expected_alert_counters(alert_config.irq) + 1;
+          when 1 => v_expected_alert_counters(alert_config.readdata)           := v_expected_alert_counters(alert_config.readdata) + 1;
+          when 2 => v_expected_alert_counters(alert_config.response)           := v_expected_alert_counters(alert_config.response) + 1;
+          when 3 => v_expected_alert_counters(alert_config.waitrequest)        := v_expected_alert_counters(alert_config.waitrequest) + 1;
+          when 4 => v_expected_alert_counters(alert_config.readdatavalid)      := v_expected_alert_counters(alert_config.readdatavalid) + 1;
+          when 5 => v_expected_alert_counters(alert_config.irq)                := v_expected_alert_counters(alert_config.irq) + 1;
+        end case;
+        -- Force new value
+        case i is
+          when 0 => dut_readdata           <= force not dut_readdata;
+                    dut_response           <= force not dut_response;
+                    dut_waitrequest        <= force not dut_waitrequest;
+                    dut_readdatavalid      <= force not dut_readdatavalid;
+                    dut_irq                <= force not dut_irq;
+          when 1 => dut_readdata           <= force not dut_readdata;
+          when 2 => dut_response           <= force not dut_response;
+          when 3 => dut_waitrequest        <= force not dut_waitrequest;
+          when 4 => dut_readdatavalid      <= force not dut_readdatavalid;
+          when 5 => dut_irq                <= force not dut_irq;
         end case;
         wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 1;
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
-        -- Set back original value
-        v_num_expected_alerts := get_alert_counter(alert_level);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
+        -- Update expected alert counters
         case i is
-          when 0 => dut_readdata      <= release;
-                    dut_response      <= release;
-                    dut_waitrequest   <= release;
-                    dut_readdatavalid <= release;
-                    dut_irq           <= release;
-          when 1 => dut_readdata      <= release;
-          when 2 => dut_response      <= release;
-          when 3 => dut_waitrequest   <= release;
-          when 4 => dut_readdatavalid <= release;
-          when 5 => dut_irq           <= release;
+          when 0 => v_expected_alert_counters(alert_config.readdata)           := v_expected_alert_counters(alert_config.readdata) + 1;
+                    v_expected_alert_counters(alert_config.response)           := v_expected_alert_counters(alert_config.response) + 1;
+                    v_expected_alert_counters(alert_config.waitrequest)        := v_expected_alert_counters(alert_config.waitrequest) + 1;
+                    v_expected_alert_counters(alert_config.readdatavalid)      := v_expected_alert_counters(alert_config.readdatavalid) + 1;
+                    v_expected_alert_counters(alert_config.irq)                := v_expected_alert_counters(alert_config.irq) + 1;
+          when 1 => v_expected_alert_counters(alert_config.readdata)           := v_expected_alert_counters(alert_config.readdata) + 1;
+          when 2 => v_expected_alert_counters(alert_config.response)           := v_expected_alert_counters(alert_config.response) + 1;
+          when 3 => v_expected_alert_counters(alert_config.waitrequest)        := v_expected_alert_counters(alert_config.waitrequest) + 1;
+          when 4 => v_expected_alert_counters(alert_config.readdatavalid)      := v_expected_alert_counters(alert_config.readdatavalid) + 1;
+          when 5 => v_expected_alert_counters(alert_config.irq)                := v_expected_alert_counters(alert_config.irq) + 1;
+        end case;
+        -- Set back original value
+        case i is
+          when 0 => dut_readdata           <= release;
+                    dut_response           <= release;
+                    dut_waitrequest        <= release;
+                    dut_readdatavalid      <= release;
+                    dut_irq                <= release;
+          when 1 => dut_readdata           <= release;
+          when 2 => dut_response           <= release;
+          when 3 => dut_waitrequest        <= release;
+          when 4 => dut_readdatavalid      <= release;
+          when 5 => dut_irq                <= release;
         end case;
         wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
         wait for 0 ns;
         wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 1;
         wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
       end loop;
     end procedure;
 
@@ -386,19 +428,27 @@ begin
     await_completion(AVALON_MM_VVCT, 2, 100 ns, "Waiting for checks to complete");
 
     ------------------------------------------------------------------------------------------------------------------------------
-    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+    log(ID_LOG_HDR, "Testing Unwanted Transaction Detection in VVC", C_SCOPE);
     ------------------------------------------------------------------------------------------------------------------------------
-    for i in 0 to 2 loop
+    for i in 0 to 4 loop
       -- Test different alert severity configurations
       if i = 0 then
-        v_alert_level := C_AVALON_MM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to default");
+        v_alert_config := C_AVALON_MM_VVC_CONFIG_DEFAULT.unwanted_transaction_severity;
       elsif i = 1 then
-        v_alert_level := FAILURE;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to ERROR");
+        v_alert_config := (others => ERROR);
+      elsif i = 2 then
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to FAILURE");
+        v_alert_config := (others => FAILURE);
+      elsif i = 3 then
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to NO_ALERT");
+        v_alert_config := (others => NO_ALERT);
       else
-        v_alert_level := NO_ALERT;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to different values");
+        v_alert_config := (FAILURE, others => ERROR);  
       end if;
-      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
-      shared_avalon_mm_vvc_config(1).unwanted_activity_severity := v_alert_level;
+      shared_avalon_mm_vvc_config(1).unwanted_transaction_severity := v_alert_config;
 
       log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
       avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"abba1111", "Writing to the DUT");
@@ -413,7 +463,7 @@ begin
       end if;
 
       log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
-      toggle_vvc_if(v_alert_level);
+      toggle_vvc_if(v_alert_config);
     end loop;
 
     -----------------------------------------------------------------------------

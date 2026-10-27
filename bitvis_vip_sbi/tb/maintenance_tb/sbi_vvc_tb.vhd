@@ -91,39 +91,49 @@ begin
     variable v_data           : work.vvc_cmd_pkg.t_vvc_result;
     variable v_is_ok          : boolean := false;
     variable v_timestamp      : time;
-    variable v_alert_level    : t_alert_level;
+    variable v_alert_config   : t_sbi_unwanted_transaction;
 
     -- DUT ports towards VVC interface
     alias dut_rdata is << signal i_test_harness.dut_rdata : std_logic_vector >>;
 
     -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
     procedure toggle_vvc_if (
-      constant alert_level : in t_alert_level
+      constant alert_config : in t_sbi_unwanted_transaction
     ) is
-      variable v_num_expected_alerts : natural;
-      variable v_rand                : t_rand;
+      -- Alert counter array including NO_ALERT (ignored in checks) for easier indexing
+      type t_alert_counters_arr is array(t_alert_level) of natural;
+      variable v_expected_alert_counters : t_alert_counters_arr;
+      variable v_rand                    : t_rand;
     begin
+      -- Populate local alert counters
+      for alert_level in v_expected_alert_counters'range loop
+        v_expected_alert_counters(alert_level) := get_alert_counter(alert_level);
+      end loop;
       -- Number of total expected alerts: 1 signal x 1 toggle
-      if alert_level /= NO_ALERT then
-        increment_expected_alerts_and_stop_limit(alert_level, 2);
+      if alert_config.rdata /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.rdata, 2);
       end if;
+      -- Update expected alert counters
+      v_expected_alert_counters(alert_config.rdata) := v_expected_alert_counters(alert_config.rdata) + 1;
       -- Force new value
-      v_num_expected_alerts := get_alert_counter(alert_level);
       dut_rdata <= force not dut_rdata;
-      wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
-      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                               v_num_expected_alerts + 1;
-      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time 
+      -- Loop through all error levels (except NO_ALERT) and check with expected
+      for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+        check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
+      -- Update expected alert counters
+      v_expected_alert_counters(alert_config.rdata) := v_expected_alert_counters(alert_config.rdata) + 1;
       -- Set back original value
-      v_num_expected_alerts := get_alert_counter(alert_level);
       dut_rdata <= release;
       wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
       wait for 0 ns;
       wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
-      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                               v_num_expected_alerts + 1;
       wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
-      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      -- Loop through all error levels (except NO_ALERT) and check with expected
+      for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+        check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
     end procedure;
 
   begin
@@ -517,21 +527,26 @@ begin
 
       shared_sbi_vvc_config(1).bfm_config.bfm_sync := SYNC_ON_CLOCK_ONLY;
 
-    elsif GC_TESTCASE = "test_unwanted_activity" then
+    elsif GC_TESTCASE = "test_unwanted_transaction" then
       ------------------------------------------------------------------------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+      log(ID_LOG_HDR, "Testing Unwanted Transaction Detection in VVC", C_SCOPE);
       ------------------------------------------------------------------------------------------------------------------------------
-      for i in 0 to 2 loop
+      for i in 0 to 3 loop
         -- Test different alert severity configurations
         if i = 0 then
-          v_alert_level := C_SBI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to default");
+          v_alert_config := C_SBI_VVC_CONFIG_DEFAULT.unwanted_transaction_severity;
         elsif i = 1 then
-          v_alert_level := FAILURE;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to ERROR");
+          v_alert_config := (others => ERROR);
+        elsif i = 2 then
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to FAILURE");
+          v_alert_config := (others => FAILURE);
         else
-          v_alert_level := NO_ALERT;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to NO_ALERT");
+          v_alert_config := (others => NO_ALERT);
         end if;
-        log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
-        shared_sbi_vvc_config(1).unwanted_activity_severity := v_alert_level;
+        shared_sbi_vvc_config(1).unwanted_transaction_severity := v_alert_config;
 
         log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
         sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"AA", "Write PUT on FIFO 1");
@@ -548,7 +563,7 @@ begin
         end if;
 
         log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
-        toggle_vvc_if(v_alert_level);
+        toggle_vvc_if(v_alert_config);
       end loop;
 
     end if;

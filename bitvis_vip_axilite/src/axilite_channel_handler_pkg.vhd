@@ -206,6 +206,9 @@ package body axilite_channel_handler_pkg is
       end if;
     end loop;
     check_value(not v_await_awready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for AWREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    if v_await_awready then
+      awvalid <= '0';
+    end if;
     log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_address_channel_write;
 
@@ -254,6 +257,9 @@ package body axilite_channel_handler_pkg is
       end if;
     end loop;
     check_value(not v_await_wready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for WREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    if v_await_wready then
+      wvalid <= '0';
+    end if;
     log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_data_channel_write;
 
@@ -301,6 +307,9 @@ package body axilite_channel_handler_pkg is
     end loop;
 
     check_value(not v_await_bvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for BVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    if v_await_bvalid then
+      bready <= '0';
+    end if;
 
     log(config.id_for_bfm, C_PROC_CALL & "=> OK." & add_msg_delimiter(msg), scope, msg_id_panel);
 
@@ -349,6 +358,9 @@ package body axilite_channel_handler_pkg is
       end if;
     end loop;
     check_value(not v_await_arready, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for ARREADY during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
+    if v_await_arready then
+      arvalid <= '0';
+    end if;
     log(ID_CHANNEL_BFM, C_PROC_CALL & " completed." & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure read_address_channel_write;
 
@@ -410,6 +422,9 @@ package body axilite_channel_handler_pkg is
       end if;
     end loop;
     check_value(not v_await_rvalid, config.max_wait_cycles_severity, "=> Failed. Timeout waiting for RVALID during " & to_string(config.max_wait_cycles) & " clock cycles." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if v_await_rvalid then
+      rready <= '0';
+    end if;
     -- Assigning output variable
     rdata_value := v_rdata_value;
 

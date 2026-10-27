@@ -33,7 +33,8 @@ entity avalon_st_th is
     GC_CHANNEL_WIDTH : natural := 8;
     GC_ERROR_WIDTH   : natural := 1;
     GC_SYMBOL_WIDTH  : natural := 8;
-    GC_EMPTY_WIDTH   : natural := 1
+    GC_EMPTY_WIDTH   : natural := 1;
+    GC_READY_LATENCY : natural := 0
   );
   port(
     signal clk                 : in    std_logic;
@@ -129,15 +130,23 @@ begin
 end architecture struct_bfm;
 
 architecture struct_vvc of avalon_st_th is
-  signal avalon_st_vvc2vvc_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
-                                               data(GC_DATA_WIDTH - 1 downto 0),
-                                               data_error(GC_ERROR_WIDTH - 1 downto 0),
-                                               empty(GC_EMPTY_WIDTH - 1 downto 0));
+  signal avalon_st_master_if_int : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
+                                                  data(GC_DATA_WIDTH - 1 downto 0),
+                                                  data_error(GC_ERROR_WIDTH - 1 downto 0),
+                                                  empty(GC_EMPTY_WIDTH - 1 downto 0));
+  signal avalon_st_slave_if_int  : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
+                                                  data(GC_DATA_WIDTH - 1 downto 0),
+                                                  data_error(GC_ERROR_WIDTH - 1 downto 0),
+                                                  empty(GC_EMPTY_WIDTH - 1 downto 0));
+  signal avalon_st_vvc2vvc_if    : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
+                                                  data(GC_DATA_WIDTH - 1 downto 0),
+                                                  data_error(GC_ERROR_WIDTH - 1 downto 0),
+                                                  empty(GC_EMPTY_WIDTH - 1 downto 0));
 begin
   --------------------------------------------------------------------------------
   -- Instantiate DUT
   --------------------------------------------------------------------------------
-  i_avalon_st_fifo : entity work.avalon_st_fifo
+  i_avalon_st_fifo_1 : entity work.avalon_st_fifo
     generic map(
       GC_DATA_WIDTH    => GC_DATA_WIDTH,
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
@@ -170,10 +179,45 @@ begin
       empty_o          => open
     );
 
+  -- For ready latency test: VVC->DUT->VVC
+  i_avalon_st_fifo_2 : entity work.avalon_st_fifo
+    generic map(
+      GC_DATA_WIDTH    => GC_DATA_WIDTH,
+      GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
+      GC_EMPTY_WIDTH   => GC_EMPTY_WIDTH,
+      GC_ERROR_WIDTH   => GC_ERROR_WIDTH,
+      GC_FIFO_DEPTH    => 512,
+      GC_READY_LATENCY => GC_READY_LATENCY
+    )
+    port map(
+      clk_i            => clk,
+      reset_i          => areset,
+      -- Slave stream interface
+      slave_data_i     => avalon_st_master_if_int.data,
+      slave_channel_i  => avalon_st_master_if_int.channel,
+      slave_empty_i    => avalon_st_master_if_int.empty,
+      slave_error_i    => avalon_st_master_if_int.data_error,
+      slave_valid_i    => avalon_st_master_if_int.valid,
+      slave_sop_i      => avalon_st_master_if_int.start_of_packet,
+      slave_eop_i      => avalon_st_master_if_int.end_of_packet,
+      slave_ready_o    => avalon_st_master_if_int.ready,
+      -- Master stream interface
+      master_data_o    => avalon_st_slave_if_int.data,
+      master_channel_o => avalon_st_slave_if_int.channel,
+      master_empty_o   => avalon_st_slave_if_int.empty,
+      master_error_o   => avalon_st_slave_if_int.data_error,
+      master_valid_o   => avalon_st_slave_if_int.valid,
+      master_sop_o     => avalon_st_slave_if_int.start_of_packet,
+      master_eop_o     => avalon_st_slave_if_int.end_of_packet,
+      master_ready_i   => avalon_st_slave_if_int.ready,
+      -- FIFO empty
+      empty_o          => open
+    );
+
   --------------------------------------------------------------------------------
   -- Instantiate VVCs
   --------------------------------------------------------------------------------
-  i_avalon_st_vvc_master : entity work.avalon_st_vvc
+  i_avalon_st_vvc_master_1 : entity work.avalon_st_vvc
     generic map(
       GC_VVC_IS_MASTER    => true,
       GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
@@ -187,7 +231,7 @@ begin
       avalon_st_vvc_if => avalon_st_master_if
     );
 
-  i_avalon_st_vvc_slave : entity work.avalon_st_vvc
+  i_avalon_st_vvc_slave_1 : entity work.avalon_st_vvc
     generic map(
       GC_VVC_IS_MASTER    => false,
       GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
@@ -201,7 +245,8 @@ begin
       avalon_st_vvc_if => avalon_st_slave_if
     );
 
-  i_avalon_st_vvc2vvc_master : entity work.avalon_st_vvc
+  -- For ready latency test: VVC->DUT->VVC
+  i_avalon_st_vvc_master_2 : entity work.avalon_st_vvc
     generic map(
       GC_VVC_IS_MASTER    => true,
       GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
@@ -209,6 +254,35 @@ begin
       GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
       GC_EMPTY_WIDTH      => GC_EMPTY_WIDTH,
       GC_INSTANCE_IDX     => 2
+    )
+    port map(
+      clk              => clk,
+      avalon_st_vvc_if => avalon_st_master_if_int
+    );
+
+  -- For ready latency test: VVC->DUT->VVC
+  i_avalon_st_vvc_slave_2 : entity work.avalon_st_vvc
+    generic map(
+      GC_VVC_IS_MASTER    => false,
+      GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
+      GC_DATA_WIDTH       => GC_DATA_WIDTH,
+      GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
+      GC_EMPTY_WIDTH      => GC_EMPTY_WIDTH,
+      GC_INSTANCE_IDX     => 3
+    )
+    port map(
+      clk              => clk,
+      avalon_st_vvc_if => avalon_st_slave_if_int
+    );
+
+  i_avalon_st_vvc2vvc_master : entity work.avalon_st_vvc
+    generic map(
+      GC_VVC_IS_MASTER    => true,
+      GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
+      GC_DATA_WIDTH       => GC_DATA_WIDTH,
+      GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
+      GC_EMPTY_WIDTH      => GC_EMPTY_WIDTH,
+      GC_INSTANCE_IDX     => 4
     )
     port map(
       clk              => clk,
@@ -222,7 +296,7 @@ begin
       GC_DATA_WIDTH       => GC_DATA_WIDTH,
       GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
       GC_EMPTY_WIDTH      => GC_EMPTY_WIDTH,
-      GC_INSTANCE_IDX     => 3
+      GC_INSTANCE_IDX     => 5
     )
     port map(
       clk              => clk,

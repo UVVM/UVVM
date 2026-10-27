@@ -20,6 +20,8 @@ use ieee.numeric_std.all;
 
 package uart_pif_pkg is
 
+  constant C_UART_MAX_DATA_WIDTH : positive := 9;
+
   -- Notation for regs: (Included in constant name as info to SW)
   -- - RW: Readable and writable reg.
   -- - RO: Read only reg. (output from IP)
@@ -38,15 +40,15 @@ package uart_pif_pkg is
 
   -- Signals from pif to core
   type t_p2c is record
-    awo_tx_data       : std_logic_vector(7 downto 0);
+    awo_tx_data       : std_logic_vector;--(C_UART_MAX_DATA_WIDTH - 1 downto 0);
     awo_tx_data_we    : std_logic;
     aro_rx_data_re    : std_logic;
-    rw_num_data_bits  : positive range 7 to 8;
+    rw_num_data_bits  : positive range 5 to 9;
   end record t_p2c;
 
   -- Signals from core to PIF
   type t_c2p is record
-    aro_rx_data       : std_logic_vector(7 downto 0);
+    aro_rx_data       : std_logic_vector;--(C_UART_MAX_DATA_WIDTH - 1 downto 0);
     aro_rx_data_valid : std_logic;
     aro_tx_ready      : std_logic;
   end record t_c2p;

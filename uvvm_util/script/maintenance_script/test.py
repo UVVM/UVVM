@@ -64,6 +64,7 @@ hr.add_files("../../src/*.vhd", "uvvm_util")
 hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 # Add TB
 hr.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util_tb")
+hr.remove_file("questa_extension_tb.vhd", "uvvm_util_tb") # Only for Questa One v.2026.1 and newer
 
 # Define testcase names with generics for GC_TESTCASE
 hr.add_generics(entity="generic_queue_array_tb", generics=["GC_TESTCASE", "generic_queue_array_tb"])

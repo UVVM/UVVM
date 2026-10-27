@@ -95,6 +95,13 @@ begin
     -- BFM config
     variable axilite_bfm_config : t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
 
+    -- Used to make the BFM time out
+    alias dut_awready is << signal i_test_harness.i_axilite_slave_1.S_AXI_AWREADY : std_logic >>;
+    alias dut_wready  is << signal i_test_harness.i_axilite_slave_1.S_AXI_WREADY  : std_logic >>;
+    alias dut_bvalid  is << signal i_test_harness.i_axilite_slave_1.S_AXI_BVALID  : std_logic >>;
+    alias dut_arready is << signal i_test_harness.i_axilite_slave_1.S_AXI_ARREADY : std_logic >>;
+    alias dut_rvalid  is << signal i_test_harness.i_axilite_slave_1.S_AXI_RVALID  : std_logic >>;
+
     -- overload for this testbench
     procedure axilite_write(
       signal axilite_if : inout t_axilite_if;
@@ -262,6 +269,56 @@ begin
     axilite_bfm_config.expected_response := DECERR; -- Will always be OKAY in DUT.
     increment_expected_alerts(TB_WARNING, 1);
     axilite_write(axilite_if_2, x"0000040", x"afaf1191", "00001100");
+
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing that the channels are released after a timeout", C_SCOPE);
+    ------------------------------------------------------------
+    -- max_wait_cycles = 10 and max_wait_cycles_severity = ERROR from the start of the test
+    axilite_bfm_config.expected_response := OKAY;
+
+    log(ID_SEQUENCER, "Timeout waiting for AWREADY", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for AWREADY", C_SCOPE);
+    dut_awready <= force '0';
+    axilite_write(axilite_if_1, x"0006000", x"11111111");
+    dut_awready <= release;
+    wait until rising_edge(clk);
+    check_value(axilite_if_1.write_address_channel.awvalid, '0', ERROR, "Checking that AWVALID is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for WREADY", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for WREADY", C_SCOPE);
+    dut_wready <= force '0';
+    axilite_write(axilite_if_1, x"0006000", x"11111111");
+    dut_wready <= release;
+    wait until rising_edge(clk);
+    check_value(axilite_if_1.write_data_channel.wvalid, '0', ERROR, "Checking that WVALID is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for BVALID", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for BVALID", C_SCOPE);
+    dut_bvalid <= force '0';
+    axilite_write(axilite_if_1, x"0006000", x"11111111");
+    dut_bvalid <= release;
+    wait until rising_edge(clk);
+    check_value(axilite_if_1.write_response_channel.bready, '0', ERROR, "Checking that BREADY is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for ARREADY", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for ARREADY", C_SCOPE);
+    dut_arready <= force '0';
+    axilite_read(v_read_data_1, C_INTERFACE_1, x"0006000");
+    dut_arready <= release;
+    wait until rising_edge(clk);
+    check_value(axilite_if_1.read_address_channel.arvalid, '0', ERROR, "Checking that ARVALID is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Timeout waiting for RVALID", C_SCOPE);
+    increment_expected_alerts_and_stop_limit(ERROR, 1, "Expecting timeout waiting for RVALID", C_SCOPE);
+    dut_rvalid <= force '0';
+    axilite_read(v_read_data_1, C_INTERFACE_1, x"0006000");
+    dut_rvalid <= release;
+    wait until rising_edge(clk);
+    check_value(axilite_if_1.read_data_channel.rready, '0', ERROR, "Checking that RREADY is released", C_SCOPE);
+
+    log(ID_SEQUENCER, "Checking that the bus works after the timeouts", C_SCOPE);
+    axilite_write(axilite_if_1, x"0006000", x"22222222");
+    axilite_check(axilite_if_1, x"0006000", x"22222222");
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

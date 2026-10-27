@@ -1,6 +1,18 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v4.1.0
+----------
+Released: 2026-10-27
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Added GPIO Pulse functionality to VVC, with corresponding BFM and VVC procedures.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v4.0.1
 ----------
 Released: 2026-02-14
@@ -104,7 +116,7 @@ Released: 2020-05-19
 - Added shared_gpio_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 
 v1.6.1
@@ -125,15 +137,15 @@ Released: 2020-03-30
 v1.5.2
 ----------
 Released: 2020-02-16
-- Added missing DTT commands. 
+- Added missing DTT commands.
 
 v1.5.1
 ----------
 Released: 2020-01-24
 - BFM config default clock_period is now default -1 ns.
-- VVC command insert_delay() will raise a TB_ERROR when called if the 
-  bfm_config.clock_period has not been set.  
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- VVC command insert_delay() will raise a TB_ERROR when called if the
+  bfm_config.clock_period has not been set.
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
 
 v1.5.0

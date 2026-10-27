@@ -1,5 +1,5 @@
 CAPI=2:
-name: uvvm:uvvm:bitvis_vip_axistream:6.1.4
+name: uvvm:uvvm:bitvis_vip_axistream:6.1.5
 filesets:
   rtl:
     files:
@@ -20,8 +20,8 @@ filesets:
     file_type: vhdlSource-2008
     logical_name: bitvis_vip_axistream
     depend:
-    - uvvm:uvvm:uvvm_util:2.21.4
-    - uvvm:uvvm:uvvm_vvc_framework:2.12.15
+    - uvvm:uvvm:uvvm_util:2.22.0
+    - uvvm:uvvm:uvvm_vvc_framework:2.12.16
 targets:
   default:
     filesets:

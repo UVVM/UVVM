@@ -1,0 +1,6 @@
+Requirement,Covering testcases(all),Compliance
+REQ_ANDOR_NONCOMPLIANT,check *.req_non_compliance.csv,UNLISTED_REQ_FAIL
+REQ_NONCOMPLIANT,check *.req_non_compliance.csv,UNLISTED_REQ_FAIL
+REQ_UNLISTED_FAIL,check *.req_non_compliance.csv,UNLISTED_REQ_FAIL
+
+

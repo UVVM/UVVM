@@ -29,6 +29,7 @@ package transaction_pkg is
   --===============================================================================================
   -- t_operation
   -- - VVC and BFM operations
+  -- - READ/CHECK are requests; READ_RESPONSE/CHECK_RESPONSE are issued by the read response executor.
   --===============================================================================================
   type t_operation is (
     -- UVVM common
@@ -42,7 +43,7 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE, READ, CHECK, RESET, LOCK, UNLOCK
+    WRITE, READ, READ_RESPONSE, CHECK, CHECK_RESPONSE, RESET, LOCK, UNLOCK
   );
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
@@ -70,55 +71,96 @@ package transaction_pkg is
   );
 
   -- Base transaction
+  -- Represents the complete sequencer-level transaction context.
   type t_base_transaction is record
     operation          : t_operation;
-    addr               : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0); -- Max width may be increased if required
+    addr               : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    write              : std_logic;
+    read               : std_logic;
     byte_enable        : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH - 1 downto 0);
+    response           : std_logic_vector(1 downto 0);
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
   end record;
 
-  constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
+  constant C_BASE_TRANSACTION_SET_DEFAULT  : t_base_transaction := (
     operation          => NO_OPERATION,
     addr               => (others => '0'),
     data               => (others => '0'),
+    write              => '0',
+    read               => '0',
     byte_enable        => (others => '0'),
+    response           => (others => '0'),
     vvc_meta           => C_VVC_META_DEFAULT,
     transaction_status => INACTIVE
   );
 
   -- Sub transaction
-  type t_sub_transaction is record
+  -- Leaf-level transaction for request-side bus activity.
+  type t_st_request is record
     operation          : t_operation;
-    addr               : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0); -- Max width may be increased if required
+    addr               : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    write              : std_logic;
+    read               : std_logic;
+    byte_enable        : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH - 1 downto 0);
+    response           : std_logic_vector(1 downto 0);
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
   end record;
 
-  constant C_SUB_TRANSACTION_SET_DEFAULT : t_sub_transaction := (
-    operation          => NO_OPERATION,
-    addr               => (others => '0'),
-    data               => (others => '0'),
-    vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => INACTIVE
+  constant C_ST_REQUEST_TRANSACTION_SET_DEFAULT  : t_st_request := (
+    operation           => NO_OPERATION,
+    addr                => (others => '0'),
+    data                => (others => '0'),
+    write               => '0',
+    read                => '0',
+    byte_enable         => (others => '0'),
+    response           => "00",
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => INACTIVE
+  );
+
+  -- Leaf-level transaction for read/check response bus activity (READ_RESPONSE / CHECK_RESPONSE).
+  type t_st_response is record
+    operation           : t_operation;
+    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    read                : std_logic;
+    byte_enable         : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH - 1 downto 0);
+    response            : std_logic_vector(1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record;
+
+  constant C_ST_RESPONSE_TRANSACTION_SET_DEFAULT  : t_st_response := (
+    operation           => NO_OPERATION,
+    data                => (others => '0'),
+    read                => '0',
+    byte_enable         => (others => '0'),
+    response            => "00",
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => INACTIVE
   );
 
   -- Transaction group
   type t_transaction_group is record
-    bt : t_base_transaction;
-    st : t_sub_transaction;
+    bt                  : t_base_transaction;
+    st_request          : t_st_request;
+    st_response         : t_st_response;
   end record;
 
-  constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_BASE_TRANSACTION_SET_DEFAULT,
-    st => C_SUB_TRANSACTION_SET_DEFAULT
+  constant C_TRANSACTION_GROUP_DEFAULT  : t_transaction_group := (
+    bt                  => C_BASE_TRANSACTION_SET_DEFAULT,
+    st_request          => C_ST_REQUEST_TRANSACTION_SET_DEFAULT,
+    st_response         => C_ST_RESPONSE_TRANSACTION_SET_DEFAULT
   );
 
   -- Global transaction info trigger signal
+  -- Idle at 'Z' (not '0'): each element is driven by two executors (command and read-response),
+  -- so a '1' pulse must resolve as wired-OR against an idle driver instead of conflicting to 'X'.
   type t_avalon_mm_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_mm_vvc_transaction_trigger       : t_avalon_mm_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
+  signal global_avalon_mm_vvc_transaction_trigger       : t_avalon_mm_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => 'Z');
   -- Type is defined as array to coincide with channel based VVCs
   type t_avalon_mm_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable

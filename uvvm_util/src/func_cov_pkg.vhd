@@ -738,8 +738,9 @@ package body func_cov_pkg is
     constant proc_call : string)
   return t_new_bin_array is
     constant C_PROC_CALL_NORMALISED : string(1 to proc_call'length) := proc_call;
-    constant C_RANGE_WIDTH          : unsigned(31 downto 0) := to_unsigned(abs(max_value - min_value), 32) + 1;
-    variable v_div_range            : unsigned(31 downto 0);
+    -- Use 34-bit signed arithmetic to avoid integer overflow for ranges wider than 2^31-1
+    constant C_RANGE_WIDTH          : unsigned(32 downto 0) := resize(unsigned(to_signed(max_value, 34) - to_signed(min_value, 34) + 1), 33);
+    variable v_div_range            : unsigned(32 downto 0);
     variable v_div_residue          : integer := 0;
     variable v_div_residue_min      : integer := 0;
     variable v_div_residue_max      : integer := 0;
@@ -753,7 +754,11 @@ package body func_cov_pkg is
       -- Create a bin for each value in the range (when num_bins is not defined or range is smaller than the number of bins)
       if num_bins = 0 or C_RANGE_WIDTH <= num_bins then
         if C_RANGE_WIDTH > C_FC_MAX_NUM_NEW_BINS then
-          alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. Number of bins (" & to_string(to_integer(C_RANGE_WIDTH)) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          if C_RANGE_WIDTH > integer'high then
+            alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. Number of bins (>" & to_string(integer'high) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          else
+            alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. Number of bins (" & to_string(to_integer(resize(C_RANGE_WIDTH, 31))) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          end if;
           return C_EMPTY_NEW_BIN_ARRAY;
         end if;
         for i in min_value to max_value loop
@@ -763,14 +768,14 @@ package body func_cov_pkg is
           v_ret(0).bin_vector(i - min_value).values(0)  := i;
           v_ret(0).bin_vector(i - min_value).num_values := 1;
         end loop;
-        v_num_bins := to_integer(C_RANGE_WIDTH);
+        v_num_bins := to_integer(resize(C_RANGE_WIDTH, 31));
       -- Create several bins by diving the range
       else
         if num_bins > C_FC_MAX_NUM_NEW_BINS then
           alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. Number of bins (" & to_string(num_bins) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
           return C_EMPTY_NEW_BIN_ARRAY;
         end if;
-        v_div_residue := to_integer(C_RANGE_WIDTH mod num_bins);
+        v_div_residue := to_integer(resize(C_RANGE_WIDTH mod num_bins, 31));
         v_div_range   := C_RANGE_WIDTH / num_bins;
         v_num_bins    := num_bins;
         for i in 0 to v_num_bins - 1 loop
@@ -782,8 +787,8 @@ package body func_cov_pkg is
             v_div_residue_max := v_div_residue_max + 1;
           end if;
           v_ret(0).bin_vector(i).contains   := contains;
-          v_ret(0).bin_vector(i).values(0)  := min_value + to_integer(resize(v_div_range * i, 31)) + v_div_residue_min;
-          v_ret(0).bin_vector(i).values(1)  := min_value + to_integer(resize(v_div_range * (i + 1) - 1, 31)) + v_div_residue_max;
+          v_ret(0).bin_vector(i).values(0)  := to_integer(resize(to_signed(min_value, 34) + signed(resize(v_div_range * i, 34)) + v_div_residue_min, 32));
+          v_ret(0).bin_vector(i).values(1)  := to_integer(resize(to_signed(min_value, 34) + signed(resize(v_div_range * (i + 1) - 1, 34)) + v_div_residue_max, 32));
           v_ret(0).bin_vector(i).num_values := 2;
         end loop;
       end if;

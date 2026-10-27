@@ -190,37 +190,47 @@ begin
     variable v_data_1024     : std_logic_vector(1023 downto 0);
     variable v_data_exp_1024 : std_logic_vector(1023 downto 0);
     variable v_cmd_idx       : natural;
-    variable v_alert_level   : t_alert_level;
+    variable v_alert_config  : t_gpio_unwanted_transaction;
     
     --------------------------------------------------------------------------------------------------
     -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
     --------------------------------------------------------------------------------------------------
     procedure toggle_vvc_if (
-      constant alert_level : in t_alert_level
+      constant alert_config : in t_gpio_unwanted_transaction
     ) is
-      variable v_num_expected_alerts : natural;
-      variable v_rand                : t_rand;
+      -- Alert counter array including NO_ALERT (ignored in checks) for easier indexing
+      type t_alert_counters_arr is array(t_alert_level) of natural;
+      variable v_expected_alert_counters : t_alert_counters_arr;
+      variable v_rand                    : t_rand;
     begin
+      -- Populate local alert counters
+      for alert_level in v_expected_alert_counters'range loop
+        v_expected_alert_counters(alert_level) := get_alert_counter(alert_level);
+      end loop;
       -- Number of total expected alerts: 1 signal x 1 toggle
-      if alert_level /= NO_ALERT then
-        increment_expected_alerts_and_stop_limit(alert_level, 2);
+      if alert_config.gpio_vvc_if /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.gpio_vvc_if, 2);
       end if;
+      -- Update expected alert counters
+      v_expected_alert_counters(alert_config.gpio_vvc_if) := v_expected_alert_counters(alert_config.gpio_vvc_if) + 1;
       -- Force new value
-      v_num_expected_alerts := get_alert_counter(alert_level);
       gpio_3_input <= force not gpio_3_input;
       wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
-      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                               v_num_expected_alerts + 1;
-      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      -- Loop through all error levels (except NO_ALERT) and check with expected
+      for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+        check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
+      -- Update expected alert counters
+      v_expected_alert_counters(alert_config.gpio_vvc_if) := v_expected_alert_counters(alert_config.gpio_vvc_if) + 1;
       -- Set back original value
-      v_num_expected_alerts := get_alert_counter(alert_level);
       gpio_3_input <= release;
       wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
       wait for 0 ns;
-      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                               v_num_expected_alerts + 1;
       wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
-      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      -- Loop through all error levels (except NO_ALERT) and check with expected
+      for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
     end procedure;
 
     ----------------------------------------------------------------------
@@ -360,6 +370,39 @@ begin
       gpio_check_stable(GPIO_VVCT, vvc_instance_idx, data, C_CLK_PERIOD * 5, "Readback inside VVC", error);
       await_completion(GPIO_VVCT, vvc_instance_idx, 1 us, "Wait for gpio_check_stable to finish");
     end procedure check_stable_gpio;
+
+
+    ----------------------------------------------------------------------
+    -- Test GPIO VVC Pulse method
+    -- Pulse data via VVC command and verify pins (VVC output port)
+    ----------------------------------------------------------------------
+    procedure pulse_and_verify_gpio(
+      constant vvc_instance_idx : in  natural;
+      signal   vvc_output       : in  std_logic_vector;
+      constant data             : in  std_logic_vector;
+      constant pulse_duration   : in  time
+      ) is
+        constant C_PROC_CALL            : string := "pulse_and_verify_gpio(" & to_string(vvc_instance_idx) & ")";
+        constant C_AWAIT_TOGGLE_MAX_TIME : time := 1 ps;
+        constant C_AWAIT_TOGGLE_MIN_TIME : time := 0 ps;
+        variable v_prev_value             : std_logic_vector(vvc_output'range);
+        variable v_data_normalised        : std_logic_vector(vvc_output'range);
+    begin
+      v_prev_value := vvc_output;
+      v_data_normalised := normalize_and_check(data, v_data_normalised, ALLOW_NARROWER, "data", "vvc_output", C_PROC_CALL & " called with too wide data.");
+      log(ID_SEQUENCER_SUB, "Testing pulse on GPIO VVC " & to_string(vvc_instance_idx));
+      
+      gpio_pulse(GPIO_VVCT, vvc_instance_idx, v_data_normalised, pulse_duration, "Pulsing gpio " & to_string(vvc_instance_idx) & " to 0x" & to_string(data, HEX) & ") for " & to_string(pulse_duration));
+      await_value(vvc_output, v_data_normalised, C_AWAIT_TOGGLE_MIN_TIME, C_AWAIT_TOGGLE_MAX_TIME, "Waiting for toggle");
+      await_value(vvc_output, v_prev_value, pulse_duration, pulse_duration + 1 ps, "Waiting for return to original value");
+      await_completion(GPIO_VVCT, vvc_instance_idx, 1 ps); -- Just to check that the VVC completed
+      wait for C_CLK_PERIOD * 4; -- Margin
+      -- Check that GPIO remains stable at original value after pulse.
+      check_stable(vvc_output, 4 * C_CLK_PERIOD, error, "Checking that GPIO VVC " & to_string(vvc_instance_idx) & " is stable at original value after pulse");
+
+    end procedure pulse_and_verify_gpio;
+
+
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -642,20 +685,57 @@ begin
       wait for C_CLK_PERIOD;
     end loop;
 
+    ---------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing GPIO Pulse in  VVC", C_SCOPE);
     ------------------------------------------------------------------------------------------------------------------------------
-    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+   -- Set GPIO 7 and 8 to all 0's. Check GPIO setting
+    set_and_verify_gpio(7, gpio_7_output, "00000000", "00000000");
+    v_data_1024 := (others => '0');
+    set_and_verify_gpio(8, gpio_8_output, v_data_1024, v_data_1024);
+    wait for 10*C_CLK_PERIOD;
+    -- Pulse GPIO 7 and 8 with bit pattern of alternating 0 and 1.
+    pulse_and_verify_gpio(7, gpio_7_output, 7x"55", 20 ns);
+    pulse_and_verify_gpio(8, gpio_8_output, x"5555", 40 ns);
+    wait for 10*C_CLK_PERIOD;
+    -- Pulse GPIO 7 and 8 with opposite bit pattern of alternating 1 and 0, to ensure all toggling of all bit positions.
+    pulse_and_verify_gpio(7, gpio_7_output, 7x"2A", 20 ns);
+    pulse_and_verify_gpio(8, gpio_8_output, x"AAAA", 40 ns);
+    wait for 50*C_CLK_PERIOD;
+    -- Set GPIO 7 and 8 to all 1's. Check GPIO setting.
+    set_and_verify_gpio(7, gpio_7_output, "11111111", "11111111");
+    v_data_1024 := (others => '1');
+    set_and_verify_gpio(8, gpio_8_output, v_data_1024, v_data_1024);
+    wait for 10*C_CLK_PERIOD;
+    -- Repeat the pulse sequence, to verify toggling of all bits, when starting from all 1's.
+    pulse_and_verify_gpio(7, gpio_7_output, 7x"55", 20 ns);
+    pulse_and_verify_gpio(8, gpio_8_output, x"5555", 40 ns);
+    wait for 10*C_CLK_PERIOD;   
+    -- Repeat the second pulse pattern.
+    pulse_and_verify_gpio(7, gpio_7_output, x"2A", 20 ns);
+    pulse_and_verify_gpio(8, gpio_8_output, x"AAAA", 40 ns);
+    wait for 50*C_CLK_PERIOD;
+    
+
     ------------------------------------------------------------------------------------------------------------------------------
-    for i in 0 to 2 loop
+    log(ID_LOG_HDR, "Testing Unwanted Transaction Detection in VVC", C_SCOPE);
+    ------------------------------------------------------------------------------------------------------------------------------
+    shared_gpio_vvc_config(3).unwanted_transaction_checking_enabled := true;
+    for i in 0 to 3 loop
       -- Test different alert severity configurations
       if i = 0 then
-        v_alert_level := C_GPIO_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to default");
+        v_alert_config := C_GPIO_VVC_CONFIG_DEFAULT.unwanted_transaction_severity;
       elsif i = 1 then
-        v_alert_level := FAILURE;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to ERROR");
+        v_alert_config := (others => ERROR);
+      elsif i = 2 then
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to FAILURE");
+        v_alert_config := (others => FAILURE);
       else
-        v_alert_level := NO_ALERT;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to NO_ALERT");
+        v_alert_config := (others => NO_ALERT);
       end if;
-      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
-      shared_gpio_vvc_config(3).unwanted_activity_severity := v_alert_level;
+      shared_gpio_vvc_config(3).unwanted_transaction_severity := v_alert_config;
 
       log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
       v_expect_data := random(8);
@@ -671,7 +751,7 @@ begin
       end if;
 
       log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
-      toggle_vvc_if(v_alert_level);
+      toggle_vvc_if(v_alert_config);
     end loop;
 
     -----------------------------------------------------------------------------

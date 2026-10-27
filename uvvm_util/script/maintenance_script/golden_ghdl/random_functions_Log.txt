@@ -112,16 +112,16 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   TB seq.
-UVVM:                    random(10 ms,13 ms,1 ps) => time_resolution is too small for the given range. It has been increased to 1 ns
+UVVM:            -0 ns   TB seq.
+UVVM:                    random(: ms,13 ms,1 ps) => time_resolution is too small for the given range. It has been increased to 1 ns
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:12140664000000 fs
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with too big time resolution
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #2  ***
-UVVM:             0 ns   TB seq.
-UVVM:                    random(10 ms,13 ms,6 min) => time_resolution is too big for the given range. It has been reduced to 1 ms
+UVVM:            -0 ns   TB seq.
+UVVM:                    random(: ms,13 ms,1 min) => time_resolution is too big for the given range. It has been reduced to 1 ms
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:13000000000000 fs
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure
@@ -147,16 +147,16 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #3  ***
-UVVM:             0 ns   TB seq.
-UVVM:                    random(10 sec,13 sec,1 ps) => time_resolution is too small for the given range. It has been increased to 1 us
+UVVM:            -0 ns   TB seq.
+UVVM:                    random(: sec,13 sec,1 ps) => time_resolution is too small for the given range. It has been increased to 1 us
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:12053564000000000 fs
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with too big time resolution
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1.
 UVVM: 
 UVVM: ***  TB_WARNING #4  ***
-UVVM:             0 ns   TB seq.
-UVVM:                    random(10 sec,13 sec,36 hr) => time_resolution is too big for the given range. It has been reduced to 1 sec
+UVVM:            -0 ns   TB seq.
+UVVM:                    random(: sec,13 sec,1 hr) => time_resolution is too big for the given range. It has been reduced to 1 sec
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:13000000000000000 fs
 UVVM:      

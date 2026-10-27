@@ -50,6 +50,17 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_wishbone_unwanted_transaction is record
+    dat_i : t_alert_level;
+    ack_i : t_alert_level;
+  end record t_wishbone_unwanted_transaction;
+
+  constant C_WISHBONE_UNWANTED_TRANSACTION : t_wishbone_unwanted_transaction := (
+    dat_i => NO_ALERT,
+    ack_i => ERROR
+  );
+
   type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural; -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
@@ -61,7 +72,8 @@ package vvc_methods_pkg is
     bfm_config                            : t_wishbone_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
-    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
+    unwanted_transaction_checking_enabled : boolean; -- Enable unwanted transaction checking
+    unwanted_transaction_severity         : t_wishbone_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -77,7 +89,8 @@ package vvc_methods_pkg is
     bfm_config                            => C_WISHBONE_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
-    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
+    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,
+    unwanted_transaction_severity         => C_WISHBONE_UNWANTED_TRANSACTION
   );
 
   type t_vvc_status is record

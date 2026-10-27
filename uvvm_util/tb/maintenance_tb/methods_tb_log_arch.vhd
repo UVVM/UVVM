@@ -319,8 +319,12 @@ begin
     -- Ending the simulation
     -----------------------------------------------------------------------------
     wait for 1000 ns;                   -- to allow some time for completion
+    -- Simulation status is "not completed" until report_alert_counters(FINAL). ID_NEVER keeps the golden files unchanged.
+    check_value(shared_uvvm_status.simulation_status, 2, ERROR, "simulation_status before report_alert_counters()", C_SCOPE, ID_NEVER);
     report_alert_counters(INTERMEDIATE);
+    check_value(shared_uvvm_status.simulation_status, 2, ERROR, "simulation_status after report_alert_counters(INTERMEDIATE)", C_SCOPE, ID_NEVER);
     report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
+    check_value(shared_uvvm_status.simulation_status, 0, ERROR, "simulation_status after report_alert_counters(FINAL)", C_SCOPE, ID_NEVER);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation

@@ -51,6 +51,23 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_axilite_unwanted_transaction is record
+    bvalid : t_alert_level;
+    bresp  : t_alert_level;
+    rvalid : t_alert_level;
+    rdata  : t_alert_level;
+    rresp  : t_alert_level;
+  end record t_axilite_unwanted_transaction;
+
+  constant C_AXILITE_UNWANTED_TRANSACTION : t_axilite_unwanted_transaction := (
+    bvalid => ERROR,
+    bresp  => NO_ALERT,
+    rvalid => ERROR,
+    rdata  => NO_ALERT,
+    rresp  => NO_ALERT
+  );
+
   type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural; -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
@@ -63,7 +80,8 @@ package vvc_methods_pkg is
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; -- UVVM: temporary fix for HVVC, remove in v3.0
     force_single_pending_transaction      : boolean; -- Waits until the previous transaction is completed before starting the next one
-    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
+    unwanted_transaction_checking_enabled : boolean; -- Enable unwanted transaction checking
+    unwanted_transaction_severity         : t_axilite_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -80,7 +98,8 @@ package vvc_methods_pkg is
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
     force_single_pending_transaction      => false,
-    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
+    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,
+    unwanted_transaction_severity         => C_AXILITE_UNWANTED_TRANSACTION
   );
 
   type t_vvc_status is record

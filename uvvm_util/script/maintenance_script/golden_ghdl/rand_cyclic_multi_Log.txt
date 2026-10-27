@@ -669,13 +669,13 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_real([-2.00:2.00])
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(RANGE:[-2.00:2.00])=> Cyclic mode not supported for real type. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00])=> -1.2903277382538432
 UVVM: 
 UVVM: ***  TB_WARNING #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(LEN:5, RANGE:[-2.00:2.00])=> Cyclic mode not supported for real_vector type. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:5, RANGE:[-2.00:2.00])=> (1.2507957752225543, -5.75097453126953e-1,
@@ -690,13 +690,13 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([1 fs:5 fs])
 UVVM: 
 UVVM: ***  TB_WARNING #3  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(RANGE:[1 fs:5 fs])=> Cyclic mode not supported for time type. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[1 fs:5 fs])=> 4 fs
 UVVM: 
 UVVM: ***  TB_WARNING #4  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(LEN:5, RANGE:[1 fs:5 fs])=> Cyclic mode not supported for time_vector type. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:5, RANGE:[1 fs:5 fs])=> (1 fs, 5 fs, 2 fs, 5 fs, 4 fs)
@@ -1242,7 +1242,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"00":x"03"])
 UVVM: 
 UVVM: ***  TB_WARNING #5  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(LEN:4, RANGE:[x"0":x"3"])=> Cyclic mode not supported for unsigned constraints. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"0":x"3"])=> x"0"
@@ -1818,7 +1818,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"00":x"03"])
 UVVM: 
 UVVM: ***  TB_WARNING #6  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(LEN:4, RANGE:[x"0":x"3"])=> Cyclic mode not supported for signed constraints. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"0":x"3"])=> x"3"
@@ -2364,7 +2364,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"00":x"03"])
 UVVM: 
 UVVM: ***  TB_WARNING #7  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    randm(LEN:4, RANGE:[x"0":x"3"])=> Cyclic mode not supported for slv constraints. Ignoring cyclic configuration.
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"0":x"3"])=> x"3"
@@ -2379,7 +2379,7 @@ UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    set_cyclic_mode(CYCLIC)=> Cyclic mode and uniqueness cannot be combined.
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2389,7 +2389,7 @@ UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    set_uniqueness(UNIQUE)=> Uniqueness and cyclic mode cannot be combined.
 UVVM: =========================================================================================================================================================================
 UVVM: 

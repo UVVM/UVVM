@@ -1,6 +1,13 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.7.0
+----------
+Released: 2026-10-27
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Added random clock jitter: generic GC_CLOCK_MAX_JITTER, config element clock_max_jitter and procedure
+  set_clock_max_jitter(). From pull request by user sindrekvam.
+
 v1.6.3
 ----------
 Released: 2025-11-28
@@ -9,7 +16,7 @@ Released: 2025-11-28
 v1.6.2
 ----------
 Released: 2025-09-17
-- Fixed bug where the initial configuration for the clock_name, clock_period and clock_high_time given by the VVC generics is not 
+- Fixed bug where the initial configuration for the clock_name, clock_period and clock_high_time given by the VVC generics is not
   assigned when using Riviera-PRO simulator.
 
 v1.6.1
@@ -100,7 +107,7 @@ Released: 2019-12-04
 v1.2.0
 ----------
 Released: 2019-11-21
-- Fixed an issue with clock generator VVC documentation 
+- Fixed an issue with clock generator VVC documentation
   not matching implementation.
 - Added activity watchdog.
 - Updated LICENSE.TXT

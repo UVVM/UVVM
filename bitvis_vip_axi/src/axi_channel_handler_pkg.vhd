@@ -124,6 +124,26 @@ package axi_channel_handler_pkg is
     constant ext_proc_call : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
+  -- Overload which also returns if the procedure timed out waiting for BVALID
+  procedure write_response_channel_receive(
+    variable bid_value     : out std_logic_vector;
+    variable bresp_value   : out t_xresp;
+    variable buser_value   : out std_logic_vector;
+    variable timeout       : out boolean; -- True if no response was received within max_wait_cycles
+    constant msg           : in string;
+    signal   clk           : in std_logic;
+    signal   bid           : in std_logic_vector;
+    signal   bresp         : in std_logic_vector(1 downto 0);
+    signal   buser         : in std_logic_vector;
+    signal   bvalid        : in std_logic;
+    signal   bready        : inout std_logic;
+    constant alert_level   : in t_alert_level    := error;
+    constant scope         : in string           := C_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
+  );
+
   ------------------------------------------
   -- read_address_channel_write
   ------------------------------------------
@@ -170,6 +190,26 @@ package axi_channel_handler_pkg is
   procedure read_data_channel_receive(
     variable read_result     : out t_vvc_result;
     variable read_data_queue : inout t_axi_read_data_queue;
+    constant msg             : in string;
+    signal   clk             : in std_logic;
+    signal   rid             : in std_logic_vector;
+    signal   rdata           : in std_logic_vector;
+    signal   rresp           : in std_logic_vector(1 downto 0);
+    signal   rlast           : in std_logic;
+    signal   ruser           : in std_logic_vector;
+    signal   rvalid          : in std_logic;
+    signal   rready          : inout std_logic;
+    constant scope           : in string           := C_SCOPE;
+    constant msg_id_panel    : in t_msg_id_panel   := shared_msg_id_panel;
+    constant config          : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call   : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
+  );
+
+  -- Overload which also returns if the procedure timed out waiting for RVALID
+  procedure read_data_channel_receive(
+    variable read_result     : out t_vvc_result;
+    variable read_data_queue : inout t_axi_read_data_queue;
+    variable timeout         : out boolean; -- True if no read data was received within max_wait_cycles
     constant msg             : in string;
     signal   clk             : in std_logic;
     signal   rid             : in std_logic_vector;
@@ -383,6 +423,7 @@ package body axi_channel_handler_pkg is
     variable bid_value     : out std_logic_vector;
     variable bresp_value   : out t_xresp;
     variable buser_value   : out std_logic_vector;
+    variable timeout       : out boolean; -- True if no response was received within max_wait_cycles
     constant msg           : in string;
     signal   clk           : in std_logic;
     signal   bid           : in std_logic_vector;
@@ -452,7 +493,30 @@ package body axi_channel_handler_pkg is
     else
     -- Log will be handled by calling procedure (e.g. read_data_channel_check)
     end if;
+    timeout := v_await_bvalid;
     DEALLOCATE(v_proc_call);
+  end procedure write_response_channel_receive;
+
+  procedure write_response_channel_receive(
+    variable bid_value     : out std_logic_vector;
+    variable bresp_value   : out t_xresp;
+    variable buser_value   : out std_logic_vector;
+    constant msg           : in string;
+    signal   clk           : in std_logic;
+    signal   bid           : in std_logic_vector;
+    signal   bresp         : in std_logic_vector(1 downto 0);
+    signal   buser         : in std_logic_vector;
+    signal   bvalid        : in std_logic;
+    signal   bready        : inout std_logic;
+    constant alert_level   : in t_alert_level    := error;
+    constant scope         : in string           := C_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
+  ) is
+    variable v_timeout : boolean;
+  begin
+    write_response_channel_receive(bid_value, bresp_value, buser_value, v_timeout, msg, clk, bid, bresp, buser, bvalid, bready, alert_level, scope, msg_id_panel, config, ext_proc_call);
   end procedure write_response_channel_receive;
 
   procedure read_address_channel_write(
@@ -566,6 +630,7 @@ package body axi_channel_handler_pkg is
   procedure read_data_channel_receive(
     variable read_result     : out t_vvc_result;
     variable read_data_queue : inout t_axi_read_data_queue;
+    variable timeout         : out boolean; -- True if no read data was received within max_wait_cycles
     constant msg             : in string;
     signal   clk             : in std_logic;
     signal   rid             : in std_logic_vector;
@@ -641,6 +706,7 @@ package body axi_channel_handler_pkg is
       end if;
       v_await_rvalid := true;
     end loop;
+    timeout := v_await_rvalid;
 
     if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -648,6 +714,28 @@ package body axi_channel_handler_pkg is
     -- Log will be handled by calling procedure (e.g. read_data_channel_check)
     end if;
     DEALLOCATE(v_proc_call);
+  end procedure read_data_channel_receive;
+
+  procedure read_data_channel_receive(
+    variable read_result     : out t_vvc_result;
+    variable read_data_queue : inout t_axi_read_data_queue;
+    constant msg             : in string;
+    signal   clk             : in std_logic;
+    signal   rid             : in std_logic_vector;
+    signal   rdata           : in std_logic_vector;
+    signal   rresp           : in std_logic_vector(1 downto 0);
+    signal   rlast           : in std_logic;
+    signal   ruser           : in std_logic_vector;
+    signal   rvalid          : in std_logic;
+    signal   rready          : inout std_logic;
+    constant scope           : in string           := C_SCOPE;
+    constant msg_id_panel    : in t_msg_id_panel   := shared_msg_id_panel;
+    constant config          : in t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call   : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
+  ) is
+    variable v_timeout : boolean;
+  begin
+    read_data_channel_receive(read_result, read_data_queue, v_timeout, msg, clk, rid, rdata, rresp, rlast, ruser, rvalid, rready, scope, msg_id_panel, config, ext_proc_call);
   end procedure read_data_channel_receive;
 
 end package body axi_channel_handler_pkg;

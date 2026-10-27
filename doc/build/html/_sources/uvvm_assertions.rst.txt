@@ -339,7 +339,7 @@ change (both assertions require the enable to be active). The input map is::
     assert_one_of([clk(sl)], ena(sl), tracked_value(sl),   allowed_values(slv),              msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
     assert_one_of([clk(sl)], ena(sl), tracked_value(u),    allowed_values(t_unsigned_array), msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
     assert_one_of([clk(sl)], ena(sl), tracked_value(s),    allowed_values(t_signed_array),   msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
-    assert_one_of([clk(sl)], ena(sl), tracked_value(int),  allowed_values(t_integer_array),  msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
+    assert_one_of([clk(sl)], ena(sl), tracked_value(int),  allowed_values(integer_vector),   msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
     assert_one_of([clk(sl)], ena(sl), tracked_value(real), allowed_values(real_vector),      msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
     assert_one_of([clk(sl)], ena(sl), tracked_value(time), allowed_values(time_vector),      msg, [alert_level, [scope, [pos_ack_kind, [msg_id, [msg_id_panel]]]]])
 

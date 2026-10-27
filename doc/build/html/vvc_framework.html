@@ -142,7 +142,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#data-routing-options">Data routing options</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#compile-scripts">Compile Scripts</a></li>
 </ul>
 </li>
@@ -167,7 +167,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#command-executor">Command Executor</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#command-terminator">Command Terminator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#clock-period">Clock period</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#unwanted-activity">Unwanted activity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#unwanted-transaction">Unwanted transaction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#additional-for-multi-channel-vvcs">Additional for multi-channel VVCs</a></li>
 </ul>
 </li>
@@ -623,12 +623,12 @@ adaptations_pkg.</p></td>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">CLEAR_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for any VVC in the list to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- can be used without ALL_OF, clear v_vvc_list entries</span>
 
 <span class="c1">-- Example, wait for a specific VVC to finish:</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for SBI to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for UART RX to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for all I2C VVCs to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for SBI to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for UART RX to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for all I2C VVCs to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example, wait for a specific VVC command index to finish:</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for SBI cmd "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_cmd_idx</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">" to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for SBI cmd "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_cmd_idx</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">" to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example, broadcast to all VVCs (ALL_VVCS):</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_VVCS</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for all the VVCs to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
@@ -2375,68 +2375,69 @@ UART_VVC, use the receive-command (and not the expect-command) to forward receiv
 </table>
 </section>
 </section>
-<section id="unwanted-activity-detection">
-<span id="vvc-framework-unwanted-activity"></span><h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT
-generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected,
-e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the
-DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.</p>
-<p>All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted
-activity. The default value for this configuration is set to ERROR in the adaptations_pkg, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UNWANTED_ACTIVITY_SEVERITY</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_alert_level</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
+<section id="unwanted-transaction-detection">
+<span id="vvc-framework-unwanted-transaction"></span><h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>The UVVM VVCs support detection of unwanted or unexpected transactions from the DUT. This mechanism will give an alert if the DUT
+generates any unexpected bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is
+output from the DUT when it is not expected, e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive,
+they start to monitor continuously on the DUT outputs. When unwanted transactions are detected, the VVCs issue an alert of severity.</p>
+<p>All VVC method packages contain a configuration in the t_vvc_config type for enabling unwanted transaction detection. The default
+value for this configuration is set to true in the adaptations_pkg, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UNWANTED_TRANSACTION_CHECKING_DEFAULT</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be
-changed to a different value. To disable this feature in the testbench, e.g. for UART VVC:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be
+changed individually for each monitored signal, e.g. for GMII VVC:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rxd</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">WARNING</span><span class="p">;</span>
+<span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rxdv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection
+<p>If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted transaction detection
 will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be
 initiated from I2C slave VVC 2 and 3.</p>
 <figure class="align-center" id="id28">
-<a class="reference internal image-reference" href="_images/multiple_slave_VVCs_example.png"><img alt="False unwanted activity detection" src="_images/multiple_slave_VVCs_example.png" style="width: 550pt;" />
+<a class="reference internal image-reference" href="_images/multiple_slave_VVCs_example.png"><img alt="False unwanted transaction detection" src="_images/multiple_slave_VVCs_example.png" style="width: 550pt;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT</span><a class="headerlink" href="#id28" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 2 A false unwanted transaction detection scenario when multiple slave VVCs are connected to the same master DUT</span><a class="headerlink" href="#id28" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs
-as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.</p>
+<p>In order to avoid getting any false alerts, the unwanted transaction must be disabled on the inactive VVCs
+as shown below example. Note that the unwanted transaction detection must be enabled again after the data transfer is complete.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="c1">-- Expect data on I2C slave VVC 1.</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 2</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 3</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 3</span>
 <span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmit data"</span><span class="p">);</span>
 <span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Slave check data"</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 2</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 3</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 3</span>
 
 <span class="c1">-- Expect data on I2C slave VVC 2</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 3</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 3</span>
 <span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmit data"</span><span class="p">);</span>
 <span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Slave check data"</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 3</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 3</span>
 
 <span class="c1">-- Expect data on I2C slave VVC 3</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 2</span>
 <span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmit data"</span><span class="p">);</span>
 <span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Slave check data"</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 2</span>
 </pre></div>
 </div>
 <p>When the reset signal is set, signal transitions may occur from the uninitialized value ‘U’. Additionally, using pull-up or pull-down
 resistors in the design may cause signal transitions from the weak 1 state ‘H’ to the logic high ‘1’ or from the weak 0 state ‘L’
 to the logic low ‘0’, and vice versa. It is also possible for signal transitions to occur from the unknown state ‘X’ to the logic low ‘0’
 or logic high ‘1’ when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by
-the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.</p>
+the unwanted transaction detection. The signal transitions that are excluded from unwanted transaction detection are summarized below.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>From</p></th>
@@ -2464,16 +2465,17 @@ the unwanted activity detection. The signal transitions that are excluded from u
 </tr>
 </tbody>
 </table>
-<p>For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.</p>
+<p>For a VVC specific description of this feature, see the Unwanted Transaction Detection section in each VVC’s documentation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period
-after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge,
-causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.</p></li>
-<li><p>The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the
-VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to
-differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.</p></li>
+<li><p>For VVCs with a valid signal, the unwanted transaction detection is ignored when the valid signal goes low within one clock
+period after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising
+edge, causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC’s documentation for
+more information.</p></li>
+<li><p>The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted transaction detection when the
+VVC is a master device. The ready signal is allowed to be set independently of the valid signal. See each VVC’s documentation
+for more information.</p></li>
 </ul>
 </div>
 </section>
@@ -2848,12 +2850,12 @@ for SBI we think it only makes sense for ‘READ’.</div>
 <section id="clock-period">
 <h4>Clock period<a class="headerlink" href="#clock-period" title="Link to this heading"></a></h4>
 <p>Finds the clock period of the clk signal. This is only necessary when there is a ‘valid’ signal, such as tvalid in the AXI4-stream
-protocol, in order to ignore a false trigger of the unwanted activity detection mechanism. <strong>(Only if the Unwanted activity
+protocol, in order to ignore a false trigger of the unwanted transaction detection mechanism. <strong>(Only if the Unwanted transaction
 detection feature was selected).</strong></p>
 </section>
-<section id="unwanted-activity">
-<h4>Unwanted activity<a class="headerlink" href="#unwanted-activity" title="Link to this heading"></a></h4>
-<p>Monitors unwanted activity from the DUT. For more information see <a class="reference internal" href="#vvc-framework-unwanted-activity"><span class="std std-ref">Unwanted Activity Detection</span></a>. <strong>(Only if the Unwanted
+<section id="unwanted-transaction">
+<h4>Unwanted transaction<a class="headerlink" href="#unwanted-transaction" title="Link to this heading"></a></h4>
+<p>Monitors unwanted transaction from the DUT. For more information see <a class="reference internal" href="#vvc-framework-unwanted-transaction"><span class="std std-ref">Unwanted Transaction Detection</span></a>. <strong>(Only if the Unwanted
 activity detection feature was selected).</strong></p>
 </section>
 <section id="additional-for-multi-channel-vvcs">
@@ -3040,7 +3042,8 @@ with a given time.</p></li>
 <li><p>result_queue_count_*: Result queue specifications. DEPRECATED, use instead entity generic constants.</p></li>
 <li><p>bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.</p></li>
 <li><p>msg_id_panel: The message ID panel that the VVC shall use.</p></li>
-<li><p>unwanted_activity_severity: Severity of alert for the unwanted activity detection.</p></li>
+<li><p>unwanted_transaction_checking_enabled: Enable unwanted transaction checking.  <strong>(Only if the Unwanted Transaction Detection feature was selected).</strong></p></li>
+<li><p>unwanted_transaction_severity: Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected.  <strong>(Only if the Unwanted Transaction Detection feature was selected).</strong></p></li>
 </ul>
 </div></blockquote>
 <p>A constant C_&lt;NAME&gt;_VVC_CONFIG_DEFAULT is defined for this type to use as default value.</p>
@@ -3262,7 +3265,7 @@ add the following features, which you can select by typing ‘y’ or ‘n’ an
 <div><ul class="simple">
 <li><p><strong>Scoreboard</strong></p></li>
 <li><p><strong>Transaction info</strong></p></li>
-<li><p><strong>Unwanted activity detection</strong></p></li>
+<li><p><strong>Unwanted transaction detection</strong></p></li>
 </ul>
 </div></blockquote>
 </li>

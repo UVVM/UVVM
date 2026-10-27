@@ -8,5 +8,5 @@ test sequencer. The record contents can be seen below:
 +-------------------------+------------------------------+---------------------------------------------------------+
 | previous_cmd_idx        | natural                      | Previous command index to run                           |
 +-------------------------+------------------------------+---------------------------------------------------------+
-| pending_cmd_idx         | natural                      | Pending number of commands in the command queue         |
+| pending_cmd_cnt         | natural                      | Pending number of commands in the command queue         |
 +-------------------------+------------------------------+---------------------------------------------------------+

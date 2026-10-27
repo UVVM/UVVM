@@ -100,7 +100,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Compilation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id7">Simulator compatibility and setup</a></li>
 </ul>
@@ -281,7 +281,7 @@ is clock_period/4. An alert is reported if
 hold_time exceeds clock_period/2.</p></td>
 </tr>
 <tr class="row-odd"><td><p>bfm_sync</p></td>
-<td><p><span class="xref std std-ref">t_bfm_sync</span></p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
 <td><p>SYNC_ON_CLOCK_ONLY</p></td>
 <td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
 always wait for the first falling edge of the
@@ -818,12 +818,16 @@ result_queue_count_threshold</p></td>
 <a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
 use verbosity control.</p></td>
 </tr>
-<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<tr class="row-odd"><td><p>unwanted_transaction_checking_enabled</p></td>
+<td><p>boolean</p></td>
+<td><p>C_UNWANTED_TRANSACTION_CHECKING_DEFAULT</p></td>
+<td><p>Enable unwanted transaction checking</p></td>
+</tr>
+<tr class="row-even"><td><p>unwanted_transaction_severity</p></td>
+<td><p><a class="reference internal" href="#t-gmii-unwanted-transaction"><span class="std std-ref">t_gmii_unwanted_transaction</span></a></p></td>
+<td><p>C_GMII_UNWANTED_TRANSACTION</p></td>
 <td><p>Severity of alert to be issued if unwanted
-activity on the DUT outputs is detected. It is
-enabled with ERROR severity by default.</p></td>
+transactions are detected on the DUT outputs.</p></td>
 </tr>
 </tbody>
 </table>
@@ -858,7 +862,7 @@ test sequencer. The record contents can be seen below:</p>
 <td><p>natural</p></td>
 <td><p>Previous command index to run</p></td>
 </tr>
-<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<tr class="row-even"><td><p>pending_cmd_cnt</p></td>
 <td><p>natural</p></td>
 <td><p>Pending number of commands in the command queue</p></td>
 </tr>
@@ -1205,26 +1209,52 @@ the vvc_methods_pkg.vhd, e.g.</p>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the GMII VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">gmii_vvc_sb</span></code>.</p>
 </section>
-<section id="unwanted-activity-detection">
-<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
-bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
-not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
-VVC issues an alert.</p>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
-to a different value. To disable this feature in the testbench, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<section id="unwanted-transaction-detection">
+<span id="t-gmii-unwanted-transaction"></span><h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted transactions from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is output from the DUT when it is not
+expected, i.e. read/receive/check/expect VVC methods are not called. Once the VVC is inactive, it starts to monitor continuously on the
+DUT outputs. When an unwanted transaction is detected, the VVC issues an alert.</p>
+<p>This mechanism can also monitor other signals coming from the DUT and generate alerts if any unexpected activity is detected. You can
+enable this by configuring the corresponding <code class="docutils literal notranslate"><span class="pre">unwanted_transaction_severity</span></code> for each signal you want to monitor.</p>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To configure this feature in the testbench, e.g.</p>
+<p><strong>t_gmii_unwanted_transaction</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rxd</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>NO_ALERT</p></td>
+</tr>
+<tr class="row-odd"><td><p>rxdv</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Disable unwanted transaction checking</span>
+<span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">FALSE</span><span class="p">;</span>
+
+<span class="c1">-- Set severity of alert for each signal</span>
+<span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rxd</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">WARNING</span><span class="p">;</span>
+<span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rxdv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>The unwanted activity detection is ignored when the rxdv signal goes low within one clock period after the VVC becomes inactive.
+<p>The unwanted transaction detection is ignored when the rxdv signal goes low within one clock period after the VVC becomes inactive.
 This is to handle the situation when the read command exits before the next rising edge, causing signal transitions during the
 first clock cycle after the VVC is inactive.</p>
-<p>For GMII VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<p>For GMII VVC, the unwanted transaction detection is enabled by default.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This feature is only implemented on gmii_rx_vvc.</p>
 </div>
-<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-transaction"><span class="std std-ref">Essential Mechanisms - Unwanted Transaction Detection</span></a>.</p>
 </section>
 <section id="id6">
 <h3>Compilation<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>

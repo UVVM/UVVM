@@ -260,12 +260,12 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
     await_completion(ALL_OF, my_vvc_list, 1 ms, CLEAR_LIST, "Wait for any VVC in the list to finish", C_SCOPE); -- can be used without ALL_OF, clear v_vvc_list entries
 
     -- Example, wait for a specific VVC to finish:
-    await_completion(SBI_VVCT, 1, "Waiting for SBI to finish.", C_SCOPE);
-    await_completion(UART_VVCT, 1, TX, "Waiting for UART RX to finish.", C_SCOPE);
-    await_completion(I2C_VVCT, ALL_INSTANCES, "Waiting for all I2C VVCs to finish.", C_SCOPE);
+    await_completion(SBI_VVCT, 1, 1 ms, "Waiting for SBI to finish.", C_SCOPE);
+    await_completion(UART_VVCT, 1, TX, 1 ms, "Waiting for UART RX to finish.", C_SCOPE);
+    await_completion(I2C_VVCT, ALL_INSTANCES, 1 ms, "Waiting for all I2C VVCs to finish.", C_SCOPE);
 
     -- Example, wait for a specific VVC command index to finish:
-    await_completion(SBI_VVCT, 1, v_cmd_idx, "Waiting for SBI cmd " & to_string(v_cmd_idx) & " to finish.", C_SCOPE);
+    await_completion(SBI_VVCT, 1, v_cmd_idx, 1 ms, "Waiting for SBI cmd " & to_string(v_cmd_idx) & " to finish.", C_SCOPE);
 
     -- Example, broadcast to all VVCs (ALL_VVCS):
     await_completion(ALL_VVCS, 1 ms, "Wait for all the VVCs to finish", C_SCOPE);
@@ -1601,74 +1601,75 @@ The profile names are defined in the type :ref:`t_data_routing`, which is define
 | <user-defined>             |                                                                                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 
-.. _vvc_framework_unwanted_activity:
+.. _vvc_framework_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT 
-generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected, 
-e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the 
-DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.
+The UVVM VVCs support detection of unwanted or unexpected transactions from the DUT. This mechanism will give an alert if the DUT 
+generates any unexpected bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is 
+output from the DUT when it is not expected, e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, 
+they start to monitor continuously on the DUT outputs. When unwanted transactions are detected, the VVCs issue an alert of severity.
 
-All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted 
-activity. The default value for this configuration is set to ERROR in the adaptations_pkg, e.g. ::
+All VVC method packages contain a configuration in the t_vvc_config type for enabling unwanted transaction detection. The default 
+value for this configuration is set to true in the adaptations_pkg, e.g. ::
 
-    constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
+    constant C_UNWANTED_TRANSACTION_CHECKING_DEFAULT : boolean := true;
 
-The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be 
-changed to a different value. To disable this feature in the testbench, e.g. for UART VVC: ::
+The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be 
+changed individually for each monitored signal, e.g. for GMII VVC: ::
 
-    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.rxd  := WARNING;
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.rxdv := ERROR;
 
-If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection 
+If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted transaction detection 
 will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be 
 initiated from I2C slave VVC 2 and 3.
 
 .. figure:: /images/vvc_framework/multiple_slave_VVCs_example.png
-   :alt: False unwanted activity detection
+   :alt: False unwanted transaction detection
    :width: 550pt
    :align: center
 
-   Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT
+   Figure 2 A false unwanted transaction detection scenario when multiple slave VVCs are connected to the same master DUT
 
-In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs 
-as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.
+In order to avoid getting any false alerts, the unwanted transaction must be disabled on the inactive VVCs 
+as shown below example. Note that the unwanted transaction detection must be enabled again after the data transfer is complete.
 
 .. code-block::
 
     -- Example:
     -- Expect data on I2C slave VVC 1.
-    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
-    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 3
     sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
     i2c_slave_check(I2C_VVCT, 1, x"55", "Slave check data");
     await_completion(I2C_VVCT, 1, 50 ms);
-    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
-    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 3
 
     -- Expect data on I2C slave VVC 2
-    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 3
     sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
     i2c_slave_check(I2C_VVCT, 2, x"55", "Slave check data");
     await_completion(I2C_VVCT, 2, 50 ms);
-    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 3
 
     -- Expect data on I2C slave VVC 3
-    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 2
     sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
     i2c_slave_check(I2C_VVCT, 3, x"55", "Slave check data");
     await_completion(I2C_VVCT, 3, 50 ms);
-    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 2
 
 When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
 resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
 to the logic low '0', and vice versa. It is also possible for signal transitions to occur from the unknown state 'X' to the logic low '0' 
 or logic high '1' when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by 
-the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.
+the unwanted transaction detection. The signal transitions that are excluded from unwanted transaction detection are summarized below.
 
 +----------------+-----------------------------------+
 | From           | To                                |
@@ -1686,16 +1687,17 @@ the unwanted activity detection. The signal transitions that are excluded from u
 | 'X'            | '0', '1'                          |
 +----------------+-----------------------------------+
 
-For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
+For a VVC specific description of this feature, see the Unwanted Transaction Detection section in each VVC's documentation.
 
 .. note::
 
-    * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
-      after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
-      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.
-    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
-      VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
-      differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
+    * For VVCs with a valid signal, the unwanted transaction detection is ignored when the valid signal goes low within one clock
+      period after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising 
+      edge, causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC's documentation for 
+      more information.
+    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted transaction detection when the 
+      VVC is a master device. The ready signal is allowed to be set independently of the valid signal. See each VVC's documentation 
+      for more information.
 
 .. _vvc_framework_compile_scripts:
 
@@ -2011,12 +2013,12 @@ The command terminator concurrent procedure sets the *is_active* flag based on t
 Clock period
 ----------------------------------------------------------------------------------------------------------------------------------
 Finds the clock period of the clk signal. This is only necessary when there is a 'valid' signal, such as tvalid in the AXI4-stream 
-protocol, in order to ignore a false trigger of the unwanted activity detection mechanism. **(Only if the Unwanted activity 
+protocol, in order to ignore a false trigger of the unwanted transaction detection mechanism. **(Only if the Unwanted transaction 
 detection feature was selected).**
 
-Unwanted activity
+Unwanted transaction
 ----------------------------------------------------------------------------------------------------------------------------------
-Monitors unwanted activity from the DUT. For more information see :ref:`vvc_framework_unwanted_activity`. **(Only if the Unwanted 
+Monitors unwanted transaction from the DUT. For more information see :ref:`vvc_framework_unwanted_transaction`. **(Only if the Unwanted 
 activity detection feature was selected).** 
 
 Additional for multi-channel VVCs
@@ -2179,7 +2181,8 @@ the VVC/BFM configuration will differ for each VVC. The record contents are:
     * result_queue_count_*: Result queue specifications. DEPRECATED, use instead entity generic constants.
     * bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.
     * msg_id_panel: The message ID panel that the VVC shall use.
-    * unwanted_activity_severity: Severity of alert for the unwanted activity detection.
+    * unwanted_transaction_checking_enabled: Enable unwanted transaction checking.  **(Only if the Unwanted Transaction Detection feature was selected).**
+    * unwanted_transaction_severity: Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected.  **(Only if the Unwanted Transaction Detection feature was selected).**
 
 A constant C_<NAME>_VVC_CONFIG_DEFAULT is defined for this type to use as default value.
 
@@ -2400,7 +2403,7 @@ The script will query the user for information about the VVC during the script:
 
      * **Scoreboard**
      * **Transaction info**
-     * **Unwanted activity detection**
+     * **Unwanted transaction detection**
 
 #. Afterwards, the script will ask to select the **number of concurrent channels** to use in the VVC. Channels are a way of 
    implementing more than one concurrent process which will use the BFM procedures. For example, when implementing a VVC for a bus 

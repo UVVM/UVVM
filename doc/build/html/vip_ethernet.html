@@ -81,7 +81,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#support-package">Support package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#constants">Constants</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#t-ethernet-protocol-config">t_ethernet_protocol_config</a></li>
@@ -384,7 +384,7 @@ test sequencer. The record contents can be seen below:</p>
 <td><p>natural</p></td>
 <td><p>Previous command index to run</p></td>
 </tr>
-<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<tr class="row-even"><td><p>pending_cmd_cnt</p></td>
 <td><p>natural</p></td>
 <td><p>Pending number of commands in the command queue</p></td>
 </tr>
@@ -733,18 +733,18 @@ when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from 
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the Ethernet VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">ethernet_vvc_sb</span></code>.</p>
 </section>
-<section id="unwanted-activity-detection">
-<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>Since HVVCs do not contain any physical ports, the unwanted activity detection is found in the physical layer VVC connected to the
+<section id="unwanted-transaction-detection">
+<h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>Since HVVCs do not contain any physical ports, the unwanted transaction detection is found in the physical layer VVC connected to the
 HVVC, e.g. GMII/RGMII/SBI. Thus, when the data is not expected from the DUT, i.e. Ethernet VVC receive/expect methods are not
 called, an alert of severity will be generated from the physical layer VVCs.</p>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed
 to a different value. To disable this feature in the testbench, e.g. for GMII VVC:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">FALSE</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>Note that the unwanted activity detection is enabled (unwanted_activity_severity := ERROR) by default for the GMII/RGMII/SBI VVCs.</p>
-<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+<p>Note that the unwanted transaction detection is enabled by default for the GMII/RGMII/SBI VVCs.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-transaction"><span class="std std-ref">Essential Mechanisms - Unwanted Transaction Detection</span></a>.</p>
 </section>
 <section id="support-package">
 <h3>Support package<a class="headerlink" href="#support-package" title="Link to this heading"></a></h3>

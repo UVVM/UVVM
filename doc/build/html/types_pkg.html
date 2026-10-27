@@ -74,6 +74,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#t-from-point-in-time">t_from_point_in_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-match-strictness">t_match_strictness</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-quietness">t_quietness</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#t-bit-order">t_bit_order</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-byte-endianness">t_byte_endianness</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-word-endianness">t_word_endianness</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-association-list-status">t_association_list_status</a></li>
@@ -113,7 +114,6 @@
 <li class="toctree-l5"><a class="reference internal" href="#t-bfm-sync">t_bfm_sync</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-data-routing">t_data_routing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-transaction-status">t_transaction_status</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#id46">t_bfm_sync</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-report-vvc">t_report_vvc</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-vvc-select">t_vvc_select</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#t-list-action">t_list_action</a></li>
@@ -319,32 +319,38 @@ binary radix.</p>
 </pre></div>
 </div>
 </section>
+<section id="t-bit-order">
+<span id="id22"></span><h3>t_bit_order<a class="headerlink" href="#t-bit-order" title="Link to this heading"></a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">MSB_FIRST</span><span class="p">,</span><span class="w"> </span><span class="n">LSB_FIRST</span>
+</pre></div>
+</div>
+</section>
 <section id="t-byte-endianness">
-<span id="id22"></span><h3>t_byte_endianness<a class="headerlink" href="#t-byte-endianness" title="Link to this heading"></a></h3>
+<span id="id23"></span><h3>t_byte_endianness<a class="headerlink" href="#t-byte-endianness" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LOWER_BYTE_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_BYTE_RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_RIGHT</span>
 </pre></div>
 </div>
 </section>
 <section id="t-word-endianness">
-<span id="id23"></span><h3>t_word_endianness<a class="headerlink" href="#t-word-endianness" title="Link to this heading"></a></h3>
+<span id="id24"></span><h3>t_word_endianness<a class="headerlink" href="#t-word-endianness" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LOWER_BYTE_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_BYTE_RIGHT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_LEFT</span><span class="p">,</span><span class="w"> </span><span class="n">LOWER_WORD_RIGHT</span>
 </pre></div>
 </div>
 </section>
 <section id="t-association-list-status">
-<span id="id24"></span><h3>t_association_list_status<a class="headerlink" href="#t-association-list-status" title="Link to this heading"></a></h3>
+<span id="id25"></span><h3>t_association_list_status<a class="headerlink" href="#t-association-list-status" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ASSOCIATION_LIST_SUCCESS</span><span class="p">,</span><span class="w"> </span><span class="n">ASSOCIATION_LIST_FAILURE</span>
 </pre></div>
 </div>
 </section>
 <section id="t-flag-returning">
-<span id="id25"></span><h3>t_flag_returning<a class="headerlink" href="#t-flag-returning" title="Link to this heading"></a></h3>
+<span id="id26"></span><h3>t_flag_returning<a class="headerlink" href="#t-flag-returning" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_UNBLOCKED</span><span class="p">,</span><span class="w"> </span><span class="n">RETURN_TO_BLOCK</span>
 </pre></div>
 </div>
 </section>
 <section id="t-watchdog-ctrl">
-<span id="id26"></span><h3>t_watchdog_ctrl<a class="headerlink" href="#t-watchdog-ctrl" title="Link to this heading"></a></h3>
+<span id="id27"></span><h3>t_watchdog_ctrl<a class="headerlink" href="#t-watchdog-ctrl" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
@@ -380,13 +386,13 @@ binary radix.</p>
 <section id="specification-coverage">
 <h2>Specification Coverage<a class="headerlink" href="#specification-coverage" title="Link to this heading"></a></h2>
 <section id="t-test-status">
-<span id="id27"></span><h3>t_test_status<a class="headerlink" href="#t-test-status" title="Link to this heading"></a></h3>
+<span id="id28"></span><h3>t_test_status<a class="headerlink" href="#t-test-status" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">PASS</span><span class="p">,</span><span class="w"> </span><span class="n">FAIL</span>
 </pre></div>
 </div>
 </section>
 <section id="t-extent-tickoff">
-<span id="id28"></span><h3>t_extent_tickoff<a class="headerlink" href="#t-extent-tickoff" title="Link to this heading"></a></h3>
+<span id="id29"></span><h3>t_extent_tickoff<a class="headerlink" href="#t-extent-tickoff" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LIST_SINGLE_TICKOFF</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_EVERY_TICKOFF</span>
 </pre></div>
 </div>
@@ -395,25 +401,25 @@ binary radix.</p>
 <section id="scoreboard">
 <h2>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h2>
 <section id="t-identifier-option">
-<span id="id29"></span><h3>t_identifier_option<a class="headerlink" href="#t-identifier-option" title="Link to this heading"></a></h3>
+<span id="id30"></span><h3>t_identifier_option<a class="headerlink" href="#t-identifier-option" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span>
 </pre></div>
 </div>
 </section>
 <section id="t-range-option">
-<span id="id30"></span><h3>t_range_option<a class="headerlink" href="#t-range-option" title="Link to this heading"></a></h3>
+<span id="id31"></span><h3>t_range_option<a class="headerlink" href="#t-range-option" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SINGLE</span><span class="p">,</span><span class="w"> </span><span class="n">AND_LOWER</span><span class="p">,</span><span class="w"> </span><span class="n">AND_HIGHER</span>
 </pre></div>
 </div>
 </section>
 <section id="t-tag-usage">
-<span id="id31"></span><h3>t_tag_usage<a class="headerlink" href="#t-tag-usage" title="Link to this heading"></a></h3>
+<span id="id32"></span><h3>t_tag_usage<a class="headerlink" href="#t-tag-usage" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="n">NO_TAG</span>
 </pre></div>
 </div>
 </section>
 <section id="t-report-sb">
-<span id="id32"></span><h3>t_report_sb<a class="headerlink" href="#t-report-sb" title="Link to this heading"></a></h3>
+<span id="id33"></span><h3>t_report_sb<a class="headerlink" href="#t-report-sb" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span>
 </pre></div>
 </div>
@@ -422,19 +428,19 @@ binary radix.</p>
 <section id="uvvm-assertions">
 <h2>UVVM Assertions<a class="headerlink" href="#uvvm-assertions" title="Link to this heading"></a></h2>
 <section id="t-pos-ack-kind">
-<span id="id33"></span><h3>t_pos_ack_kind<a class="headerlink" href="#t-pos-ack-kind" title="Link to this heading"></a></h3>
+<span id="id34"></span><h3>t_pos_ack_kind<a class="headerlink" href="#t-pos-ack-kind" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">EVERY</span><span class="p">,</span><span class="w"> </span><span class="n">FIRST</span>
 </pre></div>
 </div>
 </section>
 <section id="t-shift-one-ness-cond">
-<span id="id34"></span><h3>t_shift_one_ness_cond<a class="headerlink" href="#t-shift-one-ness-cond" title="Link to this heading"></a></h3>
+<span id="id35"></span><h3>t_shift_one_ness_cond<a class="headerlink" href="#t-shift-one-ness-cond" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT</span><span class="p">,</span><span class="w"> </span><span class="n">ANY_BIT_ALERT_NO_PIPE</span><span class="p">,</span><span class="w"> </span><span class="n">LAST_BIT_ALERT_NO_PIPE</span>
 </pre></div>
 </div>
 </section>
 <section id="t-accept-all-zeros">
-<span id="id35"></span><h3>t_accept_all_zeros<a class="headerlink" href="#t-accept-all-zeros" title="Link to this heading"></a></h3>
+<span id="id36"></span><h3>t_accept_all_zeros<a class="headerlink" href="#t-accept-all-zeros" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALL_ZERO_ALLOWED</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_ZERO_NOT_ALLOWED</span>
 </pre></div>
 </div>
@@ -443,31 +449,31 @@ binary radix.</p>
 <section id="bfms">
 <h2>BFMs<a class="headerlink" href="#bfms" title="Link to this heading"></a></h2>
 <section id="t-action-when-transfer-is-done">
-<span id="id36"></span><h3>t_action_when_transfer_is_done<a class="headerlink" href="#t-action-when-transfer-is-done" title="Link to this heading"></a></h3>
+<span id="id37"></span><h3>t_action_when_transfer_is_done<a class="headerlink" href="#t-action-when-transfer-is-done" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_AFTER_TRANSFER</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_AFTER_TRANSFER</span>
 </pre></div>
 </div>
 </section>
 <section id="t-when-to-start-transfer">
-<span id="id37"></span><h3>t_when_to_start_transfer<a class="headerlink" href="#t-when-to-start-transfer" title="Link to this heading"></a></h3>
+<span id="id38"></span><h3>t_when_to_start_transfer<a class="headerlink" href="#t-when-to-start-transfer" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">START_TRANSFER_IMMEDIATE</span><span class="p">,</span><span class="w"> </span><span class="n">START_TRANSFER_ON_NEXT_SS</span>
 </pre></div>
 </div>
 </section>
 <section id="t-action-between-words">
-<span id="id38"></span><h3>t_action_between_words<a class="headerlink" href="#t-action-between-words" title="Link to this heading"></a></h3>
+<span id="id39"></span><h3>t_action_between_words<a class="headerlink" href="#t-action-between-words" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">RELEASE_LINE_BETWEEN_WORDS</span><span class="p">,</span><span class="w"> </span><span class="n">HOLD_LINE_BETWEEN_WORDS</span>
 </pre></div>
 </div>
 </section>
 <section id="t-parity">
-<span id="id39"></span><h3>t_parity<a class="headerlink" href="#t-parity" title="Link to this heading"></a></h3>
+<span id="id40"></span><h3>t_parity<a class="headerlink" href="#t-parity" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">PARITY_NONE</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_ODD</span><span class="p">,</span><span class="w"> </span><span class="n">PARITY_EVEN</span>
 </pre></div>
 </div>
 </section>
 <section id="t-stop-bits">
-<span id="id40"></span><h3>t_stop_bits<a class="headerlink" href="#t-stop-bits" title="Link to this heading"></a></h3>
+<span id="id41"></span><h3>t_stop_bits<a class="headerlink" href="#t-stop-bits" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">STOP_BITS_ONE</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_ONE_AND_HALF</span><span class="p">,</span><span class="w"> </span><span class="n">STOP_BITS_TWO</span>
 </pre></div>
 </div>
@@ -476,13 +482,13 @@ binary radix.</p>
 <section id="vvc-framework">
 <h2>VVC Framework<a class="headerlink" href="#vvc-framework" title="Link to this heading"></a></h2>
 <section id="t-bfm-delay-type">
-<span id="id41"></span><h3>t_bfm_delay_type<a class="headerlink" href="#t-bfm-delay-type" title="Link to this heading"></a></h3>
+<span id="id42"></span><h3>t_bfm_delay_type<a class="headerlink" href="#t-bfm-delay-type" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_DELAY</span><span class="p">,</span><span class="w"> </span><span class="n">TIME_FINISH2START</span><span class="p">,</span><span class="w"> </span><span class="n">TIME_START2START</span>
 </pre></div>
 </div>
 </section>
 <section id="t-inter-bfm-delay">
-<span id="id42"></span><h3>t_inter_bfm_delay<a class="headerlink" href="#t-inter-bfm-delay" title="Link to this heading"></a></h3>
+<span id="id43"></span><h3>t_inter_bfm_delay<a class="headerlink" href="#t-inter-bfm-delay" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
@@ -501,69 +507,45 @@ binary radix.</p>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<div><p>RELEASE_LINE_BETWEEN_WORDS, HOLD_LINE_BETWEEN_WORDS</p>
-</div></blockquote>
 </section>
 <section id="t-bfm-sync">
-<span id="id43"></span><h3>t_bfm_sync<a class="headerlink" href="#t-bfm-sync" title="Link to this heading"></a></h3>
+<span id="id44"></span><h3>t_bfm_sync<a class="headerlink" href="#t-bfm-sync" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SYNC_ON_CLOCK_ONLY</span><span class="p">,</span><span class="w"> </span><span class="n">SYNC_WITH_SETUP_AND_HOLD</span>
 </pre></div>
 </div>
 </section>
 <section id="t-data-routing">
-<span id="id44"></span><h3>t_data_routing<a class="headerlink" href="#t-data-routing" title="Link to this heading"></a></h3>
+<span id="id45"></span><h3>t_data_routing<a class="headerlink" href="#t-data-routing" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_BUFFER</span>
 </pre></div>
 </div>
 </section>
 <section id="t-transaction-status">
-<span id="id45"></span><h3>t_transaction_status<a class="headerlink" href="#t-transaction-status" title="Link to this heading"></a></h3>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Record element</p></th>
-<th class="head"><p>Type</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>delay_type</p></td>
-<td><p><a class="reference internal" href="#t-bfm-delay-type"><span class="std std-ref">t_bfm_delay_type</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p>delay_in_time</p></td>
-<td><p>time</p></td>
-</tr>
-<tr class="row-even"><td><p>inter_bfm_delay_violation_severity</p></td>
-<td><p><a class="reference internal" href="#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="id46">
-<span id="id47"></span><h3>t_bfm_sync<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<span id="id46"></span><h3>t_transaction_status<a class="headerlink" href="#t-transaction-status" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">INACTIVE</span><span class="p">,</span><span class="w"> </span><span class="n">IN_PROGRESS</span><span class="p">,</span><span class="w"> </span><span class="n">FAILED</span><span class="p">,</span><span class="w"> </span><span class="n">SUCCEEDED</span><span class="p">,</span><span class="w"> </span><span class="n">COMPLETED</span>
 </pre></div>
 </div>
 </section>
 <section id="t-report-vvc">
-<span id="id48"></span><h3>t_report_vvc<a class="headerlink" href="#t-report-vvc" title="Link to this heading"></a></h3>
+<span id="id47"></span><h3>t_report_vvc<a class="headerlink" href="#t-report-vvc" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_VVCS</span>
 </pre></div>
 </div>
 </section>
 <section id="t-vvc-select">
-<span id="id49"></span><h3>t_vvc_select<a class="headerlink" href="#t-vvc-select" title="Link to this heading"></a></h3>
+<span id="id48"></span><h3>t_vvc_select<a class="headerlink" href="#t-vvc-select" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ANY_OF</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_VVCS</span>
 </pre></div>
 </div>
 </section>
 <section id="t-list-action">
-<span id="id50"></span><h3>t_list_action<a class="headerlink" href="#t-list-action" title="Link to this heading"></a></h3>
+<span id="id49"></span><h3>t_list_action<a class="headerlink" href="#t-list-action" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="n">CLEAR_LIST</span>
 </pre></div>
 </div>
 </section>
 <section id="t-normalization-mode">
-<span id="id51"></span><h3>t_normalization_mode<a class="headerlink" href="#t-normalization-mode" title="Link to this heading"></a></h3>
+<span id="id50"></span><h3>t_normalization_mode<a class="headerlink" href="#t-normalization-mode" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">ALLOW_WIDER</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_NARROWER</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_WIDER_NARROWER</span><span class="p">,</span><span class="w"> </span><span class="n">ALLOW_EXACT_ONLY</span>
 </pre></div>
 </div>
@@ -573,14 +555,14 @@ binary radix.</p>
 </div>
 </section>
 <section id="t-relational-operator">
-<span id="id52"></span><h3>t_relational_operator<a class="headerlink" href="#t-relational-operator" title="Link to this heading"></a></h3>
+<span id="id51"></span><h3>t_relational_operator<a class="headerlink" href="#t-relational-operator" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">EQ</span><span class="p">,</span><span class="w"> </span><span class="n">LE</span><span class="p">,</span><span class="w"> </span><span class="n">GE</span><span class="p">,</span><span class="w"> </span><span class="n">NE</span>
 </pre></div>
 </div>
 <p>LT=Less than, GT=Greater than, EQ=Equal, LE=Less than or equal, GE=Greater than or equal, NE=Not equal</p>
 </section>
 <section id="t-arithmetic-operator">
-<span id="id53"></span><h3>t_arithmetic_operator<a class="headerlink" href="#t-arithmetic-operator" title="Link to this heading"></a></h3>
+<span id="id52"></span><h3>t_arithmetic_operator<a class="headerlink" href="#t-arithmetic-operator" title="Link to this heading"></a></h3>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>

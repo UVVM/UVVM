@@ -75,6 +75,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#gpio-check-stable">gpio_check_stable()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#gpio-expect">gpio_expect()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#gpio-expect-stable">gpio_expect_stable()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-pulse">gpio_pulse()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
@@ -103,14 +104,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#gpio-check-stable-vvc">gpio_check_stable()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#gpio-expect-vvc">gpio_expect()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#gpio-expect-stable-vvc">gpio_expect_stable()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-pulse-vvc">gpio_pulse()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Compilation</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id11">Simulator compatibility and setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Simulator compatibility and setup</a></li>
 </ul>
 </li>
 </ul>
@@ -167,6 +169,7 @@
 <li><p><a class="reference internal" href="#gpio-check-stable-bfm"><span class="std std-ref">gpio_check_stable()</span></a></p></li>
 <li><p><a class="reference internal" href="#gpio-expect-bfm"><span class="std std-ref">gpio_expect()</span></a></p></li>
 <li><p><a class="reference internal" href="#gpio-expect-stable-bfm"><span class="std std-ref">gpio_expect_stable()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-pulse-bfm"><span class="std std-ref">gpio_pulse()</span></a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#vvc">VVC</a></p>
@@ -177,6 +180,7 @@
 <li><p><a class="reference internal" href="#gpio-check-stable-vvc"><span class="std std-ref">gpio_check_stable()</span></a></p></li>
 <li><p><a class="reference internal" href="#gpio-expect-vvc"><span class="std std-ref">gpio_expect()</span></a></p></li>
 <li><p><a class="reference internal" href="#gpio-expect-stable-vvc"><span class="std std-ref">gpio_expect_stable()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-pulse-vvc"><span class="std std-ref">gpio_pulse()</span></a></p></li>
 </ul>
 </li>
 </ul>
@@ -735,6 +739,84 @@ value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
 </pre></div>
 </div>
 </section>
+<section id="gpio-pulse">
+<span id="gpio-pulse-bfm"></span><h4>gpio_pulse()<a class="headerlink" href="#gpio-pulse" title="Link to this heading"></a></h4>
+<p>Pulses the given data value on <code class="docutils literal notranslate"><span class="pre">data_port</span></code> for the specified pulse duration, then returns the signal to its initial value.
+Bits set to “don’t care” (<code class="docutils literal notranslate"><span class="pre">'-'</span></code>) in <code class="docutils literal notranslate"><span class="pre">data_value</span></code> are not changed during the pulse. The pulse duration must be greater than
+0 ns.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_pulse</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">pulse_duration</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be pulsed on <code class="docutils literal notranslate"><span class="pre">data_port</span></code>. Bits set
+to <code class="docutils literal notranslate"><span class="pre">'-'</span></code> are left unchanged during the pulse. The
+width must match <code class="docutils literal notranslate"><span class="pre">data_port</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pulse_duration</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The duration the pulsed value should be held before
+returning to the initial value. Must be greater than
+0 ns.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>inout</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The GPIO signal to which the pulse is applied</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel. For more information see
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_pulse</span><span class="p">(</span><span class="s">"101100"</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Pulse data value 101100 for 20 ns"</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">gpio_pulse</span><span class="p">(</span><span class="s">"101100"</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Pulse data for 20 ns"</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="local-bfm-overloads">
 <h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
@@ -1007,12 +1089,16 @@ result_queue_count_threshold</p></td>
 <a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
 use verbosity control.</p></td>
 </tr>
-<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<tr class="row-odd"><td><p>unwanted_transaction_checking_enabled</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Enable unwanted transaction checking</p></td>
+</tr>
+<tr class="row-even"><td><p>unwanted_transaction_severity</p></td>
+<td><p><a class="reference internal" href="#t-gpio-unwanted-transaction"><span class="std std-ref">t_gpio_unwanted_transaction</span></a></p></td>
+<td><p>C_GPIO_UNWANTED_TRANSACTION</p></td>
 <td><p>Severity of alert to be issued if unwanted
-activity on the DUT outputs is detected. It is
-disabled with NO_ALERT severity by default.</p></td>
+transactions are detected on the DUT outputs.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1046,7 +1132,7 @@ test sequencer. The record contents can be seen below:</p>
 <td><p>natural</p></td>
 <td><p>Previous command index to run</p></td>
 </tr>
-<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<tr class="row-even"><td><p>pending_cmd_cnt</p></td>
 <td><p>natural</p></td>
 <td><p>Pending number of commands in the command queue</p></td>
 </tr>
@@ -1506,6 +1592,73 @@ adaptations_pkg.</p></td>
 </pre></div>
 </div>
 </section>
+<section id="gpio-pulse-vvc">
+<span id="id10"></span><h4>gpio_pulse()<a class="headerlink" href="#gpio-pulse-vvc" title="Link to this heading"></a></h4>
+<p>Adds a pulse command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-pulse-bfm"><span class="std std-ref">gpio_pulse()</span></a> procedure. The output is pulsed for the specified
+duration and then returned to its initial value.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_pulse</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">pulse_duration</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be pulsed. Narrower values are
+normalized to the VVC data width before being passed
+to the BFM. Too wide values will cause a UVVM alert.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>pulse_duration</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The duration the pulsed value should be held before
+returning to the initial value</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT defined in
+adaptations_pkg.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_pulse</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">"101100"</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Pulse data value 101100 for 20 ns"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="activity-watchdog">
 <h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
@@ -1523,8 +1676,8 @@ Note that setting the exact number of expected VVCs in the VVC activity register
 <p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
 complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
 information directly from the VVC to a DUT model.</p>
-<table class="docutils align-default" id="id12">
-<caption><span class="caption-text">GPIO transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_gpio_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-text">GPIO transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_gpio_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Info field</p></th>
 <th class="head"><p>Type</p></th>
@@ -1593,24 +1746,45 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the GPIO VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">gpio_vvc_sb</span></code>.</p>
 </section>
-<section id="unwanted-activity-detection">
-<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
-bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
-not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
-VVC issues an alert.</p>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
-to a different value. To disable this feature in the testbench, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gpio_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<section id="unwanted-transaction-detection">
+<span id="t-gpio-unwanted-transaction"></span><h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted transactions from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is output from the DUT when it is not
+expected, i.e. read/receive/check/expect VVC methods are not called. Once the VVC is inactive, it starts to monitor continuously on the
+DUT outputs. When an unwanted transaction is detected, the VVC issues an alert.</p>
+<p>This mechanism can also monitor other signals coming from the DUT and generate alerts if any unexpected activity is detected. You can
+enable this by configuring the corresponding <code class="docutils literal notranslate"><span class="pre">unwanted_transaction_severity</span></code> for each signal you want to monitor.</p>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To configure this feature in the testbench, e.g.</p>
+<p><strong>t_gpio_unwanted_transaction</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>gpio_vvc_if</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Disable unwanted transaction checking</span>
+<span class="n">shared_gpio_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">FALSE</span><span class="p">;</span>
+
+<span class="c1">-- Set severity of alert the signal</span>
+<span class="n">shared_gpio_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">gpio_vvc_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>For GPIO VVC, the unwanted activity detection is disabled by default with severity NO_ALERT.</p>
-<p>When the unwanted activity detection is enabled, the GPIO set/get/check methods would not work as expected. To use these VVC
-methods, the unwanted activity detection must be disabled.</p>
-<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+<p>For GPIO VVC, the unwanted transaction detection is disabled by default.</p>
+<p>When the unwanted transaction detection is enabled, the GPIO set/get/check methods would not work as expected. To use these VVC
+methods, the unwanted transaction detection must be disabled.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-transaction"><span class="std std-ref">Essential Mechanisms - Unwanted Transaction Detection</span></a>.</p>
 </section>
-<section id="id10">
-<h3>Compilation<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="id11">
+<h3>Compilation<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
 <p>The GPIO VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
 <blockquote>
 <div><ul class="simple">
@@ -1622,8 +1796,8 @@ methods, the unwanted activity detection must be disabled.</p>
 </div></blockquote>
 <p>Before compiling the GPIO VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
 <p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
-<table class="docutils align-default" id="id13">
-<caption><span class="caption-text">Compile order for the GPIO VVC</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id14">
+<caption><span class="caption-text">Compile order for the GPIO VVC</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Compile to library</p></th>
 <th class="head"><p>File</p></th>
@@ -1681,8 +1855,8 @@ VVC library</p></td>
 </tr>
 </tbody>
 </table>
-<section id="id11">
-<h4>Simulator compatibility and setup<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<section id="id12">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
 <li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>

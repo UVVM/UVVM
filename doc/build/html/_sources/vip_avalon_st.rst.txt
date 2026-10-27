@@ -675,13 +675,20 @@ Configuration Record
 | bfm_config                   | :ref:`t_avalon_st_bfm_config | C_AVALON_ST_BFM\| Configuration for the Avalon-ST BFM             |
 |                              | <t_avalon_st_bfm_config>`    | _CONFIG_DEFAULT |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_latency                | natural                      | 0               | Number of cycles between ready assertion and    |
+|                              |                              |                 | valid assertion.                                |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | msg_id_panel                 | t_msg_id_panel               | C_VVC_MSG_ID_PA\| VVC dedicated message ID panel. See             |
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_avalon_st_unwanted_t\| C_AVALON_ST_UNW\| Severity of alert to be issued if unwanted      |
+|                              | ransaction<t_avalon_st_unwan\| ANTED_TRANSACTIO| transactions are detected on the DUT outputs.   |
+|                              | ted_transaction>`            | N               |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -915,25 +922,71 @@ a dedicated Scoreboard can be added by the user if needed.
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information.
 
 
-Unwanted Activity Detection
+.. _t_avalon_st_unwanted_transaction:
+
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_avalon_st_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| channel                 | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| data                    | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| data_error              | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| valid                   | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+| empty                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| end_of_packet           | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| start_of_packet         | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_avalon_st_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_avalon_st_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-Note that the ready signal is not monitored in this VVC. The ready signal is allowed to be set independently of the valid signal, 
-and there is no method to differentiate between the unwanted activity and intended activity. See the Avalon-ST protocol specification 
-for more information on the ready signal. 
+    -- Set severity of alert for each signal
+    shared_avalon_st_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.data  := WARNING;
+    shared_avalon_st_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.valid := ERROR;
 
-The unwanted activity detection is ignored when the valid signal goes low within one clock period after the VVC becomes inactive. 
+Note that the ready signal is not monitored in this VVC. The ready signal is allowed to be set independently of the valid signal. 
+See the Avalon-ST protocol specification for more information on the ready signal. 
+
+The unwanted transaction detection is ignored when the valid signal goes low within one clock period after the VVC becomes inactive. 
 This is to handle the situation when the read command exits before the next rising edge, causing signal transitions during the 
 first clock cycle after the VVC is inactive. 
 
-For Avalon-ST VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For Avalon-ST VVC, the unwanted transaction detection is enabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
+
+
+Ready Latency
+==================================================================================================================================
+The ready latency defines the number of cycles between ready assertion and valid assertion. If ready is asserted on cycle <n>, valid 
+is allowed to be asserted on cycle <n + ready latency>. For instance, if ready latency is 1, valid must be asserted one cycle 
+after ready is asserted, and data transfer takes place in that cycle. 
+
+The ready latency is implemented using a shift register in the VVC, connected to a parameter in the BFM procedures. Therefore, this 
+functionality is intended for use only by the VVC. To utilize this feature, the VVC configuration must be set with the desired 
+ready latency, e.g. 
+
+.. code-block::
+
+    shared_avalon_st_vvc_config(C_VVC_INDEX).ready_latency := C_READY_LATENCY;
+
+The allowed values for 'ready_latency' is from 0 to 8. The default value is 0, meaning that no ready latency is applied. 
+
+For more information on ready latency, refer to "Avalon® Interface Specifications, Chapter 5.9. Data Transfers with Backpressure" 
+(MNL-AVABUSREF), available from Intel.
 
 
 Compilation

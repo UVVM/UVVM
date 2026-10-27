@@ -114,6 +114,18 @@ sub-libraries).</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fusesoc</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="c1">--target=sim uvvm:uvvm:bitvis_irqc</span>
 </pre></div>
 </div>
+<p>A <code class="docutils literal notranslate"><span class="pre">sim</span></code> target is available for the demo testbenches of <code class="docutils literal notranslate"><span class="pre">bitvis_irqc</span></code>, <code class="docutils literal notranslate"><span class="pre">bitvis_uart</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bitvis_vip_error_injection</span></code>, <code class="docutils literal notranslate"><span class="pre">bitvis_vip_ethernet</span></code>, <code class="docutils literal notranslate"><span class="pre">bitvis_vip_uart</span></code> and <code class="docutils literal notranslate"><span class="pre">uvvm_assertions</span></code>. The demo
+testbenches of <code class="docutils literal notranslate"><span class="pre">bitvis_vip_scoreboard</span></code> and <code class="docutils literal notranslate"><span class="pre">uvvm_util</span></code> have no FuseSoC target, since they depend on VIPs that in
+turn depend on these libraries, and FuseSoC does not allow circular dependencies between cores. The
+<code class="docutils literal notranslate"><span class="pre">bitvis_vip_spec_cov</span></code> demos have no target either, since they also need the run_spec_cov.py post-processing step.</p>
+<p>On Windows:</p>
+<ul class="simple">
+<li><p>The GHDL backend in Edalize needs <code class="docutils literal notranslate"><span class="pre">make</span></code> on the <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, e.g. from MSYS2.</p></li>
+<li><p>FuseSoC copies the shared <code class="docutils literal notranslate"><span class="pre">td_*</span></code> files to long build paths. If a path exceeds the 260 character limit of Windows,
+FuseSoC fails with <code class="docutils literal notranslate"><span class="pre">Could</span> <span class="pre">not</span> <span class="pre">find</span> <span class="pre">EDA</span> <span class="pre">API</span> <span class="pre">file</span> <span class="pre">&quot;None&quot;</span></code>. Use a short checkout path or a short build directory, e.g.
+<code class="docutils literal notranslate"><span class="pre">fusesoc</span> <span class="pre">run</span> <span class="pre">--build-root</span> <span class="pre">C:/build</span> <span class="pre">--target=sim</span> <span class="pre">uvvm:uvvm:bitvis_irqc</span></code>.</p></li>
+</ul>
 <p>The <code class="docutils literal notranslate"><span class="pre">.core</span></code> files are generated from <code class="docutils literal notranslate"><span class="pre">compile_order.txt</span></code> and
 <code class="docutils literal notranslate"><span class="pre">VERSION.TXT</span></code> metadata by <code class="docutils literal notranslate"><span class="pre">script/generate_fusesoc_cores.py</span></code>.
 Regenerate after changing either:</p>

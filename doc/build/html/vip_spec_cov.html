@@ -126,6 +126,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#post-processing-script">Post-processing script</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#return-codes">Return codes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#strictness-levels">Strictness levels</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#strictness-0">Strictness 0</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#strictness-1">Strictness 1</a></li>
@@ -1232,6 +1233,55 @@ testcases, with strict requirement vs testcase relation</a>)).</p>
 </tr>
 </tbody>
 </table>
+<section id="return-codes">
+<h3>Return codes<a class="headerlink" href="#return-codes" title="Link to this heading"></a></h3>
+<p>The run_spec_cov.py script returns a process exit code reflecting the outcome of the run. This allows a regression or CI flow to
+gate on the coverage result directly, without parsing the output CSV files.</p>
+<span id="return-codes-table"></span><table class="docutils align-default" id="id5">
+<caption><span class="caption-text">run_spec_cov.py return codes</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 90.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Processing completed and every listed requirement is compliant. Without a Requirement List, every ticked-off
+requirement passed.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>A technical, configuration, parsing, usage or I/O failure prevented successful processing.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Processing completed and at least one listed requirement is <code class="docutils literal notranslate"><span class="pre">NON_COMPLIANT</span></code>. Without a Requirement List, at least
+one ticked-off requirement failed.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Processing completed without non-compliance, but warnings, <code class="docutils literal notranslate"><span class="pre">NOT_TESTED</span></code> requirements or tick-offs for unlisted
+requirements exist. Without a Requirement List, unlisted tick-offs and their warnings do not raise code 3.</p></td>
+</tr>
+</tbody>
+</table>
+<p>When more than one condition applies the most severe code is returned, with precedence <strong>1 &gt; 2 &gt; 3 &gt; 0</strong>. Technical failures stop
+processing and return code 1. Codes 2 and 3 are determined only after all output report files have been written, so a coverage
+outcome never prevents the reports from being generated.
+Successful <code class="docutils literal notranslate"><span class="pre">--help</span></code> and <code class="docutils literal notranslate"><span class="pre">--clean</span></code> operations return code 0. Usage errors such as calling the script with no arguments,
+omitting an option’s required value or selecting an invalid strictness return code 1. All technical failures return code 1; the
+printed message identifies the cause.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Code 2 is returned only when a listed requirement is NON_COMPLIANT. Code 3 groups the incomplete coverage conditions: warnings,
+not-tested requirements and unlisted tick-offs. The individual conditions are detailed in the <code class="docutils literal notranslate"><span class="pre">*.req_compliance_*.csv</span></code>,
+<code class="docutils literal notranslate"><span class="pre">*.req_non_compliance.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">*.warnings.csv</span></code> reports. A failing testcase does not affect the exit status by itself; if it
+covers a listed requirement, the existing compliance calculation makes that requirement non-compliant and the script returns code
+2. In strictness 0 <em>without</em> a Requirement List (no <code class="docutils literal notranslate"><span class="pre">-r</span></code>) every tick-off is unlisted, so the exit code is based on the
+tick-off results: 2 if any ticked-off requirement failed, otherwise 0. Missing requirements cannot be detected in this mode.</p>
+</div>
+</section>
 <section id="strictness-levels">
 <h3>Strictness levels<a class="headerlink" href="#strictness-levels" title="Link to this heading"></a></h3>
 <p>Strictness does not apply to VHDL testcases - only to the post processing Python script.

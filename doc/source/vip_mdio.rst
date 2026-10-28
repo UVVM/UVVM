@@ -149,7 +149,8 @@ Default value for the record is C_MDIO_BFM_CONFIG_DEFAULT.
 |                              |                                |                                 | (clause 45)                                   |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | max_wait_mdc_change          | time                           | 1 ms                            | Maximum time between two rising MDC edges     |
-|                              |                                |                                 | within a frame                                |
+|                              |                                |                                 | within a frame, 0 ns = no timeout (a stalled  |
+|                              |                                |                                 | frame then waits until terminated).           |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | max_wait_mdc_change_severity | :ref:`t_alert_level`           | FAILURE                         | Severity of the above timeout                 |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+

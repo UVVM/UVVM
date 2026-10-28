@@ -78,7 +78,8 @@ package mdio_bfm_pkg is
   type t_mdio_phy_bfm_config is record
     phy_address                  : unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0);         -- own address: PHYAD (clause 22) / PRTAD (clause 45)
     -- max time between MDC edges within a frame ("bus is dead"
-    -- watchdog - MDC has no minimum frequency, keep it generous)
+    -- watchdog - MDC has no minimum frequency, keep it generous).
+    -- 0 ns = no watchdog.
     max_wait_mdc_change          : time;
     max_wait_mdc_change_severity : t_alert_level; -- the above timeout will have this severity
     -- default max time an mdio_phy_* call waits for its frame to
@@ -282,6 +283,8 @@ package mdio_bfm_pkg is
   --   (other-target) frame are synced if suppress_preamble, as their start time is unknown.
   -- - timeout: max wait until the addressed frame starts; a started frame is always completed.
   --   C_UNDEFINED_TIME (default) = config.phy.timeout, 0 ns = no timeout.
+  -- - config.phy.max_wait_mdc_change: 0 ns = no watchdog, a stalled frame then waits until terminate_loop.
+  --   A negative timeout or max_wait_mdc_change is a TB_FAILURE, the call returns without waiting.
   -- - terminate_loop: '1' aborts the call immediately (also mid-frame), releases the bus and
   --   logs ID_TERMINATE_CMD - no alert. The VVC connects its terminate_current_cmd flag here.
   -- - Logging: start of the wait with id_for_bfm_wait, success with id_for_bfm. An MDC stall / timeout
@@ -573,7 +576,7 @@ package body mdio_bfm_pkg is
   -- WAIT_BAD_TIMEOUT, WAIT_TIMEOUT, WAIT_BAD_START and WAIT_STALL only occur in the PHY role (the STA generates MDC itself).
   type t_mdio_wait_status is (
     WAIT_OK,
-    WAIT_BAD_TIMEOUT, -- negative timeout, the call does not wait (TB_FAILURE reported by resolve_phy_timeout)
+    WAIT_BAD_TIMEOUT, -- negative timeout / max_wait_mdc_change, the call does not wait (TB_FAILURE reported by resolve_phy_timeout)
     WAIT_TIMEOUT,     -- no frame started in time
     WAIT_BAD_START,   -- no ST at the next rising edge (suppress_preamble, sync_to_frame_start = false)
     WAIT_STALL,       -- MDC stopped mid-frame
@@ -587,7 +590,7 @@ package body mdio_bfm_pkg is
     return value = 'H' or value = 'Z';
   end function is_undriven;
 
-  -- Wait for the next MDC rising edge within a frame (watchdog: config.phy.max_wait_mdc_change).
+  -- Wait for the next MDC rising edge within a frame (watchdog: config.phy.max_wait_mdc_change, 0 ns = none).
   -- No alert here - the caller reports once at the end (report_phy_access_end).
   procedure await_mdc_rising_edge(
     signal   mdio_if        : in t_mdio_if;
@@ -595,7 +598,11 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config;
     variable status         : out t_mdio_wait_status) is
   begin
-    wait until rising_edge(mdio_if.mdc) or terminate_loop = '1' for config.phy.max_wait_mdc_change;
+    if config.phy.max_wait_mdc_change = 0 ns then
+      wait until rising_edge(mdio_if.mdc) or terminate_loop = '1';
+    else
+      wait until rising_edge(mdio_if.mdc) or terminate_loop = '1' for config.phy.max_wait_mdc_change;
+    end if;
     if terminate_loop = '1' then
       status := WAIT_TERMINATED;
     elsif rising_edge(mdio_if.mdc) then
@@ -806,7 +813,8 @@ package body mdio_bfm_pkg is
       or config.bus_contention_severity = NO_ALERT;
   end function phy_check_bus_matches_driven;
 
-  -- Per-call timeout if given, else config.phy.timeout (0 ns = none, negative not allowed)
+  -- Per-call timeout if given, else config.phy.timeout (0 ns = none, negative not allowed).
+  -- Also checks config.phy.max_wait_mdc_change, as every mdio_phy_* call starts here.
   impure function resolve_phy_timeout(
     constant timeout      : in time;
     constant proc_call    : in string;
@@ -824,6 +832,8 @@ package body mdio_bfm_pkg is
     end if;
     check_value(v_timeout >= 0 ns, TB_FAILURE, "Negative timeout " & to_string(v_timeout, ns) & " (not allowed)." & add_msg_delimiter(msg),
       scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.phy.max_wait_mdc_change >= 0 ns, TB_FAILURE, "Negative phy.max_wait_mdc_change " &
+      to_string(config.phy.max_wait_mdc_change, ns) & " (not allowed)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
     return v_timeout;
   end function resolve_phy_timeout;
 
@@ -875,7 +885,7 @@ package body mdio_bfm_pkg is
     constant config       : in t_mdio_bfm_config) is
     constant C_PHY : string := "PHY " & to_string(config.phy.phy_address, HEX, KEEP_LEADING_0, INCL_RADIX);
   begin
-    if timeout < 0 ns then
+    if timeout < 0 ns or config.phy.max_wait_mdc_change < 0 ns then
       null; -- the call does not wait, see WAIT_BAD_TIMEOUT
     elsif timeout = 0 ns then
       log(config.id_for_bfm_wait, proc_call & "=> Waiting to be addressed as " & C_PHY & " (no timeout). " &
@@ -1252,6 +1262,11 @@ package body mdio_bfm_pkg is
     variable v_sync                 : boolean := config.sync_to_frame_start;
     variable v_defined              : boolean;
   begin
+    -- reported by resolve_phy_timeout. A negative "wait for" would stop the simulator.
+    if config.phy.max_wait_mdc_change < 0 ns then
+      status := WAIT_BAD_TIMEOUT;
+      return;
+    end if;
     loop
       -- the timeout only applies until a frame starts, a started frame is always completed
       await_start_of_frame(mdio_if, terminate_loop, C_START_TIME, timeout, config.suppress_preamble, v_sync,

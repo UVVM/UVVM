@@ -69,6 +69,9 @@ architecture func of mdio_bfm_tb is
 
   constant C_NUM_RANDOM_FRAMES : positive := 20;
 
+  -- MDC stall with max_wait_mdc_change 0 ns: longer than the default watchdog, then the STA terminates the PHY call
+  constant C_STALL_TIME : time := 2 * C_MDIO_PHY_BFM_CONFIG_DEFAULT.max_wait_mdc_change;
+
   type t_data_array is array (natural range <>) of std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
 
   -- check_bit_timing: one bit time of raw stimulus (p_sta) and how mdio_check_bit_timing() checks it (p_phy).
@@ -174,6 +177,7 @@ begin
   p_sta : process is
     variable v_config : t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT;
     variable v_data   : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
+    variable v_start  : time;
 
     -- The wait lets the '1' that await_barrier assigns on leaving reach the bus first. Without it, two barriers in one
     -- time step leave global_barrier at '0': no event, both processes would wait for the timeout (without an alert).
@@ -464,6 +468,19 @@ begin
       barrier("MDC stall done");
       check_alerts("MDC stall");
 
+      log(ID_LOG_HDR, "max_wait_mdc_change 0 ns: a frame is received, a stalled frame waits until terminated (no alert)", C_SCOPE);
+      ------------------------------------------------------------
+      barrier("no MDC watchdog");
+      sta_drive_raw(c22_write(x"DDDD"));
+      barrier("no MDC watchdog done");
+      barrier("no MDC watchdog, stall");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG, "10", x"EEEE")(31 downto 22));
+      wait for C_STALL_TIME;
+      terminate_loop <= '1';
+      barrier("no MDC watchdog, stall done");
+      terminate_loop <= '0';
+      check_alerts("no MDC watchdog");
+
       log(ID_LOG_HDR, "Reply to a read: the STA drives turnaround bit 1 and data bit 15 (two ERRORs)", C_SCOPE);
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(ERROR, 2);
@@ -597,6 +614,17 @@ begin
       mdio_phy_c22_expect_write(unsigned(C_REG), x"0000", "negative timeout", mdio_if, terminate_loop, timeout => -1 us,
                                 config                                                                         => v_config);
       check_alerts("PHY negative timeout");
+
+      log(ID_LOG_HDR, "PHY negative max_wait_mdc_change: one TB_FAILURE, the call returns without waiting", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_FAILURE, 1);
+      v_config.phy.max_wait_mdc_change := -1 ns;
+      v_start := now;
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"0000", "negative max_wait_mdc_change", mdio_if, terminate_loop, timeout => 1 us,
+                                config => v_config);
+      check_value(now, v_start, ERROR, "negative max_wait_mdc_change: no wait", C_SCOPE);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      check_alerts("PHY negative max_wait_mdc_change");
 
       -- The PHY calls wait 1 us for a frame, then see terminate_loop: no timeout alert, nothing driven
       log(ID_LOG_HDR, "PHY output_delay -1 ns: one TB_FAILURE", C_SCOPE);
@@ -857,6 +885,16 @@ begin
       barrier("MDC stall");
       mdio_phy_c22_expect_write(unsigned(C_REG), x"CCCC", "MDC stops", mdio_if, terminate_loop, config => v_config);
       barrier("MDC stall done");
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+
+      v_config.phy.max_wait_mdc_change := 0 ns;
+      barrier("no MDC watchdog");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"DDDD", "max_wait_mdc_change 0 ns", mdio_if, terminate_loop, config => v_config);
+      barrier("no MDC watchdog done");
+      barrier("no MDC watchdog, stall");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"EEEE", "MDC stops, max_wait_mdc_change 0 ns", mdio_if, terminate_loop,
+                                config => v_config);
+      barrier("no MDC watchdog, stall done");
       v_config := C_MDIO_BFM_CONFIG_DEFAULT;
 
       barrier("reply contention");

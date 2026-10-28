@@ -62,7 +62,7 @@ package mdio_bfm_pkg is
 
   -- Optional interface record for BFM signals
   -- std_logic (resolved) on purpose: MDIO is a tri-state bus with several drivers (STA, PHY, pull-up), and both VVC
-  -- roles assign this record. UVVM's check_unwanted_activity() also only takes std_logic signals.
+  -- roles assign this record. UVVM's check_unwanted_transaction() also only takes std_logic signals.
   type t_mdio_if is record
     mdc  : std_logic; -- clock
     mdio : std_logic; -- data
@@ -869,7 +869,7 @@ package body mdio_bfm_pkg is
     constant scope        : in string;
     constant msg_id_panel : in t_msg_id_panel;
     constant config       : in t_mdio_bfm_config) is
-    constant C_PHY : string := "PHY " & to_string(config.phy.phy_address, HEX, AS_IS, INCL_RADIX);
+    constant C_PHY : string := "PHY " & to_string(config.phy.phy_address, HEX, KEEP_LEADING_0, INCL_RADIX);
   begin
     if timeout < 0 ns then
       null; -- the call does not wait, see WAIT_BAD_TIMEOUT
@@ -1983,8 +1983,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c22_expect_write";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " &
-                                     to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
+                                     to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2020,7 +2020,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c22_receive_write";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2046,7 +2046,7 @@ package body mdio_bfm_pkg is
       end if;
     end if;
     report_phy_access_end(v_status, v_check_ok, C_TIMEOUT, "PHY", C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          to_string(v_data, HEX, AS_IS, INCL_RADIX));
+                          to_string(v_data, HEX, KEEP_LEADING_0, INCL_RADIX));
   end procedure mdio_phy_c22_receive_write;
 
   -- PHY: replies to a read of 'reg_addr' with 'data' (IEEE 802.3 Clause 22)
@@ -2063,8 +2063,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c22_reply_read";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " &
-                                     to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
+                                     to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2100,8 +2100,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_expect_address";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", A:" &
-                                     to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", A:" &
+                                     to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2136,7 +2136,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_receive_address";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2161,7 +2161,7 @@ package body mdio_bfm_pkg is
       end if;
     end if;
     report_phy_access_end(v_status, v_check_ok, C_TIMEOUT, "PHY/DEVAD", C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          "A:" & to_string(v_reg_addr, HEX, AS_IS, INCL_RADIX));
+                          "A:" & to_string(v_reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX));
   end procedure mdio_phy_c45_receive_address;
 
   -- PHY: expects a write to MMD 'dev_addr' and compares the data with 'data' (IEEE 802.3 Clause 45)
@@ -2178,8 +2178,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_expect_write";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " &
-                                     to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
+                                     to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2214,7 +2214,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_receive_write";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2239,7 +2239,7 @@ package body mdio_bfm_pkg is
       end if;
     end if;
     report_phy_access_end(v_status, v_check_ok, C_TIMEOUT, "PHY/DEVAD", C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          to_string(v_data, HEX, AS_IS, INCL_RADIX));
+                          to_string(v_data, HEX, KEEP_LEADING_0, INCL_RADIX));
   end procedure mdio_phy_c45_receive_write;
 
   -- PHY: replies to a read of MMD 'dev_addr' with 'data' (IEEE 802.3 Clause 45)
@@ -2256,8 +2256,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_reply_read";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " &
-                                     to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
+                                     to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2292,8 +2292,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_reply_post_read_increment";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " &
-                                     to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
+                                     to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -2326,7 +2326,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c22_write";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PHY:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", REG:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PHY:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_check_ok : boolean := true;
     variable v_status   : t_mdio_wait_status;
@@ -2349,7 +2349,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c22_read";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PHY:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", REG:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PHY:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_payload_ok : boolean;
     variable v_check_ok   : boolean := true;
@@ -2359,7 +2359,7 @@ package body mdio_bfm_pkg is
     sta_check_read_timing_config(C_PROC_CALL, msg, scope, msg_id_panel, config);
     sta_read_frame(C_MDIO_ST_CL22, C_MDIO_OP_CL22_READ, phy_addr, reg_addr, data, v_payload_ok, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                    v_check_ok, v_status);
-    report_sta_access_end(v_status, v_check_ok, C_PROC_CALL, msg, scope, msg_id_panel, config, to_string(data, HEX, AS_IS, INCL_RADIX));
+    report_sta_access_end(v_status, v_check_ok, C_PROC_CALL, msg, scope, msg_id_panel, config, to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX));
   end procedure mdio_sta_c22_read;
 
   procedure mdio_sta_c22_check(
@@ -2375,7 +2375,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c22_check";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PHY:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", REG:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", EXP:" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PHY:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", EXP:" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_data       : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
     variable v_payload_ok : boolean;
@@ -2406,7 +2406,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c45_address";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", A:" & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", A:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_check_ok : boolean := true;
     variable v_status   : t_mdio_wait_status;
@@ -2446,7 +2446,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c45_write";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_check_ok : boolean := true;
     variable v_status   : t_mdio_wait_status;
@@ -2469,7 +2469,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c45_read";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_payload_ok : boolean;
     variable v_check_ok   : boolean := true;
@@ -2479,7 +2479,7 @@ package body mdio_bfm_pkg is
     sta_check_read_timing_config(C_PROC_CALL, msg, scope, msg_id_panel, config);
     sta_read_frame(C_MDIO_ST_CL45, C_MDIO_OP_CL45_READ, phy_addr, dev_addr, data, v_payload_ok, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                    v_check_ok, v_status);
-    report_sta_access_end(v_status, v_check_ok, C_PROC_CALL, msg, scope, msg_id_panel, config, to_string(data, HEX, AS_IS, INCL_RADIX));
+    report_sta_access_end(v_status, v_check_ok, C_PROC_CALL, msg, scope, msg_id_panel, config, to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX));
   end procedure mdio_sta_c45_read;
 
   procedure mdio_sta_c45_post_read_increment(
@@ -2494,7 +2494,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c45_post_read_increment";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_payload_ok : boolean;
     variable v_check_ok   : boolean := true;
@@ -2504,7 +2504,7 @@ package body mdio_bfm_pkg is
     sta_check_read_timing_config(C_PROC_CALL, msg, scope, msg_id_panel, config);
     sta_read_frame(C_MDIO_ST_CL45, C_MDIO_OP_CL45_READ_INC, phy_addr, dev_addr, data, v_payload_ok, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                    v_check_ok, v_status);
-    report_sta_access_end(v_status, v_check_ok, C_PROC_CALL, msg, scope, msg_id_panel, config, to_string(data, HEX, AS_IS, INCL_RADIX));
+    report_sta_access_end(v_status, v_check_ok, C_PROC_CALL, msg, scope, msg_id_panel, config, to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX));
   end procedure mdio_sta_c45_post_read_increment;
 
   procedure mdio_sta_c45_check(
@@ -2520,7 +2520,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c45_check";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", EXP:" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", EXP:" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_data       : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
     variable v_payload_ok : boolean;
@@ -2551,7 +2551,7 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_sta_c45_check_post_read_increment";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", EXP:" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(PRT:" & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", EXP:" & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     variable v_data       : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
     variable v_payload_ok : boolean;

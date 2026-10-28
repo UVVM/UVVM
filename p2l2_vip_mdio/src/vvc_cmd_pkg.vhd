@@ -51,7 +51,7 @@ package vvc_cmd_pkg is
     cmd_idx                   : natural;
     command_type              : t_immediate_or_queued;
     msg_id                    : t_msg_id;
-    gen_integer_array         : t_integer_array(0 to 1); -- Increase array length if needed
+    gen_integer_array         : integer_vector(0 to 1); -- Increase array length if needed
     gen_boolean               : boolean; -- Generic boolean
     timeout                   : time;
     alert_level               : t_alert_level;

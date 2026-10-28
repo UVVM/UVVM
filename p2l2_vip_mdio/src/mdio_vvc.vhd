@@ -836,8 +836,8 @@ begin
   -- - PHY mode: MDC and the bits driven by the STA (the DUT).
   -- - STA mode: the bits driven by a PHY (the DUT). MDC and the STA's own bits are validated from the config in
   --   the BFM, so they can be violated on purpose (config.timing_violation_severity).
-  -- - PHY mode, also unwanted activity detection: a frame to this PHY's address that no mdio_phy_* call was
-  --   waiting for is reported with vvc_config.unwanted_activity_severity (see the end of the frame header below).
+  -- - PHY mode, also unwanted transaction detection: a frame to this PHY's address that no mdio_phy_* call was
+  --   waiting for is reported with vvc_config.unwanted_transaction_severity.mdio (see the end of the frame header below).
   --==========================================================================================
   p_bus_timing_checker : process is
     variable v_mdc_edges       : t_mdio_mdc_edges;               -- no initialisation needed
@@ -878,7 +878,8 @@ begin
       constant C_PHY_ADDR    : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := mdio_header_phy_addr(v_header);
       variable v_needed_bits : natural := v_header'length; -- bits sampled by the call: ST to the end of the header
     begin
-      if GC_STA_MODE or mdio_get_frame_kind(C_ST, C_OP) = FRAME_INVALID or
+      if GC_STA_MODE or not vvc_config.unwanted_transaction_checking_enabled or
+         mdio_get_frame_kind(C_ST, C_OP) = FRAME_INVALID or
          C_PHY_ADDR /= std_ulogic_vector(vvc_config.bfm_config.phy.phy_address) then
         return;
       end if;
@@ -887,13 +888,13 @@ begin
       end if;
       if v_access_bits < v_needed_bits then
         if C_ST = C_MDIO_ST_CL22 then
-          alert(vvc_config.unwanted_activity_severity, "Unwanted activity detected. " & frame_name(C_ST, C_OP) &
-                " frame to this PHY (PHYAD " & to_string(C_PHY_ADDR, HEX, AS_IS, INCL_RADIX) & ", REGAD " &
-                to_string(mdio_header_reg_or_dev_addr(v_header), HEX, AS_IS, INCL_RADIX) & ") while no PHY command was waiting for it.", C_SCOPE);
+          alert(vvc_config.unwanted_transaction_severity.mdio, "Unwanted transaction detected. " & frame_name(C_ST, C_OP) &
+                " frame to this PHY (PHYAD " & to_string(C_PHY_ADDR, HEX, KEEP_LEADING_0, INCL_RADIX) & ", REGAD " &
+                to_string(mdio_header_reg_or_dev_addr(v_header), HEX, KEEP_LEADING_0, INCL_RADIX) & ") while no PHY command was waiting for it.", C_SCOPE);
         else
-          alert(vvc_config.unwanted_activity_severity, "Unwanted activity detected. " & frame_name(C_ST, C_OP) &
-                " frame to this PHY (PRTAD " & to_string(C_PHY_ADDR, HEX, AS_IS, INCL_RADIX) & ", DEVAD " &
-                to_string(mdio_header_reg_or_dev_addr(v_header), HEX, AS_IS, INCL_RADIX) & ") while no PHY command was waiting for it.", C_SCOPE);
+          alert(vvc_config.unwanted_transaction_severity.mdio, "Unwanted transaction detected. " & frame_name(C_ST, C_OP) &
+                " frame to this PHY (PRTAD " & to_string(C_PHY_ADDR, HEX, KEEP_LEADING_0, INCL_RADIX) & ", DEVAD " &
+                to_string(mdio_header_reg_or_dev_addr(v_header), HEX, KEEP_LEADING_0, INCL_RADIX) & ") while no PHY command was waiting for it.", C_SCOPE);
         end if;
       end if;
     end procedure check_unwanted_frame;
@@ -958,13 +959,13 @@ begin
   end process p_bus_timing_checker;
 
   --==========================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transactions from the DUT
   -- - STA mode: any change on MDIO while the VVC is inactive (here).
   -- - PHY mode: a frame to this PHY's address that no PHY command was waiting for (in p_bus_timing_checker, which
   --   decodes the frames). Other activity of the DUT (STA) is normal bus traffic.
   --==========================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -988,14 +989,16 @@ begin
         wait on global_trigger_vvc_activity_register;
       end if;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        if GC_STA_MODE then
-          check_unwanted_activity(mdio_vvc_if.mdio, vvc_config.unwanted_activity_severity, "mdio", C_SCOPE);
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          if GC_STA_MODE then
+            check_unwanted_transaction(mdio_vvc_if.mdio, vvc_config.unwanted_transaction_severity.mdio, "mdio", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
   --==========================================================================================
 
   --==========================================================================================

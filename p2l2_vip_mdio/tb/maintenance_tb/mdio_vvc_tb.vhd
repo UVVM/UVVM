@@ -179,7 +179,7 @@ begin
       mdio <= release;
     end procedure force_frame_bit;
 
-    -- Unwanted activity on MDIO while the STA VVC is inactive (the STA mode check, see mdio_vvc.vhd).
+    -- Unwanted transaction on MDIO while the STA VVC is inactive (the STA mode check, see mdio_vvc.vhd).
     -- MDIO idles at 'H' (pull-up). Each forced change and its release is one alert, except the ignored transitions.
     procedure toggle_vvc_if(constant alert_level : in t_alert_level) is
       variable v_alerts : natural;
@@ -200,10 +200,10 @@ begin
       -- 'H' -> '0' and back: two alerts
       mdio <= force '0';
       wait for 100 ns;
-      check_alerts(v_alerts + 1, "unwanted activity H -> 0");
+      check_alerts(v_alerts + 1, "unwanted transaction H -> 0");
       mdio <= release;
       wait for 100 ns;
-      check_alerts(v_alerts + 2, "unwanted activity 0 -> H");
+      check_alerts(v_alerts + 2, "unwanted transaction 0 -> H");
       -- ignored: 'H' <-> '1', 'U' -> 'L', 'L' <-> '0'. 'H' -> 'U' and 'L' -> 'H' are alerted.
       mdio <= force '1';
       wait for 100 ns;
@@ -212,7 +212,7 @@ begin
       check_alerts(v_alerts + 2, "H <-> 1 is ignored");
       mdio <= force 'U';
       wait for 100 ns;
-      check_alerts(v_alerts + 3, "unwanted activity H -> U");
+      check_alerts(v_alerts + 3, "unwanted transaction H -> U");
       mdio <= force 'L';
       wait for 100 ns;
       mdio <= force '0';
@@ -222,7 +222,7 @@ begin
       check_alerts(v_alerts + 3, "U -> L, L <-> 0 are ignored");
       mdio <= release;
       wait for 100 ns;
-      check_alerts(v_alerts + 4, "unwanted activity L -> H");
+      check_alerts(v_alerts + 4, "unwanted transaction L -> H");
     end procedure toggle_vvc_if;
 
     -- Number of MDIO changes after the first rising MDC edge of a frame: one per bit that differs from the bit
@@ -1006,7 +1006,7 @@ begin
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "write at the next edge");
 
       -- the PHY expects no preamble, the STA sends one: one ERROR, the call ends. The frame then reaches PHY 1 with no
-      -- command waiting: a second ERROR (unwanted activity)
+      -- command waiting: a second ERROR (unwanted transaction)
       increment_expected_alerts_and_stop_limit(ERROR, 2);
       shared_mdio_vvc_config(C_STA).bfm_config.suppress_preamble := false;
       mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY expects ST at the next edge");
@@ -1101,7 +1101,7 @@ begin
       log(ID_LOG_HDR, "Frames to other PHYs do not stop the timeout: one ERROR", C_SCOPE);
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      -- to an address without a PHY VVC: the idle PHY 2 would report the frames to its address as unwanted activity
+      -- to an address without a PHY VVC: the idle PHY 2 would report the frames to its address as unwanted transactions
       mdio_phy_c22_receive_write(MDIO_VVCT, C_PHY_1, "00101", "PHY 1 waits for its frame", timeout => 10 us);
       mdio_sta_c22_write(MDIO_VVCT, C_STA, C_MISSING_PHY_ADDR, "00101", x"1234", "STA writes to another PHY");
       mdio_sta_c22_write(MDIO_VVCT, C_STA, C_MISSING_PHY_ADDR, "00101", x"1234", "STA writes to another PHY");
@@ -1514,22 +1514,31 @@ begin
       mdio_vvc_sb.flush(C_STA, "Remove the pending entry");
 
     --============================================================================================================================
-    elsif GC_TESTCASE = "test_unwanted_activity" then
+    elsif GC_TESTCASE = "test_unwanted_transaction" then
       --============================================================================================================================
       -- STA mode: any MDIO change while the STA VVC is inactive. PHY mode: a frame to the PHY's address that no PHY
       -- command was waiting for, frames to other addresses are normal bus traffic.
-      for i in 0 to 2 loop
-        -- Test different alert severity configurations
+      for i in 0 to 3 loop
+        -- Test different alert severity configurations, the last one with the checking disabled
         if i = 0 then
-          v_alert_level := C_MDIO_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+          v_alert_level := C_MDIO_VVC_CONFIG_DEFAULT.unwanted_transaction_severity.mdio;
         elsif i = 1 then
           v_alert_level := FAILURE;
         else
           v_alert_level := NO_ALERT;
         end if;
-        log(ID_LOG_HDR, "Unwanted activity with unwanted_activity_severity " & to_upper(to_string(v_alert_level)), C_SCOPE);
-        shared_mdio_vvc_config(C_STA).unwanted_activity_severity   := v_alert_level;
-        shared_mdio_vvc_config(C_PHY_1).unwanted_activity_severity := v_alert_level;
+        if i = 3 then
+          log(ID_LOG_HDR, "Unwanted transaction with unwanted_transaction_checking_enabled FALSE", C_SCOPE);
+          shared_mdio_vvc_config(C_STA).unwanted_transaction_checking_enabled   := false;
+          shared_mdio_vvc_config(C_PHY_1).unwanted_transaction_checking_enabled := false;
+          -- checking disabled: no alert, whatever the severity
+          shared_mdio_vvc_config(C_STA).unwanted_transaction_severity.mdio      := ERROR;
+          shared_mdio_vvc_config(C_PHY_1).unwanted_transaction_severity.mdio    := ERROR;
+        else
+          log(ID_LOG_HDR, "Unwanted transaction with unwanted_transaction_severity " & to_upper(to_string(v_alert_level)), C_SCOPE);
+          shared_mdio_vvc_config(C_STA).unwanted_transaction_severity.mdio   := v_alert_level;
+          shared_mdio_vvc_config(C_PHY_1).unwanted_transaction_severity.mdio := v_alert_level;
+        end if;
 
         -- The last frame is a write: after a read the bus timing checker of the STA would also report the forced
         -- MDIO changes, as a PHY that releases MDIO too late.
@@ -1540,12 +1549,12 @@ begin
         mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", x"BEEF", "STA writes");
         await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "normal frames");
 
-        -- Test with and without a time gap between await_completion and the unwanted activity
+        -- Test with and without a time gap between await_completion and the unwanted transaction
         if i = 0 then
           wait for 1 us;
         end if;
 
-        log(ID_SEQUENCER, "Unwanted activity on MDIO", C_SCOPE);
+        log(ID_SEQUENCER, "Unwanted transaction on MDIO", C_SCOPE);
         toggle_vvc_if(v_alert_level);
 
         log(ID_SEQUENCER, "PHY mode: frames to the address of an idle PHY VVC", C_SCOPE);

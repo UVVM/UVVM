@@ -1604,8 +1604,12 @@ Configuration Record
 | msg_id_panel                              | t_msg_id_panel               | C_VVC_MSG_ID_PANEL_DEFAULT              | VVC dedicated message ID panel, see      |
 |                                           |                              |                                         | :ref:`vvc_framework_verbosity_ctrl`      |
 +-------------------------------------------+------------------------------+-----------------------------------------+------------------------------------------+
-| unwanted_activity_severity                | :ref:`t_alert_level`         | C_UNWANTED_ACTIVITY_SEVERITY            | Severity of unwanted activity, see       |
-|                                           |                              |                                         | :ref:`vvc_mdio_unwanted_activity`        |
+| unwanted_transaction_checking_enabled     | boolean                      | C_UNWANTED_TRANSACTION_CHECKING_DEFAULT | Enable unwanted transaction checking,    |
+|                                           |                              |                                         | see :ref:`t_mdio_unwanted_transaction`   |
++-------------------------------------------+------------------------------+-----------------------------------------+------------------------------------------+
+| unwanted_transaction_severity             | :ref:`t_mdio_unwanted_transa\| C_MDIO_UNWANTED_TRANSACTION             | Severity of alert to be issued if        |
+|                                           | ction<t_mdio_unwanted_transa\|                                         | unwanted transactions are detected on    |
+|                                           | ction>`                      |                                         | the DUT outputs                          |
 +-------------------------------------------+------------------------------+-----------------------------------------+------------------------------------------+
 | bus_timing_checker                        | t_bus_timing_checker         | C_BUS_TIMING_CHECKER_DEFAULT            | Fields 'enable' (true) and 'alert_level' |
 |                                           |                              |                                         | (ERROR), see                             |
@@ -2829,26 +2833,38 @@ See the :ref:`vip_scoreboard` for a complete list of available commands and addi
 Scoreboard commands are available for the MDIO VVC scoreboard using the ``mdio_vvc_sb``.
 
 
-.. _vvc_mdio_unwanted_activity:
+.. _t_mdio_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_mdio_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| mdio                    | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_mdio_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_mdio_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
+
+    -- Set severity of alert for the signal
+    shared_mdio_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.mdio := WARNING;
 
 * STA mode: any change of mdio while the VVC is inactive is reported, except changes that keep the logic level (e.g. 'H' to
   '1').
 * PHY mode: a valid frame to this PHY address that no PHY command was waiting for is reported. With the default
   sync_to_frame_start, a command must be waiting from the first preamble bit to catch the frame.
-* Several PHY VVCs on one address (e.g. one VVC per MMD) report each other's frames: set unwanted_activity_severity to
-  NO_ALERT on these VVCs.
+* Several PHY VVCs on one address (e.g. one VVC per MMD) report each other's frames: disable the unwanted transaction
+  checking on these VVCs.
 
-For MDIO VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For MDIO VVC, the unwanted transaction detection is enabled by default with severity ERROR.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 .. _vvc_mdio_bus_timing_check:

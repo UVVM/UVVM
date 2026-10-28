@@ -50,6 +50,15 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_mdio_unwanted_transaction is record
+    mdio : t_alert_level;
+  end record t_mdio_unwanted_transaction;
+
+  constant C_MDIO_UNWANTED_TRANSACTION : t_mdio_unwanted_transaction := (
+    mdio => ERROR
+  );
+
   -- Property checker of the bus timing, see p_bus_timing_checker in mdio_vvc.vhd
   type t_bus_timing_checker is record
     enable      : boolean;       -- Enables or disables the bus timing checker (the frames are still followed)
@@ -71,7 +80,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity : t_alert_level;
     bfm_config                            : t_bfm_config;      -- Configuration for the BFM. See BFM quick reference.
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.
-    unwanted_activity_severity            : t_alert_level;     -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected.
+    unwanted_transaction_checking_enabled : boolean;           -- Enable unwanted transaction checking.
+    unwanted_transaction_severity         : t_mdio_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected.
     bus_timing_checker                    : t_bus_timing_checker; -- Property checker of the DUT's bus timing (PHY mode: the STA's bits and MDC, STA mode: the PHY's bits).
   end record t_vvc_config;
 
@@ -87,7 +97,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     bfm_config                            => C_MDIO_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY,
+    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,
+    unwanted_transaction_severity         => C_MDIO_UNWANTED_TRANSACTION,
     bus_timing_checker                    => C_BUS_TIMING_CHECKER_DEFAULT
   );
 
@@ -517,7 +528,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c22_expect_write";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_reg_addr : unsigned(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := -- clause 22: 5 bits
              normalize_and_check(reg_addr, shared_vvc_cmd.reg_addr(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0), ALLOW_WIDER_NARROWER, "reg_addr", "shared_vvc_cmd.reg_addr", C_PROC_CALL & " called with too wide reg_addr. " & msg);
     variable v_normalised_data    : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
@@ -566,7 +577,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c22_receive_write";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_reg_addr : unsigned(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := -- clause 22: 5 bits
              normalize_and_check(reg_addr, shared_vvc_cmd.reg_addr(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0), ALLOW_WIDER_NARROWER, "reg_addr", "shared_vvc_cmd.reg_addr", C_PROC_CALL & " called with too wide reg_addr. " & msg);
@@ -600,7 +611,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c22_reply_read";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_reg_addr : unsigned(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := -- clause 22: 5 bits
              normalize_and_check(reg_addr, shared_vvc_cmd.reg_addr(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0), ALLOW_WIDER_NARROWER, "reg_addr", "shared_vvc_cmd.reg_addr", C_PROC_CALL & " called with too wide reg_addr. " & msg);
     variable v_normalised_data    : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
@@ -635,7 +646,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c45_expect_address";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
     variable v_normalised_address  : unsigned(C_VVC_CMD_REG_ADDR_LENGTH-1 downto 0) :=
@@ -684,7 +695,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c45_receive_address";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
@@ -718,7 +729,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c45_expect_write";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
     variable v_normalised_data    : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
@@ -767,7 +778,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c45_receive_write";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
@@ -801,7 +812,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c45_reply_read";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
     variable v_normalised_data    : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
@@ -836,7 +847,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_phy_c45_reply_post_read_increment";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
     variable v_normalised_data    : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
@@ -874,7 +885,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c22_write";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_reg_addr : unsigned(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := -- clause 22: 5 bits
@@ -922,7 +933,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c22_read";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
@@ -957,7 +968,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c22_check";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_reg_addr : unsigned(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := -- clause 22: 5 bits
@@ -993,7 +1004,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_address";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
@@ -1028,7 +1039,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_write";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
@@ -1076,7 +1087,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_read";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
@@ -1123,7 +1134,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_post_read_increment";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
@@ -1158,7 +1169,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_check";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
@@ -1195,7 +1206,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_check_post_read_increment";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
@@ -1232,7 +1243,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_write_reg";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
@@ -1285,7 +1296,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_read_reg";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX)
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
                                      & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
@@ -1324,7 +1335,7 @@ package body vvc_methods_pkg is
   ) is
     constant C_PROC_NAME : string := "mdio_sta_c45_check_reg";
     constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-                                     & ", " & to_string(phy_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(dev_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(reg_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+                                     & ", " & to_string(phy_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_phy_addr : unsigned(C_VVC_CMD_PHY_ADDR_LENGTH-1 downto 0) :=
              normalize_and_check(phy_addr, shared_vvc_cmd.phy_addr, ALLOW_WIDER_NARROWER, "phy_addr", "shared_vvc_cmd.phy_addr", C_PROC_CALL & " called with too wide phy_addr. " & msg);
     variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=

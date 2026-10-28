@@ -47,6 +47,18 @@ architecture func of mdio_bfm_tb is
   constant C_OTHER_ADDR : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00010"; -- nobody answers
   constant C_REG        : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "00101";
 
+  -- Idle bits between a consumed frame and a short preamble: together fewer than C_MDIO_PREAMBLE_LENGTH ones
+  constant C_IDLE_BITS           : natural := 10;
+  constant C_SHORT_PREAMBLE_BITS : natural := 16;
+
+  -- No clause 22 opcode: the frame kind is FRAME_INVALID
+  constant C_INVALID_OP : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0) := "00";
+  -- Data of an invalid frame: if the rest of the frame were not skipped, the '0' of the turnaround would be taken as
+  -- ST and the data would read like the rest of the header of a write to this PHY (ST bit 1, OP, PHYAD, REGAD, then
+  -- the remaining data bits)
+  constant C_HEADER_LIKE_DATA : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0) :=
+    C_MDIO_ST_CL22(0) & C_MDIO_OP_CL22_WRITE & C_PHY_ADDR & C_REG & "000";
+
   -- STA timing used by the raw frames, the same as the STA BFM defaults
   constant C_MDC_PERIOD   : time := C_MDIO_STA_BFM_CONFIG_DEFAULT.mdc_period;
   constant C_OUTPUT_DELAY : time := C_MDIO_BFM_CONFIG_DEFAULT.output_delay;
@@ -340,6 +352,33 @@ begin
       barrier("preamble not driven done");
       check_alerts("preamble not driven");
 
+      log(ID_LOG_HDR, "sync_to_frame_start = false, idle bits after a frame to another PHY, then a full preamble: no alert", C_SCOPE);
+      ------------------------------------------------------------
+      barrier("idle bits, full preamble");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_OTHER_ADDR, C_REG, "10", x"0000") & bits(C_IDLE_BITS, 'Z') &
+                    c22_write(x"3434"));
+      barrier("idle bits, full preamble done");
+      check_alerts("idle bits, full preamble");
+
+      log(ID_LOG_HDR, "sync_to_frame_start = false, idle bits after a frame to another PHY, then a short preamble: one ERROR", C_SCOPE);
+      ------------------------------------------------------------
+      -- the idle bits are no undriven preamble: only "Preamble too short", the frame is received
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      barrier("idle bits, short preamble");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_OTHER_ADDR, C_REG, "10", x"0000") & bits(C_IDLE_BITS, 'Z') &
+                    bits(C_SHORT_PREAMBLE_BITS) & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG, "10", x"3535"));
+      barrier("idle bits, short preamble done");
+      check_alerts("idle bits, short preamble");
+
+      log(ID_LOG_HDR, "sync_to_frame_start = false, idle bits before the first frame of the call, then a short preamble: one ERROR", C_SCOPE);
+      ------------------------------------------------------------
+      -- MDC runs during the idle bits (an STA with a free-running MDC): only "Preamble too short", the frame is received
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      barrier("idle bits first, short preamble");
+      sta_drive_raw(bits(C_IDLE_BITS, 'Z') & bits(C_SHORT_PREAMBLE_BITS) & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG, "10", x"3636"));
+      barrier("idle bits first, short preamble done");
+      check_alerts("idle bits first, short preamble");
+
       log(ID_LOG_HDR, "Undefined PHYAD bit: one ERROR, the frame is not addressed, the next one is taken", C_SCOPE);
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -356,6 +395,22 @@ begin
       sta_drive_raw(C_PREAMBLE & c22_frame("X1", C_OTHER_ADDR, C_REG, "10", x"0000") & c22_write(x"6666"));
       barrier("undefined OP done");
       check_alerts("undefined OP");
+
+      log(ID_LOG_HDR, "sync_to_frame_start = false, invalid OP (frame to another PHY): the rest is skipped, the next frame is taken", C_SCOPE);
+      ------------------------------------------------------------
+      -- if not skipped, the turnaround and data would be a frame to this PHY with a 1 bit preamble
+      barrier("invalid OP");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_INVALID_OP, C_OTHER_ADDR, C_REG, "10", C_HEADER_LIKE_DATA) & c22_write(x"6767"));
+      barrier("invalid OP done");
+      check_alerts("invalid OP");
+
+      log(ID_LOG_HDR, "suppress_preamble, invalid OP (frame to another PHY): the rest is skipped, the next frame follows directly", C_SCOPE);
+      ------------------------------------------------------------
+      barrier("invalid OP, no preamble");
+      sta_drive_raw(c22_frame(C_INVALID_OP, C_OTHER_ADDR, C_REG, "10", C_HEADER_LIKE_DATA) &
+                    c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG, "10", x"6868"));
+      barrier("invalid OP, no preamble done");
+      check_alerts("invalid OP, no preamble");
 
       log(ID_LOG_HDR, "Undefined bit in the written data: one ERROR instead of a data mismatch", C_SCOPE);
       ------------------------------------------------------------
@@ -726,6 +781,25 @@ begin
       check_value(v_data, x"4444", ERROR, "the frame is received", C_SCOPE);
       barrier("preamble not driven done");
 
+      v_config.sync_to_frame_start := false;
+      barrier("idle bits, full preamble");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"3434", "full preamble after idle bits", mdio_if, terminate_loop,
+                                config => v_config);
+      barrier("idle bits, full preamble done");
+
+      barrier("idle bits, short preamble");
+      mdio_phy_c22_receive_write(unsigned(C_REG), v_data, "short preamble after idle bits", mdio_if, terminate_loop,
+                                 config => v_config);
+      check_value(v_data, x"3535", ERROR, "the frame is received", C_SCOPE);
+      barrier("idle bits, short preamble done");
+
+      barrier("idle bits first, short preamble");
+      mdio_phy_c22_receive_write(unsigned(C_REG), v_data, "idle bits before the first frame", mdio_if, terminate_loop,
+                                 config => v_config);
+      check_value(v_data, x"3636", ERROR, "the frame is received", C_SCOPE);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      barrier("idle bits first, short preamble done");
+
       barrier("undefined PHYAD");
       mdio_phy_c22_expect_write(unsigned(C_REG), x"5555", "the frame after the undefined PHYAD", mdio_if, terminate_loop,
                                 config => v_config);
@@ -735,6 +809,20 @@ begin
       mdio_phy_c22_expect_write(unsigned(C_REG), x"6666", "the frame after the undefined OP", mdio_if, terminate_loop,
                                 config => v_config);
       barrier("undefined OP done");
+
+      v_config.sync_to_frame_start := false;
+      barrier("invalid OP");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"6767", "the frame after the invalid OP", mdio_if, terminate_loop,
+                                config => v_config);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      barrier("invalid OP done");
+
+      v_config.suppress_preamble := true;
+      barrier("invalid OP, no preamble");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"6868", "the frame after the invalid OP, no preamble", mdio_if, terminate_loop,
+                                config => v_config);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      barrier("invalid OP, no preamble done");
 
       barrier("undefined data");
       mdio_phy_c22_expect_write(unsigned(C_REG), x"7771", "undefined data", mdio_if, terminate_loop, config => v_config);

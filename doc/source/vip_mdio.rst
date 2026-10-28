@@ -210,6 +210,8 @@ Methods
 * A call waits for a frame that addresses this PHY (and MMD for clause 45): at least 32 preamble '1' bits followed by ST,
   so a call may start in the middle of other traffic (config.sync_to_frame_start). Frames to other targets are skipped,
   their turnaround is checked. A read to an address without a PHY (e.g. the STA scans the bus) is not reported.
+* With config.sync_to_frame_start = false, the preamble is the '1' bits the STA drives before ST; idle or only pulled-up
+  ('H') bits are not counted.
 * The 'timeout' applies until the addressed frame starts, a started frame is always completed.
 * The ``*_receive_*`` procedures make the same checks as the ``*_expect_*`` procedures, but return the 16 bits the STA sent
   instead of comparing them.
@@ -764,7 +766,7 @@ The procedure reports an alert if:
     * MDC does not change within config.phy.max_wait_mdc_change during a frame (config.phy.max_wait_mdc_change_severity).
     * The addressed frame has the wrong opcode, register address (clause 22) or data ('alert_level').
     * ST, OP, address fields or the written data contain undefined bits, the turnaround of a write or address frame is
-      not "10", or preamble bits are only pulled up and not driven by the STA (config.protocol_error_severity).
+      not "10", or the STA drives fewer than 32 preamble bits (config.protocol_error_severity).
 
 .. code-block::
 
@@ -890,7 +892,7 @@ The procedure reports an alert if:
     * No addressed frame starts within 'timeout' (config.phy.timeout_severity).
     * MDC does not change within config.phy.max_wait_mdc_change during a frame (config.phy.max_wait_mdc_change_severity).
     * The addressed frame has the wrong opcode or register address (clause 22) ('alert_level').
-    * ST, OP or address fields contain undefined bits, or preamble bits are only pulled up and not driven by the STA
+    * ST, OP or address fields contain undefined bits, or the STA drives fewer than 32 preamble bits
       (config.protocol_error_severity).
     * The STA does not release the first turnaround bit, or the bus does not show the bits driven by the PHY
       (config.bus_contention_severity).
@@ -1336,7 +1338,8 @@ time ('driver'). Only the side of the bus selected with 'checked_side' is checke
   * PHY_DRIVES: MDIO has settled at most 300 ns after the rising MDC edge that starts the bit time.
   * PHY_RELEASES: the PHY releases MDIO at most 300 ns after the rising MDC edge of the last data bit of a read.
 
-With NOT_CHECKED (before the first MDC edge) MDIO is not checked.
+With NOT_CHECKED (e.g. before the first MDC edge, or in the turnaround and data of a frame with an undefined ST/OP
+combination) MDIO is not checked.
 
 .. code-block::
 
@@ -2873,7 +2876,8 @@ Bus Timing Checker
 ==================================================================================================================================
 Every VVC runs a bus timing property checker (see :ref:`vvc_framework_property_checkers`) that follows the frames on the bus and
 checks every bit time with :ref:`mdio_check_bit_timing_bfm`. Each mode checks the other side of the bus: PHY mode checks MDC and
-the bits driven by the STA, STA mode checks the bits driven by a PHY. Frames with an undefined ST/OP combination are not followed.
+the bits driven by the STA, STA mode checks the bits driven by a PHY. Frames with an undefined ST/OP combination are followed
+to their end; only MDC is checked in their turnaround and data bits.
 
 The checker is configured with vvc_config.bus_timing_checker and enabled with severity ERROR by default, e.g. ::
 

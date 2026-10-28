@@ -952,8 +952,12 @@ begin
             check_next_bit(PHY_DRIVES);
           end loop;
           v_idle_bit_driver := PHY_RELEASES;        -- the bit after the frame
-        when FRAME_INVALID =>                       -- not followed, the rest is checked as an idle bus
-          null;
+        when FRAME_INVALID =>                       -- followed to its end, only MDC is checked
+          -- every frame has the same length. Back in the idle loop, with suppress_preamble a '0' in the rest would be
+          -- taken for the ST of a new frame. Who drives MDIO in the rest is undefined, so it is not checked.
+          for i in 1 to C_MDIO_TA_WIDTH + C_MDIO_DATA_WIDTH loop
+            check_next_bit(NOT_CHECKED);
+          end loop;
       end case;
     end loop;
   end process p_bus_timing_checker;

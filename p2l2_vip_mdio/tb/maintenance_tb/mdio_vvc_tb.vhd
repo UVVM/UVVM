@@ -57,6 +57,12 @@ architecture func of mdio_vvc_tb is
   constant C_PHY_3_ADDR       : unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00011";
   constant C_MISSING_PHY_ADDR : unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00100"; -- no PHY VVC answers
 
+  -- Data of an invalid frame: if the rest of the frame were not skipped, the '0' of the turnaround would be taken as
+  -- ST and the data would read like the rest of the header of a write to PHY 1 (ST bit 1, OP, PHYAD, REGAD, then the
+  -- remaining data bits)
+  constant C_HEADER_LIKE_DATA : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0) :=
+    C_MDIO_ST_CL22(0) & C_MDIO_OP_CL22_WRITE & std_ulogic_vector(C_PHY_1_ADDR) & "00101" & "000";
+
   constant C_NUM_RANDOM_FRAMES : positive := 50;
   constant C_AWAIT_TIMEOUT     : time     := 10 ms; -- enough for C_NUM_RANDOM_FRAMES frames of up to 51.2 us
 
@@ -1214,6 +1220,23 @@ begin
       mdio_phy_c22_reply_read(MDIO_VVCT, C_PHY_1, "00110", x"A5A5", "PHY replies 310 ns after the MDC edges");
       mdio_sta_c22_check(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00110", x"A5A5", "STA checks");
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "no alerts");
+      reset_vvc_configs;
+
+      log(ID_LOG_HDR, "suppress_preamble, invalid frame: the checkers skip its turnaround and data, no new frame starts there", C_SCOPE);
+      ------------------------------------------------------------
+      -- The second OP bit of a write is forced to '0': OP "00" is no clause 22 opcode. If the rest of the frame were not
+      -- skipped, the checker of the idle PHY 1 would take it for a write to its address (an unwanted transaction).
+      -- The STA reports the forced bit as bus contention (one ERROR), the frame is still sent completely.
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      for i in C_STA to C_PHY_3 loop
+        shared_mdio_vvc_config(i).bfm_config.suppress_preamble := true;
+      end loop;
+      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_MISSING_PHY_ADDR, "00101", C_HEADER_LIKE_DATA, "STA write, OP forced to an invalid opcode");
+      force_frame_bit(C_MDIO_ST_WIDTH + C_MDIO_OP_WIDTH - 1, '0');
+      await_completion(MDIO_VVCT, C_STA, 1 ms, "invalid frame");
+      mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY 1 expects the next write");
+      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", x"BEEF", "STA writes to PHY 1");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "the frame after the invalid frame");
       reset_vvc_configs;
 
     --============================================================================================================================

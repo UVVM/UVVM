@@ -145,7 +145,7 @@ package mdio_bfm_pkg is
     -- of a read to another target driven to anything but '0' (undriven = no PHY at that
     -- address, not reported), undefined bits ('X', 'U', 'Z', ...) in the
     -- ST / OP / address fields of any frame or in the data written by the STA, and with
-    -- sync_to_frame_start = false a preamble shorter than 32 bits (the frame is still
+    -- sync_to_frame_start = false fewer than 32 driven preamble bits (the frame is still
     -- received) or, with suppress_preamble, a frame not starting at the next rising edge
     -- (the call is aborted). STA role: undefined bits in the data read from the PHY.
     -- NO_ALERT disables the checks, e.g. when frames are broken on purpose.
@@ -195,7 +195,7 @@ package mdio_bfm_pkg is
 
   -- Who drives MDIO in a bit time (from one rising MDC edge to the next), i.e. how mdio_check_bit_timing() checks it
   type t_mdio_bit_driver is (
-    NOT_CHECKED,   -- before the first MDC edge
+    NOT_CHECKED,   -- MDIO not checked, only MDC: before the first MDC edge, or the rest of an invalid frame
     STA_DRIVES,    -- hold after the edge, setup before the next one
     STA_RELEASES,  -- the STA releases MDIO for the first turnaround bit of a read: hold only
     PHY_DRIVES,    -- MDIO settles at most 300 ns after the edge
@@ -277,7 +277,8 @@ package mdio_bfm_pkg is
   -- - config.sync_to_frame_start: true (default) waits for the next frame start (see above). false expects
   --   the first frame to start at the next rising edge: a preamble shorter than 32 bits is reported with
   --   config.protocol_error_severity but the frame is still received; with suppress_preamble a first bit
-  --   other than '0' aborts the call (same severity). Frames following a consumed
+  --   other than '0' aborts the call (same severity). The preamble is the '1' bits the STA drives
+  --   before ST, idle or only pulled-up ('H') bits are not counted. Frames following a consumed
   --   (other-target) frame are synced if suppress_preamble, as their start time is unknown.
   -- - timeout: max wait until the addressed frame starts; a started frame is always completed.
   --   C_UNDEFINED_TIME (default) = config.phy.timeout, 0 ns = no timeout.
@@ -701,7 +702,8 @@ package body mdio_bfm_pkg is
   end procedure await_start_of_frame;
 
   -- Only with sync_to_frame_start = false: the frame start was taken at face value, so the preamble
-  -- length still needs checking (with syncing it is always 32). Not applicable to suppress_preamble.
+  -- length still needs checking (with syncing it is always 32). The caller passes the driven '1' bits
+  -- before ST. Not applicable to suppress_preamble.
   -- Returns true if the preamble was complete or the check is disabled (NO_ALERT).
   impure function check_preamble_length(
     constant preamble_bits : in natural;
@@ -719,7 +721,7 @@ package body mdio_bfm_pkg is
       value        => preamble_bits >= C_MDIO_PREAMBLE_LENGTH,
       alert_level  => config.protocol_error_severity,
       msg          => "Preamble too short: " & to_string(preamble_bits) & " of " & to_string(C_MDIO_PREAMBLE_LENGTH) &
-                      " bits before ST." & add_msg_delimiter(msg),
+                      " driven '1' bits before ST." & add_msg_delimiter(msg),
       scope        => scope,
       msg_id       => ID_NEVER,
       msg_id_panel => msg_id_panel,
@@ -729,6 +731,8 @@ package body mdio_bfm_pkg is
 
   -- The STA "shall send" the preamble (22.2.4.5.2), bits only pulled up ('H') violate this.
   -- Returns true if all preamble bits were driven or the check is disabled (NO_ALERT).
+  -- Only reports with sync_to_frame_start = true: without syncing, undriven bits are not counted as
+  -- preamble, a short driven preamble is reported by check_preamble_length() instead.
   -- Not applicable to suppress_preamble (a driven last data bit of the previous frame can precede ST).
   impure function check_preamble_driven(
     constant preamble_bits        : in natural;
@@ -1180,8 +1184,9 @@ package body mdio_bfm_pkg is
   end function mdio_header_reg_or_dev_addr;
 
   -- Consume the rest of a frame addressed to another target according to its own opcode and
-  -- check the turnaround driven by the other nodes. Invalid frames are not consumed - the
-  -- preamble search resynchronizes on the next frame anyway.
+  -- check the turnaround driven by the other nodes. The rest of an invalid frame is skipped
+  -- unchecked: every frame has the same length, so the next search starts after it and does not
+  -- take a '0' in its turnaround or data for ST (sync_to_frame_start = false or suppress_preamble).
   procedure consume_other_target_frame(
     constant st             : in std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
     constant op             : in std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -1204,7 +1209,7 @@ package body mdio_bfm_pkg is
       when FRAME_PHY_DRIVEN =>
         check_other_target_read_turnaround(mdio_if, terminate_loop, proc_call, msg, scope, msg_id_panel, config, v_status);
       when FRAME_INVALID =>
-        status := WAIT_OK;
+        skip_frame_rest(mdio_if, terminate_loop, config, status);
         return;
     end case;
     status := v_status;
@@ -1252,6 +1257,11 @@ package body mdio_bfm_pkg is
       await_start_of_frame(mdio_if, terminate_loop, C_START_TIME, timeout, config.suppress_preamble, v_sync,
                            v_preamble_bits, v_driven_preamble_bits, status);
       exit when status /= WAIT_OK;
+      -- not synced: only the driven ones before ST are the preamble. 'H' bits can be the bus idling at the pull-up
+      -- (before the first frame with a free-running MDC, between the frames), they cannot be told from an undriven preamble.
+      if not v_sync then
+        v_preamble_bits := v_driven_preamble_bits;
+      end if;
       v_preamble_ok := check_preamble_length(v_preamble_bits, proc_call, msg, scope, msg_id_panel, config);
       v_preamble_ok := check_preamble_driven(v_preamble_bits, v_driven_preamble_bits, proc_call, msg, scope, msg_id_panel, config)
                        and v_preamble_ok;

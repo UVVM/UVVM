@@ -1,6 +1,6 @@
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:            10 ns   TB seq
+UVVM:             : ns   TB seq
 UVVM:                    The flag FLAG_A was already blocked. 'This flag should already be blocked.'
 UVVM: 
 UVVM: 

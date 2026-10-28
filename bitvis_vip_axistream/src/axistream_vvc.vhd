@@ -429,11 +429,11 @@ begin
   --===============================================================================================
 
   --========================================================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transaction from the DUT
   --========================================================================================================================
-  g_unwanted_activity : if not GC_VVC_IS_MASTER generate
-    p_unwanted_activity : process is
+  g_unwanted_transaction : if not GC_VVC_IS_MASTER generate
+    p_unwanted_transaction : process is
     begin
       -- Add a delay to allow the VVC to be registered in the activity register
       wait for std.env.resolution_limit;
@@ -455,23 +455,25 @@ begin
                 axistream_vvc_if.tvalid, axistream_vvc_if.tlast, axistream_vvc_if.tstrb,
                 axistream_vvc_if.tid, axistream_vvc_if.tdest, global_trigger_vvc_activity_register;
 
-        -- Check the changes on the DUT outputs only when the vvc is inactive
-        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-          -- Skip checking the changes if the tvalid signal goes low within one clock period after the VVC becomes inactive
-          if not (falling_edge(axistream_vvc_if.tvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-            check_unwanted_activity(axistream_vvc_if.tvalid, vvc_config.unwanted_activity_severity, "tvalid", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tdata, vvc_config.unwanted_activity_severity, "tdata", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tkeep, vvc_config.unwanted_activity_severity, "tkeep", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tuser, vvc_config.unwanted_activity_severity, "tuser", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tlast, vvc_config.unwanted_activity_severity, "tlast", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tstrb, vvc_config.unwanted_activity_severity, "tstrb", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tid, vvc_config.unwanted_activity_severity, "tid", C_SCOPE);
-            check_unwanted_activity(axistream_vvc_if.tdest, vvc_config.unwanted_activity_severity, "tdest", C_SCOPE);
+        if vvc_config.unwanted_transaction_checking_enabled = true then
+          -- Check the changes on the DUT outputs only when the vvc is inactive
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            -- Skip checking the changes if the tvalid signal goes low within one clock period after the VVC becomes inactive
+            if not (falling_edge(axistream_vvc_if.tvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+              check_unwanted_transaction(axistream_vvc_if.tvalid, vvc_config.unwanted_transaction_severity.tvalid, "tvalid", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tdata, vvc_config.unwanted_transaction_severity.tdata, "tdata", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tkeep, vvc_config.unwanted_transaction_severity.tkeep, "tkeep", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tuser, vvc_config.unwanted_transaction_severity.tuser, "tuser", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tlast, vvc_config.unwanted_transaction_severity.tlast, "tlast", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tstrb, vvc_config.unwanted_transaction_severity.tstrb, "tstrb", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tid, vvc_config.unwanted_transaction_severity.tid, "tid", C_SCOPE);
+              check_unwanted_transaction(axistream_vvc_if.tdest, vvc_config.unwanted_transaction_severity.tdest, "tdest", C_SCOPE);
+            end if;
           end if;
         end if;
       end loop;
-    end process p_unwanted_activity;
-  end generate g_unwanted_activity;
+    end process p_unwanted_transaction;
+  end generate g_unwanted_transaction;
 --========================================================================================================================
 
 end architecture behave;

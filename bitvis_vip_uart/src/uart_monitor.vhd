@@ -24,6 +24,7 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.uart_bfm_pkg.all;
 use work.monitor_cmd_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -63,7 +64,7 @@ architecture behave of uart_monitor is
     variable monitor_config      : in t_uart_monitor_config
   ) is
     alias interface_config    : t_uart_interface_config is monitor_config.interface_config;
-    variable v_data           : std_logic_vector(C_MAX_BITS_IN_DATA - 1 downto 0) := (others => '0');
+    variable v_data           : std_logic_vector(C_MAX_NUM_DATA_BITS - 1 downto 0) := (others => '0');
     variable v_parity_error   : boolean;
     variable v_stop_bit_error : boolean_vector(0 to 1);
   begin

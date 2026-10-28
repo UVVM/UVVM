@@ -108,7 +108,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Compilation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id7">Simulator compatibility and setup</a></li>
 </ul>
@@ -136,6 +136,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -206,7 +207,7 @@
 raise an error if not set.</p></td>
 </tr>
 <tr class="row-odd"><td><p>num_data_bits</p></td>
-<td><p>natural range 7 to 8</p></td>
+<td><p>natural range 5 to 9</p></td>
 <td><p>8</p></td>
 <td><p>Number of data bits to send per transmission</p></td>
 </tr>
@@ -402,11 +403,11 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">);</span>
-<span class="n">uart_transmit</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmitting data to DUT UART"</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmitting data to DUT UART"</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A to DUT UART&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmitting ASCII A to DUT UART"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -497,11 +498,11 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">);</span>
-<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from DUT UART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Receive from DUT UART"</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Receive from DUT UART"</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive from DUT UART&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Receive from DUT UART"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -624,12 +625,12 @@ value is shared_msg_id_panel. For more information see
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_expect</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
-<span class="n">uart_expect</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expect data on UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="mh">x"3B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Expect data on UART RX"</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="mh">x"3B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Expect data on UART RX"</span><span class="p">,</span><span class="w"> </span><span class="n">rx</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_signal</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_BFM_CONFIG_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">uart_expect</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return&quot;</span><span class="p">);</span>
-<span class="n">uart_expect</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_TIMEOUT</span><span class="p">,</span><span class="w"> </span><span class="n">C_MAX_RECEPTIONS</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">"Expecting carriage return"</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">"Expecting carriage return"</span><span class="p">,</span><span class="w"> </span><span class="n">C_TIMEOUT</span><span class="p">,</span><span class="w"> </span><span class="n">C_MAX_RECEPTIONS</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -638,11 +639,11 @@ value is shared_msg_id_panel. For more information see
 <h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
 <p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
 process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmitting ASCII A"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>rather than</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting ASCII A&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_transmit</span><span class="p">(</span><span class="n">C_ASCII_A</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmitting ASCII A"</span><span class="p">,</span><span class="w"> </span><span class="n">tx</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>By defining the local overload as e.g.</p>
@@ -674,7 +675,7 @@ configuration has not been set.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UART_CONFIG_LOCAL</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_uart_bfm_config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">bit_time</span><span class="w">                              </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_UART_BIT_TIME</span><span class="p">,</span>
 <span class="w">  </span><span class="n">num_data_bits</span><span class="w">                         </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
-<span class="w">  </span><span class="n">idle_state</span><span class="w">                            </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">idle_state</span><span class="w">                            </span><span class="o">=&gt;</span><span class="w"> </span><span class="sc">'1'</span><span class="p">,</span>
 <span class="w">  </span><span class="n">num_stop_bits</span><span class="w">                         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">STOP_BITS_ONE</span><span class="p">,</span>
 <span class="w">  </span><span class="n">parity</span><span class="w">                                </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">PARITY_ODD</span><span class="p">,</span>
 <span class="w">  </span><span class="n">timeout</span><span class="w">                               </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
@@ -742,10 +743,10 @@ compatible with VHDL-2008 or newer.</p></li>
 <tr class="row-even"><td><p>GC_DATA_WIDTH</p></td>
 <td><p>natural</p></td>
 <td><p>8</p></td>
-<td><p>Bits in the UART byte. Note that this will
-initialize num_data_bits in the BFM
-configuration and override the setting in
-GC_UART_CONFIG.</p></td>
+<td><p>Bits in the UART byte (supported range: 5..9).
+Note that this will initialize num_data_bits in
+the BFM configuration and override the setting
+in GC_UART_CONFIG.</p></td>
 </tr>
 <tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
 <td><p>natural</p></td>
@@ -924,12 +925,16 @@ the BFM procedure calls</p></td>
 <td><p>C_BIT_RATE_CHECKER_DEFAULT</p></td>
 <td><p>Configure the UART property checker behavior</p></td>
 </tr>
-<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<tr class="row-odd"><td><p>unwanted_transaction_checking_enabled</p></td>
+<td><p>boolean</p></td>
+<td><p>C_UNWANTED_TRANSACTION_CHECKING_DEFAULT</p></td>
+<td><p>Enable unwanted transaction checking</p></td>
+</tr>
+<tr class="row-even"><td><p>unwanted_transaction_severity</p></td>
+<td><p><a class="reference internal" href="#t-uart-unwanted-transaction"><span class="std std-ref">t_uart_unwanted_transaction</span></a></p></td>
+<td><p>C_UART_UNWANTED_TRANSACTION</p></td>
 <td><p>Severity of alert to be issued if unwanted
-activity on the DUT outputs is detected. It is
-enabled with ERROR severity by default.</p></td>
+transactions are detected on the DUT outputs.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1032,7 +1037,7 @@ test sequencer. The record contents can be seen below:</p>
 <td><p>natural</p></td>
 <td><p>Previous command index to run</p></td>
 </tr>
-<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<tr class="row-even"><td><p>pending_cmd_cnt</p></td>
 <td><p>natural</p></td>
 <td><p>Pending number of commands in the command queue</p></td>
 </tr>
@@ -1142,8 +1147,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending data to DUT UART instance 0&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">RANDOM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending 5 random bytes to DUT UART instance 0&quot;</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AF"</span><span class="p">,</span><span class="w"> </span><span class="s">"Sending data to DUT UART instance 0"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">RANDOM</span><span class="p">,</span><span class="w"> </span><span class="s">"Sending 5 random bytes to DUT UART instance 0"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1217,17 +1222,17 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving from DUT UART instance 0&quot;</span><span class="p">);</span>
-<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from DUT UART instance 0 and passing on to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">"Receiving from DUT UART instance 0"</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">"Receiving data from DUT UART instance 0 and passing on to Scoreboard"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from receive.</span>
 <span class="p">...</span>
-<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving from DUT UART instance 0&quot;</span><span class="p">);</span>
+<span class="n">uart_receive</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="s">"Receiving from DUT UART instance 0"</span><span class="p">);</span>
 <span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
-<span class="n">fetch_result</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for receive to finish"</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching result from receive operation"</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition hint">
@@ -1323,8 +1328,8 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">uart_expect</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return from DUT UART instance 0&quot;</span><span class="p">);</span>
-<span class="n">uart_expect</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting carriage return from DUT UART instance 0&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x"0D"</span><span class="p">,</span><span class="w"> </span><span class="s">"Expecting carriage return from DUT UART instance 0"</span><span class="p">);</span>
+<span class="n">uart_expect</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">"Expecting carriage return from DUT UART instance 0"</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1412,29 +1417,50 @@ SUCCEEDED during a transaction</p></td>
 i.e. uart_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
 TO_SB parameter is applied. The UART scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">uart_vvc_sb</span></code>, located in
 the vvc_methods_pkg.vhd, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_UART_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uart_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_UART_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">"Adding expected"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the UART VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">uart_vvc_sb</span></code>.</p>
 </section>
-<section id="unwanted-activity-detection">
-<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
-bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
-not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
-VVC issues an alert.</p>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
-to a different value. To disable this feature in the testbench, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<section id="unwanted-transaction-detection">
+<span id="t-uart-unwanted-transaction"></span><h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted transactions from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is output from the DUT when it is not
+expected, i.e. read/receive/check/expect VVC methods are not called. Once the VVC is inactive, it starts to monitor continuously on the
+DUT outputs. When an unwanted transaction is detected, the VVC issues an alert.</p>
+<p>This mechanism can also monitor other signals coming from the DUT and generate alerts if any unexpected activity is detected. You can
+enable this by configuring the corresponding <code class="docutils literal notranslate"><span class="pre">unwanted_transaction_severity</span></code> for each signal you want to monitor.</p>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To configure this feature in the testbench, e.g.</p>
+<p><strong>t_uart_unwanted_transaction</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>uart_vvc_rx</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Disable unwanted transaction checking</span>
+<span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">FALSE</span><span class="p">;</span>
+
+<span class="c1">-- Set severity of alert for each signal</span>
+<span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">uart_vvc_rx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">WARNING</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>For UART VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<p>For UART VVC, the unwanted transaction detection is enabled by default.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This feature is only implemented on uart_rx_vvc.</p>
 </div>
-<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-transaction"><span class="std std-ref">Essential Mechanisms - Unwanted Transaction Detection</span></a>.</p>
 </section>
 <section id="id6">
 <h3>Compilation<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
@@ -1670,7 +1696,7 @@ started.</p></td>
 <td><p>The time it takes to transfer one bit</p></td>
 </tr>
 <tr class="row-odd"><td><p>num_data_bits</p></td>
-<td><p>natural range 7 to 8</p></td>
+<td><p>natural range 5 to 9</p></td>
 <td><p>8</p></td>
 <td><p>Number of data bits to send per transmission</p></td>
 </tr>
@@ -1698,7 +1724,7 @@ extracts the transaction info from the shared variable when the global signal is
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">p_monitor_tx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
 <span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">v_transaction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_uart_transaction</span><span class="p">;</span>
 <span class="k">begin</span>
-<span class="w">  </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">global_uart_monitor_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">global_uart_monitor_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">;</span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">shared_uart_monitor_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SUCCEEDED</span><span class="w"> </span><span class="k">or</span>
 <span class="w">      </span><span class="n">shared_uart_monitor_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FAILED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>

@@ -28,13 +28,19 @@ library bitvis_vip_uart;
 use bitvis_vip_uart.monitor_cmd_pkg.all;
 
 library bitvis_uart;
-
+use bitvis_uart.uart_pif_pkg.all;
 -- Test case entity
 entity uart_monitor_th is
 end entity;
 
 -- Test case architecture
 architecture struct of uart_monitor_th is
+
+  -- DUT CPU bus is fixed at the maximum supported UART frame width.
+  -- The per-run UART data width is set by the TB sequencer via the
+  -- NUM_DATA_BITS register and the BFM config.
+  constant C_DUT_BUS_WIDTH : natural := C_UART_MAX_DATA_WIDTH;
+
 
   -- DSP interface and general control signals
   signal clk  : std_logic := '0';
@@ -44,16 +50,15 @@ architecture struct of uart_monitor_th is
   signal addr  : unsigned(2 downto 0);
   signal wr    : std_logic;
   signal rd    : std_logic;
-  signal wdata : std_logic_vector(7 downto 0);
-  signal rdata : std_logic_vector(7 downto 0);
+  signal wdata : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0);
+  signal rdata : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0);
   signal ready : std_logic;
 
   signal uart_rx : std_logic;
   signal uart_tx : std_logic;
-
-  constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
-  constant C_CLK_JITTER : time := 0.2 ns;
-  constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD;
+  constant C_CLK_PERIOD          : time := 10 ns; -- 100 MHz
+  constant C_CLK_JITTER          : time := 0.2 ns;
+  constant C_BIT_PERIOD          : time := 16 * C_CLK_PERIOD;
 
   constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
     max_wait_cycles            => 10000000,
@@ -76,7 +81,7 @@ architecture struct of uart_monitor_th is
 
   constant C_UART_MONITOR_INTERFACE_CONFIG : t_uart_interface_config := (
     bit_time      => C_BIT_PERIOD,
-    num_data_bits => 8,
+    num_data_bits => C_DUT_BUS_WIDTH,
     parity        => PARITY_ODD,
     num_stop_bits => STOP_BITS_ONE
   );
@@ -96,6 +101,7 @@ begin
   -----------------------------------------------------------------------------
   i_uart : entity bitvis_uart.uart
     generic map(
+      GC_DATA_WIDTH                => C_DUT_BUS_WIDTH,
       GC_MIN_EQUAL_SAMPLES_PER_BIT => 9
     )
     port map(
@@ -116,8 +122,8 @@ begin
 
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH   => 3,             -- integer := 8;
-      GC_DATA_WIDTH   => 8,             -- integer := 32;
+      GC_ADDR_WIDTH   => 3,
+      GC_DATA_WIDTH   => C_DUT_BUS_WIDTH,
       GC_INSTANCE_IDX => 1,
       GC_SBI_CONFIG   => C_SBI_BFM_CONFIG
     )
@@ -134,7 +140,8 @@ begin
 
   i1_uart_vvc : entity bitvis_vip_uart.uart_vvc
     generic map(
-      GC_INSTANCE_IDX => 1
+      GC_INSTANCE_IDX => 1,
+      GC_DATA_WIDTH   => C_DUT_BUS_WIDTH
     )
     port map(
       uart_vvc_rx => uart_rx,

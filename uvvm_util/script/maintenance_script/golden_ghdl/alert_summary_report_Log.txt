@@ -25,7 +25,7 @@ UVVM:
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing NOTE
 UVVM: 
 UVVM: ***  NOTE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM:      
@@ -51,7 +51,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_NOTE
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM:      
@@ -77,7 +77,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing WARNING
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM:      
@@ -103,7 +103,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_WARNING
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM:      
@@ -129,7 +129,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing MANUAL_CHECK
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in minor alerts report
 UVVM: 
 UVVM:      
@@ -156,7 +156,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -185,7 +185,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -214,7 +214,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -243,7 +243,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    This alert shall set mismatch in major alerts report
 UVVM: =========================================================================================================================================================================
 UVVM: 

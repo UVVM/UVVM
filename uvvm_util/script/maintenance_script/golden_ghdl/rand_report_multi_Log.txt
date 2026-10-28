@@ -194,11 +194,11 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing config report with time constraints
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([10 fs:20 fs])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([: fs:20 fs])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([30 fs:40 fs])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_time(100 fs)
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        excl_val_time(15 fs, 35 fs, 55 fs)
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[10 fs:20 fs],[30 fs:40 fs], ADD:(100 fs), EXCL:(15 fs, 35 fs, 55 fs))=> 37 fs
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[: fs:20 fs],[30 fs:40 fs], ADD:(100 fs), EXCL:(15 fs, 35 fs, 55 fs))=> 37 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
@@ -218,7 +218,7 @@ UVVM:                MULTI-METHOD CONSTRAINTS
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                CYCLIC MODE             : NON_CYCLIC
 UVVM:                UNIQUENESS              : NON_UNIQUE
-UVVM:                RANGE TIME VALUES       : [10 fs:20 fs],[30 fs:40 fs]
+UVVM:                RANGE TIME VALUES       : [: fs:20 fs],[30 fs:40 fs]
 UVVM:                INCLUDED TIME VALUES    : (100 fs)
 UVVM:                EXCLUDED TIME VALUES    : (15 fs, 35 fs, 55 fs)
 UVVM:      ====================================================================================================================================================================
@@ -245,17 +245,17 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:                CYCLIC MODE             : NON_CYCLIC
 UVVM:                UNIQUENESS              : NON_UNIQUE
 UVVM:                EXCLUDED TIME VALUES    : (15 fs, 35 fs, 55 fs)
-UVVM:                WEIGHTED TIME VALUES    : ([10 fs:20 fs],1,COMBINED),([30 fs:40 fs],1,COMBINED),(100 fs,1),(200 fs,8)
+UVVM:                WEIGHTED TIME VALUES    : ([: fs:20 fs],1,COMBINED),([30 fs:40 fs],1,COMBINED),(:0 fs,1),(200 fs,8)
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
-UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([10 fs:20 fs])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([: fs:20 fs])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight_time([30 fs:40 fs],5)
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight_time([50 fs:60 fs],10)
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_time(100 fs)
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight_time(200 fs,8)
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(([10 fs:20 fs],1,COMBINED),([30 fs:40 fs],5,COMBINED),([50 fs:60 fs],10,COMBINED),(100
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(([: fs:20 fs],1,COMBINED),([30 fs:40 fs],5,COMBINED),([50 fs:60 fs],10,COMBINED),(:0
 UVVM:                                                                           fs,1),(200 fs,8))=> 57 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
@@ -276,7 +276,7 @@ UVVM:                MULTI-METHOD CONSTRAINTS
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                CYCLIC MODE             : NON_CYCLIC
 UVVM:                UNIQUENESS              : NON_UNIQUE
-UVVM:                WEIGHTED TIME VALUES    : ([10 fs:20 fs],1,COMBINED),([30 fs:40 fs],5,COMBINED),([50 fs:60 fs],10,COMBINED),(100 fs,1),(200 fs,8)
+UVVM:                WEIGHTED TIME VALUES    : ([: fs:20 fs],1,COMBINED),([30 fs:40 fs],5,COMBINED),([50 fs:60 fs],10,COMBINED),(:0 fs,1),(200 fs,8)
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -401,16 +401,16 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Time
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs])=> 0 fs
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs])=> -0 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs],[8 fs:9 fs])=> 8 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5 fs, 3 fs, 4 fs))=> 4 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1 fs:1 fs], ADD:(10 fs))=> 1 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1 fs:1 fs],[8 fs:9 fs], ADD:(10 fs, -5 fs, 3 fs, 4 fs))=> 9 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs], EXCL:(-1 fs, 0 fs, 1 fs))=> 2 fs
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs],[8 fs:10 fs], EXCL:(-1 fs, 0 fs, 1 fs, 10 fs))=> 8 fs
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs],[8 fs:: fs], EXCL:(-1 fs, 0 fs, 1 fs, 10 fs))=> 8 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-6 fs, -4 fs, -2 fs, 0 fs, 2 fs, 4 fs, 6 fs), EXCL:(-2 fs, 0 fs, 2 fs))=> 6 fs
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs], ADD:(-5 fs, 3 fs, 4 fs), EXCL:(-5 fs, -1 fs, 1 fs))=> -2 fs
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs],[8 fs:10 fs], ADD:(-5 fs, 3 fs, 4 fs, 20 fs, 30 fs, 40 fs), EXCL:(-5
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 fs:2 fs],[8 fs:: fs], ADD:(-5 fs, 3 fs, 4 fs, 20 fs, 30 fs, 40 fs), EXCL:(-5
 UVVM:                                                                           fs, -1 fs, 1 fs, 9 fs, 30 fs, 40 fs))=> 4 fs
 UVVM: 
 UVVM: 

@@ -746,10 +746,10 @@ begin
   --===============================================================================================
 
   --===============================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transaction from the DUT
   --===============================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -772,26 +772,28 @@ begin
         wait on spi_vvc_if.ss_n, spi_vvc_if.sclk, spi_vvc_if.mosi, global_trigger_vvc_activity_register;
       end if;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        if GC_MASTER_MODE then
-          check_unwanted_activity(spi_vvc_if.miso, vvc_config.unwanted_activity_severity, "miso", C_SCOPE);
-        else
-          -- Skip checking the changes if the ss_n signal goes high within the sclk_to_ss_n period after the last sclk
-          if not (rising_edge(spi_vvc_if.ss_n) and global_trigger_vvc_activity_register'last_event <= (vvc_config.bfm_config.sclk_to_ss_n - minimum(vvc_config.bfm_config.spi_bit_time/2, vvc_config.bfm_config.ss_n_to_sclk) + std.env.resolution_limit)) then
-            check_unwanted_activity(spi_vvc_if.ss_n, vvc_config.unwanted_activity_severity, "ss_n", C_SCOPE);
-          end if;
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          if GC_MASTER_MODE then
+            check_unwanted_transaction(spi_vvc_if.miso, vvc_config.unwanted_transaction_severity.miso, "miso", C_SCOPE);
+          else
+            -- Skip checking the changes if the ss_n signal goes high within the sclk_to_ss_n period after the last sclk
+            if not (rising_edge(spi_vvc_if.ss_n) and global_trigger_vvc_activity_register'last_event <= (vvc_config.bfm_config.sclk_to_ss_n - minimum(vvc_config.bfm_config.spi_bit_time/2, vvc_config.bfm_config.ss_n_to_sclk) + std.env.resolution_limit)) then
+              check_unwanted_transaction(spi_vvc_if.ss_n, vvc_config.unwanted_transaction_severity.ss_n, "ss_n", C_SCOPE);
+            end if;
 
-          -- Skip checking the changes if the mosi signal goes to 'Z' within the sclk_to_ss_n period after the last sclk
-          if not (spi_vvc_if.mosi = 'Z' and global_trigger_vvc_activity_register'last_event <= (vvc_config.bfm_config.sclk_to_ss_n - minimum(vvc_config.bfm_config.spi_bit_time/2, vvc_config.bfm_config.ss_n_to_sclk) + std.env.resolution_limit)) then
-            check_unwanted_activity(spi_vvc_if.mosi, vvc_config.unwanted_activity_severity, "mosi", C_SCOPE);
-          end if;
+            -- Skip checking the changes if the mosi signal goes to 'Z' within the sclk_to_ss_n period after the last sclk
+            if not (spi_vvc_if.mosi = 'Z' and global_trigger_vvc_activity_register'last_event <= (vvc_config.bfm_config.sclk_to_ss_n - minimum(vvc_config.bfm_config.spi_bit_time/2, vvc_config.bfm_config.ss_n_to_sclk) + std.env.resolution_limit)) then
+              check_unwanted_transaction(spi_vvc_if.mosi, vvc_config.unwanted_transaction_severity.mosi, "mosi", C_SCOPE);
+            end if;
 
-          check_unwanted_activity(spi_vvc_if.sclk, vvc_config.unwanted_activity_severity, "sclk", C_SCOPE);
+            check_unwanted_transaction(spi_vvc_if.sclk, vvc_config.unwanted_transaction_severity.sclk, "sclk", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --===============================================================================================
 
 end architecture behave;

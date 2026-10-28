@@ -19,14 +19,14 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_rand_dist_mean()
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    get_rand_dist_mean()=> mean has not been configured, using default
 UVVM: 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.0) => OK. Value was 0.0. 'Checking mean config was cleared'
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_rand_dist_std_deviation()
 UVVM: 
 UVVM: ***  TB_NOTE #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    get_rand_dist_std_deviation()=> std_deviation has not been configured, using default
 UVVM: 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value(real, 0.0) => OK. Value was 0.0. 'Checking std_deviation config was cleared'

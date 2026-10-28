@@ -84,6 +84,11 @@ Default value for the record is C_I2C_BFM_CONFIG_DEFAULT.
 | i2c_bit_time                 | time                         | C_UNDEFINED_TIME| Bit period. Will give a TB_ERROR if not set to  |
 |                              |                              |                 | a different value than -1.                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| data_hold_time               | time                         | C_UNDEFINED_TIME| SDA-stable-after-SCL-falls window for data      |
+|                              |                              |                 | + ACK. Default C_UNDEFINED_TIME resolves        |
+|                              |                              |                 | to i2c_bit_time/4 (preserves legacy).           |
+|                              |                              |                 | Drive paths constrain to < i2c_bit_time/2.      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | i2c_bit_time_severity        | :ref:`t_alert_level`         | failure         | A master method will report an alert with this  |
 |                              |                              |                 | severity if a slave performs clock stretching   |
 |                              |                              |                 | for longer than i2c_bit_time.                   |
@@ -126,6 +131,37 @@ Default value for the record is C_I2C_BFM_CONFIG_DEFAULT.
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | id_for_bfm_poll              | :ref:`t_msg_id <message_ids>`| ID_BFM_POLL     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. _i2c_data_hold_time_usage:
+
+Setting data_hold_time
+----------------------------------------------------------------------------------------------------------------------------------
+The default ``data_hold_time = C_UNDEFINED_TIME`` resolves at run-time to
+``i2c_bit_time/4``, preserving the legacy SDA-after-SCL-falls window for
+testbenches written before the field existed. While unset, each affected BFM
+procedure emits a ``TB_NOTE`` alert reporting that the default is in use.
+Override the field directly on the BFM config to simulate I2C-spec corner
+cases (hold time as low as 0 ns; setup time as low as 100 ns in fast mode):
+
+.. code-block::
+
+    -- Local BFM config
+    variable v_i2c_bfm_config : t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    v_i2c_bfm_config.i2c_bit_time   := 1100 ns;  -- I2C fast-mode bit period
+    v_i2c_bfm_config.data_hold_time := 0 ns;     -- I2C-spec minimum hold
+    i2c_master_transmit(v_addr, v_data, "TX at minimum hold", scl, sda, config => v_i2c_bfm_config);
+
+    -- VVC config (per-instance)
+    shared_i2c_vvc_config(0).bfm_config.data_hold_time := 450 ns;  -- 100 ns setup at i2c_bit_time = 1100 ns
+    i2c_master_transmit(I2C_VVCT, 0, v_addr, v_data, "TX with 100 ns setup");
+
+The master- and slave-side drive procedures enforce
+``data_hold_time < i2c_bit_time/2`` and emit a ``TB_ERROR`` if violated
+(at the bound the SDA setup window before the SCL rising edge would be 0 ns).
+The field controls only the SDA-stable-
+after-SCL-falls window for data bits and ACK; start- and stop-condition
+framing remain governed by ``master_sda_to_scl``, ``master_scl_to_sda``, and
+``master_stop_condition_hold_time``.
 
 Methods
 ==================================================================================================================================
@@ -765,9 +801,13 @@ Configuration Record
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_i2c_unwanted_transac\| C_I2C_UNWANTED\ | Severity of alert to be issued if unwanted      |
+|                              | tion<t_i2c_unwanted_transact\| _TRANSACTION    | transactions are detected on the DUT outputs.   |
+|                              | ion>`                        |                 |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -1235,21 +1275,40 @@ See the :ref:`vip_scoreboard` for a complete list of available commands and addi
 Scoreboard commands are available for the I2C VVC scoreboard using the ``i2c_vvc_sb``.
 
 
-Unwanted Activity Detection
+.. _t_i2c_unwanted_transaction:
+
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_i2c_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| scl                     | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+| sda                     | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+
+``scl`` is only monitored for unwanted transaction when ``GC_MASTER_MODE = FALSE``.
 
 .. code-block::
 
-    shared_i2c_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_i2c_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-If multiple I2C slave VVCs are connected to the same master DUT, unwanted activity will give alerts on the inactive slave VVCs. In 
-order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive slave VVCs. Note that the unwanted 
+    -- Set severity of alert for each signal
+    shared_i2c_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.scl := WARNING;
+    shared_i2c_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.sda := ERROR;
+
+If multiple I2C slave VVCs are connected to the same master DUT, unwanted transaction will give alerts on the inactive slave VVCs. In 
+order to avoid getting any false alerts, the unwanted transaction must be disabled on the inactive slave VVCs. Note that the unwanted 
 activity detection must be enabled again after the data transfer is complete.
 
-For I2C VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For I2C VVC, the unwanted transaction detection is enabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

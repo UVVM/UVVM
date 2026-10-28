@@ -1,11 +1,11 @@
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    get_rand_dist_mean()=> mean has not been configured, using default
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    get_rand_dist_std_deviation()=> std_deviation has not been configured, using default
 UVVM: 
 UVVM: 

@@ -941,9 +941,13 @@ Configuration Record
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_axistream_unwanted_t\| C_AXISTREAM_UNW\| Severity of alert to be issued if unwanted      |
+|                              | ransaction<t_axistream_unwan\| ANTED_TRANSACTI\| transactions are detected on the DUT outputs.   |
+|                              | ted_transaction>`            | ON              |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -1289,25 +1293,55 @@ a dedicated Scoreboard can be added by the user if needed.
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information.
 
 
-Unwanted Activity Detection
+.. _t_axistream_unwanted_transaction:
+
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_axistream_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| tdata                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| tkeep                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| tuser                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| tvalid                  | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+| tlast                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| tstrb                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| tid                     | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| tdest                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+
+The signals are only monitored when ``GC_VVC_IS_MASTER = FALSE``.
 
 .. code-block::
 
-    shared_axistream_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_axistream_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-Note that the tready signal is not monitored in this VVC. The tready signal is allowed to be set independently of the tvalid signal, 
-and there is no method to differentiate between the unwanted activity and intended activity. See the AXI4-Stream protocol specification 
-for more information. 
+    -- Set severity of alert for each signal
+    shared_axistream_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.tdata  := WARNING;
+    shared_axistream_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.tvalid := ERROR;
 
-The unwanted activity detection is ignored when the tvalid signal goes low within one clock period after the VVC becomes inactive. 
+Note that the tready signal is not monitored in this VVC. The tready signal is allowed to be set independently of the tvalid signal. 
+See the AXI4-Stream protocol specification for more information. 
+
+The unwanted transaction detection is ignored when the tvalid signal goes low within one clock period after the VVC becomes inactive. 
 This is to handle the situation when the read command exits before the next rising edge, causing signal transitions during the 
 first clock cycle after the VVC is inactive. 
 
-For AXI4-Stream VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For AXI4-Stream VVC, the unwanted transaction detection is enabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

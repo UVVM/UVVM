@@ -32,9 +32,9 @@ package types_pkg is
   type t_void is (VOID); -- For dummy parameters
 
   -- Array types
-  type t_boolean_array is array (natural range <>) of boolean;
+  alias t_boolean_array is boolean_vector; -- DEPRECATED: will be removed in v3. Use boolean_vector instead.
+  alias t_integer_array is integer_vector; -- DEPRECATED: will be removed in v3. Use integer_vector instead.
   type t_natural_array is array (natural range <>) of natural;
-  type t_integer_array is array (natural range <>) of integer;
   type t_slv_array is array (natural range <>) of std_logic_vector;
   type t_slv_array_ptr is access t_slv_array;
   type t_signed_array is array (natural range <>) of signed;
@@ -90,6 +90,7 @@ package types_pkg is
   type t_match_strictness is (MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT, MATCH_STD_INCL_ZXUW);
   type t_quietness is (NON_QUIET, QUIET);
   type t_justify_center is (CENTER); -- Addition to the standard left, side
+  type t_bit_order is (MSB_FIRST, LSB_FIRST);
   type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT, FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT); -- FIRST_BYTE_LEFT and FIRST_BYTE_RIGHT are deprecated and will be removed in v3
   alias t_word_endianness is t_byte_endianness;
   type t_relational_operator is (LT, GT, EQ, LE, GE, NE);
@@ -135,6 +136,7 @@ package types_pkg is
     mismatch_on_expected_simulation_warnings_or_worse : natural range 0 to 1; -- simulation status: 0=no mismatch, 1=mismatch
     mismatch_on_expected_simulation_errors_or_worse   : natural range 0 to 1; -- simulation status: 0=no mismatch, 1=mismatch
     info_on_finishing_await_any_completion            : t_info_on_finishing_await_any_completion; -- DEPRECATED: will be removed in v3
+    simulation_status                                 : natural range 0 to 2; -- 0=passed, 1=failed, 2=not completed (report_alert_counters(FINAL) not called yet)
   end record t_uvvm_status;
   constant C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT : string        := "no await_any_completion() finshed yet\n";
   constant C_UVVM_STATUS_DEFAULT                                     : t_uvvm_status := (
@@ -144,7 +146,8 @@ package types_pkg is
     mismatch_on_expected_simulation_errors_or_worse   => 0,
     info_on_finishing_await_any_completion            => (vvc_name               => (C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT, others => ' '),
                                                           vvc_cmd_idx            => 0,
-                                                          vvc_time_of_completion => 0 ns)
+                                                          vvc_time_of_completion => 0 ns),
+    simulation_status                                 => 2
   );
 
   -- These values are used to indicate outdated sub-programs

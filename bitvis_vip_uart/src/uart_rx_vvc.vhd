@@ -292,9 +292,11 @@ begin
 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
-            -- pad 8th bit as don't care if rx is 7 bits
-            if v_num_data_bits = 7 then
-              v_read_data(7) := '-';
+            -- pad unused bits as don't care
+            if v_num_data_bits < C_MAX_NUM_DATA_BITS then
+              for i in v_num_data_bits to C_MAX_NUM_DATA_BITS - 1 loop
+                v_read_data(i) := '-';
+              end loop;
             end if;
             -- call SB check_received
             uart_vvc_sb.check_received(GC_INSTANCE_IDX, v_read_data);
@@ -393,10 +395,10 @@ begin
   end process p_checker;
 
   --===============================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transaction from the DUT
   --===============================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -415,12 +417,14 @@ begin
 
       wait on uart_vvc_rx, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT output only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        check_unwanted_activity(uart_vvc_rx, vvc_config.unwanted_activity_severity, "The DUT TX output", C_SCOPE);
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT output only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          check_unwanted_transaction(uart_vvc_rx, vvc_config.unwanted_transaction_severity.uart_vvc_rx, "The DUT TX output", C_SCOPE);
+        end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --===============================================================================================
 
 end architecture behave;

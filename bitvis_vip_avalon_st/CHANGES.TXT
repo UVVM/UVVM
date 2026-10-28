@@ -1,6 +1,22 @@
 Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
+
+v4.1.0
+----------
+Released: 2026-10-27
+- Added ready latency in VVC configuration.
+- Added mechanism for ready latency handling in VVC.
+- Added missing fields for the data_array length in the transaction info record.
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Added support for _receive() with unknown data lengths for packet transfers.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v4.0.2
 ----------
 Released: 2026-02-14
@@ -89,7 +105,7 @@ Released: 2020-05-19
 - Added shared_avalon_mm_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section and BFM config record description.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 - Removed extra log in receive procedure when called from another BFM procedure.
 

@@ -9,6 +9,67 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2026.10.27
+--------------------
+Released: 2026-10-27
+- Added gpio_pulse functionality to GPIO VVC.
+- Added range normalization in SPI BFM.
+- Added data_hold_time field to I2C BFM config for configurable SDA hold time after SCL falls (data + ACK).
+- Extended bitvis_vip_uart and bitvis_uart to support 5-9 bit data widths.
+- Added generic GC_DATA_WIDTH for configurable data width to bitvis_uart.
+- Added t_bit_order type to types_pkg.
+- Added bit_order to SPI BFM config.
+- Fixed duplicate definitions and typos in documentation source file for types_pkg.
+- Added ready latency configuration in Avalon-ST and updated the Avalon-ST documentation.
+- Added missing fields for the data_array length in the transaction info record in Avalon-ST, GMII and RGMII.
+- Split Avalon-MM pipelined read/check transaction info into separate request and response sub-transactions.
+- Fixed the decoding of the response signal in the Avalon-MM BFM (RESERVED, SLAVEERROR and DECODEERROR were mixed up).
+- Fixed the type of the lock_value parameter of init_avalon_mm_if_signals() in the Avalon-MM documentation.
+- Changed the VVC transaction info trigger default value from '0' to 'Z' in all VVCs and the VVC generator to fix multiple
+  executor-issue and ensure consistent implementation.
+- Changed definition of array types in AXI-Stream BFM for compatibility with other UVVM functions.
+- Added support for avalon_st_receive() with unknown data lengths for packet transfers.
+- Fixed functional coverage bins with ranges wider than 2^31-1 in func_cov_pkg.
+- Added .gitattributes to normalize line endings (LF for shell scripts and Makefiles, CRLF for .bat files).
+- Added C_AVALON_ST_BFM_MAX_DATA_WORDS to adaptations_pkg. C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS now defaults to this value.
+- Specification Coverage: run_spec_cov.py now returns 0 for complete compliant coverage, 1 for technical failures,
+  2 for non-compliant requirements, and 3 for incomplete coverage or warnings. Error-specific exit codes 7-28 are removed.
+- Replaced t_boolean_array and t_integer_array with the VHDL-2008 types boolean_vector and integer_vector. The old
+  names are kept as deprecated aliases in types_pkg and will be removed in v3.
+- Added C_REPORT_ALERTS_TO_SIMULATOR to adaptations_pkg to report UVVM alerts to the simulator's test status.
+- Fixed TB_ERROR "command_type is not IMMEDIATE or QUEUED" when SPI VVC commands are sent from two processes in the same
+  delta cycle.
+- Fixed a fatal error with hierarchical alerts enabled when set_alert_stop_limit(), increment_expected_alerts() or
+  another alert hierarchy procedure was called before the first log or alert.
+- Removed the outdated ghdl_compile_all_and_simulate.sh scripts from bitvis_uart, bitvis_irqc and bitvis_vip_uart.
+  Use compile_all_and_simulate.sh with ghdl as simulator instead.
+- Fixed multisim.sh failing when the target directory has more than one missing level.
+- Added simulation_status to shared_uvvm_status in uvvm_util, giving a single pass/fail/not completed simulation status.
+- Fixed Specification Coverage demo scripts hiding errors by falling back to ModelSim/Questa on any error.
+- Fixed removed generic queue elements keeping the rest of the queue reachable on garbage-collecting simulators such
+  as nvc, which could exhaust the heap. From pull request by user bwandl98.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+- Fixed the AXI VVC looping forever on an RVALID timeout or after a response with an unexpected RID/BID.
+  From pull request by user FPonGitHub.
+- Fixed the AXI and AXI-Lite BFMs and VVCs leaving the channel signals asserted after a timeout.
+  From pull request by user EMAZAC.
+- Fixed the AXI VVC checking the ID and data of a response that was never received after a BVALID or RVALID timeout.
+- Added random clock jitter to the clock generator VVC with GC_CLOCK_MAX_JITTER and set_clock_max_jitter().
+  From pull request by user sindrekvam.
+- Added FuseSoC core files for all UVVM libraries and script/generate_fusesoc_cores.py to generate them.
+  From pull request by user ChristianJacobsen.
+
+
+v2 2026.03.20
+--------------------
+Released: 2026-03-20
+- Fixed the incorrect component order in component_list.txt, which caused compile_all.sh to fail.
+
+
 v2 2026.02.14
 --------------------
 Released: 2026-02-14
@@ -26,7 +87,8 @@ Released: 2026-02-14
 - Added initial version of APB VIP. From pull request by user mikkelmi2.
 - Removed duplicate component_list.txt file under the release folder.
 - Removed unused testbench.py script under the script folder.
-- Extended randomization and functional coverage functionality for Questa One is now supported. 
+- Extended randomization and functional coverage functionality for Questa One is now supported.
+
 
 v2 2025.11.28
 --------------------
@@ -35,7 +97,7 @@ Released: 2025-11-28
 - Moved spec cov section to a more correct location in adaptations_pkg.
 - Set ready default value from config in init_avalon_st_if_signals function.
 - Added handling of BOM character (utf-8-sig encoding) when parsing req/map files in run_spec_cov.py and spec_cov_pkg.
-- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg and removed double definition of C_MAX_CYCLES 
+- Changed name of C_MAX_CYCLES to C_WINDOW_ASSERTIONS_MAX_CYCLES in adaptations_pkg and removed double definition of C_MAX_CYCLES
   in uvvm_assertions_pkg.
 - Added C_WINDOW_ASSERTIONS_MAX_CYCLES range guard to trigger->trigger (sl) overload as well as more pipeline numbering in log (uvvm_assertions_pkg).
 - Added two uses of window assertions to UVVM assertions demo tb.
@@ -53,7 +115,7 @@ Released: 2025-11-28
 - Replaced shared buffer between instances of t_data_queue to avoid overwritting data between data fifo and data stack.
 - Added Sigasi project (requires Sigasi 2025.3.1 or later). Fixed a bug in compile_src.do when the UVVM repository was checked
   out in a directory containing spaces. From pull request by user lievenlemiengre.
-- Fixed spec cov testcase status for partial coverage files with no requirement tickoffs. 
+- Fixed spec cov testcase status for partial coverage files with no requirement tickoffs.
 - Moved shared_default_log_destination to string_methods_pkg and added a constant to set the default value in adaptations_pkg.
 - Added missing deprecate() calls to some functions and procedures.
 - Changed deprecate message from log message to tb_note alert.
@@ -78,7 +140,7 @@ Released: 2025-11-28
 - Added comments to alert_hierarchy_pkg procedures which are for internal use. Updated hierarchical alerts documentation.
 - Minor changes to formatting in log messages across most log messages (changed add_msg_delimiter behaviour among others).
 - Documentation updates: Reorganized Utility Library and VVC framework sections. Updated multi-channel VVC examples, shared variables
-  and global signals section and VVC Implementation Guide section. Renamed and reorganized VVC Framework Essential Mechanisms section. 
+  and global signals section and VVC Implementation Guide section. Renamed and reorganized VVC Framework Essential Mechanisms section.
   Added info regarding logging and verbosity control. Added links to different sections in the UVVM intro section.
 - Updated vvc_generator to replace the GC_CHANNEL generic for a constant C_CHANNEL inside the VVC.
 - Use normalized value alias in string_contains_char and to_string functions.
@@ -105,7 +167,7 @@ Released: 2025-09-17
 - Fixed some report methods crashing the simulation when used at the very start of the simulation due to an unopened log file.
 - Released HVVC to VVC Bridge VIP and Ethernet VIP from BETA.
 - Moved Markdown documentation files to main HTML documentation.
-- Fixed bug in Clock Generator VVC where the initial configuration for the clock_name, clock_period and clock_high_time given by 
+- Fixed bug in Clock Generator VVC where the initial configuration for the clock_name, clock_period and clock_high_time given by
   the VVC generics is not assigned when using Riviera-PRO simulator.
 - Added misc folder to the root directory, and placed the UVVM context files and vendor extensions packages for Questa.
 - Added context section in the Essential Mechanisms documentation.
@@ -202,7 +264,7 @@ Released: 2024-08-16
 - Updated spec_cov methods signature to match in specification and body.
 - Added PR from @FPonGitHub removing vsim-8684 warning messages in AXI VVC.
 - Removed vsim-8684 warning messages in AXI-Lite VVC.
-- Fixed bug in spec cov where COMPLIANT status might overwrite NOT_TESTED status of super requirement. 
+- Fixed bug in spec cov where COMPLIANT status might overwrite NOT_TESTED status of super requirement.
 - Clear old spec cov testcase name before setting new name in initialize_req_cov.
 - Fixed ready_default_value not having the initial value from the GC_AXISTREAM_BFM_CONFIG VVC generic.
 - Added PR from @am9417 to support changing the default queue size configuration in the built-in scoreboards.
@@ -312,7 +374,7 @@ Released: 2023-09-16
 - Updated constant values related to cmd/results queues. Updated vvc_generator.py script.
 - Added filter for (vcom-1246) warning in TCL compile scripts.
 - Added bitvis_uart and bitvis_irqc to uvvm/script/component_list.txt.
-- Updated vvc_framework.rst documentation for further explanation of common types 
+- Updated vvc_framework.rst documentation for further explanation of common types
   and usage of t_vvc_result.
 - Updated scripts for proper handling of errors during compilation/simulation
   in older versions of Riviera-PRO, based on Github user bennyslbs contributions.
@@ -363,7 +425,7 @@ Released: 2022-10-07
 - Added PR from @m-kru fixing miso direction in one of spi_master_transmit_and_receive procedures.
 - Added PR from @amb5l adding Make support to UART and IRQC DUTs, in addition to template files.
 - Added PR from @andrefi-eml adding a new await_stable function for specifying the target value.
-- Added more RST documentation. 
+- Added more RST documentation.
 
 
 v2 2022.05.25
@@ -423,9 +485,9 @@ Released: 2021-10-22
   documentation.
 - Updated ghdl_compile_all_and_simulate.sh scripts with new uvvm_util packages.
 - Added support to force the VVC to execute only one transaction at a time in AXI and AXI-Lite VIPs.
-- Fixed bug where await_completion in certain cases didn't detect that the AXI and AXI-Lite 
+- Fixed bug where await_completion in certain cases didn't detect that the AXI and AXI-Lite
   VIPs VVC was finished.
-- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential problems 
+- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential problems
   with fetch_result in the AXI and AXI-Lite VIPs.
 - Added missing change history to CHANGES.TXT.
 
@@ -436,9 +498,9 @@ Released: 2021-05-26
 - Corrected message ID for check_value() methods in BFM packages.
 - Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
 - Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
-- Summary alert report and hierarchical alerts report updated to 
+- Summary alert report and hierarchical alerts report updated to
   warn for minor alert mismatch.
-- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occur if a requirement 
+- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occur if a requirement
   and testcase were listed in combination multiple times.
 - Generic queue allow to insert to an empty queue with identifier position
   set to POSITION and position set to 1.
@@ -452,7 +514,7 @@ Released: 2021-05-26
 - Added data_length to AXI-Stream VVC transaction info.
 - Fixed an issue with VVC name indexing in ti_protected_types_pkg priv_get_vvc_idx().
 - Added some missing deallocating of lines in in methods_pkg.
-- Fixed issue where calling the same VVC at the same time from different processes 
+- Fixed issue where calling the same VVC at the same time from different processes
   could lead to a timeout.
 
 
@@ -511,14 +573,14 @@ v2 2020.10.06
 Released: 2020-10-06
 - Added constant C_UVVM_VERSION with UVVM release version number.
 - Removed shared_spec_cov_config alias from spec_cov_pkg.
-- run_spec_cov.py script will now also create single_req_vs_single_tc.csv 
-  and single_tc_vs_single_req.csv 
+- run_spec_cov.py script will now also create single_req_vs_single_tc.csv
+  and single_tc_vs_single_req.csv
 - added conditional requirement tick off functionality to specification
   coverage VIP.
 - Corrected normalize_and_check() description in Util QR.
 - Corrected default KEEP_LEADING_0 for check_value() in Util QR.
 - Removed SLV range check for t_slv_array version of normalize_and_check().
-- Removed VVC_Framework_Documentation_Overview.txt from VVC Framework /doc folder.     
+- Removed VVC_Framework_Documentation_Overview.txt from VVC Framework /doc folder.
 - Updated GPIO BFM config.
 - Fixed log messages in GPIO BFM.
 - Fixed default timeout parameter in gpio_expect() BFM procedure.
@@ -532,7 +594,7 @@ v2 2020.08.21
 --------------------
 Released: 2020-08-21
 - Corrected change log in UVVM.
-- Added parameter tickoff_extent (LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF) to 
+- Added parameter tickoff_extent (LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF) to
 - tick_off_req_cov() parameter.
 - Removed testcase as parameter in tick_off_req_cov() call.
 - Added missing queue, FIFO and stack in Util package.
@@ -542,14 +604,14 @@ v2 2020.08.18
 --------------------
 Released: 2020-08-18
 - Added maintenance TBs and simulation scripts to UVVM modules in UVVM_SUPPLEMENTARY repo.
-- Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
+- Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES.
 - Replaced ALL_ENABLED_INSTANCES option with ALL_INSTANCES in Scoreboard VIP.
 - Changed Scoreboard max instances constant name to C_MAX_SB_INSTANCE_IDX.
 - Changed Scoreboard to be instance of Utility Library generic_sb_pkg.
 - Fixed missing possibility to exit a TRANSMIT / WRITE loop in UART TX and SBI VVCs.
-- Added missing reset of terminate cmd request flag in UART TX VVC. 
+- Added missing reset of terminate cmd request flag in UART TX VVC.
 - Added deprecated warning to ti_data_fifo_pkg, ti_data_queue_pkg, ti_data_stack_pkg and
-  ti_generic_queue_pkg. These will no longer be maintained and users should use the 
+  ti_generic_queue_pkg. These will no longer be maintained and users should use the
   packages in Utility Library.
 - Updated UART, RGMII, SPI and I2C BFM QRs with required BFM configuration information.
 - Added fix with gen_pulse() method for slv with don't care.
@@ -593,7 +655,7 @@ Released: 2020-05-19
 - Added missing t_byte_endianness enums.
 - Removed extra log in some BFM procedures when called from another BFM procedure.
 - Added new await_completion command for several VVCs which doesn't block them while waiting.
-- Updated VVC activity_watchdog_register_vvc_state() method call with new t_activity parameter and 
+- Updated VVC activity_watchdog_register_vvc_state() method call with new t_activity parameter and
   other minor improvements.
 
 
@@ -612,7 +674,7 @@ v2 2020.04.20
 Released: 2020-04-20
 - Updated Util QR check_value() with MATCH_STD_INCL_Z option.
 - Renamed Simple Watchdog to General Watchdog.
-- Removed logging message from Activity Watchdog for when number of 
+- Removed logging message from Activity Watchdog for when number of
   expected VVCs match actual number.
 - Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
 - Added dependency list in compile_src.do scripts.
@@ -693,7 +755,7 @@ Released: 2020-02-16
 v2020.01.24
 --------------------
 Released: 2020-01-24
-- The UVVM forum is released : https://forum.uvvm.org 
+- The UVVM forum is released : https://forum.uvvm.org
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
@@ -701,11 +763,11 @@ Released: 2020-01-24
 - Added bfm_sync to the BFM configuration record for SBI VIP, Avalon MM VIP,
   AXI-Lite VIP and AXI-Stream VIP.
 - Clock driven BFMs utilize new synchronising methods, with synchronising to
-  clock as default, and clock_period, setup_time and hold_time set to -1 ns 
+  clock as default, and clock_period, setup_time and hold_time set to -1 ns
   by default.
-- Clock driven BFMs will detect the clock period and verify with BFM config 
+- Clock driven BFMs will detect the clock period and verify with BFM config
   specified clock_period and clock_period_margin.
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
 - Updated vvc_context files for all VIPs with BFM interface and config types.
 - Removed unused config elements id_for_bfm_wait & id_for_bfm_poll in Axistream BFM.
@@ -733,7 +795,7 @@ Released: 2019-12-04
 - Added possible randomised data transfer from UART and SBI VVCs (beta)
 - Added scoreboarding to VVCs.
 - Added property checkers to UART VVC (beta)
-- Added demostration testbench to Bitvis VIP UART for demonstrating 
+- Added demostration testbench to Bitvis VIP UART for demonstrating
   several new mechanisms to the UVVM VVC Framework and VVCs.
 - See UVVM VVC Framework Essential Mechanisms for an extended listing of
   many new features in this release.
@@ -763,7 +825,7 @@ Released: 2019-11-21
   See UVVM Essential Mechanisms and VVC quick references for more information.
 - Added scoreboard to VVC.
 - Updated Scoreboard QR.
-- Fixed an issue with clock generator VVC documentation 
+- Fixed an issue with clock generator VVC documentation
   not matching implementation.
 
 v2019.09.02
@@ -776,7 +838,7 @@ Released: 2019-09-02
 - Minor fixes in vvc_generator.py
 - Bug fix for std.env.stop return value when UVVM stop simulations if stop-limit is
   reached for a given alert.
-- Major changes in generics used in the Scoreboard VIP.  
+- Major changes in generics used in the Scoreboard VIP.
 
 v2019.06.06
 --------------------

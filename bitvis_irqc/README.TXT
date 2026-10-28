@@ -5,9 +5,8 @@
 Modelsim compile scripts are part of this release, see
 the script folder. For other simulators, the compile order
 is provided in scripts/compile_order.txt. See also the
-following shell scripts:
-  compile_all_and_simulate.sh
-  ghdl_compile_all_and_simulate.sh
+following shell script:
+  compile_all_and_simulate.sh  (usage: sh compile_all_and_simulate.sh <ghdl|nvc|vsim|xsim> <target_dir>)
 
 -----------------------------------------------------------
 -- Directory structure                                   --

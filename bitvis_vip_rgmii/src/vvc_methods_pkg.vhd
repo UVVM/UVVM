@@ -50,6 +50,17 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_rgmii_unwanted_transaction is record
+    rxd    : t_alert_level;
+    rx_ctl : t_alert_level;
+  end record t_rgmii_unwanted_transaction;
+
+  constant C_RGMII_UNWANTED_TRANSACTION : t_rgmii_unwanted_transaction := (
+    rxd    => NO_ALERT,
+    rx_ctl => ERROR
+  );
+
   type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural; -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
@@ -61,7 +72,8 @@ package vvc_methods_pkg is
     bfm_config                            : t_rgmii_bfm_config; -- Configuration for the BFM. See BFM quick reference.
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel.
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
-    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT TX outputs is detected
+    unwanted_transaction_checking_enabled : boolean; -- Enable unwanted transaction checking
+    unwanted_transaction_severity         : t_rgmii_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT TX outputs is detected
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -77,7 +89,8 @@ package vvc_methods_pkg is
     bfm_config                            => C_RGMII_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
-    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
+    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,
+    unwanted_transaction_severity         => C_RGMII_UNWANTED_TRANSACTION
   );
 
   type t_vvc_status is record
@@ -313,6 +326,7 @@ package body vvc_methods_pkg is
       when WRITE | READ | EXPECT =>
         vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
         vvc_transaction_info_group.bt.data_array         := vvc_cmd.data_array;
+        vvc_transaction_info_group.bt.data_length        := vvc_cmd.data_array_length;
         vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
         vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.bt.transaction_status := transaction_status;
@@ -336,6 +350,7 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when READ =>
         vvc_transaction_info_group.bt.data_array         := vvc_result.data_array;
+        vvc_transaction_info_group.bt.data_length        := vvc_result.data_array_length;
         vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 

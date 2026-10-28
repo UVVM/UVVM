@@ -36,6 +36,7 @@ package avalon_st_bfm_pkg is
   -- Constants for the maximum sizes to use in this BFM. Can be modified in adaptations_pkg.
   constant C_MAX_BITS_PER_SYMBOL  : positive := C_AVALON_ST_BFM_MAX_BITS_PER_SYMBOL;
   constant C_MAX_SYMBOLS_PER_BEAT : positive := C_AVALON_ST_BFM_MAX_SYMBOLS_PER_BEAT;
+  constant C_MAX_WORDS            : positive := C_AVALON_ST_BFM_MAX_DATA_WORDS;
 
   -- Interface record for BFM signals
   type t_avalon_st_if is record
@@ -126,6 +127,20 @@ package avalon_st_bfm_pkg is
   -- Avalon-ST Transmit
   -- BFM -> DUT
   ---------------------------------------------------------------------------------------------
+  -- This overload shall be used only by the VVC
+  procedure avalon_st_transmit(
+    constant channel_value : in std_logic_vector;
+    constant data_array    : in t_slv_array;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    signal   ready_delayed : in std_logic;
+    constant ready_latency : in natural;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
+  );
+
   procedure avalon_st_transmit(
     constant channel_value : in std_logic_vector;
     constant data_array    : in t_slv_array;
@@ -151,6 +166,23 @@ package avalon_st_bfm_pkg is
   -- Avalon-ST Receive
   -- DUT -> BFM
   ---------------------------------------------------------------------------------------------
+
+  -- This overload shall be used only by the VVC
+  procedure avalon_st_receive(
+    variable channel_value : out std_logic_vector;
+    variable data_array    : out t_slv_array;
+    variable num_words     : out natural;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    signal   ready_delayed : in std_logic;
+    constant ready_latency : in natural;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
+  );
+
   procedure avalon_st_receive(
     variable channel_value : out std_logic_vector;
     variable data_array    : out t_slv_array;
@@ -174,9 +206,36 @@ package avalon_st_bfm_pkg is
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
+  procedure avalon_st_receive(
+    variable data_array    : out t_slv_array;
+    variable num_words     : out natural;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
+  );
+
   ---------------------------------------------------------------------------------------------
   -- Avalon-ST Expect
   ---------------------------------------------------------------------------------------------
+  -- This overload shall be used only by the VVC
+  procedure avalon_st_expect(
+    constant channel_exp   : in std_logic_vector;
+    constant data_exp      : in t_slv_array;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    signal   ready_delayed : in std_logic;
+    constant ready_latency : in natural;
+    constant alert_level   : in t_alert_level          := error;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
+  );
+
   procedure avalon_st_expect(
     constant channel_exp  : in std_logic_vector;
     constant data_exp     : in t_slv_array;
@@ -255,6 +314,8 @@ package body avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
+    signal   ready_delayed : in std_logic;
+    constant ready_latency : in natural;
     constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
@@ -278,7 +339,6 @@ package body avalon_st_bfm_pkg is
     variable v_wait_for_transfer     : boolean                                                                := false;
     variable v_wait_count            : natural                                                                := 0;
     variable v_timeout               : boolean                                                                := false;
-    variable v_ready                 : std_logic; -- Sampled ready for the current clock cycle
     variable v_seeds                 : t_positive_vector(0 to 1);
     variable v_rand                  : real;
     variable v_clock_period_checked  : boolean;
@@ -336,6 +396,7 @@ package body avalon_st_bfm_pkg is
       else
         v_data_offset := v_sym_in_beat * C_SYM_WIDTH;
       end if;
+      avalon_st_if.channel                                                    <= v_normalized_chan;
       avalon_st_if.data(v_data_offset + C_SYM_WIDTH - 1 downto v_data_offset) <= v_symbol_array(symbol);
       log(ID_PACKET_DATA, C_PROC_CALL & "=> " & to_string(v_symbol_array(symbol), HEX, KEEP_LEADING_0, INCL_RADIX) & " (symbol# " & to_string(symbol) & ")." & add_msg_delimiter(msg), scope, msg_id_panel);
 
@@ -375,10 +436,6 @@ package body avalon_st_bfm_pkg is
         end if;
       end if;
 
-      -- Set the basic interface signals
-      avalon_st_if.valid   <= '1';
-      avalon_st_if.channel <= v_normalized_chan;
-
       -- Set the packet transfer signals
       if config.use_packet_transfer then
         avalon_st_if.start_of_packet <= '1' when symbol / C_SYMBOLS_PER_BEAT = 0 else '0';
@@ -405,26 +462,26 @@ package body avalon_st_bfm_pkg is
       end if;
 
       if v_wait_for_transfer then
-        wait until rising_edge(clk);
-        v_ready := avalon_st_if.ready;
-        if not v_clock_period_checked then -- Only check once
-          check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
-          v_clock_period_checked := true;
-        end if;
-
-        -- Wait according to config.bfm_sync setup
-        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
-
-        v_wait_count := 1;
-        -- Check ready signal is asserted (sampled at rising_edge)
-        while v_ready = '0' loop
+        -- When ready_latency is disabled, assert valid signal right away
+        if ready_latency = 0 then
+          avalon_st_if.valid <= '1';
           wait until rising_edge(clk);
-          v_ready := avalon_st_if.ready;
-
+          if not v_clock_period_checked then -- Only check once
+            check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+            v_clock_period_checked := true;
+          end if;
           -- Wait according to config.bfm_sync setup
           wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
+        end if;
 
+        -- Wait for ready to be asserted
+        v_wait_count := 1;
+        while ready_delayed = '0' loop
+          wait until rising_edge(clk);
+          -- Wait according to config.bfm_sync setup
+          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
           v_wait_count := v_wait_count + 1;
+
           -- If timeout then exit procedure
           if v_wait_count >= config.max_wait_cycles then
             v_timeout := true;
@@ -433,6 +490,18 @@ package body avalon_st_bfm_pkg is
         end loop;
         if v_timeout then
           exit;
+        end if;
+
+        -- When ready_latency is configured, the source can only assert valid during ready cycles
+        if ready_latency > 0 then
+          avalon_st_if.valid <= '1';
+          wait until rising_edge(clk);
+          if not v_clock_period_checked then -- Only check once
+            check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+            v_clock_period_checked := true;
+          end if;
+          -- Wait according to config.bfm_sync setup
+          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
         end if;
 
         -- Default values for the next clk cycle
@@ -454,10 +523,20 @@ package body avalon_st_bfm_pkg is
     deallocate(v_symbol_array);
   end procedure;
 
-  ---------------------------------------------------------------------------------------------
-  -- Avalon-ST Transmit
-  -- BFM -> DUT
-  ---------------------------------------------------------------------------------------------
+  procedure avalon_st_transmit(
+    constant channel_value : in std_logic_vector;
+    constant data_array    : in t_slv_array;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
+  ) is
+  begin
+    avalon_st_transmit(channel_value, data_array, msg, clk, avalon_st_if, avalon_st_if.ready, 0, scope, msg_id_panel, config);
+  end procedure;
+
   procedure avalon_st_transmit(
     constant data_array   : in t_slv_array;
     constant msg          : in string                 := "";
@@ -479,9 +558,12 @@ package body avalon_st_bfm_pkg is
   procedure avalon_st_receive(
     variable channel_value : out std_logic_vector;
     variable data_array    : out t_slv_array;
+    variable num_words     : out natural;
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
+    signal   ready_delayed : in std_logic;
+    constant ready_latency : in natural;
     constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
@@ -507,6 +589,7 @@ package body avalon_st_bfm_pkg is
     variable v_data_offset           : natural                                             := 0;
     variable v_ready_low_duration    : natural                                             := 0;
     variable v_ready_low_cycle_count : natural                                             := 0;
+    variable v_ready_deasserted      : boolean                                             := false;
     variable v_time_of_rising_edge   : time                                                := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_time_of_falling_edge  : time                                                := C_UNDEFINED_TIME; -- time stamp for clk period checking
     variable v_sample_data_now       : boolean                                             := false;
@@ -558,54 +641,51 @@ package body avalon_st_bfm_pkg is
       -- Set ready low before given beat (once per transmission or multiple random times)
       --------------------------------------------------------------------------------------
       if v_sym_in_beat = 0 and (config.ready_low_duration > 0 or config.ready_low_duration = C_RANDOM) then
-        v_ready_low_cycle_count := 0;
-        -- Check if pulse duration is defined or random
-        if config.ready_low_duration > 0 then
-          v_ready_low_duration := config.ready_low_duration;
-        elsif config.ready_low_duration = C_RANDOM then
-          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
-          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
-          random(1, config.ready_low_max_random_duration, v_seeds(0), v_seeds(1), v_ready_low_duration);
-        end if;
-
-        -- Deassert ready once per transmission on a specific beat
-        if config.ready_low_at_word_idx = v_sym_cnt / C_SYMBOLS_PER_BEAT then
-          avalon_st_if.ready <= '0';
-          -- Wait until valid goes high before counting the deassertion cycles
-          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
-            v_invalid_count := v_invalid_count + 1;
-            wait until rising_edge(clk);
-            -- If valid was asserted right before the rising_edge then we have already waited
-            -- one cycle with ready deasserted
-            if avalon_st_if.valid = '1' then
-              v_ready_low_duration := v_ready_low_duration - 1;
-            end if;
-            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-          end loop;
-          -- valid timed out
-          if v_invalid_count >= config.max_wait_cycles then
-            v_timeout            := true;
-            v_done               := true;
-            v_ready_low_duration := 0;
+        -- Decrement ready low cycle counter
+        v_ready_low_cycle_count := v_ready_low_cycle_count - 1 when v_ready_low_cycle_count > 0;
+        if not v_ready_deasserted then
+          -- Check if pulse duration is defined or random
+          if config.ready_low_duration > 0 then
+            v_ready_low_duration := config.ready_low_duration;
+          elsif config.ready_low_duration = C_RANDOM then
+            -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+            shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+            random(1, config.ready_low_max_random_duration, v_seeds(0), v_seeds(1), v_ready_low_duration);
           end if;
-          while v_ready_low_cycle_count < v_ready_low_duration loop
-            v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
-            wait until rising_edge(clk);
-            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-          end loop;
 
-        -- Deassert ready multiple random times per transmission
-        elsif config.ready_low_at_word_idx = C_MULTIPLE_RANDOM then
-          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
-          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
-          random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
-          if v_rand <= config.ready_low_multiple_random_prob then
-            avalon_st_if.ready <= '0';
-            while v_ready_low_cycle_count < v_ready_low_duration loop
-              v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
+          -- Deassert ready once per transmission on a specific beat
+          if config.ready_low_at_word_idx = v_sym_cnt / C_SYMBOLS_PER_BEAT then
+            avalon_st_if.ready      <= '0';
+            v_ready_deasserted      := true;
+            v_ready_low_cycle_count := v_ready_low_duration;
+            -- Wait until valid goes high before counting the deassertion cycles
+            while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
+              v_invalid_count := v_invalid_count + 1;
               wait until rising_edge(clk);
+              -- If valid was asserted right before the rising_edge then we have already waited
+              -- one cycle with ready deasserted
+              if avalon_st_if.valid = '1' then
+                v_ready_low_duration := v_ready_low_duration - 1;
+              end if;
               wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
             end loop;
+            -- valid timed out
+            if v_invalid_count >= config.max_wait_cycles then
+              v_timeout            := true;
+              v_done               := true;
+              v_ready_low_duration := 0;
+            end if;
+
+          -- Deassert ready multiple random times per transmission
+          elsif config.ready_low_at_word_idx = C_MULTIPLE_RANDOM then
+            -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+            shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+            random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
+            if v_rand <= config.ready_low_multiple_random_prob then
+              avalon_st_if.ready      <= '0';
+              v_ready_deasserted      := true;
+              v_ready_low_cycle_count := v_ready_low_duration;
+            end if;
           end if;
         end if;
       end if;
@@ -615,34 +695,39 @@ package body avalon_st_bfm_pkg is
       -- for the rising_edge of the clock to sample the data
       ------------------------------------------------------------
       if v_sym_in_beat = 0 then
-        -- To receive the first symbol wait until valid goes high before asserting ready
-        if v_sym_cnt = 0 and avalon_st_if.valid = '0' and not (v_timeout) then
-          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
-            v_invalid_count := v_invalid_count + 1;
-            wait until rising_edge(clk);
-            -- If valid was asserted right before the rising_edge then we should sample
-            -- the data right away, otherwise we wait
-            if avalon_st_if.valid = '1' and avalon_st_if.ready = '1' then
-              v_sample_data_now := true;
-            else
-              v_sample_data_now := false;
-              wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-            end if;
-          end loop;
-          if not (v_sample_data_now) then
-            -- valid is now high, assert ready
-            if v_invalid_count < config.max_wait_cycles then
-              avalon_st_if.ready <= '1';
+        if v_ready_low_cycle_count = 0 then
+          v_ready_deasserted := false;
+          -- To receive the first symbol wait until valid goes high before asserting ready (only for ready_latency = 0)
+          if v_sym_cnt = 0 and avalon_st_if.valid = '0' and not (v_timeout) and ready_latency = 0 then
+            while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
+              v_invalid_count := v_invalid_count + 1;
               wait until rising_edge(clk);
-            -- valid timed out
-            else
-              v_timeout := true;
-              v_done    := true;
+              -- If valid was asserted right before the rising_edge then we should sample
+              -- the data right away, otherwise we wait
+              if avalon_st_if.valid = '1' and ready_delayed = '1' then
+                v_sample_data_now := true;
+              else
+                v_sample_data_now := false;
+                wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+              end if;
+            end loop;
+            if not (v_sample_data_now) then
+              -- Valid is now high, assert ready
+              if v_invalid_count < config.max_wait_cycles then
+                avalon_st_if.ready <= '1';
+                wait until rising_edge(clk);
+              -- Valid timed out
+              else
+                v_timeout := true;
+                v_done    := true;
+              end if;
             end if;
+          -- Valid was already high (or ready_latency > 0), assert ready right away
+          else
+            avalon_st_if.ready <= '1';
+            wait until rising_edge(clk);
           end if;
-        -- valid was already high, assert ready right away
         else
-          avalon_st_if.ready <= '1';
           wait until rising_edge(clk);
         end if;
       end if;
@@ -654,7 +739,7 @@ package body avalon_st_bfm_pkg is
       ------------------------------------------------------------
       -- Receive the data
       ------------------------------------------------------------
-      if avalon_st_if.valid = '1' and avalon_st_if.ready = '1' then
+      if avalon_st_if.valid = '1' and ready_delayed = '1' then
         v_invalid_count := 0;
 
         -- Sample the symbols from the data bus according to the configured order
@@ -679,13 +764,25 @@ package body avalon_st_bfm_pkg is
           if C_SYMBOLS_PER_BEAT > 1 then
             v_empty_symbols := to_integer(unsigned(avalon_st_if.empty));
           end if;
-          -- Check that end of packet is received only on the last data transfer
-          if v_sym_cnt = v_symbol_array'length - 1 and avalon_st_if.end_of_packet = '0' then
-            alert(error, v_proc_call.all & "=> Failed. End of packet not set at last valid transfer." & add_msg_delimiter(msg), scope);
-            v_done := true;
-          elsif v_sym_cnt / C_SYMBOLS_PER_BEAT < v_symbol_array'length / C_SYMBOLS_PER_BEAT - 1 and v_sym_in_beat = 0 and avalon_st_if.end_of_packet = '1' then
-            alert(error, v_proc_call.all & "=> Failed. End of packet set at symbol #" & to_string(v_sym_cnt) & "." & add_msg_delimiter(msg), scope);
-            v_done := true;
+
+          -- Array length = MAX + 1 signifies packet transfer of unknown packet size. Thus, skip end-of-packet checks with array length.
+          if data_array'length /= C_MAX_WORDS + 1 then
+            -- Check that end of packet is received only on the last data transfer
+            if v_sym_cnt = v_symbol_array'length - 1 and avalon_st_if.end_of_packet = '0' then
+              alert(error, v_proc_call.all & "=> Failed. End of packet not set at last valid transfer." & add_msg_delimiter(msg), scope);
+              v_done := true;
+            elsif v_sym_cnt / C_SYMBOLS_PER_BEAT < v_symbol_array'length / C_SYMBOLS_PER_BEAT - 1 and v_sym_in_beat = 0 and avalon_st_if.end_of_packet = '1' then
+              alert(error, v_proc_call.all & "=> Failed. End of packet set at symbol #" & to_string(v_sym_cnt) & "." & add_msg_delimiter(msg), scope);
+              v_done := true;
+            end if;
+          elsif avalon_st_if.end_of_packet = '1' then
+            num_words := v_sym_cnt + 1;
+            v_done    := true;
+          elsif v_sym_cnt = C_MAX_WORDS * C_SYMBOLS_PER_BEAT - 1 then
+            alert(error, v_proc_call.all & "=> Failed. End of packet not received within max number of words allowed per packet (" &
+                  to_string(C_MAX_WORDS) & ")." & add_msg_delimiter(msg), scope);
+            num_words := C_MAX_WORDS;
+            v_done    := true;
           end if;
         end if;
 
@@ -715,6 +812,10 @@ package body avalon_st_bfm_pkg is
       -- Data couldn't be sampled, wait until next cycle
       ------------------------------------------------------------
       else
+        -- Check that the source de-asserts valid on non-ready cycles when ready_latency is not 0
+        if avalon_st_if.valid = '1' and ready_latency > 0 then
+          alert(error, v_proc_call.all & "=> Failed. Valid signal not de-asserted on non-ready cycle (ready_latency > 0)." & add_msg_delimiter(msg), scope);
+        end if;
         -- Check for timeout
         if v_invalid_count >= config.max_wait_cycles then
           v_timeout := true;
@@ -773,10 +874,22 @@ package body avalon_st_bfm_pkg is
     deallocate(v_symbol_array);
   end procedure;
 
-  ---------------------------------------------------------------------------------------------
-  -- Avalon-ST Receive
-  -- DUT -> BFM
-  ---------------------------------------------------------------------------------------------
+  procedure avalon_st_receive(
+    variable channel_value : out std_logic_vector;
+    variable data_array    : out t_slv_array;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
+  ) is
+    variable v_num_words  : natural; -- Does nothing in this overload, needed for parameter list
+  begin
+    avalon_st_receive(channel_value, data_array, v_num_words, msg, clk, avalon_st_if, avalon_st_if.ready, 0, scope, msg_id_panel, config, ext_proc_call);
+  end procedure;
+
   procedure avalon_st_receive(
     variable data_array    : out t_slv_array;
     constant msg           : in string                 := "";
@@ -787,24 +900,58 @@ package body avalon_st_bfm_pkg is
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    variable v_channel : std_logic_vector(avalon_st_if.channel'range);
+    variable v_channel    : std_logic_vector(avalon_st_if.channel'range);
+    variable v_num_words  : natural; -- Does nothing in this overload, needed for parameter list
   begin
-    avalon_st_receive(v_channel, data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, ext_proc_call);
+    avalon_st_receive(v_channel, data_array, v_num_words, msg, clk, avalon_st_if, avalon_st_if.ready, 0, scope, msg_id_panel, config, ext_proc_call);
+  end procedure;
+
+  procedure avalon_st_receive(
+    variable data_array    : out t_slv_array;
+    variable num_words     : out natural;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
+  ) is
+    variable v_channel                  : std_logic_vector(avalon_st_if.channel'range);
+    variable v_data_array_with_max_size : t_slv_array(0 to C_MAX_WORDS)(avalon_st_if.data'range);
+  begin
+    -- Check if BFM is configured for packet transfer, this overload will not work for stream transfers (requires end-of-packet)
+    if config.use_packet_transfer = false then
+      alert(TB_ERROR, "Overload of avalon_st_receive() with 'num_words' output-parameter is only allowed for packet transfer");
+    -- This overload requires length of data array = MAX + 1 to signify unknown package size
+    elsif data_array'length > C_MAX_WORDS + 1 then
+      alert(TB_ERROR, "Length of data_array must be less than C_AVALON_ST_BFM_MAX_DATA_WORDS + 1 (=" & to_string(C_AVALON_ST_BFM_MAX_DATA_WORDS +1) & ") for this overload with unknown packet size.");
+    else
+      -- Call overloaded procedure
+      avalon_st_receive(v_channel, v_data_array_with_max_size, num_words, msg, clk, avalon_st_if, avalon_st_if.ready, 0, scope, msg_id_panel, config, ext_proc_call);
+
+      -- Format the received data into the caller-provided array.
+      for i in data_array'range loop
+        data_array(i) := v_data_array_with_max_size(i)(data_array(i)'range);
+      end loop;
+    end if;
   end procedure;
 
   ---------------------------------------------------------------------------------------------
   -- Avalon-ST Expect
   ---------------------------------------------------------------------------------------------
   procedure avalon_st_expect(
-    constant channel_exp  : in std_logic_vector;
-    constant data_exp     : in t_slv_array;
-    constant msg          : in string                 := "";
-    signal   clk          : in std_logic;
-    signal   avalon_st_if : inout t_avalon_st_if;
-    constant alert_level  : in t_alert_level          := error;
-    constant scope        : in string                 := C_BFM_SCOPE;
-    constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
-    constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
+    constant channel_exp   : in std_logic_vector;
+    constant data_exp      : in t_slv_array;
+    constant msg           : in string                 := "";
+    signal   clk           : in std_logic;
+    signal   avalon_st_if  : inout t_avalon_st_if;
+    signal   ready_delayed : in std_logic;
+    constant ready_latency : in natural;
+    constant alert_level   : in t_alert_level          := error;
+    constant scope         : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
     constant C_DATA_WORD_SIZE     : natural                                                              := data_exp(data_exp'low)'length;
     constant C_SYMBOLS_PER_BEAT   : natural                                                              := avalon_st_if.data'length / config.symbol_width; -- Number of symbols transferred per cycle
@@ -819,12 +966,13 @@ package body avalon_st_bfm_pkg is
     variable v_data_error_cnt     : natural                                                              := 0;
     variable v_first_wrong_symbol : natural;
     variable v_alert_radix        : t_radix;
+    variable v_num_words          : natural;  -- Needed for parameter list, value unused.
   begin
 
     check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 
     -- Receive data
-    avalon_st_receive(v_rx_channel, v_rx_data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, C_PROC_CALL);
+    avalon_st_receive(v_rx_channel, v_rx_data_array, v_num_words, msg, clk, avalon_st_if, ready_delayed, ready_latency, scope, msg_id_panel, config, C_PROC_CALL);
 
     -- Check the received channel
     if v_rx_channel /= v_normalized_chan then
@@ -869,9 +1017,21 @@ package body avalon_st_bfm_pkg is
     end if;
   end procedure;
 
-  ---------------------------------------------------------------------------------------------
-  -- Avalon-ST Expect
-  ---------------------------------------------------------------------------------------------
+  procedure avalon_st_expect(
+    constant channel_exp  : in std_logic_vector;
+    constant data_exp     : in t_slv_array;
+    constant msg          : in string                 := "";
+    signal   clk          : in std_logic;
+    signal   avalon_st_if : inout t_avalon_st_if;
+    constant alert_level  : in t_alert_level          := error;
+    constant scope        : in string                 := C_BFM_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
+    constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
+  ) is
+  begin
+    avalon_st_expect(channel_exp, data_exp, msg, clk, avalon_st_if, avalon_st_if.ready, 0, alert_level, scope, msg_id_panel, config);
+  end procedure;
+
   procedure avalon_st_expect(
     constant data_exp     : in t_slv_array;
     constant msg          : in string                 := "";

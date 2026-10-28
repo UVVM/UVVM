@@ -1,0 +1,33 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : ../tb/maintenance_tb/req_file_no_req_file_tc.csv
+partial_cov          : ../sim/pc_no_req_file.csv
+requirement_map_list : None
+spec_cov             : ../sim/sc_listed_no_req_file.csv
+clean                : None
+strictness           : 0
+config               : None
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 1
+Number of non compliant requirements : 0
+Number of non verified requirements  : 0
+Number of not listed requirements    : 0
+Number of passing testcases : 1
+Number of failing testcases : 0
+Number of not run testcases : 0
+
+
+Compliant requirement(s) :
+REQ_1, 
+
+Passing testcase(s) :
+TC_NO_REQ_FILE, 
+
+Following 1 partial coverage file(s) have been previously executed :
+../sim/pc_no_req_file.csv
+
+

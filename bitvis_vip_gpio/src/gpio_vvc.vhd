@@ -251,7 +251,7 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
-      if v_cmd.operation = SET or v_cmd.operation = GET or v_cmd.operation = CHECK or v_cmd.operation = EXPECT then
+      if v_cmd.operation = SET or v_cmd.operation = GET or v_cmd.operation = CHECK or v_cmd.operation = EXPECT or v_cmd.operation = PULSE then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -397,6 +397,25 @@ begin
           -- Update vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
+        when PULSE =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+          -- Normalise data
+          v_normalised_data                                 := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "gpio_pulse() called with too wide data. " & v_cmd.msg);
+          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+
+          gpio_pulse(data_value     => v_normalised_data,
+                     pulse_duration => v_cmd.pulse_duration,
+                     msg            => format_msg(v_cmd),
+                     data_port      => gpio_vvc_if,
+                     scope          => C_SCOPE,
+                     msg_id_panel   => v_msg_id_panel,
+                     config         => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
@@ -447,10 +466,10 @@ begin
   --========================================================================================================================
 
   --========================================================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transaction from the DUT
   --========================================================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -469,13 +488,17 @@ begin
 
       wait on gpio_vvc_if, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT output only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        check_unwanted_activity(gpio_vvc_if, vvc_config.unwanted_activity_severity, "gpio_vvc_if", C_SCOPE);
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT output only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          check_unwanted_transaction(gpio_vvc_if, vvc_config.unwanted_transaction_severity.gpio_vvc_if, "gpio_vvc_if", C_SCOPE);
+        end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --========================================================================================================================
 
 end architecture behave;
+
+
 

@@ -38,7 +38,7 @@ package uart_pkg is
   return natural;
 
   function odd_parity(
-    signal data : std_logic_vector)
+    data : std_logic_vector)
   return std_logic;
 
 end package uart_pkg;
@@ -94,7 +94,7 @@ package body uart_pkg is
   end function;
 
   function odd_parity(
-    signal data : std_logic_vector)
+    data : std_logic_vector)
   return std_logic is
     variable v_odd : std_logic;
   begin

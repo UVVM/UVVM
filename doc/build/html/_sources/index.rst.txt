@@ -51,4 +51,5 @@ UVVM consists currently of the following elements:
    vip_uart.rst
    vip_wishbone.rst
    tool_compatibility.rst
+   fusesoc.rst
    faq.rst

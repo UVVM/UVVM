@@ -12,6 +12,7 @@ Bitvis VIP GPIO
   * :ref:`gpio_check_stable_bfm`
   * :ref:`gpio_expect_bfm`
   * :ref:`gpio_expect_stable_bfm`
+  * :ref:`gpio_pulse_bfm`
 
 * `VVC`_
 
@@ -21,6 +22,7 @@ Bitvis VIP GPIO
   * :ref:`gpio_check_stable_vvc`
   * :ref:`gpio_expect_vvc`
   * :ref:`gpio_expect_stable_vvc`
+  * :ref:`gpio_pulse_vvc`
 
 
 **********************************************************************************************************************************
@@ -360,6 +362,53 @@ the DUT register remains stable for the 'stable_req' time sampled after the 'sta
     gpio_expect_stable(x"0B", 100 us, FROM_LAST_EVENT, "Read UART RX and check it has been stable for 100 us since the last event", data_port);
 
 
+.. _gpio_pulse_bfm:
+
+gpio_pulse()
+----------------------------------------------------------------------------------------------------------------------------------
+Pulses the given data value on ``data_port`` for the specified pulse duration, then returns the signal to its initial value.
+Bits set to "don't care" (``'-'``) in ``data_value`` are not changed during the pulse. The pulse duration must be greater than
+0 ns.
+
+.. code-block::
+
+    gpio_pulse(data_value, pulse_duration, msg, data_port, [scope, [msg_id_panel, [config]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | data_value         | in     | std_logic_vector             | The data value to be pulsed on ``data_port``. Bits set  |
+|          |                    |        |                              | to ``'-'`` are left unchanged during the pulse. The     |
+|          |                    |        |                              | width must match ``data_port``.                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | pulse_duration     | in     | time                         | The duration the pulsed value should be held before     |
+|          |                    |        |                              | returning to the initial value. Must be greater than    |
+|          |                    |        |                              | 0 ns.                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| signal   | data_port          | inout  | std_logic_vector             | The GPIO signal to which the pulse is applied           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_BFM_SCOPE ("GPIO BFM").              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel. For more information see  |
+|          |                    |        |                              | :ref:`vvc_framework_verbosity_ctrl`.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | config             | in     | :ref:`t_gpio_bfm_config      | Configuration of BFM behavior and restrictions. Default |
+|          |                    |        | <t_gpio_bfm_config>`         | value is C_GPIO_BFM_CONFIG_DEFAULT.                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    gpio_pulse("101100", 20 ns, "Pulse data value 101100 for 20 ns", data_port, C_SCOPE, shared_msg_id_panel, C_GPIO_BFM_CONFIG_DEFAULT);
+
+    -- Suggested usage (requires local overload, see 'Local BFM overloads' section):
+    gpio_pulse("101100", 20 ns, "Pulse data for 20 ns", data_port);
+
+
 Local BFM overloads
 ==================================================================================================================================
 A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB 
@@ -556,9 +605,13 @@ Configuration Record
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | disabled with NO_ALERT severity by default.     |
+| unwanted_transaction_checkin\| boolean                      | false           | Enable unwanted transaction checking            |
+| g_enabled                    |                              |                 |                                                 |
+|                              |                              |                 |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_gpio_unwanted_transa\| C_GPIO_UNWANTED\| Severity of alert to be issued if unwanted      |
+|                              | ction<t_gpio_unwanted_transa\| _TRANSACTION    | transactions are detected on the DUT outputs.   |
+|                              | ction>`                      |                 |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -848,6 +901,48 @@ the command is scheduled to run, the executor calls the BFM :ref:`gpio_expect_st
     gpio_expect_stable(GPIO_VVCT, 0, x"0D", 100 us, FROM_NOW, 2 ms, "Read UART RX until CR is found and check that it remains stable for 100 us", ERROR, C_SCOPE);
 
 
+.. _gpio_pulse_vvc:
+
+gpio_pulse()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a pulse command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the 
+command is scheduled to run, the executor calls the BFM :ref:`gpio_pulse_bfm` procedure. The output is pulsed for the specified
+duration and then returned to its initial value.
+
+.. code-block::
+
+    gpio_pulse(VVCT, vvc_instance_idx, data, pulse_duration, msg, [scope])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data               | in     | std_logic_vector             | The data value to be pulsed. Narrower values are        |
+|          |                    |        |                              | normalized to the VVC data width before being passed    |
+|          |                    |        |                              | to the BFM. Too wide values will cause a UVVM alert.    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | pulse_duration     | in     | time                         | The duration the pulsed value should be held before     |
+|          |                    |        |                              | returning to the initial value                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT defined in     |
+|          |                    |        |                              | adaptations_pkg.                                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    gpio_pulse(GPIO_VVCT, 0, "101100", 20 ns, "Pulse data value 101100 for 20 ns", C_SCOPE);
+
+
+
+
 Activity Watchdog
 ==================================================================================================================================
 .. include:: rst_snippets/vip_activity_watchdog.rst
@@ -902,21 +997,34 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the GPIO VVC scoreboard using the ``gpio_vvc_sb``.
 
+.. _t_gpio_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_gpio_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| gpio_vvc_if             | :ref:`t_alert_level`         | ERROR           | 
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_gpio_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_gpio_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-For GPIO VVC, the unwanted activity detection is disabled by default with severity NO_ALERT.
+    -- Set severity of alert the signal
+    shared_gpio_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.gpio_vvc_if := ERROR;
 
-When the unwanted activity detection is enabled, the GPIO set/get/check methods would not work as expected. To use these VVC 
-methods, the unwanted activity detection must be disabled. 
+For GPIO VVC, the unwanted transaction detection is disabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+When the unwanted transaction detection is enabled, the GPIO set/get/check methods would not work as expected. To use these VVC 
+methods, the unwanted transaction detection must be disabled. 
+
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

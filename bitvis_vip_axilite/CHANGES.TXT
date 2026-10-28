@@ -1,6 +1,18 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v4.1.3
+----------
+Released: 2026-10-27
+- Changed the VVC transaction info trigger default value from '0' to 'Z' to fix multiple executor-issue.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+- Fixed the BFM and VVC leaving AWVALID, WVALID, BREADY, ARVALID or RREADY asserted after a timeout.
+
 v4.1.2
 ----------
 Released: 2026-02-14
@@ -73,7 +85,7 @@ Released: 2023-03-10
 - Added one delta cycle delay in the setup for read and write process in VVC.
 - Added PR from @runeben fixing a VVC issue by adding an extra delta cycle delay in the beginning of the
   read and write executors.
-  
+
 v2.9.1
 ----------
 Released: 2022-05-05
@@ -84,7 +96,7 @@ v2.9.0
 Released: 2021-10-22
 - Added support to force the VVC to execute only one transaction at a time
 - Fixed bug where await_completion in certain cases didn't detect that the VVC was finished
-- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential 
+- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential
   problems with fetch_result
 
 v2.8.3
@@ -128,7 +140,7 @@ Released: 2020-05-19
 - Added shared_axilite_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section and BFM config record description.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 
 v2.6.1
@@ -158,14 +170,14 @@ Released: 2020-01-24
 - Added new BFM synchronisation methods with default SYNC_ON_CLOCK_ONLY.
   The BFM will synchronise and start with falling edge, detect clock period, and
   exit after a quarter clock period.
-- BFM config defaults setup_time, hold_time and clock_period are now 
+- BFM config defaults setup_time, hold_time and clock_period are now
   default -1 ns, i.e. will require user configuration if BFM synchronisation is
   used with other than SYNC_ON_CLOCK_ONLY.
-- VVC command insert_delay() will raise a TB_ERROR when called if the 
-  bfm_config.clock_period has not been set.  
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- VVC command insert_delay() will raise a TB_ERROR when called if the
+  bfm_config.clock_period has not been set.
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
-  
+
 v2.4.0
 ----------
 Released: 2019-12-04

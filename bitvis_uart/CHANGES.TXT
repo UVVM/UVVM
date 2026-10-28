@@ -1,6 +1,13 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.2.0
+----------
+Released: 2026-10-27
+- Extended UART data width support from 7-8 to 5-9 bits. (Default remains 8)
+- Added generic GC_DATA_WIDTH for configurable data width.
+- Removed outdated ghdl_compile_all_and_simulate.sh. Use compile_all_and_simulate.sh with ghdl as simulator instead.
+
 v1.1.9
 ----------
 Released: 2025-09-17
@@ -20,13 +27,13 @@ Released: 2024-03-08
 v1.1.6
 ----------
 Released: 2021-10-22
-- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util
   packages.
 
 v1.1.5
 ----------
 Released: 2019-11-21
-- Fixed an issue when receiving back-to-back transactions 
+- Fixed an issue when receiving back-to-back transactions
   could cause the DUT to issue an alert.
 - Updated LICENSE.TXT
 

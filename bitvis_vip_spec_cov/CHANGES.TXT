@@ -1,6 +1,16 @@
 Bitvis VIP Specification Coverage - Overview on Versions and Changes
 ==============================================================
 
+v2.1.0
+----------
+Released: 2026-10-27
+- Exit codes for post-processing script: run_spec_cov.py now returns 0 for complete compliant coverage, 1 for technical failures,
+  2 for non-compliant requirements, and 3 for incomplete coverage or warnings.
+  All technical failures now return 1; the previous error-specific exit codes (7-28) are removed.
+  When run without a requirement list, unlisted tick-offs are judged by their tick-off result instead of returning 3.
+- run_basic_demo.py and run_advanced_demo.py now only fall back to ModelSim/Questa .do scripts when HDLRegression is not
+  installed, instead of on any error.
+
 v2.0.2
 ----------
 Released: 2026-02-14
@@ -30,7 +40,7 @@ v1.1.1
 ----------
 Released: 2024-08-16
 - Updated spec_cov methods signature to match in specification and body.
-- Fixed bug where a COMPLIANT status might overwrite NOT_TESTED status for super requirement. 
+- Fixed bug where a COMPLIANT status might overwrite NOT_TESTED status for super requirement.
 - Clear old testcase name before setting new testcase name in initialize_req_cov.
 
 v1.1.0
@@ -75,7 +85,7 @@ Released: 2022-05-05
 v0.5.1
 ----------
 Released: 2021-05-26
-- Fixed crash that could occur if a requirement and testcase were listed 
+- Fixed crash that could occur if a requirement and testcase were listed
   in combination multiple times.
 
 v0.5.0

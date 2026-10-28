@@ -656,9 +656,13 @@ Configuration Record
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_sbi_unwanted_transac\| C_SBI_UNWANTED\ | Severity of alert to be issued if unwanted      |
+|                              | tion<t_sbi_unwanted_transact\| _TRANSACTION    | transactions are detected on the DUT outputs.   |
+|                              | ion>`                        |                 |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -994,23 +998,36 @@ data width is smaller than the default scoreboard width, we recommend zero-paddi
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the SBI VVC scoreboard using the ``sbi_vvc_sb``.
 
+.. _t_sbi_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_sbi_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| rdata                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
+    
+    -- Disable unwanted transaction checking
+    shared_sbi_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-    shared_sbi_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Set severity of alert for the signal
+    shared_sbi_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.rdata := ERROR;
 
 Note that the ready signal is not monitored in this VVC. When the ready signal is in use, i.e. *sbi_bfm_config.use_ready_signal := true*, 
-the ready signal is allowed to be set independently of the enable signal (wena, rena), and there is no method to differentiate 
-between the unwanted activity and intended activity. When the ready signal is not in use, i.e. *sbi_bfm_config.use_ready_signal := false*, 
-the ready signal holds its level high. See `SBI protocol`_ for more information on the ready signal.
+the ready signal is allowed to be set independently of the enable signal (wena, rena). When the ready signal is not in use, i.e. 
+*sbi_bfm_config.use_ready_signal := false*, the ready signal holds its level high. See `SBI protocol`_ for more information on the 
+ready signal.
 
-For SBI VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For SBI VVC, the unwanted transaction detection is enabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

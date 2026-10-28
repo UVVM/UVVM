@@ -6,7 +6,7 @@ UVVM: ID_BLOCKING                        0.0 ns  TB sync_seq                    
 UVVM:                                                                           uninitialized flag, it will be created.'
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:            10 ns   TB seq
+UVVM:             : ns   TB seq
 UVVM:                    The flag FLAG_A was already blocked. 'This flag should already be blocked.'
 UVVM: 
 UVVM: ID_UTIL_SETUP                     10.0 ns  TB seq.                        incremented expected WARNINGs by 1.

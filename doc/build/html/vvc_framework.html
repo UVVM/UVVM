@@ -142,7 +142,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#data-routing-options">Data routing options</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#compile-scripts">Compile Scripts</a></li>
 </ul>
 </li>
@@ -167,7 +167,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#command-executor">Command Executor</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#command-terminator">Command Terminator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#clock-period">Clock period</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#unwanted-activity">Unwanted activity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#unwanted-transaction">Unwanted transaction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#additional-for-multi-channel-vvcs">Additional for multi-channel VVCs</a></li>
 </ul>
 </li>
@@ -256,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -479,7 +480,7 @@ sequencers or processes have finished before calling <cite>await_uvvm_completion
 <p>If there is only need to check for VVCs to be inactive with no pending commands to be executed, one can also use the
 <a class="reference internal" href="#await-completion"><span class="std std-ref">await_completion()</span></a> procedure:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example: Wait for all VVCs to finish</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_VVCS</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for all the VVCs to finish&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_VVCS</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for all the VVCs to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>If there are no VVCs in the testbench and only want to check for scoreboards to be empty, one can also use the
@@ -612,25 +613,25 @@ adaptations_pkg.</p></td>
 <span class="p">...</span>
 <span class="n">add_to_vvc_list</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">);</span>
 <span class="n">add_to_vvc_list</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_CHANNELS</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">ANY_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for any VVC in the list to finish&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- keep v_vvc_list entries for later</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ANY_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for any VVC in the list to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- keep v_vvc_list entries for later</span>
 
 <span class="c1">-- Example, wait for all VVCs to finish (ALL_OF):</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_prot_vvc_list</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="n">add_to_vvc_list</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">);</span>
 <span class="n">add_to_vvc_list</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_CHANNELS</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">CLEAR_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for any VVC in the list to finish&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- can be used without ALL_OF, clear v_vvc_list entries</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">CLEAR_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for any VVC in the list to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span><span class="w"> </span><span class="c1">-- can be used without ALL_OF, clear v_vvc_list entries</span>
 
 <span class="c1">-- Example, wait for a specific VVC to finish:</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for SBI to finish.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for UART RX to finish.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for all I2C VVCs to finish.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for SBI to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for UART RX to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for all I2C VVCs to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example, wait for a specific VVC command index to finish:</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for SBI cmd &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_cmd_idx</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot; to finish.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Waiting for SBI cmd "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">v_cmd_idx</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">" to finish."</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example, broadcast to all VVCs (ALL_VVCS):</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_VVCS</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for all the VVCs to finish&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_VVCS</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for all the VVCs to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -685,7 +686,7 @@ waiting for several VVCs to finish command execution.</p></td>
 <span class="p">...</span>
 <span class="n">add_to_vvc_list</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">);</span>
 <span class="n">add_to_vvc_list</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_CHANNELS</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for any VVC in the list to finish&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_OF</span><span class="p">,</span><span class="w"> </span><span class="n">my_vvc_list</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">KEEP_LIST</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for any VVC in the list to finish"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="n">v_vvc_list</span><span class="p">.</span><span class="n">clear_list</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- clear all VVC entries from list</span>
 </pre></div>
@@ -774,11 +775,11 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">enable_log_msg</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enabling SBI BFM logging&quot;</span><span class="p">);</span>
-<span class="n">enable_log_msg</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enabling UART TX BFM logging&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">enable_log_msg</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">"Enabling SBI BFM logging"</span><span class="p">);</span>
+<span class="n">enable_log_msg</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">"Enabling UART TX BFM logging"</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Broadcast:</span>
-<span class="n">enable_log_msg</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enabling BFM logging for all VVCs&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">enable_log_msg</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">"Enabling BFM logging for all VVCs"</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -851,11 +852,11 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">disable_log_msg</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disabling SBI BFM logging&quot;</span><span class="p">);</span>
-<span class="n">disable_log_msg</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disabling UART TX BFM logging&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">disable_log_msg</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">"Disabling SBI BFM logging"</span><span class="p">);</span>
+<span class="n">disable_log_msg</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">ID_LOG_BFM</span><span class="p">,</span><span class="w"> </span><span class="s">"Disabling UART TX BFM logging"</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Broadcast:</span>
-<span class="n">disable_log_msg</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_MESSAGES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disables all messages in all VVCs&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">disable_log_msg</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="n">ALL_MESSAGES</span><span class="p">,</span><span class="w"> </span><span class="s">"Disables all messages in all VVCs"</span><span class="p">,</span><span class="w"> </span><span class="n">NON_QUIET</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -914,10 +915,10 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">flush_command_queue</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Flushing command queue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">flush_command_queue</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"Flushing command queue"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Broadcast:</span>
-<span class="n">flush_command_queue</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Flushing command queues&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">flush_command_queue</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="s">"Flushing command queues"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1004,14 +1005,14 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">fetch_result</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_data</span><span class="p">,</span><span class="w"> </span><span class="n">v_is_ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching read-result&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_data</span><span class="p">,</span><span class="w"> </span><span class="n">v_is_ok</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching read-result"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Full example:</span>
-<span class="n">sbi_read</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_FIFO_GET</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from FIFO&quot;</span><span class="p">);</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_FIFO_GET</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from FIFO"</span><span class="p">);</span>
 <span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Retrieve the command index</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for sbi_read to finish&quot;</span><span class="p">);</span>
-<span class="n">fetch_result</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_data</span><span class="p">,</span><span class="w"> </span><span class="n">v_is_ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching read-result&quot;</span><span class="p">);</span>
-<span class="n">check_value</span><span class="p">(</span><span class="n">v_is_ok</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Readback OK via fetch_result()&quot;</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for sbi_read to finish"</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_data</span><span class="p">,</span><span class="w"> </span><span class="n">v_is_ok</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching read-result"</span><span class="p">);</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">v_is_ok</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">"Readback OK via fetch_result()"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1076,11 +1077,11 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">insert_delay</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;50 ns delay&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">insert_delay</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100T delay&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">insert_delay</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"50 ns delay"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">insert_delay</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="s">"100T delay"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Broadcast:</span>
-<span class="n">insert_delay</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert 50 ns delay to all VVCs&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">insert_delay</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Insert 50 ns delay to all VVCs"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1139,10 +1140,10 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">terminate_current_command</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Terminating current command&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">terminate_current_command</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"Terminating current command"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Broadcast:</span>
-<span class="n">terminate_current_command</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Terminating current command in all VVCs&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">terminate_current_command</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="s">"Terminating current command in all VVCs"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1202,10 +1203,10 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">terminate_all_commands</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Terminating all commands&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">terminate_all_commands</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"Terminating all commands"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Broadcast:</span>
-<span class="n">terminate_all_commands</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Terminating all commands in all VVCs&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">terminate_all_commands</span><span class="p">(</span><span class="n">VVC_BROADCAST</span><span class="p">,</span><span class="w"> </span><span class="s">"Terminating all commands in all VVCs"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1333,7 +1334,7 @@ the fetch_result method has been completed.</p>
 </pre></div>
 </div>
 <p>And then:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fetch_result</span><span class="p">(</span><span class="n">SPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result of SPI receive operation&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fetch_result</span><span class="p">(</span><span class="n">SPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_data</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching result of SPI receive operation"</span><span class="p">);</span>
 <span class="n">v_data_out</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">v_data</span><span class="p">(</span><span class="mi">7</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1642,7 +1643,7 @@ modify testbenches to control the randomization seeds. If a new BFM requires thi
 with the generated seeds whenever a randomized method is used, as shown below. Note that the maximum length of the instance_name
 is defined by C_RAND_MAX_INSTANCE_NAME_LENGTH in adaptations_pkg.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.</span>
-<span class="n">shared_rand_seeds_register</span><span class="p">.</span><span class="n">update_and_get_seeds</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="na">&#39;instance_name</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">);</span>
+<span class="n">shared_rand_seeds_register</span><span class="p">.</span><span class="n">update_and_get_seeds</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="na">'instance_name</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">);</span>
 <span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">valid_low_max_random_duration</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">v_valid_low_duration</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -2124,16 +2125,16 @@ Figure 6 uses aliasing to simplify and improve code readability, while Figure 7 
 <span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="k">loop</span><span class="o">:</span>
 
 <span class="w">    </span><span class="c1">-- Wait for available transaction info</span>
-<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="p">(</span><span class="n">sbi_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">(</span><span class="n">uart_rx_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="p">(</span><span class="n">sbi_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">)</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">(</span><span class="n">uart_rx_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">sbi_transaction_trigger</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">sbi_transaction_trigger</span><span class="na">'event</span><span class="w"> </span><span class="k">then</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">READ</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">COMPLETED</span><span class="w"> </span><span class="k">then</span>
 <span class="w">        </span><span class="n">v_sb_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 <span class="w">        </span><span class="n">sbi_vvc_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span>
 <span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">uart_rx_transaction_trigger</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">uart_rx_transaction_trigger</span><span class="na">'event</span><span class="w"> </span><span class="k">then</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">COMPLETED</span><span class="w"> </span><span class="k">then</span>
 <span class="w">        </span><span class="n">v_sb_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 <span class="w">        </span><span class="n">uart_vvc_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_UART_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span>
@@ -2155,15 +2156,15 @@ these scoreboard approaches are already performed by the VVCs.</p>
 <span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="k">loop</span><span class="o">:</span>
 
 <span class="w">    </span><span class="c1">-- Wait for available transaction info</span>
-<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="p">(</span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">(</span><span class="n">global_uart_vvc_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="p">(</span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">)</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">(</span><span class="n">global_uart_vvc_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">)</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">)</span><span class="na">'event</span><span class="w"> </span><span class="k">then</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WRITE</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IN_PROGRESS</span><span class="w"> </span><span class="k">then</span>
 <span class="w">        </span><span class="n">uart_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
 <span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">global_uart_vvc_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">)</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">global_uart_vvc_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">)</span><span class="na">'event</span><span class="w"> </span><span class="k">then</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">shared_uart_vvc_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TRANSMIT</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">shared_uart_vvc_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IN_PROGRESS</span><span class="w"> </span><span class="k">then</span>
 <span class="w">        </span><span class="n">sbi_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">shared_uart_vvc_transaction</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
 <span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
@@ -2197,13 +2198,13 @@ record element.</p>
 <span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">rec_element</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_avalon_st_element</span>
 <span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="k">is</span>
 <span class="k">begin</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;channel value: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">rec_element</span><span class="p">.</span><span class="n">channel_value</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;, data: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">rec_element</span><span class="p">.</span><span class="n">data_array</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="s">"channel value: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">rec_element</span><span class="p">.</span><span class="n">channel_value</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">", data: "</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">rec_element</span><span class="p">.</span><span class="n">data_array</span><span class="p">);</span>
 <span class="k">end</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="nc">avalon_st_element_to_string</span><span class="p">;</span>
 
 <span class="c1">-- define Avalon ST scoreboard</span>
 <span class="k">package</span><span class="w"> </span><span class="n">avalon_st_sb_pkg</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">bitvis_vip_scoreboard</span><span class="p">.</span><span class="n">generic_sb_package</span>
 <span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span><span class="n">t_element</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_avalon_st_element</span><span class="p">,</span>
-<span class="w">            </span><span class="n">element_match</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;=&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="n">element_match</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">"="</span><span class="p">,</span>
 <span class="w">            </span><span class="n">to_string_element</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">avalon_st_element_to_string</span><span class="p">);</span>
 <span class="k">use</span><span class="w"> </span><span class="nn">avalon_st_sb_pkg.</span><span class="k">all</span><span class="p">;</span>
 
@@ -2220,9 +2221,9 @@ record element.</p>
 <span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="k">loop</span><span class="o">:</span>
 
 <span class="w">    </span><span class="c1">-- Wait for available transaction info</span>
-<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">avalon_st_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">avalon_st_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'1'</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">avalon_st_transaction_trigger</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">avalon_st_transaction_trigger</span><span class="na">'event</span><span class="w"> </span><span class="k">then</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">COMPLETED</span><span class="w"> </span><span class="k">then</span>
 <span class="w">        </span><span class="n">v_sb_element</span><span class="p">.</span><span class="n">channel_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">channel_value</span><span class="p">(</span><span class="n">C_CH_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 <span class="w">        </span><span class="n">v_sb_element</span><span class="p">.</span><span class="n">data_array</span><span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_ARRAY_LENGTH</span><span class="o">-</span><span class="mi">1</span><span class="p">)(</span><span class="n">C_WORD_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
@@ -2374,68 +2375,69 @@ UART_VVC, use the receive-command (and not the expect-command) to forward receiv
 </table>
 </section>
 </section>
-<section id="unwanted-activity-detection">
-<span id="vvc-framework-unwanted-activity"></span><h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT
-generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected,
-e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the
-DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.</p>
-<p>All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted
-activity. The default value for this configuration is set to ERROR in the adaptations_pkg, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UNWANTED_ACTIVITY_SEVERITY</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_alert_level</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
+<section id="unwanted-transaction-detection">
+<span id="vvc-framework-unwanted-transaction"></span><h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>The UVVM VVCs support detection of unwanted or unexpected transactions from the DUT. This mechanism will give an alert if the DUT
+generates any unexpected bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is
+output from the DUT when it is not expected, e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive,
+they start to monitor continuously on the DUT outputs. When unwanted transactions are detected, the VVCs issue an alert of severity.</p>
+<p>All VVC method packages contain a configuration in the t_vvc_config type for enabling unwanted transaction detection. The default
+value for this configuration is set to true in the adaptations_pkg, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span><span class="w"> </span><span class="n">C_UNWANTED_TRANSACTION_CHECKING_DEFAULT</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be
-changed to a different value. To disable this feature in the testbench, e.g. for UART VVC:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_uart_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be
+changed individually for each monitored signal, e.g. for GMII VVC:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rxd</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">WARNING</span><span class="p">;</span>
+<span class="n">shared_gmii_vvc_config</span><span class="p">(</span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rxdv</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection
+<p>If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted transaction detection
 will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be
 initiated from I2C slave VVC 2 and 3.</p>
 <figure class="align-center" id="id28">
-<a class="reference internal image-reference" href="_images/multiple_slave_VVCs_example.png"><img alt="False unwanted activity detection" src="_images/multiple_slave_VVCs_example.png" style="width: 550pt;" />
+<a class="reference internal image-reference" href="_images/multiple_slave_VVCs_example.png"><img alt="False unwanted transaction detection" src="_images/multiple_slave_VVCs_example.png" style="width: 550pt;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT</span><a class="headerlink" href="#id28" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 2 A false unwanted transaction detection scenario when multiple slave VVCs are connected to the same master DUT</span><a class="headerlink" href="#id28" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs
-as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.</p>
+<p>In order to avoid getting any false alerts, the unwanted transaction must be disabled on the inactive VVCs
+as shown below example. Note that the unwanted transaction detection must be enabled again after the data transfer is complete.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="c1">-- Expect data on I2C slave VVC 1.</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 2</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 3</span>
-<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmit data&quot;</span><span class="p">);</span>
-<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Slave check data&quot;</span><span class="p">);</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 3</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmit data"</span><span class="p">);</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Slave check data"</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 2</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 3</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 3</span>
 
 <span class="c1">-- Expect data on I2C slave VVC 2</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 3</span>
-<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmit data&quot;</span><span class="p">);</span>
-<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Slave check data&quot;</span><span class="p">);</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 3</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmit data"</span><span class="p">);</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Slave check data"</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 3</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 3</span>
 
 <span class="c1">-- Expect data on I2C slave VVC 3</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted activity on slave VVC 2</span>
-<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmit data&quot;</span><span class="p">);</span>
-<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Slave check data&quot;</span><span class="p">);</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Disable unwanted transaction on slave VVC 2</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_TX_DATA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmit data"</span><span class="p">);</span>
+<span class="n">i2c_slave_check</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mh">x"55"</span><span class="p">,</span><span class="w"> </span><span class="s">"Slave check data"</span><span class="p">);</span>
 <span class="n">await_completion</span><span class="p">(</span><span class="n">I2C_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 1</span>
-<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span><span class="w">    </span><span class="c1">-- Enable unwanted activity on slave VVC 2</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 1</span>
+<span class="n">shared_i2c_vvc_config</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w">  </span><span class="c1">-- Enable unwanted transaction on slave VVC 2</span>
 </pre></div>
 </div>
 <p>When the reset signal is set, signal transitions may occur from the uninitialized value ‘U’. Additionally, using pull-up or pull-down
 resistors in the design may cause signal transitions from the weak 1 state ‘H’ to the logic high ‘1’ or from the weak 0 state ‘L’
 to the logic low ‘0’, and vice versa. It is also possible for signal transitions to occur from the unknown state ‘X’ to the logic low ‘0’
 or logic high ‘1’ when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by
-the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.</p>
+the unwanted transaction detection. The signal transitions that are excluded from unwanted transaction detection are summarized below.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>From</p></th>
@@ -2463,16 +2465,17 @@ the unwanted activity detection. The signal transitions that are excluded from u
 </tr>
 </tbody>
 </table>
-<p>For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.</p>
+<p>For a VVC specific description of this feature, see the Unwanted Transaction Detection section in each VVC’s documentation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period
-after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge,
-causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.</p></li>
-<li><p>The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the
-VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to
-differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.</p></li>
+<li><p>For VVCs with a valid signal, the unwanted transaction detection is ignored when the valid signal goes low within one clock
+period after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising
+edge, causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC’s documentation for
+more information.</p></li>
+<li><p>The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted transaction detection when the
+VVC is a master device. The ready signal is allowed to be set independently of the valid signal. See each VVC’s documentation
+for more information.</p></li>
 </ul>
 </div>
 </section>
@@ -2847,12 +2850,12 @@ for SBI we think it only makes sense for ‘READ’.</div>
 <section id="clock-period">
 <h4>Clock period<a class="headerlink" href="#clock-period" title="Link to this heading"></a></h4>
 <p>Finds the clock period of the clk signal. This is only necessary when there is a ‘valid’ signal, such as tvalid in the AXI4-stream
-protocol, in order to ignore a false trigger of the unwanted activity detection mechanism. <strong>(Only if the Unwanted activity
+protocol, in order to ignore a false trigger of the unwanted transaction detection mechanism. <strong>(Only if the Unwanted transaction
 detection feature was selected).</strong></p>
 </section>
-<section id="unwanted-activity">
-<h4>Unwanted activity<a class="headerlink" href="#unwanted-activity" title="Link to this heading"></a></h4>
-<p>Monitors unwanted activity from the DUT. For more information see <a class="reference internal" href="#vvc-framework-unwanted-activity"><span class="std std-ref">Unwanted Activity Detection</span></a>. <strong>(Only if the Unwanted
+<section id="unwanted-transaction">
+<h4>Unwanted transaction<a class="headerlink" href="#unwanted-transaction" title="Link to this heading"></a></h4>
+<p>Monitors unwanted transaction from the DUT. For more information see <a class="reference internal" href="#vvc-framework-unwanted-transaction"><span class="std std-ref">Unwanted Transaction Detection</span></a>. <strong>(Only if the Unwanted
 activity detection feature was selected).</strong></p>
 </section>
 <section id="additional-for-multi-channel-vvcs">
@@ -3039,7 +3042,8 @@ with a given time.</p></li>
 <li><p>result_queue_count_*: Result queue specifications. DEPRECATED, use instead entity generic constants.</p></li>
 <li><p>bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.</p></li>
 <li><p>msg_id_panel: The message ID panel that the VVC shall use.</p></li>
-<li><p>unwanted_activity_severity: Severity of alert for the unwanted activity detection.</p></li>
+<li><p>unwanted_transaction_checking_enabled: Enable unwanted transaction checking.  <strong>(Only if the Unwanted Transaction Detection feature was selected).</strong></p></li>
+<li><p>unwanted_transaction_severity: Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected.  <strong>(Only if the Unwanted Transaction Detection feature was selected).</strong></p></li>
 </ul>
 </div></blockquote>
 <p>A constant C_&lt;NAME&gt;_VVC_CONFIG_DEFAULT is defined for this type to use as default value.</p>
@@ -3261,7 +3265,7 @@ add the following features, which you can select by typing ‘y’ or ‘n’ an
 <div><ul class="simple">
 <li><p><strong>Scoreboard</strong></p></li>
 <li><p><strong>Transaction info</strong></p></li>
-<li><p><strong>Unwanted activity detection</strong></p></li>
+<li><p><strong>Unwanted transaction detection</strong></p></li>
 </ul>
 </div></blockquote>
 </li>

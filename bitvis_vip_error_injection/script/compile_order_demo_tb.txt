@@ -1,0 +1,3 @@
+# library bitvis_vip_error_injection
+# toplevel: ei_demo_tb
+../tb/ei_demo_tb.vhd

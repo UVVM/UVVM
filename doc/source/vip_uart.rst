@@ -40,7 +40,7 @@ Default value for the record is C_UART_BFM_CONFIG_DEFAULT.
 | bit_time                     | time                         | C_UNDEFINED_TIME| The time it takes to transfer one bit. Will     |
 |                              |                              |                 | raise an error if not set.                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| num_data_bits                | natural range 7 to 8         | 8               | Number of data bits to send per transmission    |
+| num_data_bits                | natural range 5 to 9         | 8               | Number of data bits to send per transmission    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | idle_state                   | std_logic                    | '1'             | Bit value when line is idle                     |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -402,10 +402,10 @@ Generics
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Name                         | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| GC_DATA_WIDTH                | natural                      | 8               | Bits in the UART byte. Note that this will      |
-|                              |                              |                 | initialize num_data_bits in the BFM             |
-|                              |                              |                 | configuration and override the setting in       |
-|                              |                              |                 | GC_UART_CONFIG.                                 |
+| GC_DATA_WIDTH                | natural                      | 8               | Bits in the UART byte (supported range: 5..9).  |
+|                              |                              |                 | Note that this will initialize num_data_bits in |
+|                              |                              |                 | the BFM configuration and override the setting  |
+|                              |                              |                 | in GC_UART_CONFIG.                              |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC Maximum value |
 |                              |                              |                 | is defined by C_UART_VVC_MAX_INSTANCE_NUM       |
@@ -513,9 +513,13 @@ Configuration Record
 | bit_rate_checker             | t_bit_rate_checker           | C_BIT_RATE_CHEC\| Configure the UART property checker behavior    |
 |                              |                              | KER_DEFAULT     |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_uart_unwanted_transa\| C_UART_UNWANTED\| Severity of alert to be issued if unwanted      |
+|                              | ction<t_uart_unwanted_transa\| _TRANSACTION    | transactions are detected on the DUT outputs.   |
+|                              | ction>`                      |                 |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -809,22 +813,35 @@ the vvc_methods_pkg.vhd, e.g. ::
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the UART VVC scoreboard using the ``uart_vvc_sb``.
 
+.. _t_uart_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_uart_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| uart_vvc_rx             | :ref:`t_alert_level`         | ERROR           | 
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-For UART VVC, the unwanted activity detection is enabled by default with severity ERROR.
+    -- Set severity of alert for each signal
+    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.uart_vvc_rx := WARNING;
+
+For UART VVC, the unwanted transaction detection is enabled by default.
 
 .. note::
 
     This feature is only implemented on uart_rx_vvc.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation
@@ -974,7 +991,7 @@ Default value for the record is C_UART_MONITOR_INTERFACE_CONFIG_DEFAULT.
 +==============================+==============================+=================+=================================================+
 | bit_time                     | time                         | 0 ns            | The time it takes to transfer one bit           |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| num_data_bits                | natural range 7 to 8         | 8               | Number of data bits to send per transmission    |
+| num_data_bits                | natural range 5 to 9         | 8               | Number of data bits to send per transmission    |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | parity                       | :ref:`t_parity`              | PARITY_ODD      | Transmission parity bit                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+

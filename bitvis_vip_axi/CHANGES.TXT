@@ -1,6 +1,25 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
+v3.1.3
+----------
+Released: 2026-10-27
+- Changed the VVC transaction info trigger default value from '0' to 'Z' to fix multiple executor-issue.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+- Fixed the VVC looping forever on an RVALID timeout, and keeping the command after a response with an unexpected
+  RID/BID. The channel queue is now flushed on an unexpected ID. From pull request by user FPonGitHub.
+- Fixed the BFM and VVC leaving AWVALID, WVALID, BREADY, ARVALID or RREADY asserted after a timeout.
+  From pull request by user EMAZAC.
+- Fixed the VVC checking the ID and data of a response that was never received after a BVALID or RVALID timeout.
+  The command is now removed from the channel queue without these checks.
+- Added overloads of write_response_channel_receive() and read_data_channel_receive() in axi_channel_handler_pkg
+  with a timeout output.
+
 v3.1.2
 ----------
 Released: 2026-02-14
@@ -85,7 +104,7 @@ v0.2.0
 Released: 2021-10-22
 - Added support to force the VVC to execute only one transaction at a time.
 - Fixed bug where await_completion in certain cases didn't detect that the VVC was finished.
-- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential 
+- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential
   problems with fetch_result.
 
 v0.1.1

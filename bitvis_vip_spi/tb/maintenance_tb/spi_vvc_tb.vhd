@@ -66,6 +66,7 @@ architecture behav of spi_vvc_tb is
     sclk_to_ss_n     => 301 ns,
     inter_word_delay => 0 ns,
     match_strictness => MATCH_EXACT,
+    bit_order        => MSB_FIRST,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
     id_for_bfm_poll  => ID_BFM_POLL
@@ -79,6 +80,7 @@ architecture behav of spi_vvc_tb is
     sclk_to_ss_n     => 301 ns,
     inter_word_delay => 0 ns,
     match_strictness => MATCH_EXACT,
+    bit_order        => MSB_FIRST,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
     id_for_bfm_poll  => ID_BFM_POLL
@@ -92,6 +94,7 @@ architecture behav of spi_vvc_tb is
     sclk_to_ss_n     => 301 ns,
     inter_word_delay => 0 ns,
     match_strictness => MATCH_EXACT,
+    bit_order        => MSB_FIRST,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
     id_for_bfm_poll  => ID_BFM_POLL
@@ -105,6 +108,7 @@ architecture behav of spi_vvc_tb is
     sclk_to_ss_n     => 301 ns,
     inter_word_delay => 0 ns,
     match_strictness => MATCH_EXACT,
+    bit_order        => MSB_FIRST,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
     id_for_bfm_poll  => ID_BFM_POLL
@@ -365,7 +369,7 @@ begin
     variable result              : std_logic_vector(bitvis_vip_spi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     variable v_cmd_idx           : natural;
     variable v_num_words         : positive;
-    variable v_alert_level       : t_alert_level;
+    variable v_alert_config      : t_spi_unwanted_transaction;
 
     -- DUT ports towards VVC interface
     constant C_NUM_VVC_SIGNALS : natural := 4;
@@ -376,25 +380,47 @@ begin
 
     -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
     procedure toggle_vvc_if (
-      constant alert_level : in t_alert_level
+      constant alert_config : in t_spi_unwanted_transaction
     ) is
-      constant C_BFM_CONFIG          : t_spi_bfm_config := C_SPI_BFM_CONFIG_MODE0; -- The applicable timing parameters are equal for all configs
-      variable v_num_expected_alerts : natural;
-      variable v_rand                : t_rand;
-      variable v_hold_time           : time;
+      -- Alert counter array including NO_ALERT (ignored in checks) for easier indexing
+      type t_alert_counters_arr is array(t_alert_level) of natural;
+      constant C_BFM_CONFIG              : t_spi_bfm_config := C_SPI_BFM_CONFIG_MODE0; -- The applicable timing parameters are equal for all configs
+      variable v_expected_alert_counters : t_alert_counters_arr;
+      variable v_rand                    : t_rand;
+      variable v_hold_time               : time;
     begin
+      -- Populate local alert counters
+      for alert_level in v_expected_alert_counters'range loop
+        v_expected_alert_counters(alert_level) := get_alert_counter(alert_level);
+      end loop;
+      -- Set expected alerts before toggle
+      if alert_config.ss_n /= NO_ALERT then
+        -- Only 2 since ss_n toggle can happen within accepted time period
+        -- Increment when applicable
+        increment_expected_alerts_and_stop_limit(alert_config.ss_n, 2);
+      end if;
+      if alert_config.sclk /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.sclk, 4);
+      end if;
+      if alert_config.mosi /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.mosi, 4);
+      end if;
+      if alert_config.miso /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_config.miso, 4);
+      end if;
       for i in 0 to C_NUM_VVC_SIGNALS loop
-        -- Set expected alerts before toggle
-        if alert_level /= NO_ALERT then
-          if i = 0 then
-            increment_expected_alerts_and_stop_limit(alert_level, C_NUM_VVC_SIGNALS);
-          else
-            increment_expected_alerts_and_stop_limit(alert_level, 1);
-          end if;
-        end if;
-
+        -- Update expected alert counters
+        case i is
+          when 0 => v_expected_alert_counters(alert_config.ss_n) := v_expected_alert_counters(alert_config.ss_n) + 1;    
+                    v_expected_alert_counters(alert_config.sclk) := v_expected_alert_counters(alert_config.sclk) + 1;
+                    v_expected_alert_counters(alert_config.mosi) := v_expected_alert_counters(alert_config.mosi) + 1;
+                    v_expected_alert_counters(alert_config.miso) := v_expected_alert_counters(alert_config.miso) + 1;
+          when 1 => v_expected_alert_counters(alert_config.ss_n) := v_expected_alert_counters(alert_config.ss_n) + 1;
+          when 2 => v_expected_alert_counters(alert_config.sclk) := v_expected_alert_counters(alert_config.sclk) + 1;
+          when 3 => v_expected_alert_counters(alert_config.mosi) := v_expected_alert_counters(alert_config.mosi) + 1;
+          when 4 => v_expected_alert_counters(alert_config.miso) := v_expected_alert_counters(alert_config.miso) + 1;
+        end case;
         -- Force new value
-        v_num_expected_alerts := get_alert_counter(alert_level);
         case i is
           when 0 => dut_ss_n <= force not dut_ss_n;
                     dut_sclk <= force not dut_sclk;
@@ -407,38 +433,33 @@ begin
         end case;
         v_hold_time := v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
         wait for v_hold_time;
-        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                 v_num_expected_alerts + 1;
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
-
-        -- Set expected alerts before toggle
-        if alert_level /= NO_ALERT then
-          if i < 2 then
-            -- Toggles ss_n
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
+        
+        -- Update expected alert counters
+        case i is
+          when 0 =>
+            -- No alert for ss_n if toggle happens within accepted time period
             if v_hold_time > (C_BFM_CONFIG.sclk_to_ss_n - minimum(C_BFM_CONFIG.spi_bit_time/2, C_BFM_CONFIG.ss_n_to_sclk) + std.env.resolution_limit) then
-              if i = 0 then
-                increment_expected_alerts_and_stop_limit(alert_level, C_NUM_VVC_SIGNALS);
-              else
-                increment_expected_alerts_and_stop_limit(alert_level, 1);
-              end if;
-            else -- v_hold_time <= (C_BFM_CONFIG.sclk_to_ss_n - minimum(C_BFM_CONFIG.spi_bit_time/2, C_BFM_CONFIG.ss_n_to_sclk) + std.env.resolution_limit)
-              if i = 0 then
-                increment_expected_alerts_and_stop_limit(alert_level, C_NUM_VVC_SIGNALS - 1); -- No alert for ss_n because toggle happened within accepted time period
-              end if;
-            end if; -- v_hold_time
-          else
-            -- Does not toggle ss_n
-            if i = 0 then
-              increment_expected_alerts_and_stop_limit(alert_level, C_NUM_VVC_SIGNALS);
-            else
-              increment_expected_alerts_and_stop_limit(alert_level, 1);
+              increment_expected_alerts_and_stop_limit(alert_config.ss_n, 1);
+              v_expected_alert_counters(alert_config.ss_n) := v_expected_alert_counters(alert_config.ss_n) + 1;
+            end if;         
+            v_expected_alert_counters(alert_config.sclk) := v_expected_alert_counters(alert_config.sclk) + 1;
+            v_expected_alert_counters(alert_config.mosi) := v_expected_alert_counters(alert_config.mosi) + 1;
+            v_expected_alert_counters(alert_config.miso) := v_expected_alert_counters(alert_config.miso) + 1;
+          when 1 =>
+            -- No alert for ss_n if toggle happens within accepted time period
+            if v_hold_time > (C_BFM_CONFIG.sclk_to_ss_n - minimum(C_BFM_CONFIG.spi_bit_time/2, C_BFM_CONFIG.ss_n_to_sclk) + std.env.resolution_limit) then
+              increment_expected_alerts_and_stop_limit(alert_config.ss_n, 1);
+              v_expected_alert_counters(alert_config.ss_n) := v_expected_alert_counters(alert_config.ss_n) + 1;
             end if;
-          end if;
-        end if;
-
+          when 2 => v_expected_alert_counters(alert_config.sclk) := v_expected_alert_counters(alert_config.sclk) + 1;
+          when 3 => v_expected_alert_counters(alert_config.mosi) := v_expected_alert_counters(alert_config.mosi) + 1;
+          when 4 => v_expected_alert_counters(alert_config.miso) := v_expected_alert_counters(alert_config.miso) + 1;
+        end case;
         -- Set back original value
-        v_num_expected_alerts := get_alert_counter(alert_level);
         case i is
           when 0 => dut_ss_n <= release;
                     dut_sclk <= release;
@@ -451,26 +472,11 @@ begin
         end case;
         wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
         wait for 0 ns;
-
-        if i < 2 then
-          -- Toggles ss_n
-          if v_hold_time > (C_BFM_CONFIG.sclk_to_ss_n - minimum(C_BFM_CONFIG.spi_bit_time/2, C_BFM_CONFIG.ss_n_to_sclk) + std.env.resolution_limit) then
-            v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-              v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-              v_num_expected_alerts + 1;
-          else -- v_hold_time <= (C_BFM_CONFIG.sclk_to_ss_n - minimum(C_BFM_CONFIG.spi_bit_time/2, C_BFM_CONFIG.ss_n_to_sclk) + std.env.resolution_limit)
-            v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-              v_num_expected_alerts + C_NUM_VVC_SIGNALS - 1 when i = 0 else
-              v_num_expected_alerts;
-          end if; -- v_hold_time
-        else -- i >=2
-          -- Does not toggle ss_n
-          v_num_expected_alerts := 0 when alert_level = NO_ALERT else
-                                  v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
-                                  v_num_expected_alerts + 1;
-        end if;
         wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
-        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Loop through all error levels (except NO_ALERT) and check with expected
+        for alert_level in v_expected_alert_counters(NOTE to t_alert_level'right)'range loop
+          check_value(get_alert_counter(alert_level), v_expected_alert_counters(alert_level), TB_NOTE, "Unwanted transaction alert was expected", C_SCOPE, ID_NEVER);
+        end loop;
       end loop;
     end procedure;
 
@@ -950,7 +956,7 @@ begin
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Testing functionality of terminate_access for slave side, one word", C_SCOPE);
       ----------------------------------------------------------------------------------------------------------------------------
-      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to terminate command
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors due to terminate command
       for iteration in 1 to 10 loop
         tx_word := std_logic_vector(to_unsigned(iteration, GC_DATA_WIDTH)); --Making individual tx words per loop
         spi_master_transmit_and_check(not(tx_word), tx_word);
@@ -967,12 +973,12 @@ begin
         await_slave_tx_completion(50 ms);
         await_master_tx_completion(50 ms);
       end loop;
-      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := C_SPI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_transaction_checking_enabled := C_SPI_VVC_CONFIG_DEFAULT.unwanted_transaction_checking_enabled;
 
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Testing functionality of terminate_access for slave side, multi-word", C_SCOPE);
       ----------------------------------------------------------------------------------------------------------------------------
-      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to terminate command
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_transaction_checking_enabled := false; -- Unwanted transaction errors due to terminate command
       for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
         for i in 1 to iteration loop
           master_word_array(i - 1) := random(GC_DATA_WIDTH);
@@ -989,7 +995,7 @@ begin
           check_value(master_word_array(i - 1), result(GC_DATA_WIDTH - 1 downto 0), ERROR, "check received data");
         end loop;
       end loop;
-      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := C_SPI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_transaction_checking_enabled := C_SPI_VVC_CONFIG_DEFAULT.unwanted_transaction_checking_enabled;
 
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying correct function of multi-word transaction from slave after previous terminated access", C_SCOPE);
@@ -1008,6 +1014,45 @@ begin
       await_slave_rx_completion(50 ms);
 
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 0 ns;
+
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying bit order functionality", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
+      for iteration in 0 to 3 loop
+        if iteration = 0 then
+          -- Set bit order to LSB_FIRST in both master and slave VVC
+          shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.bit_order := LSB_FIRST;
+          shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).bfm_config.bit_order := LSB_FIRST;
+        elsif iteration = 1 then
+          -- Set bit order to LSB_FIRST only in master VVC
+          shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.bit_order := LSB_FIRST;
+          shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).bfm_config.bit_order := MSB_FIRST;
+          -- Expect alerts
+          increment_expected_alerts_and_stop_limit(TB_ERROR);
+          increment_expected_alerts_and_stop_limit(ERROR);
+        elsif iteration = 2 then
+          -- Set bit order to LSB_FIRST only in slave VVC
+          shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.bit_order := MSB_FIRST;
+          shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).bfm_config.bit_order := LSB_FIRST;
+          -- Expect alerts
+          increment_expected_alerts_and_stop_limit(TB_ERROR);
+          increment_expected_alerts_and_stop_limit(ERROR);
+        else
+          -- Set bit order to MSB_FIRST in both master and slave VVC
+          shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.bit_order := MSB_FIRST;
+          shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).bfm_config.bit_order := MSB_FIRST;
+        end if;
+
+        -- Generate random word
+        slave_tx_data_word  := random(GC_DATA_WIDTH);
+        master_tx_data_word := random(GC_DATA_WIDTH);
+        -- Transmit and check
+        spi_slave_transmit_and_check(slave_tx_data_word, master_tx_data_word, C_VVC_IDX_SLAVE_1);
+        spi_master_transmit_and_check(master_tx_data_word, slave_tx_data_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
+
+        await_master_tx_completion(50 ms);
+        await_slave_rx_completion(50 ms);
+      end loop;
 
     elsif GC_TESTCASE = "spi_master_dut_to_slave_VVC" then
       ----------------------------------------------------------------------------------------------------------------------------
@@ -1379,23 +1424,31 @@ begin
 
       spi_vvc_sb.report_counters(ALL_INSTANCES);
 
-    elsif GC_TESTCASE = "test_unwanted_activity" then
+    elsif GC_TESTCASE = "test_unwanted_transaction" then
       ----------------------------------------------------------------------------------------------------------------------------
-      log(ID_LOG_HDR_LARGE, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+      log(ID_LOG_HDR_LARGE, "Testing Unwanted Transaction Detection in VVC", C_SCOPE);
       ----------------------------------------------------------------------------------------------------------------------------
       increment_expected_alerts(TB_WARNING, 1); -- Because of time stamp truncate warning
-      for i in 0 to 2 loop
+      for i in 0 to 4 loop
         -- Test different alert severity configurations
         if i = 0 then
-          v_alert_level := C_SPI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to default");
+          v_alert_config := C_SPI_VVC_CONFIG_DEFAULT.unwanted_transaction_severity;
         elsif i = 1 then
-          v_alert_level := FAILURE;
+        log(ID_SEQUENCER, "Setting unwanted_transaction_severity to ERROR");
+        v_alert_config := (others => ERROR);
+        elsif i = 2 then
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to FAILURE");
+          v_alert_config := (others => FAILURE);
+        elsif i = 3 then
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to NO_ALERT");
+          v_alert_config := (others => NO_ALERT);
         else
-          v_alert_level := NO_ALERT;
+          log(ID_SEQUENCER, "Setting unwanted_transaction_severity to different values");
+          v_alert_config := (FAILURE, others => ERROR);  
         end if;
-        log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
-        shared_spi_vvc_config(C_SPI_VVC_2).unwanted_activity_severity := v_alert_level;
-        shared_spi_vvc_config(C_SPI_VVC_3).unwanted_activity_severity := v_alert_level;
+        shared_spi_vvc_config(C_SPI_VVC_2).unwanted_transaction_severity := v_alert_config;
+        shared_spi_vvc_config(C_SPI_VVC_3).unwanted_transaction_severity := v_alert_config;
 
         log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
         tx_word := random(GC_DATA_WIDTH);
@@ -1416,7 +1469,7 @@ begin
         end if;
 
         log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
-        toggle_vvc_if(v_alert_level);
+        toggle_vvc_if(v_alert_config);
       end loop;
 
     end if;

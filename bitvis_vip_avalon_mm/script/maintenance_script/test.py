@@ -56,24 +56,30 @@ hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard"
 # Add Avalon MM VIP
 hr.add_files("../../src/*.vhd", "bitvis_vip_avalon_mm")
 hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_avalon_mm")
-# Add TB/TH
-hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_mm")
-# Add TB dependencies
-hr.add_files("../../tb/maintenance_tb/altera_files/altera/*.vhd", "altera", com_options=lib_options)
-hr.add_files("../../tb/maintenance_tb/altera_files/altera_mf/*.vhd", "altera_mf", com_options=lib_options)
-hr.add_files("../../tb/maintenance_tb/altera_files/220model/*.vhd", "lpm", com_options=lib_options)
+# The testbenches instantiate Altera vendor IP, which depends on the Altera simulation libraries. Those
+# libraries require the IEEE VITAL packages and cannot be analysed by GHDL, so the testbenches are skipped
+# under GHDL (the VIP library itself is still compiled as a check).
+if simulator_name != "GHDL":
+    # Add TB/TH
+    hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_mm")
+    # Add TB dependencies
+    hr.add_files("../../tb/maintenance_tb/altera_files/altera/*.vhd", "altera", com_options=lib_options)
+    hr.add_files("../../tb/maintenance_tb/altera_files/altera_mf/*.vhd", "altera_mf", com_options=lib_options)
+    hr.add_files("../../tb/maintenance_tb/altera_files/220model/*.vhd", "lpm", com_options=lib_options)
 
-# Setup VVC TB test generics
-hr.add_generics(entity="avalon_mm_vvc_pipeline_tb", generics=["GC_DELTA_DELAYED_VVC_CLK", True])
-hr.add_generics(entity="avalon_mm_vvc_pipeline_tb", generics=["GC_DELTA_DELAYED_VVC_CLK", False])
+    # Setup VVC TB test generics
+    hr.add_generics(entity="avalon_mm_vvc_pipeline_tb", generics=["GC_DELTA_DELAYED_VVC_CLK", True])
+    hr.add_generics(entity="avalon_mm_vvc_pipeline_tb", generics=["GC_DELTA_DELAYED_VVC_CLK", False])
+else:
+    print("GHDL detected: skipping the Altera-dependent testbenches, the VIP library is compiled as a check only.")
 
 hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
 
-# No tests run error
-if num_passing_tests == 0:
+# No tests run error. Under GHDL the testbenches are skipped, so zero tests is expected there.
+if num_passing_tests == 0 and simulator_name != "GHDL":
     sys.exit(1)
 # Remove output only if OK
 if hr.check_run_results(exp_fail=0) is True:

@@ -399,11 +399,16 @@ non_compliant_string                = "NON_COMPLIANT"
 not_tested_compliant_string         = "NOT_TESTED"
 parsed_string                       = "Has been parsed by run_spec_cov.py script for total coverage"
 delimiter                           = "," # Default delimiter - will be updated from partial coverage file
+C_EXIT_SUCCESS                      = 0
+C_EXIT_TECHNICAL_FAILURE            = 1
+C_EXIT_NON_COMPLIANT                = 2
+C_EXIT_INCOMPLETE                   = 3
 
 
 reporting_dict = {}
 previously_executed_coverage_list = []
 messages_in_warnings_file = False
+listed_req_warnings_in_warnings_file = False
 reqs_in_non_compliance_file = False
 
 
@@ -420,6 +425,7 @@ def write_warning_file(run_configuration,container):
     warnings_filename = filename[: filename.rfind(".")] + ".warnings.csv"
     file_empty = True
     global messages_in_warnings_file
+    global listed_req_warnings_in_warnings_file
 
     try:
         with open(warnings_filename, mode='w', newline='') as to_file:
@@ -451,6 +457,9 @@ def write_warning_file(run_configuration,container):
                             csv_writer.writerow(["No testcases specified for requirement " + requirement.name + ". At least one testcase must be specified per requirement in strictness 2"])
                             file_empty = False
 
+            # Warnings written so far concern listed requirements only
+            listed_req_warnings_found = not file_empty
+
             # Write lines for non-listed requirements ticked off
             if reporting_dict.get("not_listed_requirements"):
                 for requirement in reporting_dict.get("not_listed_requirements"):
@@ -472,10 +481,12 @@ def write_warning_file(run_configuration,container):
 
         if not file_empty:
             messages_in_warnings_file = True
+        if listed_req_warnings_found:
+            listed_req_warnings_in_warnings_file = True
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], warnings_filename))
-        abort(error_code = 26, msg = error_msg)
+        abort(msg = error_msg)
 
 
 ## Helper function. Write name of items in a list as a string, with each item separated by "&".
@@ -600,7 +611,7 @@ def write_extended_req_entry(requirement, compound_req_name, run_configuration, 
                         # If this check fails, it means there is a bug somewhere.
                         if testcase_string == "":
                             error_msg = ("Bug alert: Error in write_extended_req_entry. Empty testcase_string. Shouldn't occur for compliant req.")
-                            abort(error_code = 10, msg = error_msg)
+                            abort(msg = error_msg)
 
                         # Write line to CSV file
                         if req_type == "NONCOMPOUND":
@@ -679,7 +690,7 @@ def write_req_compliance_files(run_configuration, container, delimiter):
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_compliance_minimal_filename))
-        abort(error_code = 27, msg = error_msg)
+        abort(msg = error_msg)
 
 
     #----------------------------------------------------------------------------------------------
@@ -721,7 +732,7 @@ def write_req_compliance_files(run_configuration, container, delimiter):
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_compliance_extended_filename))
-        abort(error_code = 9, msg = error_msg)
+        abort(msg = error_msg)
 
 def write_non_compliance_file(run_configuration, container, delimiter):
     # For each NON-COMPLIANT or NOT_TESTED requirement, write a line with status and reason for lack of compliance
@@ -880,7 +891,7 @@ def write_non_compliance_file(run_configuration, container, delimiter):
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], non_compliance_filename))
-        abort(error_code = 1, msg = error_msg)
+        abort(msg = error_msg)
 
 def write_testcase_list_file(run_configuration, container, delimiter):
     filename = run_configuration.get("spec_cov")
@@ -904,7 +915,7 @@ def write_testcase_list_file(run_configuration, container, delimiter):
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], testcase_list_filename))
-        abort(error_code = 1, msg = error_msg)
+        abort(msg = error_msg)
 
 def terminal_present_results(container, delimiter) -> dict:
     testcase_pass_list = []
@@ -1019,6 +1030,8 @@ def terminal_present_results(container, delimiter) -> dict:
             print(item)
         print("\n")
 
+    return reporting_dict
+
 
 
 
@@ -1121,7 +1134,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
 
     elif not strictness == '0': # Strictness neither 0, 1 or 2
         msg = ("strictness level %s outside limits 0-2" %(strictness))
-        abort(error_code = 7, msg = msg)
+        abort(msg = msg)
 
     # Set requirement status based on sub-requirements
     for requirement in container.get_requirement_list():
@@ -1246,7 +1259,7 @@ def build_mapping_req_list(run_configuration, container, delimiter):
             
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
-        abort(error_code = 8, msg = error_msg)
+        abort(msg = error_msg)
 
 
 def build_req_list(run_configuration, container, delimiter):
@@ -1351,7 +1364,7 @@ def build_req_list(run_configuration, container, delimiter):
         container.organize_requirements()
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_file))
-        abort(error_code = 10, msg = error_msg)
+        abort(msg = error_msg)
 
 
 
@@ -1383,7 +1396,7 @@ def find_testcase_in_pc_header(partial_coverage_file, container):
                     return testcase_object
     except:
         error_msg = ("Error %s occurred with file %s while collection testcase names from PC header" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 11, msg = error_msg)
+        abort(msg = error_msg)
     return
 
 
@@ -1417,7 +1430,7 @@ def find_pc_summary(partial_coverage_file, container):
                     continue
     except:
         error_msg = ("Error %s occurred with file %s when searching for PC summary line" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 12, msg = error_msg)
+        abort(msg = error_msg)
     return False
 
 def find_parsed_string(partial_coverage_file):
@@ -1444,7 +1457,7 @@ def find_parsed_string(partial_coverage_file):
                     continue
     except:
         error_msg = ("Error %s occurred with file %s when searching for the parsed string" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 13, msg = error_msg)
+        abort(msg = error_msg)
     return False
 
 def build_partial_cov_list(run_configuration, container):
@@ -1473,17 +1486,17 @@ def build_partial_cov_list(run_configuration, container):
     # Check if partial coverage file has been specified
     if not(partial_coverage_file_name):
         msg = "Error partial coverage file not specified"
-        abort(error_code = 14, msg = msg)
+        abort(msg = msg)
 
     # Check if partial coverage file is missing
     if not(os.path.isfile(partial_coverage_file_name)):
         msg = "Error partial coverage file not found: " + partial_coverage_file_name
-        abort(error_code = 15, msg = msg)
+        abort(msg = msg)
 
     # Check if partial coverage file is empty
     if (os.path.getsize(partial_coverage_file_name) == 0):
         msg = "Error partial coverage file empty: " + partial_coverage_file_name
-        abort(error_code = 16, msg = msg)
+        abort(msg = msg)
 
     #==========================================================================
     # Create a list of partial_cov_files to read
@@ -1501,7 +1514,7 @@ def build_partial_cov_list(run_configuration, container):
             partial_coverage_files.append(partial_coverage_file_name)
     except:
         error_msg = ("Error %s occurred with file %s when creating list of PC files" %(sys.exc_info()[0], partial_coverage_file_name))
-        abort(error_code = 17, msg = error_msg)
+        abort(msg = error_msg)
 
     #==========================================================================
     # Check if listed files are files, i.e. files listed using wildcards,
@@ -1534,7 +1547,7 @@ def build_partial_cov_list(run_configuration, container):
         if len(partial_coverage_files) == 0:
             pc_file_name = "NO_FILE_FOUND"
             msg = "Error: No valid partial coverage files found"
-            abort(error_code = 15, msg = msg)
+            abort(msg = msg)
 
         pc_file = partial_coverage_files[0]
 
@@ -1551,7 +1564,7 @@ def build_partial_cov_list(run_configuration, container):
 
     except:
         error_msg = ("Error %s occurred with file %s when searching for CSV delimiter in PC file %s" %(sys.exc_info()[0], partial_coverage_file_name, pc_file_name))
-        abort(error_code = 18, msg = error_msg)
+        abort(msg = error_msg)
 
     #==========================================================================
     # Read requirements, testcases and results
@@ -1607,7 +1620,7 @@ def build_partial_cov_list(run_configuration, container):
 
     except:
         error_msg = ("Error %s occurred with file %s when reading PC file" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 19, msg = error_msg)
+        abort(msg = error_msg)
 
     #==========================================================================
     # Write the parsed string at the bottom of the partial_cov files
@@ -1628,28 +1641,32 @@ def build_partial_cov_list(run_configuration, container):
 
     except:
         error_msg = ("Error %s occurred with file %s when writing a parsed message to PC file" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 20, msg = error_msg)
+        abort(msg = error_msg)
 
-def abort(error_code = 0, msg = ""):
+def print_arguments():
     """
-    This method will list all available arguments and exit the program
-    with an exit code.
-
-    Parameters:
-
-        error_code (int) : exit code set when stopping program.
-        
-        msg (str) : string displayed prior to listing arguments.
+    This method will list all available arguments.
     """
     global def_args
-
-    if msg:
-        print(msg)
 
     print("\nrun_spec_cov command line arguments (see QuickReference for more details):\n")
     for item in def_args:
         print(item.get("help"))
-    sys.exit(error_code)
+
+def abort(msg = ""):
+    """
+    This method will list all available arguments and exit the program
+    with the technical failure exit code.
+
+    Parameters:
+
+        msg (str) : string displayed prior to listing arguments.
+    """
+    if msg:
+        print(msg)
+
+    print_arguments()
+    sys.exit(C_EXIT_TECHNICAL_FAILURE)
 
 def arg_parser(arguments):
     """
@@ -1715,11 +1732,12 @@ def arg_parser(arguments):
                     run_configuration[key_word] = arg_value
 
                 elif argument[1] == "help":
-                    abort(error_code = 0)
+                    print_arguments()
+                    sys.exit(C_EXIT_SUCCESS)
 
     # No legal arguments given - present help and exit
     if run_configuration == run_parameter_default:
-        abort(error_code = 0, msg = "Please call script with one of the following arguments.")
+        abort(msg = "Please call script with one of the following arguments.")
     else:
         if run_configuration.get("strictness") == "X": run_configuration["strictness"] = '0' 
         return run_configuration
@@ -1746,7 +1764,7 @@ def set_run_config_from_file(run_configuration):
             lines = config_file.readlines()
     except:
         error_msg = ("Error %s occurred with configuration file %s" %(sys.exc_info()[0], config_file_name))
-        abort(error_code = 21, msg = error_msg)
+        abort(msg = error_msg)
 
     # Add each line in the config file as a list to the arguments_lists
     for line in lines:
@@ -1774,20 +1792,20 @@ def validate_run_configuration(run_configuration):
     strictness = run_configuration.get("strictness")
     if not (strictness in ["0", "1", "2"]):
         msg = ("Strictness level %s is outside the valid range 0-2" %(strictness))
-        abort(error_code = 28, msg = msg)
+        abort(msg = msg)
 
     if run_configuration.get("strictness") != "0":
         if run_configuration.get("requirement_list") == None:
             msg = ("Strictness level %s requires a requirement file" %(run_configuration.get("strictness")))
-            abort(error_code = 22, msg = msg)
+            abort(msg = msg)
 
     if run_configuration.get("partial_cov") == None:
         msg = ("Missing argument for partial coverage file")
-        abort(error_code = 23, msg = msg)
+        abort(msg = msg)
 
     if run_configuration.get("spec_cov") == None:
         msg = ("Missing argument for specification coverage file")
-        abort(error_code = 24, msg = msg)
+        abort(msg = msg)
 
     return
 
@@ -1814,7 +1832,7 @@ def run_housekeeping(run_configuration):
         run_configuration.get("config")
         ):
        error_msg = ("ERROR! --clean argument used in combination with other arguments.")
-       abort(error_code = 25, msg = error_msg)
+       abort(msg = error_msg)
 
     else:
         clean_dir = run_configuration.get("clean")
@@ -1827,15 +1845,15 @@ def run_housekeeping(run_configuration):
                     num_files_removed += 1
                 
             msg = ("Successfully removed %d CSV files." %(num_files_removed))
-            exit_code = 0
+            exit_code = C_EXIT_SUCCESS
         except:
             msg = ("Error %s occurred" %(sys.exc_info()[0]))
-            exit_code = 1
+            exit_code = C_EXIT_TECHNICAL_FAILURE
 
 
-        if exit_code == 1:
+        if exit_code == C_EXIT_TECHNICAL_FAILURE:
             # Done, exit
-            abort(error_code = exit_code, msg = msg)
+            abort(msg = msg)
         else:
             print(msg)
             sys.exit(exit_code)
@@ -1847,6 +1865,26 @@ def version_check():
     """
     if sys.version_info[0] < 3:
         raise Exception("Python version 3 is required to run this script!")
+
+
+def determine_exit_code(reporting: dict, warnings_found: bool, listed_req_warnings_found: bool,
+                        requirement_list_given: bool) -> int:
+    """Return the process status represented by the completed reports."""
+    if reporting["non_compliant_requirements"]:
+        return C_EXIT_NON_COMPLIANT
+    if not requirement_list_given:
+        # Without a requirement list every tick-off is unlisted, so unlisted requirements are judged by
+        # their tick-off results, and their 'not found in input requirement list' warnings are ignored.
+        if any(requirement.compliance == non_compliant_string for requirement in reporting["not_listed_requirements"]):
+            return C_EXIT_NON_COMPLIANT
+        if reporting["non_verified_requirements"] or listed_req_warnings_found:
+            return C_EXIT_INCOMPLETE
+        return C_EXIT_SUCCESS
+    if (reporting["non_verified_requirements"]
+            or reporting["not_listed_requirements"]
+            or warnings_found):
+        return C_EXIT_INCOMPLETE
+    return C_EXIT_SUCCESS
 
 
 def main():
@@ -1911,7 +1949,7 @@ def main():
     #==========================================================================
     # Write the results to CSV files
     #==========================================================================
-    terminal_present_results(container, delimiter)
+    reporting = terminal_present_results(container, delimiter)
 
     write_req_compliance_files(run_configuration, container, delimiter)
     write_warning_file(run_configuration, container)
@@ -1924,6 +1962,8 @@ def main():
     if reqs_in_non_compliance_file:
         print("Non-compliant or not verified requirements found. Please see " + file_name + ".req_non_compliance.csv for details.")
 
+    return determine_exit_code(reporting, messages_in_warnings_file, listed_req_warnings_in_warnings_file,
+                               run_configuration.get("requirement_list") is not None)
+
 if __name__ == "__main__":
-    main()
-    
+    sys.exit(main())

@@ -154,10 +154,11 @@ print("Running demos...")
 
 hr = HDLRegression()
 
-# Must clean the hdlregression directory to avoid issues with previous test structure
-(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/run_basic_demo.py -c", True)
+# Must clean the hdlregression directory to avoid issues with previous test structure.
+# Pass on the simulator, since each demo script parses its own arguments.
+(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/run_basic_demo.py -c -s " + simulator_name, True)
 num_failing_tests += ret_code
-(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/run_advanced_demo.py -c", True)
+(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/run_advanced_demo.py -c -s " + simulator_name, True)
 num_failing_tests += ret_code
 
 # Remove output only if OK

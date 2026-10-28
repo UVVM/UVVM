@@ -1,0 +1,11 @@
+
+run_spec_cov command line arguments (see QuickReference for more details):
+
+-r                  Path/requirements.csv contains requirements
+-p                  Path/testcase_result.csv partial coverage file from VHDL simulations
+-m                  Optional: path/subrequirements.csv requirement map file
+-s                  Path/spec_cov.csv specification coverage file
+--strictness N      Optional: will set specification coverage to strictness (1-2) (0=default)
+--config            Optional: configuration file with all arguments
+--clean (DIR)       Will clean any/all partial coverage file(s) (default=current directory)
+--help              This help screen

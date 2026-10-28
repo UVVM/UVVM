@@ -451,9 +451,13 @@ Configuration Record
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_gmii_unwanted_transa\| C_GMII_UNWANTED\| Severity of alert to be issued if unwanted      |
+|                              | ction<t_gmii_unwanted_transa\| _TRANSACTION    | transactions are detected on the DUT outputs.   |
+|                              | ction>`                      |                 |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -681,26 +685,42 @@ the vvc_methods_pkg.vhd, e.g. ::
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the GMII VVC scoreboard using the ``gmii_vvc_sb``.
 
+.. _t_gmii_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_gmii_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| rxd                     | :ref:`t_alert_level`         | NO_ALERT        | 
++-------------------------+------------------------------+-----------------+
+| rxdv                    | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-The unwanted activity detection is ignored when the rxdv signal goes low within one clock period after the VVC becomes inactive. 
+    -- Set severity of alert for each signal
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.rxd  := WARNING;
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.rxdv := ERROR;
+
+The unwanted transaction detection is ignored when the rxdv signal goes low within one clock period after the VVC becomes inactive. 
 This is to handle the situation when the read command exits before the next rising edge, causing signal transitions during the 
 first clock cycle after the VVC is inactive. 
 
-For GMII VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For GMII VVC, the unwanted transaction detection is enabled by default.
 
 .. note::
 
     This feature is only implemented on gmii_rx_vvc.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

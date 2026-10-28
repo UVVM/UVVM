@@ -105,7 +105,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-transaction-detection">Unwanted Transaction Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Compilation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id7">Simulator compatibility and setup</a></li>
 </ul>
@@ -131,6 +131,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -274,7 +275,7 @@ is clock_period/4. An alert is reported if
 hold_time exceeds clock_period/2.</p></td>
 </tr>
 <tr class="row-odd"><td><p>bfm_sync</p></td>
-<td><p><span class="xref std std-ref">t_bfm_sync</span></p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
 <td><p>SYNC_ON_CLOCK_ONLY</p></td>
 <td><p>When set to SYNC_ON_CLOCK_ONLY the BFM will
 always wait for the first falling edge of the
@@ -475,11 +476,11 @@ value is C_AXILITE_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">axilite_write</span><span class="p">(</span><span class="mh">x&quot;00101155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAAA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
-<span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00F1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing first byte to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">axilite_write</span><span class="p">(</span><span class="mh">x"00101155"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AAAA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"00F1"</span><span class="p">,</span><span class="w"> </span><span class="s">"01"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing first byte to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAAA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to DMA&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AAAA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to DMA"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -565,10 +566,10 @@ value is C_AXILITE_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">axilite_read</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">axilite_read</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">axilite_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading from IO device&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">axilite_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">"Reading from IO device"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -653,10 +654,10 @@ value is C_AXILITE_BFM_CONFIG_DEFAULT.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">axilite_check</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<span class="n">axilite_check</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"3B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 
-<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
-<span class="n">axilite_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking data in UART RX register&quot;</span><span class="p">);</span>
+<span class="c1">-- Suggested usage (requires local overload, see 'Local BFM overloads' section):</span>
+<span class="n">axilite_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x"3B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Checking data in UART RX register"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -834,11 +835,11 @@ to UNPRIVILEGED_NONSECURE_DATA (“010”).</p>
 <h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
 <p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
 process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending data to Peripheral 1&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">"Sending data to Peripheral 1"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>rather than</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axilite_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">"Sending data to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axilite_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AXILITE_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>By defining the local overload as e.g.</p>
@@ -1110,12 +1111,16 @@ tion</p></td>
 <td><p>Waits until the previous transaction is
 completed before starting the next one</p></td>
 </tr>
-<tr class="row-even"><td><p>unwanted_activity_severity</p></td>
-<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
-<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<tr class="row-even"><td><p>unwanted_transaction_checking_enabled</p></td>
+<td><p>boolean</p></td>
+<td><p>C_UNWANTED_TRANSACTION_CHECKING_DEFAULT</p></td>
+<td><p>Enable unwanted transaction checking</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_transaction_severity</p></td>
+<td><p><a class="reference internal" href="#t-axilite-unwanted-transaction"><span class="std std-ref">t_axilite_unwanted_transaction</span></a></p></td>
+<td><p>C_AXILITE_UNWANTED_TRANSACTION</p></td>
 <td><p>Severity of alert to be issued if unwanted
-activity on the DUT outputs is detected. It is
-enabled with ERROR severity by default.</p></td>
+transactions are detected on the DUT outputs.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1150,7 +1155,7 @@ test sequencer. The record contents can be seen below:</p>
 <td><p>natural</p></td>
 <td><p>Previous command index to run</p></td>
 </tr>
-<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<tr class="row-even"><td><p>pending_cmd_cnt</p></td>
 <td><p>natural</p></td>
 <td><p>Pending number of commands in the command queue</p></td>
 </tr>
@@ -1253,9 +1258,9 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0011A000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F102&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F102&quot;</span><span class="p">,</span><span class="w"> </span><span class="mb">b&quot;11&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1155F102&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to DMA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"0011A000"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"F102"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="mh">x"F102"</span><span class="p">,</span><span class="w"> </span><span class="mb">b"11"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">axilite_write</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x"1155F102"</span><span class="p">,</span><span class="w"> </span><span class="s">"Writing data to DMA"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1323,17 +1328,17 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">axilite_read</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00099555&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
-<span class="n">axilite_read</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from IO device&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">axilite_read</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"00099555"</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">axilite_read</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from IO device"</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 
 <span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w">         </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last read</span>
 <span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">          </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read</span>
 <span class="p">...</span>
-<span class="n">axilite_read</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;112252AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">);</span>
+<span class="n">axilite_read</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"112252AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Read from Peripheral 1"</span><span class="p">);</span>
 <span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-<span class="n">await_completion</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for read to finish&quot;</span><span class="p">);</span>
-<span class="n">fetch_result</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from read operation&quot;</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">"Wait for read to finish"</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">"Fetching result from read operation"</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition hint">
@@ -1410,7 +1415,7 @@ adaptations_pkg.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">axilite_check</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00099555&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;393B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">axilite_check</span><span class="p">(</span><span class="n">AXILITE_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x"00099555"</span><span class="p">,</span><span class="w"> </span><span class="mh">x"393B"</span><span class="p">,</span><span class="w"> </span><span class="s">"Check data from Peripheral 1"</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -1658,7 +1663,7 @@ SUCCEEDED during a transaction</p></td>
 i.e. axilite_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
 TO_SB parameter is applied. The AXI4-Lite scoreboard is accessible from the testbench as a shared variable <code class="docutils literal notranslate"><span class="pre">axilite_vvc_sb</span></code>,
 located in the vvc_methods_pkg.vhd, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axilite_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AXILITE_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_axilite_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axilite_vvc_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AXILITE_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_axilite_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">"Adding expected"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The AXI4-Lite scoreboard is per default 256 bits wide standard logic vector. When sending expected result to the scoreboard, where
@@ -1670,25 +1675,62 @@ function, e.g.</p>
 <p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
 Scoreboard commands are available for the AXI4-Lite VVC scoreboard using the <code class="docutils literal notranslate"><span class="pre">axilite_vvc_sb</span></code>.</p>
 </section>
-<section id="unwanted-activity-detection">
-<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
-<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
-bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
-not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
-VVC issues an alert.</p>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
-to a different value. To disable this feature in the testbench, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axilite_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+<section id="unwanted-transaction-detection">
+<span id="t-axilite-unwanted-transaction"></span><h3>Unwanted Transaction Detection<a class="headerlink" href="#unwanted-transaction-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted transactions from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is output from the DUT when it is not
+expected, i.e. read/receive/check/expect VVC methods are not called. Once the VVC is inactive, it starts to monitor continuously on the
+DUT outputs. When an unwanted transaction is detected, the VVC issues an alert.</p>
+<p>This mechanism can also monitor other signals coming from the DUT and generate alerts if any unexpected activity is detected. You can
+enable this by configuring the corresponding <code class="docutils literal notranslate"><span class="pre">unwanted_transaction_severity</span></code> for each signal you want to monitor.</p>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To configure this feature in the testbench, e.g.</p>
+<p><strong>t_axilite_unwanted_transaction</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bvalid</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>bresp</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>NO_ALERT</p></td>
+</tr>
+<tr class="row-even"><td><p>rvalid</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>rdata</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>NO_ALERT</p></td>
+</tr>
+<tr class="row-even"><td><p>rresp</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>NO_ALERT</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Disable unwanted transaction checking</span>
+<span class="n">shared_axilite_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_checking_enabled</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">FALSE</span><span class="p">;</span>
+
+<span class="c1">-- Set severity of alert for each signal</span>
+<span class="n">shared_axilite_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rdata</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">WARNING</span><span class="p">;</span>
+<span class="n">shared_axilite_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_transaction_severity</span><span class="p">.</span><span class="n">rvalid</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ERROR</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>Note that the ready signals (awready, wready, arready) are not monitored in this VVC. The ready signals are allowed to be set
-independently of the valid signals (awvalid, wvalid, arvalid), and there is no method to differentiate between the unwanted activity
-and intended activity. See the AXI4-Lite protocol specification for more information.</p>
-<p>The unwanted activity detection is ignored when the valid signals (bvalid, rvalid) go low within one clock period after the VVC
+independently of the valid signals (awvalid, wvalid, arvalid). See the AXI4-Lite protocol specification for more information.</p>
+<p>The unwanted transaction detection is ignored when the valid signals (bvalid, rvalid) go low within one clock period after the VVC
 becomes inactive. This is to handle the situation when the read command exits before the next rising edge, causing signal transitions
 during the first clock cycle after the VVC is inactive.</p>
-<p>For AXI4-Lite VVC, the unwanted activity detection feature is enabled by default with severity ERROR.</p>
-<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+<p>For AXI4-Lite VVC, the unwanted transaction detection feature is enabled by default.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-transaction"><span class="std std-ref">Essential Mechanisms - Unwanted Transaction Detection</span></a>.</p>
 </section>
 <section id="id6">
 <h3>Compilation<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>

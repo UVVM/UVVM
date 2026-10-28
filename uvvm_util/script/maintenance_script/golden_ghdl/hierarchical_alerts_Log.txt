@@ -387,133 +387,133 @@ UVVM:
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Verifying that alerts propagate correctly for all alert levels
 UVVM: 
 UVVM: ***  NOTE #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  NOTE #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  NOTE #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  NOTE #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  NOTE #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level TB_NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level TB_NOTE
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level TB_WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level TB_WARNING
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level MANUAL_CHECK
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level MANUAL_CHECK
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level MANUAL_CHECK
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level MANUAL_CHECK
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level MANUAL_CHECK
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -521,7 +521,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -529,7 +529,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -537,7 +537,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -545,7 +545,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -553,7 +553,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -561,7 +561,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -569,7 +569,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -577,7 +577,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level TB_ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -585,7 +585,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level TB_ERROR
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -593,7 +593,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -601,7 +601,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -609,7 +609,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -617,7 +617,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -625,7 +625,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -633,7 +633,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -641,7 +641,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #2  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -649,7 +649,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    testing with alert_level TB_FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -657,7 +657,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #4  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    testing with alert_level TB_FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -665,7 +665,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #5  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    testing with alert_level TB_FAILURE
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -923,7 +923,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Verifying alert level printing for several nodes
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    VERIFY THIS
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Disabling all alert levels in entire hierarchy. No alerts between this log message and the
@@ -934,7 +934,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #3  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -942,7 +942,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #6  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -950,7 +950,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #3  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -958,7 +958,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #12  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -966,7 +966,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #15  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -979,7 +979,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -987,7 +987,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #16  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -995,7 +995,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #20  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1005,7 +1005,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
-UVVM:             0 ns   fourth_node -> third_node -> first_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1013,7 +1013,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #10  ***
-UVVM:             0 ns   third_node -> first_node -> TB seq
+UVVM:            -0 ns   third_node -> first_node -> TB seq
 UVVM:                    
 UVVM: =========================================================================================================================================================================
 UVVM: 

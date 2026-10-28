@@ -287,6 +287,10 @@ package body hierarchy_linked_list_pkg is
         end if;
         v_traverse_children_ptr := v_traverse_children_ptr.first_child;
       end loop;
+      -- Keep the simulation status up to date for alerts after report_alert_counters(FINAL)
+      if shared_uvvm_status.simulation_status /= 2 then
+        shared_uvvm_status.simulation_status := mismatch_on_expected_simulation_errors_or_worse;
+      end if;
     end procedure update_uvvm_sim_status;
 
     --
@@ -562,6 +566,10 @@ package body hierarchy_linked_list_pkg is
         end if;
 
         deallocate(v_info);
+
+        if attention /= IGNORE then
+          report_alert_to_simulator(alert_level);
+        end if;
 
         if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
           update_uvvm_sim_status;

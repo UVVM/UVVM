@@ -634,6 +634,24 @@ begin
       --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
       --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
+    ------------------------------------------------------------------------------------------------------------------------------
+    elsif GC_TESTCASE = "hierarchical_alerts_before_init" then
+    ------------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying the global alert hierarchy procedures before the hierarchy is initialized", C_SCOPE);
+      -- initialize_util() only initializes the global hierarchy when C_ENABLE_HIERARCHICAL_ALERTS is true, so it is not
+      -- initialized here. This is the same as calling one of these procedures first in a testbench with hierarchical alerts.
+      check_value(get_hierarchical_alert_top_level_stop_limit(ERROR), 0, ERROR, "Verifying default top level stop limit", C_SCOPE);
+      set_hierarchical_alert_top_level_stop_limit(ERROR, 2);
+      check_value(get_hierarchical_alert_top_level_stop_limit(ERROR), 2, ERROR, "Verifying top level stop limit", C_SCOPE);
+      add_to_alert_hierarchy("test_hier_1");
+      set_stop_limit("test_hier_1", ERROR, 3);
+      increment_expected_alerts("test_hier_1", WARNING);
+      hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
+      check_value(priv_global_hierarchy_tree.get_parent_scope(justify("test_hier_1", left, C_HIERARCHY_NODE_NAME_LENGTH)) = justify(C_BASE_HIERARCHY_LEVEL, left, C_HIERARCHY_NODE_NAME_LENGTH), ERROR, "Verifying parent scope", C_SCOPE);
+      check_value(priv_global_hierarchy_tree.get_stop_limit(justify("test_hier_1", left, C_HIERARCHY_NODE_NAME_LENGTH), ERROR), 3, ERROR, "Verifying stop limit", C_SCOPE);
+      check_value(priv_global_hierarchy_tree.get_expected_alerts(justify("test_hier_1", left, C_HIERARCHY_NODE_NAME_LENGTH), WARNING), 1, ERROR, "Verifying expected alerts", C_SCOPE);
+      print_hierarchical_log(INTERMEDIATE);
+
     end if;
 
     -----------------------------------------------------------------------------

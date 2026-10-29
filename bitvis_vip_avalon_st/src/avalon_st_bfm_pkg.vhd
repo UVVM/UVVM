@@ -337,6 +337,7 @@ package body avalon_st_bfm_pkg is
     variable v_valid_low_duration    : natural                                                                := 0;
     variable v_valid_low_cycle_count : natural                                                                := 0;
     variable v_wait_for_transfer     : boolean                                                                := false;
+    variable v_ready                 : std_logic                                                              := '0';
     variable v_wait_count            : natural                                                                := 0;
     variable v_timeout               : boolean                                                                := false;
     variable v_seeds                 : t_positive_vector(0 to 1);
@@ -462,10 +463,14 @@ package body avalon_st_bfm_pkg is
       end if;
 
       if v_wait_for_transfer then
+        -- Ready is sampled at the rising edge, before the hold time, since the DUT may deassert it right after the edge.
+        -- With ready_latency the delayed ready only changes before the rising edge.
+        v_ready := ready_delayed;
         -- When ready_latency is disabled, assert valid signal right away
         if ready_latency = 0 then
           avalon_st_if.valid <= '1';
           wait until rising_edge(clk);
+          v_ready := ready_delayed;
           if not v_clock_period_checked then -- Only check once
             check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
             v_clock_period_checked := true;
@@ -476,8 +481,9 @@ package body avalon_st_bfm_pkg is
 
         -- Wait for ready to be asserted
         v_wait_count := 1;
-        while ready_delayed = '0' loop
+        while v_ready = '0' loop
           wait until rising_edge(clk);
+          v_ready := ready_delayed;
           -- Wait according to config.bfm_sync setup
           wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
           v_wait_count := v_wait_count + 1;

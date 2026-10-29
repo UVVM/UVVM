@@ -458,10 +458,10 @@ begin
     end loop;
 
     loop
-      -- Sample the ready signal right before the rising edge of the clock.
-      -- This is to ensure ready_delayed is updated before it is sampled in the BFM procedures.
-      wait_until_given_time_before_rising_edge(clk, std.env.resolution_limit, clock_period);
       if vvc_config.ready_latency > 0 then
+        -- Sample the ready signal right before the rising edge of the clock.
+        -- This is to ensure ready_delayed is updated before it is sampled in the BFM procedures.
+        wait_until_given_time_before_rising_edge(clk, std.env.resolution_limit, clock_period);
         ready_delayed_sr <= ready_delayed_sr(ready_delayed_sr'high - 1 downto 0) & avalon_st_vvc_if.ready;
       end if;
       wait until rising_edge(clk);

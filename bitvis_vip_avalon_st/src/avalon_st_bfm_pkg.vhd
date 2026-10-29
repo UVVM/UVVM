@@ -826,7 +826,8 @@ package body avalon_st_bfm_pkg is
         if v_invalid_count >= config.max_wait_cycles then
           v_timeout := true;
           v_done    := true;
-        else
+        -- The cycles where ready is deasserted on purpose (ready_low_duration) don't count
+        elsif v_ready_low_cycle_count = 0 then
           v_invalid_count := v_invalid_count + 1;
         end if;
         wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);

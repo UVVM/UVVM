@@ -338,6 +338,26 @@ begin
       avalon_st_transmit(v_data_stream, C_MAX_CHANNEL);
       avalon_st_expect(v_data_stream, C_MAX_CHANNEL);
 
+      log(ID_LOG_HDR, "Testing that ready deasserted right after a transfer doesn't repeat the data (DUT FIFO gets full)");
+      for i in 0 to 4 loop
+        avalon_st_transmit(v_data_stream);
+      end loop;
+      avalon_st_transmit(v_data_stream(0 to 11)); -- 512 words in total, the FIFO deasserts ready after the last one
+      for i in 0 to 4 loop
+        avalon_st_expect(v_data_stream);
+      end loop;
+      avalon_st_expect(v_data_stream(0 to 11));
+
+      log(ID_LOG_HDR, "Testing that ready deasserted longer than max_wait_cycles doesn't time out");
+      v_avl_st_bfm_config.max_wait_cycles       := 20;
+      v_avl_st_bfm_config.ready_low_at_word_idx := 2;
+      v_avl_st_bfm_config.ready_low_duration    := 30;
+      avalon_st_transmit(v_data_stream(0 to 4));
+      avalon_st_expect(v_data_stream(0 to 4));
+      v_avl_st_bfm_config.max_wait_cycles       := C_AVALON_ST_BFM_CONFIG_DEFAULT.max_wait_cycles;
+      v_avl_st_bfm_config.ready_low_at_word_idx := C_AVALON_ST_BFM_CONFIG_DEFAULT.ready_low_at_word_idx;
+      v_avl_st_bfm_config.ready_low_duration    := C_AVALON_ST_BFM_CONFIG_DEFAULT.ready_low_duration;
+
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_receive(v_data_stream);

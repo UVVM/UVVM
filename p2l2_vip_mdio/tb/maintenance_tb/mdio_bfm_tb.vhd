@@ -46,6 +46,8 @@ architecture func of mdio_bfm_tb is
   constant C_PHY_ADDR   : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00001"; -- = phy.phy_address default
   constant C_OTHER_ADDR : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00010"; -- nobody answers
   constant C_REG        : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "00101";
+  constant C_DEVAD       : unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0) := "00011"; -- the MMD the PHY calls expect
+  constant C_OTHER_DEVAD : unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0) := "00100"; -- another MMD of the same PHY
   -- C_PHY_ADDR / C_REG with bit 0 released by the STA: the pull-up still makes it a '1'
   constant C_PHY_ADDR_PULLED : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "0000Z";
   constant C_REG_PULLED : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "0010Z";
@@ -323,15 +325,49 @@ begin
       mdio_sta_c45_check_post_read_increment(unsigned(C_PHY_ADDR), "00011", x"6666", "c45 check post-read-increment", mdio_if,
                                              terminate_loop, config => v_config);
 
-      log(ID_LOG_HDR, "Frames to other targets are consumed: another PHY address, another DEVAD", C_SCOPE);
+      log(ID_LOG_HDR, "Frames to other PHYs are consumed", C_SCOPE);
       ------------------------------------------------------------
       barrier("other targets");
       mdio_sta_c22_write(unsigned(C_OTHER_ADDR), unsigned(C_REG), x"0BAD", "c22 write to another PHY", mdio_if, terminate_loop,
                          config => v_config);
-      mdio_sta_c45_write(unsigned(C_PHY_ADDR), "00100", x"0BAD", "c45 write to another DEVAD", mdio_if, terminate_loop,
+      mdio_sta_c45_write(unsigned(C_OTHER_ADDR), C_DEVAD, x"0BAD", "c45 write to another PHY", mdio_if, terminate_loop,
                          config => v_config);
-      mdio_sta_c45_write(unsigned(C_PHY_ADDR), "00011", x"7777", "c45 write to this PHY and DEVAD", mdio_if, terminate_loop,
+      mdio_sta_c45_write(unsigned(C_PHY_ADDR), C_DEVAD, x"7777", "c45 write to this PHY and DEVAD", mdio_if, terminate_loop,
                          config => v_config);
+
+      log(ID_LOG_HDR, "A frame to this PHY with another DEVAD is taken: one ERROR each, the frame is handled", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 3);
+      barrier("other DEVAD / expect_write");
+      mdio_sta_c45_write(unsigned(C_PHY_ADDR), C_OTHER_DEVAD, x"7777", "c45 write to another DEVAD", mdio_if, terminate_loop,
+                         config => v_config);
+      barrier("other DEVAD / reply_read");
+      -- the PHY replies: the check passes
+      mdio_sta_c45_check(unsigned(C_PHY_ADDR), C_OTHER_DEVAD, x"3333", "c45 check of another DEVAD", mdio_if, terminate_loop,
+                         config => v_config);
+      barrier("other DEVAD / receive_address");
+      mdio_sta_c45_address(unsigned(C_PHY_ADDR), C_OTHER_DEVAD, x"8000", "c45 address to another DEVAD", mdio_if, terminate_loop,
+                           config => v_config);
+      barrier("other DEVAD done");
+      check_alerts("other DEVAD");
+
+      log(ID_LOG_HDR, "A frame to this PHY of the other clause is taken: one ERROR each, the frame is only consumed", C_SCOPE);
+      ------------------------------------------------------------
+      -- c22 and c45 writes have the same OP code: only the ST tells them apart. The read is not replied: the STA reports
+      -- the undriven turnaround as well and reads all ones.
+      increment_expected_alerts_and_stop_limit(ERROR, 4);
+      barrier("other clause / receive_write");
+      mdio_sta_c22_write(unsigned(C_PHY_ADDR), unsigned(C_REG), x"1C22", "c22 write to a c45 call", mdio_if, terminate_loop,
+                         config => v_config);
+      barrier("other clause / expect_write");
+      mdio_sta_c45_write(unsigned(C_PHY_ADDR), C_DEVAD, x"3C45", "c45 write to a c22 call", mdio_if, terminate_loop,
+                         config => v_config);
+      barrier("other clause / reply_read");
+      mdio_sta_c45_read(unsigned(C_PHY_ADDR), C_DEVAD, v_data, "c45 read to a c22 call", mdio_if, terminate_loop,
+                        config => v_config);
+      check_value(v_data, x"FFFF", ERROR, "the c22 call does not reply to a c45 read", C_SCOPE);
+      barrier("other clause done");
+      check_alerts("other clause");
 
       log(ID_LOG_HDR, "Random data: " & to_string(C_NUM_RANDOM_FRAMES) & " c22 writes and reads", C_SCOPE);
       ------------------------------------------------------------
@@ -897,8 +933,32 @@ begin
                                              config => v_config);
 
       barrier("other targets");
-      mdio_phy_c45_expect_write("00011", x"7777", "c45 expect_write after frames to other targets", mdio_if, terminate_loop,
+      mdio_phy_c45_expect_write(C_DEVAD, x"7777", "c45 expect_write after frames to other PHYs", mdio_if, terminate_loop,
                                 config => v_config);
+
+      barrier("other DEVAD / expect_write");
+      mdio_phy_c45_expect_write(C_DEVAD, x"7777", "c45 expect_write, gets another DEVAD", mdio_if, terminate_loop,
+                                config => v_config);
+      barrier("other DEVAD / reply_read");
+      mdio_phy_c45_reply_read(C_DEVAD, x"3333", "c45 reply_read, gets another DEVAD", mdio_if, terminate_loop,
+                              config => v_config);
+      barrier("other DEVAD / receive_address");
+      mdio_phy_c45_receive_address(C_DEVAD, v_reg_addr, "c45 receive_address, gets another DEVAD", mdio_if, terminate_loop,
+                                   config => v_config);
+      check_value(v_reg_addr, x"8000", ERROR, "the address of the frame to another DEVAD is returned", C_SCOPE);
+      barrier("other DEVAD done");
+
+      barrier("other clause / receive_write");
+      mdio_phy_c45_receive_write(C_DEVAD, v_data, "c45 receive_write, gets a c22 frame", mdio_if, terminate_loop,
+                                 config => v_config);
+      check_value(v_data, (v_data'range => 'X'), MATCH_EXACT, ERROR, "nothing is received from a frame of the other clause", C_SCOPE);
+      barrier("other clause / expect_write");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"3C45", "c22 expect_write, gets a c45 frame", mdio_if, terminate_loop,
+                                config => v_config);
+      barrier("other clause / reply_read");
+      mdio_phy_c22_reply_read(unsigned(C_REG), x"1234", "c22 reply_read, gets a c45 read", mdio_if, terminate_loop,
+                              config => v_config);
+      barrier("other clause done");
 
       for i in data_array'range loop
         barrier("random frame " & to_string(i));

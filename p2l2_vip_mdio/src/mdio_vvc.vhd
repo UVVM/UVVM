@@ -495,8 +495,8 @@ begin
               scope            => C_SCOPE,
               msg_id_panel     => v_msg_id_panel,
               config           => vvc_config.bfm_config);
-          -- no address frame (timed out, terminated, wrong opcode) ends the command, the access frame is not awaited.
-          -- A wrong register address was reported, the STA still sends the access frame: it is awaited.
+          -- no address frame (timed out, terminated, wrong clause / opcode) ends the command, the access frame is not
+          -- awaited. A wrong DEVAD / register address was reported, the STA still sends the access frame: it is awaited.
           if v_address_ok then
             mdio_phy_c45_expect_write(
                 dev_addr       => v_cmd.dev_addr,
@@ -534,8 +534,8 @@ begin
               scope            => C_SCOPE,
               msg_id_panel     => v_msg_id_panel,
               config           => vvc_config.bfm_config);
-          -- no address frame (timed out, terminated, wrong opcode) ends the command, the access frame is not awaited.
-          -- A wrong register address was reported, the STA still sends the access frame: it is awaited.
+          -- no address frame (timed out, terminated, wrong clause / opcode) ends the command, the access frame is not
+          -- awaited. A wrong DEVAD / register address was reported, the STA still sends the access frame: it is awaited.
           if v_address_ok then
             mdio_phy_c45_receive_write(
                 dev_addr       => v_cmd.dev_addr,
@@ -574,8 +574,8 @@ begin
               scope            => C_SCOPE,
               msg_id_panel     => v_msg_id_panel,
               config           => vvc_config.bfm_config);
-          -- no address frame (timed out, terminated, wrong opcode) ends the command, the access frame is not awaited.
-          -- A wrong register address was reported, the STA still sends the access frame: it is awaited.
+          -- no address frame (timed out, terminated, wrong clause / opcode) ends the command, the access frame is not
+          -- awaited. A wrong DEVAD / register address was reported, the STA still sends the access frame: it is awaited.
           if v_address_ok then
             mdio_phy_c45_reply_read(
                 dev_addr       => v_cmd.dev_addr,
@@ -963,7 +963,8 @@ begin
     variable v_ones_before_bit : natural;
     variable v_idle_bit_driver : t_mdio_bit_driver := NOT_CHECKED; -- who drives the first bit after a frame
     variable v_header          : t_mdio_header;                  -- ST OP PHYAD/PRTAD REGAD/DEVAD
-    variable v_access_bits     : natural := 0;                   -- consecutive bits sampled with a BFM call running
+    variable v_access_bits     : natural := 0;                   -- consecutive bits sampled with the same BFM call running
+    variable v_access_cmd_idx  : integer := C_VVC_META_DEFAULT.cmd_idx; -- the command running during v_access_bits
 
     -- name of a valid frame, for the alert message
     function frame_name(
@@ -986,7 +987,8 @@ begin
     end function frame_name;
 
     -- PHY mode: report a frame to this PHY's address that no mdio_phy_* call has seen from its start. Called at the
-    -- end of the frame header. The call must have run without a break from the first bit await_start_of_frame() needs
+    -- end of the frame header. A running call takes every valid frame to this address (a wrong clause / DEVAD /
+    -- opcode is reported by the call). The same call must have run without a break from the first bit await_start_of_frame() needs
     -- to find the frame (the first of the 32 preamble bits with sync_to_frame_start (default), else the first ST bit)
     -- up to here. A call that ended within the header (terminated) has not handled the frame either.
     procedure check_unwanted_frame is
@@ -1030,8 +1032,13 @@ begin
       else
         v_ones := 0;
       end if;
-      -- the transaction info is IN_PROGRESS exactly while the executor runs a BFM call
+      -- the transaction info is IN_PROGRESS exactly while the executor runs a BFM call. Only the call that has run
+      -- from the frame start can handle the frame: a new command starts the count again.
       if vvc_transaction_info.bt.transaction_status = IN_PROGRESS then
+        if vvc_transaction_info.bt.vvc_meta.cmd_idx /= v_access_cmd_idx then
+          v_access_bits    := 0;
+          v_access_cmd_idx := vvc_transaction_info.bt.vvc_meta.cmd_idx;
+        end if;
         v_access_bits := minimum(v_access_bits + 1, C_MDIO_PREAMBLE_LENGTH + v_header'length);
       else
         v_access_bits := 0;

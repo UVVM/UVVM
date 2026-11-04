@@ -671,42 +671,43 @@ begin
       mdio_sta_c22_check(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00001", x"1111", "STA checks PHY 1");
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C22 reads of three PHYs");
 
-      log(ID_LOG_HDR, "Clause 45: the DEVAD selects the MMD within one PHY", C_SCOPE);
+      log(ID_LOG_HDR, "Clause 45: one PHY VVC serves several MMDs, one command per frame in the order of the frames", C_SCOPE);
       ------------------------------------------------------------
-      -- PHY 1 waits for DEVAD 3: the frame to DEVAD 7 of the same PHY address is not taken
-      mdio_phy_c45_receive_address(MDIO_VVCT, C_PHY_1, "00011", "PHY 1 receives an address frame to DEVAD 3");
-      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
-      mdio_sta_c45_address(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00111", x"7000", "STA sends an address frame to DEVAD 7");
-      mdio_sta_c45_address(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"3000", "STA sends an address frame to DEVAD 3");
-      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 address frames to two DEVADs");
-      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the address frame PHY 1 received");
-      check_value(v_data, x"3000", ERROR, "PHY 1 took only the frame to DEVAD 3", C_SCOPE);
-
-      -- one PHY serves two MMDs, one command per MMD
       mdio_phy_c45_reply_read(MDIO_VVCT, C_PHY_1, "00111", x"7777", "PHY 1 replies to a read of DEVAD 7");
       mdio_phy_c45_reply_read(MDIO_VVCT, C_PHY_1, "00011", x"3333", "PHY 1 replies to a read of DEVAD 3");
       mdio_sta_c45_check(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00111", x"7777", "STA checks DEVAD 7");
       mdio_sta_c45_check(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"3333", "STA checks DEVAD 3");
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 reads of two DEVADs");
 
+      log(ID_LOG_HDR, "Clause 45: a frame to another MMD than the command expects is taken and reported (one ERROR)", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      mdio_phy_c45_receive_address(MDIO_VVCT, C_PHY_1, "00011", "PHY 1 receives an address frame to DEVAD 3");
+      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
+      mdio_sta_c45_address(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00111", x"7000", "STA sends an address frame to DEVAD 7");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 address frame to another DEVAD");
+      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the address frame PHY 1 received");
+      check_value(v_data, x"7000", ERROR, "PHY 1 took the frame to DEVAD 7", C_SCOPE);
+
       log(ID_LOG_HDR, "Clause 22 and clause 45 mixed on one PHY address", C_SCOPE);
       ------------------------------------------------------------
-      -- a PHY that waits for a frame of one clause does not take a frame of the other clause
       mdio_phy_c45_receive_write(MDIO_VVCT, C_PHY_1, "00011", "PHY 1 receives a C45 write");
-      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
-      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1C22", "STA sends a C22 write");
-      mdio_sta_c45_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"3C45", "STA sends a C45 write");
-      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C22 frame while a C45 frame is expected");
-      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the C45 write PHY 1 received");
-      check_value(v_data, x"3C45", ERROR, "PHY 1 took only the C45 frame", C_SCOPE);
-
       mdio_phy_c22_receive_write(MDIO_VVCT, C_PHY_1, "00011", "PHY 1 receives a C22 write");
       v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
       mdio_sta_c45_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"3C45", "STA sends a C45 write");
       mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1C22", "STA sends a C22 write");
-      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 frame while a C22 frame is expected");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 and C22 writes in the order of the commands");
       fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the C22 write PHY 1 received");
-      check_value(v_data, x"1C22", ERROR, "PHY 1 took only the C22 frame", C_SCOPE);
+      check_value(v_data, x"1C22", ERROR, "PHY 1 received the C22 write", C_SCOPE);
+
+      -- a frame of the other clause is reported and only consumed: nothing is received
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      mdio_phy_c45_receive_write(MDIO_VVCT, C_PHY_1, "00011", "PHY 1 receives a C45 write");
+      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
+      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1C22", "STA sends a C22 write");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C22 frame while a C45 frame is expected");
+      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the C45 write PHY 1 received");
+      check_value(v_data, (v_data'range => 'X'), MATCH_EXACT, ERROR, "PHY 1 received nothing from the C22 frame", C_SCOPE);
 
       log(ID_LOG_HDR, "STA scans the bus for PHYs while the PHYs wait: reads to an address without a PHY are no error", C_SCOPE);
       ------------------------------------------------------------

@@ -221,10 +221,14 @@ Methods
     The BFM does not model registers or the clause 45 address register: the testbench decides what is expected or
     returned.
 
-* The address of the PHY is config.phy.phy_address.
-* A call waits for a frame that addresses this PHY (and MMD for clause 45): at least 32 preamble '1' bits followed by ST,
-  so a call may start in the middle of other traffic (config.sync_to_frame_start). Frames to other targets are skipped,
-  their turnaround is checked. A read to an address without a PHY (e.g. the STA scans the bus) is not reported.
+* The address of the PHY is config.phy.phy_address. One PHY address is served by one caller (one VVC), which handles all
+  its MMDs: several callers on the same address would take each other's frames.
+* A call waits for the next valid frame that addresses this PHY: at least 32 preamble '1' bits followed by ST, so a call
+  may start in the middle of other traffic (config.sync_to_frame_start). Frames to other PHYs are skipped, their
+  turnaround is checked. A read to an address without a PHY (e.g. the STA scans the bus) is not reported.
+* The addressed frame is taken whatever its clause and DEVAD. A frame of the other clause, or a clause 45 frame to another
+  MMD than 'dev_addr', is reported with 'alert_level'. A frame of the other clause is consumed without driving the bus, a
+  frame to another MMD is handled like the expected one (e.g. a read is replied).
 * With config.sync_to_frame_start = false, the preamble is the '1' bits the STA drives before ST; idle or only pulled-up
   ('H') bits are not counted.
 * The 'timeout' applies until the addressed frame starts, a started frame is always completed.
@@ -810,7 +814,8 @@ The procedure reports an alert if:
 
     * No addressed frame starts within 'timeout' (config.phy.timeout_severity).
     * MDC does not change within config.phy.max_wait_mdc_change during a frame (config.phy.max_wait_mdc_change_severity).
-    * The addressed frame has the wrong opcode, register address (clause 22) or data ('alert_level').
+    * The addressed frame has the wrong clause (ST), DEVAD (clause 45), opcode, register address (clause 22) or data
+      ('alert_level').
     * ST, OP, address fields or the written data contain undefined bits, the turnaround of a write or address frame is
       not "10", or the STA drives fewer than 32 preamble bits (config.protocol_error_severity).
     * Preamble, ST, OP, address fields, the turnaround of a write or address frame or the written data are only pulled
@@ -850,8 +855,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode, wrong register address or wrong written   |
-|          |                    |        |                              | data. Default value is ERROR.                           |
+|          |                    |        |                              | wrong clause, wrong opcode, wrong register address or   |
+|          |                    |        |                              | wrong written data. Default value is ERROR.             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -911,8 +916,8 @@ not possible.
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong register address. Default value   |
-|          |                    |        |                              | is ERROR.                                               |
+|          |                    |        |                              | wrong clause, wrong opcode or wrong register address.   |
+|          |                    |        |                              | Default value is ERROR.                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -946,7 +951,8 @@ The procedure reports an alert if:
 
     * No addressed frame starts within 'timeout' (config.phy.timeout_severity).
     * MDC does not change within config.phy.max_wait_mdc_change during a frame (config.phy.max_wait_mdc_change_severity).
-    * The addressed frame has the wrong opcode or register address (clause 22) ('alert_level').
+    * The addressed frame has the wrong clause (ST), DEVAD (clause 45), opcode or register address (clause 22)
+      ('alert_level').
     * ST, OP or address fields contain undefined bits, or the STA drives fewer than 32 preamble bits
       (config.protocol_error_severity).
     * Preamble, ST, OP or address fields are only pulled ('H' / 'L') instead of driven by the STA
@@ -994,8 +1000,8 @@ The procedure reports an alert if:
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong register address. Default value   |
-|          |                    |        |                              | is ERROR.                                               |
+|          |                    |        |                              | wrong clause, wrong opcode or wrong register address.   |
+|          |                    |        |                              | Default value is ERROR.                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -1035,7 +1041,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | dev_addr           | in     | unsigned(4 downto 0)         | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Frames to other MMDs are skipped.              |
+|          |                    |        |                              | address. A frame to another MMD is alerted              |
+|          |                    |        |                              | ('alert_level').                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | reg_addr           | in     | unsigned(15 downto 0)        | Expected register address in the address frame. A       |
 |          |                    |        |                              | mismatch results in an alert with severity              |
@@ -1054,8 +1061,9 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong register address in the address   |
-|          |                    |        |                              | frame. Default value is ERROR.                          |
+|          |                    |        |                              | wrong clause, wrong DEVAD, wrong opcode or wrong        |
+|          |                    |        |                              | register address in the address frame. Default value is |
+|          |                    |        |                              | ERROR.                                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -1096,7 +1104,8 @@ mismatch is not possible.
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | dev_addr           | in     | unsigned(4 downto 0)         | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Frames to other MMDs are skipped.              |
+|          |                    |        |                              | address. A frame to another MMD is alerted              |
+|          |                    |        |                              | ('alert_level').                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | reg_addr           | out    | unsigned(15 downto 0)        | The register address received in the address frame. All |
 |          |                    |        |                              | 'X' if the call ended without a complete frame.         |
@@ -1114,7 +1123,8 @@ mismatch is not possible.
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -1154,7 +1164,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | dev_addr           | in     | unsigned(4 downto 0)         | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Frames to other MMDs are skipped.              |
+|          |                    |        |                              | address. A frame to another MMD is alerted              |
+|          |                    |        |                              | ('alert_level').                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_ulogic_vector(15         | The data value to expect in the write frame. A mismatch |
 |          |                    |        | downto 0)                    | results in an alert with severity 'alert_level'.        |
@@ -1172,8 +1183,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong written data. Default value is    |
-|          |                    |        |                              | ERROR.                                                  |
+|          |                    |        |                              | wrong clause, wrong DEVAD, wrong opcode or wrong        |
+|          |                    |        |                              | written data. Default value is ERROR.                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -1214,7 +1225,8 @@ not possible.
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | dev_addr           | in     | unsigned(4 downto 0)         | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Frames to other MMDs are skipped.              |
+|          |                    |        |                              | address. A frame to another MMD is alerted              |
+|          |                    |        |                              | ('alert_level').                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | data               | out    | std_ulogic_vector(15         | The data value written by the STA. All 'X' if the call  |
 |          |                    |        | downto 0)                    | ended without a complete frame.                         |
@@ -1232,7 +1244,8 @@ not possible.
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -1272,7 +1285,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | dev_addr           | in     | unsigned(4 downto 0)         | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Frames to other MMDs are skipped.              |
+|          |                    |        |                              | address. A frame to another MMD is alerted              |
+|          |                    |        |                              | ('alert_level').                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_ulogic_vector(15         | The data value returned to the STA                      |
 |          |                    |        | downto 0)                    |                                                         |
@@ -1290,7 +1304,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -1330,7 +1345,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | dev_addr           | in     | unsigned(4 downto 0)         | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Frames to other MMDs are skipped.              |
+|          |                    |        |                              | address. A frame to another MMD is alerted              |
+|          |                    |        |                              | ('alert_level').                                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_ulogic_vector(15         | The data value returned to the STA.                     |
 |          |                    |        | downto 0)                    |                                                         |
@@ -1348,7 +1364,8 @@ The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c
 |          |                    |        |                              | no timeout.                                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_BFM_SCOPE ("MDIO BFM").  |
@@ -2386,8 +2403,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode, wrong register address or wrong written   |
-|          |                    |        |                              | data. Default value is ERROR.                           |
+|          |                    |        |                              | wrong clause, wrong opcode, wrong register address or   |
+|          |                    |        |                              | wrong written data. Default value is ERROR.             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2438,8 +2455,8 @@ entity generic constant 'GC_STA_MODE' to 'false'.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong register address. Default value   |
-|          |                    |        |                              | is ERROR.                                               |
+|          |                    |        |                              | wrong clause, wrong opcode or wrong register address.   |
+|          |                    |        |                              | Default value is ERROR.                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2498,8 +2515,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong register address. Default value   |
-|          |                    |        |                              | is ERROR.                                               |
+|          |                    |        |                              | wrong clause, wrong opcode or wrong register address.   |
+|          |                    |        |                              | Default value is ERROR.                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2534,7 +2551,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
 |          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
@@ -2547,8 +2565,9 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong register address in the address   |
-|          |                    |        |                              | frame. Default value is ERROR.                          |
+|          |                    |        |                              | wrong clause, wrong DEVAD, wrong opcode or wrong        |
+|          |                    |        |                              | register address in the address frame. Default value is |
+|          |                    |        |                              | ERROR.                                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2587,7 +2606,8 @@ instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_M
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the received data. TO_SB     |
 |          |                    |        |                              | sends it to the VVC scoreboard instead of the result    |
@@ -2600,7 +2620,8 @@ instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_M
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2648,7 +2669,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_ulogic_vector            | The data value to expect in the write frame. Normalized |
 |          |                    |        |                              | to 16 bits. A mismatch results in an alert with         |
@@ -2661,8 +2683,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode or wrong written data. Default value is    |
-|          |                    |        |                              | ERROR.                                                  |
+|          |                    |        |                              | wrong clause, wrong DEVAD, wrong opcode or wrong        |
+|          |                    |        |                              | written data. Default value is ERROR.                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2701,7 +2723,8 @@ entity generic constant 'GC_STA_MODE' to 'false'.
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the received data. TO_SB     |
 |          |                    |        |                              | sends it to the VVC scoreboard instead of the result    |
@@ -2714,7 +2737,8 @@ entity generic constant 'GC_STA_MODE' to 'false'.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2762,7 +2786,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_ulogic_vector            | The data value returned to the STA. Normalized to 16    |
 |          |                    |        |                              | bits.                                                   |
@@ -2774,7 +2799,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2809,7 +2835,8 @@ in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'fals
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that the frame must         |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data               | in     | std_ulogic_vector            | The data value returned to the STA. Normalized to 16    |
 |          |                    |        |                              | bits.                                                   |
@@ -2821,7 +2848,8 @@ in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'fals
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if the addressed frame is not as expected:     |
-|          |                    |        |                              | wrong opcode. Default value is ERROR.                   |
+|          |                    |        |                              | wrong clause, wrong DEVAD or wrong opcode. Default      |
+|          |                    |        |                              | value is ERROR.                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2842,9 +2870,10 @@ Adds a clause 45 expect write register command to the MDIO VVC executor queue, w
 commands have completed. The command is a complete register access, the counterpart of the STA's ``*_reg`` commands: when it
 is scheduled to run, the executor calls the BFM :ref:`mdio_phy_c45_expect_address_bfm` procedure for the address frame, then
 the BFM :ref:`mdio_phy_c45_expect_write_bfm` procedure for the access frame. The access frame is awaited once an address frame was
-received, also with a wrong register address (reported, the STA sends the access frame anyway). If no address frame was
-received (timeout, terminated, wrong opcode), the command ends without waiting for the access frame. This procedure can only be
-called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'false'.
+received, also with a wrong DEVAD or register address (reported, the STA sends the access frame anyway). If no address frame
+was received (timeout, terminated, wrong clause or opcode), the command ends without waiting for the access frame. This
+procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant
+'GC_STA_MODE' to 'false'.
 
 .. code-block::
 
@@ -2859,7 +2888,8 @@ called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entit
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that both frames must       |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
 |          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
@@ -2875,9 +2905,10 @@ called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entit
 |          |                    |        |                              | start. Default value is C_UNDEFINED_TIME, which uses    |
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong opcode,   |
-|          |                    |        |                              | wrong register address in the address frame or wrong    |
-|          |                    |        |                              | written data. Default value is ERROR.                   |
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong clause,   |
+|          |                    |        |                              | wrong DEVAD, wrong opcode, wrong register address in    |
+|          |                    |        |                              | the address frame or wrong written data. Default value  |
+|          |                    |        |                              | is ERROR.                                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2898,9 +2929,10 @@ Adds a clause 45 receive write register command to the MDIO VVC executor queue, 
 commands have completed. The command is a complete register access, the counterpart of the STA's ``*_reg`` commands: when it
 is scheduled to run, the executor calls the BFM :ref:`mdio_phy_c45_expect_address_bfm` procedure for the address frame, then
 the BFM :ref:`mdio_phy_c45_receive_write_bfm` procedure for the access frame. The access frame is awaited once an address frame was
-received, also with a wrong register address (reported, the STA sends the access frame anyway). If no address frame was
-received (timeout, terminated, wrong opcode), the command ends without waiting for the access frame. This procedure can only be
-called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'false'.
+received, also with a wrong DEVAD or register address (reported, the STA sends the access frame anyway). If no address frame
+was received (timeout, terminated, wrong clause or opcode), the command ends without waiting for the access frame. This
+procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant
+'GC_STA_MODE' to 'false'.
 
 The data received in the write frame will not be returned in this procedure call since it is non-blocking for the
 sequencer/caller, but it will be stored in the VVC for a potential future fetch (see example with fetch_result below). It is
@@ -2920,7 +2952,8 @@ dedicated scoreboard where it will be checked against the expected value (provid
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that both frames must       |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
 |          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
@@ -2936,9 +2969,9 @@ dedicated scoreboard where it will be checked against the expected value (provid
 |          |                    |        |                              | start. Default value is C_UNDEFINED_TIME, which uses    |
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong opcode,   |
-|          |                    |        |                              | wrong register address in the address frame. Default    |
-|          |                    |        |                              | value is ERROR.                                         |
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong clause,   |
+|          |                    |        |                              | wrong DEVAD, wrong opcode, wrong register address in    |
+|          |                    |        |                              | the address frame. Default value is ERROR.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -2972,9 +3005,10 @@ Adds a clause 45 reply read register command to the MDIO VVC executor queue, whi
 commands have completed. The command is a complete register access, the counterpart of the STA's ``*_reg`` commands: when it
 is scheduled to run, the executor calls the BFM :ref:`mdio_phy_c45_expect_address_bfm` procedure for the address frame, then
 the BFM :ref:`mdio_phy_c45_reply_read_bfm` procedure for the access frame. The access frame is awaited once an address frame was
-received, also with a wrong register address (reported, the STA sends the access frame anyway). If no address frame was
-received (timeout, terminated, wrong opcode), the command ends without waiting for the access frame. This procedure can only be
-called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'false'.
+received, also with a wrong DEVAD or register address (reported, the STA sends the access frame anyway). If no address frame
+was received (timeout, terminated, wrong clause or opcode), the command ends without waiting for the access frame. This
+procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant
+'GC_STA_MODE' to 'false'.
 
 .. code-block::
 
@@ -2989,7 +3023,8 @@ called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entit
 | constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that both frames must       |
-|          |                    |        |                              | address. Normalized to 5 bits.                          |
+|          |                    |        |                              | address. Normalized to 5 bits. A frame to another MMD   |
+|          |                    |        |                              | is alerted ('alert_level').                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
 |          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
@@ -3004,9 +3039,9 @@ called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entit
 |          |                    |        |                              | start. Default value is C_UNDEFINED_TIME, which uses    |
 |          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong opcode,   |
-|          |                    |        |                              | wrong register address in the address frame. Default    |
-|          |                    |        |                              | value is ERROR.                                         |
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong clause,   |
+|          |                    |        |                              | wrong DEVAD, wrong opcode, wrong register address in    |
+|          |                    |        |                              | the address frame. Default value is ERROR.              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
 |          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
@@ -3118,9 +3153,11 @@ Unwanted Transaction Detection
 * STA mode: any change of mdio while the VVC is inactive is reported, except changes that keep the logic level (e.g. 'H' to
   '1').
 * PHY mode: a valid frame to this PHY address that no PHY command was waiting for is reported. With the default
-  sync_to_frame_start, a command must be waiting from the first preamble bit to catch the frame.
-* Several PHY VVCs on one address (e.g. one VVC per MMD) report each other's frames: disable the unwanted transaction
-  checking on these VVCs.
+  sync_to_frame_start, the same command must be waiting from the first preamble bit to catch the frame. A waiting
+  command takes every valid frame to this PHY address: a frame of the other clause or to another MMD is reported by
+  the command ('alert_level'), not as an unwanted transaction.
+* Use one PHY VVC per PHY address, also for a PHY with several MMDs: queue the commands for all MMDs on this VVC in the
+  order the STA accesses them.
 
 For MDIO VVC, the unwanted transaction detection is enabled by default with severity ERROR.
 

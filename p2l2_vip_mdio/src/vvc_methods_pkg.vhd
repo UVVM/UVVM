@@ -138,7 +138,7 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -150,7 +150,7 @@ package vvc_methods_pkg is
     constant reg_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -163,7 +163,7 @@ package vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -175,7 +175,7 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -187,7 +187,7 @@ package vvc_methods_pkg is
     constant reg_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -199,7 +199,7 @@ package vvc_methods_pkg is
     constant dev_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -212,7 +212,7 @@ package vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -224,7 +224,7 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -236,7 +236,7 @@ package vvc_methods_pkg is
     constant dev_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -249,7 +249,7 @@ package vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -261,7 +261,7 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -273,15 +273,15 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   -- *_reg: one command for a complete clause 45 access, the counterpart of the STA's *_reg commands: an address frame
   -- to MMD 'dev_addr' that sets 'reg_addr' (checked like mdio_phy_c45_expect_address), then the access frame.
-  -- The access frame is awaited once an address frame was received, also with a wrong register address (the STA
-  -- sends it anyway). Without an address frame (timeout, terminated, wrong OP code) the command ends.
+  -- The access frame is awaited once an address frame was received, also with a wrong DEVAD or register address (the
+  -- STA sends it anyway). Without an address frame (timeout, terminated, wrong clause / OP code) the command ends.
   procedure mdio_phy_c45_expect_write_reg (
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
@@ -290,7 +290,7 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -303,7 +303,7 @@ package vvc_methods_pkg is
     constant reg_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -317,7 +317,7 @@ package vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -330,7 +330,7 @@ package vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -579,7 +579,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -613,7 +613,7 @@ package body vvc_methods_pkg is
     constant reg_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -628,7 +628,7 @@ package body vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -662,7 +662,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -697,7 +697,7 @@ package body vvc_methods_pkg is
     constant reg_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -731,7 +731,7 @@ package body vvc_methods_pkg is
     constant dev_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -746,7 +746,7 @@ package body vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -780,7 +780,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -814,7 +814,7 @@ package body vvc_methods_pkg is
     constant dev_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -829,7 +829,7 @@ package body vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -863,7 +863,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -898,7 +898,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -934,7 +934,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -972,7 +972,7 @@ package body vvc_methods_pkg is
     constant reg_addr            : in    unsigned;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -988,7 +988,7 @@ package body vvc_methods_pkg is
     constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -1026,7 +1026,7 @@ package body vvc_methods_pkg is
     constant data                : in    std_ulogic_vector;
     constant msg                 : in    string;
     constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
-    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong clause, DEVAD, OP code, register address or data (expect_*)
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
@@ -1056,10 +1056,6 @@ package body vvc_methods_pkg is
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
-
-  --==========================================================================================
-  -- STA methods
-  --==========================================================================================
 
   --==========================================================================================
   -- STA methods

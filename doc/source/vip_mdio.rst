@@ -128,8 +128,7 @@ Default value for the record is C_MDIO_BFM_CONFIG_DEFAULT.
 |                              |                                |                                 | checks.                                       |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | undriven_severity            | :ref:`t_alert_level`           | ERROR                           | Severity if a bit the sender must drive is    |
-|                              |                                |                                 | only pulled ('H' / 'L'), see                  |
-|                              |                                |                                 | :ref:`mdio_undriven_bits`. The value still    |
+|                              |                                |                                 | only pulled ('H' / 'L'). The value still      |
 |                              |                                |                                 | counts. NO_ALERT disables the check, e.g. for |
 |                              |                                |                                 | an open-drain DUT.                            |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
@@ -248,6 +247,11 @@ The procedure reports an alert if:
     * A bit driven by the STA does not show on the bus, or the bus is not released after the frame
       (config.bus_contention_severity).
     * The configured timing violates the min_* settings of the config (config.timing_violation_severity).
+    * 'phy_addr', 'reg_addr' or 'data' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still
+      driven as given.
+    * config.sta.mdc_period is not positive (TB_FAILURE).
+    * config.output_delay is negative (TB_FAILURE).
+    * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
 
@@ -285,12 +289,12 @@ The procedure reports an alert if:
 .. code-block::
 
     -- Examples:
-    mdio_sta_c22_write(5x"01", 5x"00", x"1140", "Restart autonegotiation", mdio_if, terminate_loop);
-    mdio_sta_c22_write(5x"01", 5x"00", x"1140", "Restart autonegotiation", mdio_if, terminate_loop, C_SCOPE,
+    mdio_sta_c22_write(5x"01", 5x"00", x"1340", "Restart autonegotiation", mdio_if, terminate_loop);
+    mdio_sta_c22_write(5x"01", 5x"00", x"1340", "Restart autonegotiation", mdio_if, terminate_loop, C_SCOPE,
                        shared_msg_id_panel, C_MDIO_BFM_CONFIG_DEFAULT);
 
     -- Suggested usage (requires local overload, see 'Local BFM overloads' section):
-    mdio_sta_c22_write(5x"01", 5x"00", x"1140", "Restart autonegotiation");
+    mdio_sta_c22_write(5x"01", 5x"00", x"1340", "Restart autonegotiation");
 
 .. _mdio_sta_c22_read_bfm:
 
@@ -311,6 +315,11 @@ The procedure reports an alert if:
       The data is still returned and compared.
     * The configured timing violates the min_* settings of the config, or config.sta.mdc_period is below
       300 ns + config.min_setup_time (config.timing_violation_severity).
+    * 'phy_addr' or 'reg_addr' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still driven as
+      given.
+    * config.sta.mdc_period is not positive (TB_FAILURE).
+    * config.output_delay is negative (TB_FAILURE).
+    * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
 
@@ -433,6 +442,11 @@ The procedure reports an alert if:
     * A bit driven by the STA does not show on the bus, or the bus is not released after the frame
       (config.bus_contention_severity).
     * The configured timing violates the min_* settings of the config (config.timing_violation_severity).
+    * 'phy_addr', 'dev_addr' or 'reg_addr' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still
+      driven as given.
+    * config.sta.mdc_period is not positive (TB_FAILURE).
+    * config.output_delay is negative (TB_FAILURE).
+    * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
 
@@ -492,6 +506,11 @@ The procedure reports an alert if:
     * A bit driven by the STA does not show on the bus, or the bus is not released after the frame
       (config.bus_contention_severity).
     * The configured timing violates the min_* settings of the config (config.timing_violation_severity).
+    * 'phy_addr', 'dev_addr' or 'data' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still
+      driven as given.
+    * config.sta.mdc_period is not positive (TB_FAILURE).
+    * config.output_delay is negative (TB_FAILURE).
+    * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
 
@@ -556,6 +575,11 @@ The procedure reports an alert if:
       The data is still returned and compared.
     * The configured timing violates the min_* settings of the config, or config.sta.mdc_period is below
       300 ns + config.min_setup_time (config.timing_violation_severity).
+    * 'phy_addr' or 'dev_addr' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still driven as
+      given.
+    * config.sta.mdc_period is not positive (TB_FAILURE).
+    * config.output_delay is negative (TB_FAILURE).
+    * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
 
@@ -788,6 +812,13 @@ The procedure reports an alert if:
       not "10", or the STA drives fewer than 32 preamble bits (config.protocol_error_severity).
     * Preamble, ST, OP, address fields, the turnaround of a write or address frame or the written data are only pulled
       ('H' / 'L') instead of driven by the STA (config.undriven_severity). The data is still compared.
+    * With config.suppress_preamble and config.sync_to_frame_start = false, the first bit is not the '0' of ST
+      (config.protocol_error_severity). The call ends.
+    * In a frame to another target, the preamble, ST / OP / address field and turnaround checks above also apply. In a read
+      to another target, turnaround bit 1 is driven (config.bus_contention_severity), or turnaround bit 0 is neither '0' nor
+      undriven (config.protocol_error_severity).
+    * 'timeout' is negative (TB_FAILURE). The call returns without waiting.
+    * config.phy.max_wait_mdc_change is negative (TB_FAILURE). The call returns without waiting.
 
 .. code-block::
 
@@ -833,12 +864,12 @@ The procedure reports an alert if:
 .. code-block::
 
     -- Examples:
-    mdio_phy_c22_expect_write(5x"00", x"1140", "Expect control register write", mdio_if, terminate_loop);
-    mdio_phy_c22_expect_write(5x"00", x"1140", "Expect control register write", mdio_if, terminate_loop, 1 ms, ERROR,
+    mdio_phy_c22_expect_write(5x"00", x"1340", "Expect control register write", mdio_if, terminate_loop);
+    mdio_phy_c22_expect_write(5x"00", x"1340", "Expect control register write", mdio_if, terminate_loop, 1 ms, ERROR,
                               C_SCOPE, shared_msg_id_panel, C_MDIO_BFM_CONFIG_DEFAULT);
 
     -- Suggested usage (requires local overload, see 'Local BFM overloads' section):
-    mdio_phy_c22_expect_write(5x"00", x"1140", "Expect control register write");
+    mdio_phy_c22_expect_write(5x"00", x"1340", "Expect control register write");
 
 .. _mdio_phy_c22_receive_write_bfm:
 
@@ -920,6 +951,18 @@ The procedure reports an alert if:
     * The STA does not release the first turnaround bit, or the bus does not show the bits driven by the PHY
       (config.bus_contention_severity).
     * config.output_delay is above 300 ns (config.timing_violation_severity).
+    * With config.suppress_preamble and config.sync_to_frame_start = false, the first bit is not the '0' of ST
+      (config.protocol_error_severity). The call ends.
+    * In a frame to another target, the preamble and ST / OP / address field checks above also apply. In a write or
+      address frame to another target, the turnaround is not "10" (config.protocol_error_severity) or only pulled
+      (config.undriven_severity). In a read to another target, turnaround bit 1 is driven
+      (config.bus_contention_severity), or turnaround bit 0 is neither '0' nor undriven (config.protocol_error_severity).
+    * 'timeout' is negative (TB_FAILURE). The call returns without waiting.
+    * config.phy.max_wait_mdc_change is negative (TB_FAILURE). The call returns without waiting.
+    * config.output_delay is negative (TB_FAILURE).
+    * config.output_delay is not shorter than config.min_mdc_period (TB_FAILURE).
+    * 'data' contains bits other than '0' / '1' (TB_ERROR). It is still driven as given, so those bits also get a bus
+      contention alert.
 
 .. code-block::
 
@@ -1039,7 +1082,8 @@ mdio_phy_c45_receive_address()
 Waits for a clause 45 address frame to the MMD 'dev_addr' of this PHY and returns the received register address in 'reg_addr'.
 'reg_addr' is set to all 'X' at the start of the call and only assigned once the address was received with the right opcode.
 
-The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c22_expect_write_bfm` procedure.
+The procedure will report alerts for the same conditions as the :ref:`mdio_phy_c22_expect_write_bfm` procedure. An address
+mismatch is not possible.
 
 .. code-block::
 
@@ -1345,7 +1389,8 @@ mdio_check_bit_timing()
 ----------------------------------------------------------------------------------------------------------------------------------
 Passive timing check of one bit time, used by the bus timing checker of the VVC (see :ref:`vvc_mdio_bus_timing_check`). It waits
 for the next rising MDC edge and returns the sampled bit. The caller follows the frames and passes who drives MDIO in this bit
-time ('driver'). Only the side of the bus selected with 'checked_side' is checked:
+time ('driver'). Only the side of the bus selected with 'checked_side' is checked, a violation is reported with
+'alert_level':
 
 * STA side (CHECK_STA or CHECK_BOTH):
 
@@ -1415,11 +1460,11 @@ Local BFM overloads
 A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
 process. This allows calling the BFM procedures with the key parameters only, e.g. ::
 
-    mdio_sta_c22_write(C_PHY_ADDR, C_REG_CONTROL, x"1140", "Restart autonegotiation");
+    mdio_sta_c22_write(C_PHY_ADDR, C_REG_CONTROL, x"1340", "Restart autonegotiation");
 
 rather than ::
 
-    mdio_sta_c22_write(C_PHY_ADDR, C_REG_CONTROL, x"1140", "Restart autonegotiation", mdio_if, terminate_loop, C_SCOPE,
+    mdio_sta_c22_write(C_PHY_ADDR, C_REG_CONTROL, x"1340", "Restart autonegotiation", mdio_if, terminate_loop, C_SCOPE,
                        shared_msg_id_panel, C_MDIO_CONFIG_LOCAL);
 
 By defining the local overload as e.g. ::
@@ -1717,8 +1762,8 @@ be called when the MDIO VVC is instantiated in STA mode, i.e. setting the VVC en
 .. code-block::
 
     -- Examples:
-    mdio_sta_c22_write(MDIO_VVCT, 0, 5x"01", 5x"00", x"1140", "Restart autonegotiation");
-    mdio_sta_c22_write(MDIO_VVCT, 0, 5x"01", 5x"00", x"1140", "Restart autonegotiation", C_SCOPE);
+    mdio_sta_c22_write(MDIO_VVCT, 0, 5x"01", 5x"00", x"1340", "Restart autonegotiation");
+    mdio_sta_c22_write(MDIO_VVCT, 0, 5x"01", 5x"00", x"1340", "Restart autonegotiation", C_SCOPE);
 
 .. _mdio_sta_c22_read_vvc:
 
@@ -2349,8 +2394,8 @@ procedure can only be called when the MDIO VVC is instantiated in PHY mode, i.e.
 .. code-block::
 
     -- Examples:
-    mdio_phy_c22_expect_write(MDIO_VVCT, 1, 5x"00", x"1140", "Expect control register write");
-    mdio_phy_c22_expect_write(MDIO_VVCT, 1, 5x"00", x"1140", "Expect control register write", 1 ms, ERROR, C_SCOPE);
+    mdio_phy_c22_expect_write(MDIO_VVCT, 1, 5x"00", x"1340", "Expect control register write");
+    mdio_phy_c22_expect_write(MDIO_VVCT, 1, 5x"00", x"1340", "Expect control register write", 1 ms, ERROR, C_SCOPE);
 
 .. _mdio_phy_c22_receive_write_vvc:
 

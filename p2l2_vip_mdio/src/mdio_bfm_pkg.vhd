@@ -1022,7 +1022,7 @@ package body mdio_bfm_pkg is
     end if;
   end procedure log_phy_access_start;
 
-  -- Report the end of an mdio_phy_* call once: log OK (if all checks passed) / terminated,
+  -- Report the end of an mdio_phy_* call once: log OK (if all checks passed) / Failed / terminated,
   -- or alert stall / timeout
   procedure report_phy_access_end(
     constant status       : in t_mdio_wait_status;
@@ -1040,6 +1040,8 @@ package body mdio_bfm_pkg is
       when WAIT_OK =>
         if check_ok then
           log(config.id_for_bfm, proc_call & "=> " & result & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        else -- the mismatch was alerted with its alert level (none with NO_ALERT): the call never ends without a log
+          log(config.id_for_bfm, proc_call & "=> Failed. " & add_msg_delimiter(msg), scope, msg_id_panel);
         end if;
       when WAIT_TERMINATED =>
         log(ID_TERMINATE_CMD, proc_call & "=> Terminated. " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -2064,7 +2066,7 @@ package body mdio_bfm_pkg is
                        caller_name  => proc_call);
   end function sta_compare_read_data;
 
-  -- Report the end of an mdio_sta_* call once: log OK (if all checks passed) / terminated
+  -- Report the end of an mdio_sta_* call once: log OK (if all checks passed) / Failed / terminated
   procedure report_sta_access_end(
     constant status       : in t_mdio_wait_status;
     constant check_ok     : in boolean;
@@ -2079,6 +2081,8 @@ package body mdio_bfm_pkg is
       when WAIT_OK =>
         if check_ok then
           log(config.id_for_bfm, proc_call & "=> " & result & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        else -- the mismatch was alerted with its alert level (none with NO_ALERT): the call never ends without a log
+          log(config.id_for_bfm, proc_call & "=> Failed. " & add_msg_delimiter(msg), scope, msg_id_panel);
         end if;
       when WAIT_TERMINATED =>
         log(ID_TERMINATE_CMD, proc_call & "=> Terminated. " & add_msg_delimiter(msg), scope, msg_id_panel);

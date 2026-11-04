@@ -665,6 +665,14 @@ package body mdio_bfm_pkg is
     return "REGAD";
   end function reg_or_dev_addr_name;
 
+  function reg_or_dev_addr_long_name(constant cl45 : in boolean) return string is
+  begin
+    if cl45 then
+      return "DEVAD";
+    end if;
+    return "register address";
+  end function reg_or_dev_addr_long_name;
+
   -- A call argument the BFM drives onto the bus (address, write data, read reply data) must be '0' / '1' only: a 'Z' or
   -- 'H' is only pulled up, '-' / 'X' / 'U' puts an 'X' on the bus. A testbench error, not a bus error: TB_ERROR at the
   -- call. The caller does not abort but still drives the value as given on purpose: this allows error injection, e.g. an
@@ -1368,13 +1376,14 @@ package body mdio_bfm_pkg is
 
   -- Core of all mdio_phy_* calls: searches frames until a valid one addresses this PHY (PHYAD / PRTAD) and consumes
   -- the frames to other PHYs on the way. Returns right after the address fields, the caller handles turnaround and data.
-  -- The addressed frame is taken whatever its clause and DEVAD: the PHY is the target on the bus, a frame of the other
-  -- clause or to another MMD than the call expects is a mismatch, reported with alert_level (like a wrong opcode).
+  -- The addressed frame is taken whatever its clause, REGAD and DEVAD: the PHY is the target on the bus, a frame of the
+  -- other clause, to another register (clause 22) or to another MMD (clause 45) than the call expects is a mismatch,
+  -- reported with alert_level (like a wrong opcode).
   -- clause_ok: the frame has the clause (ST) the call expects, otherwise the caller only consumes the rest of it.
-  -- header_ok: result of the preamble checks and, for clause 45, of the DEVAD check of the addressed frame.
+  -- header_ok: result of the preamble checks, the defined check and the REGAD / DEVAD check of the addressed frame.
   procedure await_addressed_frame(
     constant st              : in std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
-    constant dev_addr        : in unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0); -- ignored for clause 22
+    constant exp_addr        : in unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0); -- expected REGAD (clause 22) / DEVAD (clause 45)
     constant timeout         : in time;
     constant alert_level     : in t_alert_level;
     signal   mdio_if         : in t_mdio_if;
@@ -1385,7 +1394,6 @@ package body mdio_bfm_pkg is
     constant msg_id_panel    : in t_msg_id_panel;
     constant config          : in t_mdio_bfm_config;
     variable op              : out std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable reg_or_dev_addr : out std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0); -- REGAD (clause 22) / DEVAD (clause 45)
     variable clause_ok       : out boolean;
     variable header_ok       : out boolean;
     variable status          : out t_mdio_wait_status)
@@ -1398,10 +1406,10 @@ package body mdio_bfm_pkg is
     variable v_reg_or_dev_addr      : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0);
     variable v_preamble_bits        : natural;
     variable v_driven_preamble_bits : natural;
-    variable v_preamble_ok          : boolean := true;
+    variable v_header_ok            : boolean := true;
     variable v_clause_ok            : boolean := true;
     variable v_sync                 : boolean := config.sync_to_frame_start;
-    variable v_defined              : boolean; -- header checks: reported, they don't affect the result of the call
+    variable v_defined              : boolean := true; -- all header bits defined (or the check is disabled)
     variable v_driven               : boolean;
     variable v_cl45                 : boolean; -- for the field names in the alerts
   begin
@@ -1420,9 +1428,9 @@ package body mdio_bfm_pkg is
       if not v_sync then
         v_preamble_bits := v_driven_preamble_bits;
       end if;
-      v_preamble_ok := check_preamble_length(v_preamble_bits, proc_call, msg, scope, msg_id_panel, config);
-      v_preamble_ok := check_preamble_driven(v_preamble_bits, v_driven_preamble_bits, proc_call, msg, scope, msg_id_panel, config)
-                       and v_preamble_ok;
+      v_header_ok := check_preamble_length(v_preamble_bits, proc_call, msg, scope, msg_id_panel, config);
+      v_header_ok := check_preamble_driven(v_preamble_bits, v_driven_preamble_bits, proc_call, msg, scope, msg_id_panel, config)
+                     and v_header_ok;
       receive_frame_header(v_st, v_op, v_phy_addr, v_reg_or_dev_addr, mdio_if, terminate_loop, config, status);
       exit when status /= WAIT_OK;
       -- checked for every frame on the bus, not only addressed ones (an undefined frame is never addressed)
@@ -1460,25 +1468,25 @@ package body mdio_bfm_pkg is
                                  msg_id       => ID_NEVER,
                                  msg_id_panel => msg_id_panel,
                                  caller_name  => proc_call);
-      -- the DEVAD of a frame of the other clause is no DEVAD: only the ST is reported then
-      if v_clause_ok and st = C_MDIO_ST_CL45 then
-        v_preamble_ok := check_value(value        => v_reg_or_dev_addr,
-                                     exp          => std_ulogic_vector(dev_addr),
-                                     alert_level  => alert_level,
-                                     msg          => "Wrong DEVAD." & add_msg_delimiter(msg),
-                                     scope        => scope,
-                                     radix        => HEX,
-                                     format       => KEEP_LEADING_0,
-                                     msg_id       => ID_NEVER,
-                                     msg_id_panel => msg_id_panel,
-                                     caller_name  => proc_call) and v_preamble_ok;
+      -- the REGAD / DEVAD field of a frame of the other clause means something else: only the ST is reported then.
+      -- An undefined field was reported above (protocol_error_severity) instead of a (misleading) mismatch.
+      if v_clause_ok and v_defined then
+        v_header_ok := check_value(value        => v_reg_or_dev_addr,
+                                   exp          => std_ulogic_vector(exp_addr),
+                                   alert_level  => alert_level,
+                                   msg          => "Wrong " & reg_or_dev_addr_long_name(st = C_MDIO_ST_CL45) & "." & add_msg_delimiter(msg),
+                                   scope        => scope,
+                                   radix        => HEX,
+                                   format       => KEEP_LEADING_0,
+                                   msg_id       => ID_NEVER,
+                                   msg_id_panel => msg_id_panel,
+                                   caller_name  => proc_call) and v_header_ok;
       end if;
     end if;
 
-    op              := v_op;
-    reg_or_dev_addr := v_reg_or_dev_addr;
-    clause_ok       := v_clause_ok;
-    header_ok       := v_preamble_ok;
+    op        := v_op;
+    clause_ok := v_clause_ok;
+    header_ok := v_header_ok and v_defined;
   end procedure await_addressed_frame;
 
   impure function check_opcode(
@@ -1502,28 +1510,6 @@ package body mdio_bfm_pkg is
                        msg_id_panel => msg_id_panel,
                        caller_name  => proc_call);
   end function check_opcode;
-
-  -- Clause 22: the register address is part of the header, compare it with the one the call expects
-  impure function check_c22_reg_addr(
-    constant reg_addr     : in std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0); -- as received
-    constant exp_reg_addr : in unsigned(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0);
-    constant alert_level  : in t_alert_level;
-    constant proc_call    : in string;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel) return boolean is
-  begin
-    return check_value(value        => reg_addr,
-                       exp          => std_ulogic_vector(exp_reg_addr),
-                       alert_level  => alert_level,
-                       msg          => "Wrong register address." & add_msg_delimiter(msg),
-                       scope        => scope,
-                       radix        => HEX,
-                       format       => KEEP_LEADING_0,
-                       msg_id       => ID_NEVER,
-                       msg_id_panel => msg_id_panel,
-                       caller_name  => proc_call);
-  end function check_c22_reg_addr;
 
   -- Rest of an addressed STA-driven frame (write / address-set): check the turnaround and receive the 16 bits
   -- the STA sends (the data of a write frame, the address of an address frame). payload is only assigned once
@@ -2244,20 +2230,17 @@ package body mdio_bfm_pkg is
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_reg_addr : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0);
     variable v_op_ok    : boolean;
     variable v_clause_ok : boolean;
     variable v_check_ok : boolean;
     variable v_status   : t_mdio_wait_status;
   begin
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
-    await_addressed_frame(C_MDIO_ST_CL22, (others => '-'), C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_reg_addr, v_clause_ok, v_check_ok, v_status);
+    await_addressed_frame(C_MDIO_ST_CL22, reg_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL22_WRITE, "write", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
-      -- the REGAD field of a clause 45 frame is its DEVAD: only the wrong ST was reported
-      v_check_ok := v_clause_ok and check_c22_reg_addr(v_reg_addr, reg_addr, alert_level, C_PROC_CALL, msg, scope, msg_id_panel)
-                    and v_op_ok and v_check_ok;
+      v_check_ok := v_op_ok and v_check_ok;
       expect_payload(v_op_ok, data, "Wrong data written.", alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                       v_check_ok, v_status);
     end if;
@@ -2282,7 +2265,6 @@ package body mdio_bfm_pkg is
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_reg_addr : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0);
     variable v_data     : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0) := (others => 'X');
     variable v_defined  : boolean;
     variable v_op_ok    : boolean;
@@ -2292,13 +2274,11 @@ package body mdio_bfm_pkg is
   begin
     data := (others => 'X');
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
-    await_addressed_frame(C_MDIO_ST_CL22, (others => '-'), C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_reg_addr, v_clause_ok, v_check_ok, v_status);
+    await_addressed_frame(C_MDIO_ST_CL22, reg_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL22_WRITE, "write", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
-      -- the REGAD field of a clause 45 frame is its DEVAD: only the wrong ST was reported
-      v_check_ok := v_clause_ok and check_c22_reg_addr(v_reg_addr, reg_addr, alert_level, C_PROC_CALL, msg, scope, msg_id_panel)
-                    and v_op_ok and v_check_ok;
+      v_check_ok := v_op_ok and v_check_ok;
       receive_payload(v_op_ok, v_data, v_defined, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                       v_check_ok, v_status);
       if v_status = WAIT_OK then
@@ -2331,7 +2311,6 @@ package body mdio_bfm_pkg is
     constant C_DATA_OK   : boolean := check_drive_arg(data, "read data", C_PROC_CALL, msg, scope, msg_id_panel);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_reg_addr : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0);
     variable v_op_ok    : boolean;
     variable v_clause_ok : boolean;
     variable v_check_ok : boolean;
@@ -2339,14 +2318,12 @@ package body mdio_bfm_pkg is
   begin
     phy_check_output_delay_config(C_PROC_CALL, msg, scope, msg_id_panel, config);
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
-    await_addressed_frame(C_MDIO_ST_CL22, (others => '-'), C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_reg_addr, v_clause_ok, v_check_ok, v_status);
+    await_addressed_frame(C_MDIO_ST_CL22, reg_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_check_ok := C_DATA_OK and v_check_ok;
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL22_READ, "read", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
-      -- the REGAD field of a clause 45 frame is its DEVAD: only the wrong ST was reported
-      v_check_ok := v_clause_ok and check_c22_reg_addr(v_reg_addr, reg_addr, alert_level, C_PROC_CALL, msg, scope, msg_id_panel)
-                    and v_op_ok and v_check_ok;
+      v_check_ok := v_op_ok and v_check_ok;
       drive_payload(v_op_ok, data, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config, v_check_ok, v_status);
     end if;
     report_phy_access_end(v_status, v_check_ok, C_TIMEOUT, "PHY", C_PROC_CALL, msg, scope, msg_id_panel, config);
@@ -2372,7 +2349,6 @@ package body mdio_bfm_pkg is
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
     variable v_op_ok    : boolean := false;
     variable v_clause_ok : boolean;
     variable v_check_ok : boolean;
@@ -2380,7 +2356,7 @@ package body mdio_bfm_pkg is
   begin
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_dev_addr, v_clause_ok, v_check_ok, v_status);
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL45_ADDR, "address", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := v_op_ok and v_check_ok;
@@ -2428,7 +2404,6 @@ package body mdio_bfm_pkg is
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
     variable v_reg_addr : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C45-1 downto 0) := (others => 'X');
     variable v_defined  : boolean;
     variable v_op_ok    : boolean;
@@ -2439,7 +2414,7 @@ package body mdio_bfm_pkg is
     reg_addr := (others => 'X');
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_dev_addr, v_clause_ok, v_check_ok, v_status);
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL45_ADDR, "address", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := v_op_ok and v_check_ok;
@@ -2472,7 +2447,6 @@ package body mdio_bfm_pkg is
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
     variable v_op_ok    : boolean;
     variable v_clause_ok : boolean;
     variable v_check_ok : boolean;
@@ -2480,7 +2454,7 @@ package body mdio_bfm_pkg is
   begin
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_dev_addr, v_clause_ok, v_check_ok, v_status);
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL45_WRITE, "write", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := v_op_ok and v_check_ok;
@@ -2508,7 +2482,6 @@ package body mdio_bfm_pkg is
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
     variable v_data     : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0) := (others => 'X');
     variable v_defined  : boolean;
     variable v_op_ok    : boolean;
@@ -2519,7 +2492,7 @@ package body mdio_bfm_pkg is
     data := (others => 'X');
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_dev_addr, v_clause_ok, v_check_ok, v_status);
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL45_WRITE, "write", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := v_op_ok and v_check_ok;
@@ -2555,7 +2528,6 @@ package body mdio_bfm_pkg is
     constant C_DATA_OK   : boolean := check_drive_arg(data, "read data", C_PROC_CALL, msg, scope, msg_id_panel);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
     variable v_op_ok    : boolean;
     variable v_clause_ok : boolean;
     variable v_check_ok : boolean;
@@ -2564,7 +2536,7 @@ package body mdio_bfm_pkg is
     phy_check_output_delay_config(C_PROC_CALL, msg, scope, msg_id_panel, config);
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_dev_addr, v_clause_ok, v_check_ok, v_status);
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_check_ok := C_DATA_OK and v_check_ok;
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL45_READ, "read", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
@@ -2596,7 +2568,6 @@ package body mdio_bfm_pkg is
     constant C_DATA_OK   : boolean := check_drive_arg(data, "read data", C_PROC_CALL, msg, scope, msg_id_panel);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
     variable v_op_ok    : boolean;
     variable v_clause_ok : boolean;
     variable v_check_ok : boolean;
@@ -2605,7 +2576,7 @@ package body mdio_bfm_pkg is
     phy_check_output_delay_config(C_PROC_CALL, msg, scope, msg_id_panel, config);
     log_phy_access_start(C_TIMEOUT, C_PROC_CALL, msg, scope, msg_id_panel, config);
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, alert_level, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
-                          v_op, v_dev_addr, v_clause_ok, v_check_ok, v_status);
+                          v_op, v_clause_ok, v_check_ok, v_status);
     if v_status = WAIT_OK then
       v_check_ok := C_DATA_OK and v_check_ok;
       v_op_ok    := v_clause_ok and check_opcode(v_op, C_MDIO_OP_CL45_READ_INC, "post-read-increment-address", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);

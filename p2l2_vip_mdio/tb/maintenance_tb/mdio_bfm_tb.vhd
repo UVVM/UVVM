@@ -51,6 +51,9 @@ architecture func of mdio_bfm_tb is
   -- C_PHY_ADDR / C_REG with bit 0 released by the STA: the pull-up still makes it a '1'
   constant C_PHY_ADDR_PULLED : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "0000Z";
   constant C_REG_PULLED : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "0010Z";
+  -- C_REG / C_DEVAD with one undefined bit
+  constant C_REG_UNDEFINED   : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "0X101";
+  constant C_DEVAD_UNDEFINED : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0)     := "0X011";
   -- bad_args: values with bit 0 other than '0' / '1', a TB_ERROR when given as a value to drive
   constant C_DEV_UNDEFINED  : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0) := "0001X";
   constant C_DATA_RELEASED  : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0)     := (0 => 'Z', others => '0');
@@ -451,6 +454,22 @@ begin
       sta_drive_raw(C_PREAMBLE & c22_frame("X1", C_OTHER_ADDR, C_REG, "10", x"0000") & c22_write(x"6666"));
       barrier("undefined OP done");
       check_alerts("undefined OP");
+
+      log(ID_LOG_HDR, "Undefined REGAD bit: one ERROR instead of a register address mismatch, the frame is taken", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      barrier("undefined REGAD");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG_UNDEFINED, "10", x"7272"));
+      barrier("undefined REGAD done");
+      check_alerts("undefined REGAD");
+
+      log(ID_LOG_HDR, "Undefined DEVAD bit: one ERROR instead of a DEVAD mismatch, the frame is taken", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      barrier("undefined DEVAD");
+      sta_drive_raw(C_PREAMBLE & C_MDIO_ST_CL45 & C_MDIO_OP_CL45_WRITE & C_PHY_ADDR & C_DEVAD_UNDEFINED & "10" & x"7373");
+      barrier("undefined DEVAD done");
+      check_alerts("undefined DEVAD");
 
       log(ID_LOG_HDR, "sync_to_frame_start = false, invalid OP (frame to another PHY): the rest is skipped, the next frame is taken", C_SCOPE);
       ------------------------------------------------------------
@@ -1026,6 +1045,14 @@ begin
       mdio_phy_c22_expect_write(unsigned(C_REG), x"6666", "the frame after the undefined OP", mdio_if, terminate_loop,
                                 config => v_config);
       barrier("undefined OP done");
+
+      barrier("undefined REGAD");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"7272", "undefined REGAD", mdio_if, terminate_loop, config => v_config);
+      barrier("undefined REGAD done");
+
+      barrier("undefined DEVAD");
+      mdio_phy_c45_expect_write(C_DEVAD, x"7373", "undefined DEVAD", mdio_if, terminate_loop, config => v_config);
+      barrier("undefined DEVAD done");
 
       v_config.sync_to_frame_start := false;
       barrier("invalid OP");

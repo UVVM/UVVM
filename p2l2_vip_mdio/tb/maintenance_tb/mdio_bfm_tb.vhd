@@ -49,6 +49,14 @@ architecture func of mdio_bfm_tb is
   -- C_PHY_ADDR / C_REG with bit 0 released by the STA: the pull-up still makes it a '1'
   constant C_PHY_ADDR_PULLED : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "0000Z";
   constant C_REG_PULLED : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "0010Z";
+  -- bad_args: values with bit 0 other than '0' / '1', a TB_ERROR when given as a value to drive
+  constant C_DEV_UNDEFINED  : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0) := "0001X";
+  constant C_DATA_RELEASED  : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0)     := (0 => 'Z', others => '0');
+  constant C_DATA_DONT_CARE : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0)     := (0 => '-', others => '0');
+  constant C_DATA_PULLED    : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0)     := (0 => 'H', others => '0');
+  constant C_DEV            : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0) := "00011";
+  -- PHY calls in bad_args: terminated right away, the timeout is never reached
+  constant C_BAD_ARG_TIMEOUT : time := 1 us;
   -- Turnaround of a write with the first bit released by the STA: reads "H0", the value is right but not driven
   constant C_TA_PULLED  : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0) := "Z0";
   -- Wrong turnaround of a write ("11") with the first bit released by the STA: reads "H1"
@@ -185,6 +193,7 @@ begin
     variable v_config : t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT;
     variable v_data   : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
     variable v_start  : time;
+    variable v_success : boolean;
 
     -- The wait lets the '1' that await_barrier assigns on leaving reach the bus first. Without it, two barriers in one
     -- time step leave global_barrier at '0': no event, both processes would wait for the timeout (without an alert).
@@ -714,6 +723,59 @@ begin
                                              timeout => 1 us, config => v_config);
       v_config := C_MDIO_BFM_CONFIG_DEFAULT;
       check_alerts("PHY output_delay 310 ns");
+
+      terminate_loop <= '0';
+
+    --============================================================================================================================
+    elsif GC_TESTCASE = "bad_args" then
+      --============================================================================================================================
+      -- Values the BFM drives with bits other than '0' / '1': one TB_ERROR per bad field at the call. That they are still
+      -- driven as given is tested with the VVC (protocol_errors_vvc). Here terminate_loop is set, so every call ends right
+      -- away, and nobody answers (p_phy is not used).
+      terminate_loop <= '1';
+      wait for 0 ns;
+
+      log(ID_LOG_HDR, "STA: bad addresses / data, one TB_ERROR per field", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      mdio_sta_c22_write(unsigned(C_PHY_ADDR), unsigned(C_REG), C_DATA_RELEASED, "write data with 'Z'", mdio_if, terminate_loop,
+                         config => v_config);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      mdio_sta_c22_write(unsigned(C_PHY_ADDR_PULLED), unsigned(C_REG), C_DATA_DONT_CARE, "PHYAD with 'Z', write data with '-'",
+                         mdio_if, terminate_loop, config => v_config);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      mdio_sta_c22_read(unsigned(C_PHY_ADDR), unsigned(C_REG_PULLED), v_data, "REGAD with 'Z'", mdio_if, terminate_loop,
+                        config => v_config);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      mdio_sta_c45_address(unsigned(C_PHY_ADDR), unsigned(C_DEV), unsigned(C_DATA_PULLED), v_success, "register address with 'H'",
+                           mdio_if, terminate_loop, config => v_config);
+      check_value(not v_success, ERROR, "an address frame with a bad register address is not successful", C_SCOPE);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      mdio_sta_c45_write(unsigned(C_PHY_ADDR), unsigned(C_DEV), C_DATA_PULLED, "write data with 'H'", mdio_if, terminate_loop,
+                         config => v_config);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      mdio_sta_c45_check(unsigned(C_PHY_ADDR), unsigned(C_DEV_UNDEFINED), x"0000", "DEVAD with 'X'", mdio_if, terminate_loop,
+                         config => v_config);
+      check_alerts("STA bad arguments");
+
+      log(ID_LOG_HDR, "PHY: bad reply data, one TB_ERROR per call, also if no frame comes", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      mdio_phy_c22_reply_read(unsigned(C_REG), C_DATA_RELEASED, "reply data with 'Z'", mdio_if, terminate_loop,
+                              timeout => C_BAD_ARG_TIMEOUT, config => v_config);
+      mdio_phy_c45_reply_read(unsigned(C_DEV), C_DATA_DONT_CARE, "reply data with '-'", mdio_if, terminate_loop,
+                              timeout => C_BAD_ARG_TIMEOUT, config => v_config);
+      mdio_phy_c45_reply_post_read_increment(unsigned(C_DEV), C_DATA_PULLED, "reply data with 'H'", mdio_if, terminate_loop,
+                                             timeout => C_BAD_ARG_TIMEOUT, config => v_config);
+      check_alerts("PHY bad reply data");
+
+      log(ID_LOG_HDR, "Expected values are only compared: '-' is no TB_ERROR", C_SCOPE);
+      ------------------------------------------------------------
+      mdio_sta_c22_check(unsigned(C_PHY_ADDR), unsigned(C_REG), C_DATA_DONT_CARE, "data_exp with '-'", mdio_if, terminate_loop,
+                         config => v_config);
+      mdio_phy_c22_expect_write(unsigned(C_REG), C_DATA_DONT_CARE, "data_exp with '-'", mdio_if, terminate_loop,
+                                timeout => C_BAD_ARG_TIMEOUT, config => v_config);
+      check_alerts("don't care in expected values");
 
       terminate_loop <= '0';
 

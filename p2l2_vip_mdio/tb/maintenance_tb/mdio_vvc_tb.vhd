@@ -824,6 +824,8 @@ begin
 
       log(ID_LOG_HDR, "Undefined bit in a received address: one ERROR, the frame is not taken as the PHY's own", C_SCOPE);
       ------------------------------------------------------------
+      -- The STA injects the bad bits: a TB_ERROR at each such call, the value is still driven (also below)
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY expects one valid write");
       mdio_sta_c22_write(MDIO_VVCT, C_STA, "0X001", "00101", x"BEEF", "STA sends a PHY address with an undefined bit");
@@ -880,7 +882,8 @@ begin
 
       log(ID_LOG_HDR, "Undefined bit in the data the STA writes: protocol_error_severity", C_SCOPE);
       ------------------------------------------------------------
-      -- one ERROR, the data is not compared
+      -- one ERROR, the data is not compared. Two STA writes with an undefined bit: two TB_ERRORs
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY expects a write");
       mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", "10111110X1101111", "STA writes an undefined bit");
@@ -897,7 +900,8 @@ begin
 
       log(ID_LOG_HDR, "Data bit the STA releases (only pulled up): undriven_severity", C_SCOPE);
       ------------------------------------------------------------
-      -- one ERROR, the data is still compared: 'H' counts as '1', x"BEEF"
+      -- one ERROR, the data is still compared: 'H' counts as '1', x"BEEF". Two STA writes with a 'Z' bit: two TB_ERRORs
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY expects a write");
       mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", "10111110Z1101111", "STA releases a data bit");

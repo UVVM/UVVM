@@ -292,6 +292,9 @@ package mdio_bfm_pkg is
   --   C_UNDEFINED_TIME (default) = config.phy.timeout, 0 ns = no timeout.
   -- - config.phy.max_wait_mdc_change: 0 ns = no watchdog, a stalled frame then waits until terminate_loop.
   --   A negative timeout or max_wait_mdc_change is a TB_FAILURE, the call returns without waiting.
+  -- - The reply data of mdio_phy_*_reply_* must be '0' / '1' only, otherwise TB_ERROR at the call. It is still driven as
+  --   given, so the bus check then also reports bus contention for those bits. The expected values of expect_* are only
+  --   compared, '-' is a don't care there.
   -- - terminate_loop: '1' aborts the call immediately (also mid-frame), releases the bus and
   --   logs ID_TERMINATE_CMD - no alert. The VVC connects its terminate_current_cmd flag here.
   -- - Logging: start of the wait with id_for_bfm_wait, success with id_for_bfm. An MDC stall / timeout
@@ -433,6 +436,9 @@ package mdio_bfm_pkg is
   --   is reported with config.timing_violation_severity.
   -- - terminate_loop: '1' aborts the call, releases the bus and logs ID_TERMINATE_CMD - no alert. In an MDC high
   --   phase the abort waits for the falling edge (at most half an MDC period), so MDC never gets a short high pulse.
+  -- - Addresses and write data / register address must be '0' / '1' only (no 'Z', 'H', '-', ...), otherwise TB_ERROR
+  --   at the call. The value is still driven as given (error injection with the TB_ERROR expected), mdio_sta_c45_address
+  --   'success' is false. 'data_exp' is only compared, '-' is a don't care there.
   -- - Bus checks: a mismatch is reported with config.bus_contention_severity.
   --   IDLE: after every frame the STA clocks config.sta.idle_cycles IDLE bits with MDIO released. At the end of the
   --   call (one low phase after the last sampling edge) the bus must be undriven ('H' or 'Z'),
@@ -612,6 +618,47 @@ package body mdio_bfm_pkg is
     end loop;
     return true;
   end function is_driven;
+
+  -- Field names of the two address fields, for the alerts
+  function phy_addr_name(constant cl45 : in boolean) return string is
+  begin
+    if cl45 then
+      return "PRTAD";
+    end if;
+    return "PHYAD";
+  end function phy_addr_name;
+
+  function reg_or_dev_addr_name(constant cl45 : in boolean) return string is
+  begin
+    if cl45 then
+      return "DEVAD";
+    end if;
+    return "REGAD";
+  end function reg_or_dev_addr_name;
+
+  -- A call argument the BFM drives onto the bus (address, write data, read reply data) must be '0' / '1' only: a 'Z' or
+  -- 'H' is only pulled up, '-' / 'X' / 'U' puts an 'X' on the bus. A testbench error, not a bus error: TB_ERROR at the
+  -- call. The caller does not abort but still drives the value as given on purpose: this allows error injection, e.g. an
+  -- STA sending undefined or undriven bits to test how a PHY DUT reacts, with the TB_ERROR expected
+  -- (increment_expected_alerts). Returns true if all bits are '0' / '1'.
+  impure function check_drive_arg(
+    constant value        : in std_ulogic_vector;
+    constant field        : in string;
+    constant proc_call    : in string;
+    constant msg          : in string;
+    constant scope        : in string;
+    constant msg_id_panel : in t_msg_id_panel) return boolean is
+  begin
+    return check_value(
+      value        => is_driven(value),
+      alert_level  => TB_ERROR,
+      msg          => "Bit(s) in " & field & " other than '0' / '1': " & to_string(value) &
+                      ". Only '0' / '1' can be driven, the value is driven as given." & add_msg_delimiter(msg),
+      scope        => scope,
+      msg_id       => ID_NEVER,
+      msg_id_panel => msg_id_panel,
+      caller_name  => proc_call);
+  end function check_drive_arg;
 
   -- Wait for the next MDC rising edge within a frame (watchdog: config.phy.max_wait_mdc_change, 0 ns = none).
   -- No alert here - the caller reports once at the end (report_phy_access_end).
@@ -1322,22 +1369,6 @@ package body mdio_bfm_pkg is
     variable v_defined              : boolean; -- header checks: reported, they don't affect the result of the call
     variable v_driven               : boolean;
     variable v_cl45                 : boolean; -- for the field names in the alerts
-
-    function phy_addr_name(constant cl45 : in boolean) return string is
-    begin
-      if cl45 then
-        return "PRTAD";
-      end if;
-      return "PHYAD";
-    end function phy_addr_name;
-
-    function reg_or_dev_addr_name(constant cl45 : in boolean) return string is
-    begin
-      if cl45 then
-        return "DEVAD";
-      end if;
-      return "REGAD";
-    end function reg_or_dev_addr_name;
   begin
     -- reported by resolve_phy_timeout. A negative "wait for" would stop the simulator.
     if config.phy.max_wait_mdc_change < 0 ns then
@@ -1805,6 +1836,26 @@ package body mdio_bfm_pkg is
     sampled := v_sampled(C_PRE to C_PRE + C_STA_FRAME_LENGTH - 1);
   end procedure sta_clock_frame;
 
+  -- The address fields the STA drives must be '0' / '1' (check_drive_arg), one alert per bad field.
+  -- Returns true if both are fine.
+  impure function sta_check_addr_args(
+    constant st              : in std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
+    constant phy_addr        : in unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0);
+    constant reg_or_dev_addr : in unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0);
+    constant proc_call       : in string;
+    constant msg             : in string;
+    constant scope           : in string;
+    constant msg_id_panel    : in t_msg_id_panel) return boolean is
+    constant C_CL45 : boolean := st = C_MDIO_ST_CL45;
+    variable v_ok   : boolean;
+  begin
+    v_ok := check_drive_arg(std_ulogic_vector(phy_addr), phy_addr_name(C_CL45), proc_call, msg, scope, msg_id_panel);
+    -- not "and v_ok" in front: the short-circuit would skip the second alert
+    v_ok := check_drive_arg(std_ulogic_vector(reg_or_dev_addr), reg_or_dev_addr_name(C_CL45), proc_call, msg, scope,
+                            msg_id_panel) and v_ok;
+    return v_ok;
+  end function sta_check_addr_args;
+
   -- Core of the STA-driven frames (clause 22 write, clause 45 address / write):
   -- ST OP PHYAD/PRTAD REGAD/DEVAD TA("10", driven by STA) DATA
   procedure sta_write_frame(
@@ -1826,7 +1877,20 @@ package body mdio_bfm_pkg is
     constant C_FRAME : std_ulogic_vector(C_STA_FRAME_LENGTH-1 downto 0) :=
                                                                            st & op & std_ulogic_vector(phy_addr) & std_ulogic_vector(reg_or_dev_addr) & C_TA_STA_DRIVEN & data;
     variable v_sampled : std_ulogic_vector(C_STA_FRAME_LENGTH-1 downto 0); -- not needed for a write
+    variable v_args_ok : boolean;
+
+    function data_name return string is
+    begin
+      if st = C_MDIO_ST_CL45 and op = C_MDIO_OP_CL45_ADDR then
+        return "register address";
+      end if;
+      return "write data";
+    end function data_name;
   begin
+    v_args_ok := sta_check_addr_args(st, phy_addr, reg_or_dev_addr, proc_call, msg, scope, msg_id_panel);
+    v_args_ok := check_drive_arg(data, data_name, proc_call, msg, scope, msg_id_panel) and v_args_ok;
+    check_ok  := v_args_ok and check_ok;
+    -- a bad argument does not abort: the frame is sent as given, for error injection (see check_drive_arg)
     sta_clock_frame(C_FRAME, v_sampled, mdio_if, terminate_loop, proc_call, msg, scope, msg_id_panel, config, check_ok, status);
   end procedure sta_write_frame;
 
@@ -1865,6 +1929,8 @@ package body mdio_bfm_pkg is
   begin
     data       := (others => 'X');
     payload_ok := false;
+    check_ok   := sta_check_addr_args(st, phy_addr, reg_or_dev_addr, proc_call, msg, scope, msg_id_panel) and check_ok;
+    -- a bad argument does not abort: the frame is sent as given, for error injection (see check_drive_arg)
     sta_clock_frame(C_FRAME, v_sampled, mdio_if, terminate_loop, proc_call, msg, scope, msg_id_panel, config, check_ok, v_status);
     status := v_status;
     if v_status /= WAIT_OK then
@@ -2190,6 +2256,9 @@ package body mdio_bfm_pkg is
     constant C_PROC_CALL : string := C_PROC_NAME & "(REG:" & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
                                      to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
+    -- at the call, also if no frame comes. Counted for the OK log once the frame is there. Bad data does not abort the
+    -- call, it is replied as given for error injection (see check_drive_arg).
+    constant C_DATA_OK   : boolean := check_drive_arg(data, "read data", C_PROC_CALL, msg, scope, msg_id_panel);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
     variable v_reg_addr : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0);
@@ -2202,6 +2271,7 @@ package body mdio_bfm_pkg is
     await_addressed_frame(C_MDIO_ST_CL22, (others => '-'), C_TIMEOUT, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                           v_op, v_reg_addr, v_check_ok, v_status);
     if v_status = WAIT_OK then
+      v_check_ok := C_DATA_OK and v_check_ok;
       v_op_ok    := check_opcode(v_op, C_MDIO_OP_CL22_READ, "read", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := check_c22_reg_addr(v_reg_addr, reg_addr, alert_level, C_PROC_CALL, msg, scope, msg_id_panel)
                     and v_op_ok and v_check_ok;
@@ -2383,6 +2453,9 @@ package body mdio_bfm_pkg is
     constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
                                      to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
+    -- at the call, also if no frame comes. Counted for the OK log once the frame is there. Bad data does not abort the
+    -- call, it is replied as given for error injection (see check_drive_arg).
+    constant C_DATA_OK   : boolean := check_drive_arg(data, "read data", C_PROC_CALL, msg, scope, msg_id_panel);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
     variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
@@ -2395,6 +2468,7 @@ package body mdio_bfm_pkg is
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                           v_op, v_dev_addr, v_check_ok, v_status);
     if v_status = WAIT_OK then
+      v_check_ok := C_DATA_OK and v_check_ok;
       v_op_ok    := check_opcode(v_op, C_MDIO_OP_CL45_READ, "read", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := v_op_ok and v_check_ok;
       drive_payload(v_op_ok, data, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config, v_check_ok, v_status);
@@ -2419,6 +2493,9 @@ package body mdio_bfm_pkg is
     constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " &
                                      to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     constant C_TIMEOUT   : time   := resolve_phy_timeout(timeout, C_PROC_CALL, msg, scope, msg_id_panel, config);
+    -- at the call, also if no frame comes. Counted for the OK log once the frame is there. Bad data does not abort the
+    -- call, it is replied as given for error injection (see check_drive_arg).
+    constant C_DATA_OK   : boolean := check_drive_arg(data, "read data", C_PROC_CALL, msg, scope, msg_id_panel);
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
     variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
@@ -2431,6 +2508,7 @@ package body mdio_bfm_pkg is
     await_addressed_frame(C_MDIO_ST_CL45, dev_addr, C_TIMEOUT, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config,
                           v_op, v_dev_addr, v_check_ok, v_status);
     if v_status = WAIT_OK then
+      v_check_ok := C_DATA_OK and v_check_ok;
       v_op_ok    := check_opcode(v_op, C_MDIO_OP_CL45_READ_INC, "post-read-increment-address", alert_level, C_PROC_CALL, msg, scope, msg_id_panel);
       v_check_ok := v_op_ok and v_check_ok;
       drive_payload(v_op_ok, data, mdio_if, terminate_loop, C_PROC_CALL, msg, scope, msg_id_panel, config, v_check_ok, v_status);

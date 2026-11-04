@@ -195,6 +195,12 @@ Methods
   the clause 22 / clause 45 frame format.
 * 'terminate_loop' aborts a call when set to '1': the bus is released and ID_TERMINATE_CMD is logged, without an alert. In
   an MDC high phase, an STA procedure waits for the falling edge, so MDC never gets a short high pulse.
+* Every value a procedure drives onto the bus (the addresses and the write data / register address of the STA, the read
+  data a PHY replies with) should contain '0' / '1' only. A 'Z' or 'H' bit is only pulled up, a '-', 'X' or 'U' bit puts
+  an 'X' on the bus. Such a value is a TB_ERROR at the call (one per field), but it is still driven as given: with the
+  TB_ERROR expected, an STA can inject undefined or undriven bits to test a PHY. A PHY replying with such bits also gets
+  a bus contention alert for them (config.bus_contention_severity). Expected values ('data_exp', the expected register
+  address and data of a PHY) are only compared, so '-' (don't care) is allowed there.
 
 **STA procedures**
 
@@ -416,8 +422,9 @@ mdio_sta_c45_address()
 Sends a clause 45 address frame: sets the register address of the MMD 'dev_addr' in the PHY 'phy_addr' to 'reg_addr'. The
 following write and read frames to this MMD access that register address.
 
-The overload with the 'success' output returns false if the frame was terminated or a bus check of the frame failed: a bit driven
-by the STA did not show on the bus, or the bus was not released after the frame (config.bus_contention_severity). A caller can
+The overload with the 'success' output returns false if the frame was terminated, an argument had bits other than '0' / '1'
+(TB_ERROR), or a bus check of the frame failed: a bit driven by the STA did not show on the bus, or the bus was not
+released after the frame (config.bus_contention_severity). A caller can
 then skip the access frame that would follow. Alerts from the timing check of the configuration (config.timing_violation_severity)
 do not set 'success' to false, and a check disabled with NO_ALERT counts as passed. The VVC uses it for the ``*_reg`` methods.
 
@@ -442,8 +449,9 @@ The procedure reports an alert if:
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | reg_addr           | in     | unsigned(15 downto 0)        | Register address sent in the address frame              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | success            | out    | boolean                      | False if the frame was terminated or a bus check of the |
-|          |                    |        |                              | frame failed (config.bus_contention_severity)           |
+| variable | success            | out    | boolean                      | False if the frame was terminated, an argument had      |
+|          |                    |        |                              | bits other than '0' / '1' or a bus check failed         |
+|          |                    |        |                              | (config.bus_contention_severity)                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+

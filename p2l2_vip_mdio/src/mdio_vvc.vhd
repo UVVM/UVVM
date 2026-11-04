@@ -205,7 +205,7 @@ begin
       constant result : in t_vvc_result) is
     begin
       if v_cmd.data_routing = TO_SB then
-        -- no value at all (all 'X': terminated, timed out, wrong opcode - the BFM reported why): nothing is
+        -- no value at all (all 'X': terminated, timed out, wrong clause / opcode - the BFM reported why): nothing is
         -- checked, the expected entry stays pending in the scoreboard
         if result /= (result'range => 'X') then
           mdio_vvc_sb.check_received(GC_INSTANCE_IDX, pad_mdio_sb(result));

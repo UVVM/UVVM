@@ -42,7 +42,7 @@ package transaction_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    -- VVC local
+    -- PHY (target) operations
     PHY_C22_EXPECT_WRITE,
     PHY_C22_RECEIVE_WRITE,
     PHY_C22_REPLY_READ,

@@ -110,7 +110,9 @@ Default value for the record is C_MDIO_BFM_CONFIG_DEFAULT.
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | output_delay                 | time                           | 150 ns                          | Time from a rising MDC edge until MDIO is     |
 |                              |                                |                                 | driven, in both roles. IEEE 802.3 22.3.4      |
-|                              |                                |                                 | allows 0 ns to 300 ns for a PHY.              |
+|                              |                                |                                 | allows 0 ns to 300 ns for a PHY. The STA must |
+|                              |                                |                                 | hold MDIO at least 10 ns, output_delay 0 ns   |
+|                              |                                |                                 | is rejected for the STA (TB_FAILURE).         |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | id_for_bfm                   | :ref:`t_msg_id <message_ids>`  | ID_BFM                          | Message ID used for logging general messages  |
 |                              |                                |                                 | in the BFM                                    |
@@ -209,7 +211,8 @@ Methods
 * The STA generates MDC with config.sta.mdc_period (idle low between calls) and sends config.sta.preamble_length '1' bits
   before every frame (none with config.suppress_preamble). After every frame it clocks config.sta.idle_cycles IDLE bits
   with MDIO released.
-* MDIO is driven config.output_delay after the rising MDC edge.
+* MDIO is driven config.output_delay after the rising MDC edge. IEEE 802.3 22.3.4 requires the STA to hold MDIO at
+  least 10 ns, so config.output_delay must be greater than 0 ns.
 * The target is a parameter of every call ('phy_addr', and 'dev_addr' for clause 45), as an STA talks to several PHYs and
   MMDs.
 * The STA never waits for the PHY, so there is no timeout parameter.
@@ -256,8 +259,8 @@ The procedure reports an alert if:
     * The configured timing violates the min_* settings of the config (config.timing_violation_severity).
     * 'phy_addr', 'reg_addr' or 'data' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still
       driven as given.
-    * config.sta.mdc_period is not positive (TB_FAILURE).
-    * config.output_delay is negative (TB_FAILURE).
+    * config.sta.mdc_period is not greater than 0 ns (TB_FAILURE).
+    * config.output_delay is not greater than 0 ns (TB_FAILURE).
     * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
@@ -324,8 +327,8 @@ The procedure reports an alert if:
       300 ns + config.min_setup_time (config.timing_violation_severity).
     * 'phy_addr' or 'reg_addr' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still driven as
       given.
-    * config.sta.mdc_period is not positive (TB_FAILURE).
-    * config.output_delay is negative (TB_FAILURE).
+    * config.sta.mdc_period is not greater than 0 ns (TB_FAILURE).
+    * config.output_delay is not greater than 0 ns (TB_FAILURE).
     * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
@@ -451,8 +454,8 @@ The procedure reports an alert if:
     * The configured timing violates the min_* settings of the config (config.timing_violation_severity).
     * 'phy_addr', 'dev_addr' or 'reg_addr' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still
       driven as given.
-    * config.sta.mdc_period is not positive (TB_FAILURE).
-    * config.output_delay is negative (TB_FAILURE).
+    * config.sta.mdc_period is not greater than 0 ns (TB_FAILURE).
+    * config.output_delay is not greater than 0 ns (TB_FAILURE).
     * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
@@ -515,8 +518,8 @@ The procedure reports an alert if:
     * The configured timing violates the min_* settings of the config (config.timing_violation_severity).
     * 'phy_addr', 'dev_addr' or 'data' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still
       driven as given.
-    * config.sta.mdc_period is not positive (TB_FAILURE).
-    * config.output_delay is negative (TB_FAILURE).
+    * config.sta.mdc_period is not greater than 0 ns (TB_FAILURE).
+    * config.output_delay is not greater than 0 ns (TB_FAILURE).
     * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::
@@ -584,8 +587,8 @@ The procedure reports an alert if:
       300 ns + config.min_setup_time (config.timing_violation_severity).
     * 'phy_addr' or 'dev_addr' contain bits other than '0' / '1' (TB_ERROR, one per field). The value is still driven as
       given.
-    * config.sta.mdc_period is not positive (TB_FAILURE).
-    * config.output_delay is negative (TB_FAILURE).
+    * config.sta.mdc_period is not greater than 0 ns (TB_FAILURE).
+    * config.output_delay is not greater than 0 ns (TB_FAILURE).
     * config.output_delay is not shorter than config.sta.mdc_period (TB_FAILURE).
 
 .. code-block::

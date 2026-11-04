@@ -687,6 +687,15 @@ begin
       v_config := C_MDIO_BFM_CONFIG_DEFAULT;
       check_alerts("STA output_delay -1 ns");
 
+      log(ID_LOG_HDR, "STA output_delay 0 ns with min_hold_time 0 ns: one TB_FAILURE", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_FAILURE, 1);
+      v_config.output_delay  := 0 ns;
+      v_config.min_hold_time := 0 ns;
+      mdio_sta_c22_write(unsigned(C_PHY_ADDR), unsigned(C_REG), x"0000", "output_delay 0 ns", mdio_if, terminate_loop, config => v_config);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      check_alerts("STA output_delay 0 ns");
+
       log(ID_LOG_HDR, "STA output_delay = mdc_period: one TB_FAILURE, one ERROR (no setup time left)", C_SCOPE);
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(TB_FAILURE, 1);

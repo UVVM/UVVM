@@ -42,6 +42,7 @@ package mdio_bfm_pkg is
   constant C_MDIO_PREAMBLE_LENGTH : natural := 32;
 
   constant C_MDIO_MAX_OUTPUT_DELAY : time := 300 ns; -- IEEE 802.3 22.3.4: PHY drives MDIO 0 to 300 ns after the MDC rising edge
+  constant C_MDIO_MIN_STA_HOLD_TIME : time := 10 ns; -- IEEE 802.3 22.3.4: STA holds MDIO at least 10 ns after the MDC rising edge
 
   constant C_MDIO_ST_WIDTH     : natural := 2;
   constant C_MDIO_OP_WIDTH     : natural := 2;
@@ -131,7 +132,7 @@ package mdio_bfm_pkg is
     min_mdc_period            : time;     -- minimum time between 2 rising edges on the clock line
     min_mdc_high_time         : time;     -- minimum time the clock line has to be high in a clock period
     min_mdc_low_time          : time;     -- minimum time the clock line has to be low in a clock period
-    output_delay              : time;     -- time between rising edge of clock and output of data (must be between 0 ns and 300 ns!)
+    output_delay              : time;     -- time between rising edge of clock and output of data (STA: > 0 ns, PHY: 0 ns to 300 ns)
     id_for_bfm                : t_msg_id; -- To replace default log msg IDs
     id_for_bfm_wait           : t_msg_id; -- To replace default log msg IDs
     suppress_preamble         : boolean;  -- the STA sends no preamble (frame starts directly with ST)
@@ -175,7 +176,7 @@ package mdio_bfm_pkg is
   -- Define the default value for the BFM config
   constant C_MDIO_BFM_CONFIG_DEFAULT : t_mdio_bfm_config := (
     min_setup_time            => 10 ns,
-    min_hold_time             => 10 ns,
+    min_hold_time             => C_MDIO_MIN_STA_HOLD_TIME,
     min_mdc_period            => 400 ns,
     min_mdc_high_time         => 160 ns,
     min_mdc_low_time          => 160 ns,
@@ -1704,9 +1705,11 @@ package body mdio_bfm_pkg is
     constant C_SEV    : t_alert_level := config.timing_violation_severity;
   begin
     sta_check_condition(C_PERIOD > 0 ns, TB_FAILURE,
-      "mdc_period " & to_string(C_PERIOD, ns) & " must be positive.", proc_call, msg, scope, msg_id_panel);
-    sta_check_condition(config.output_delay >= 0 ns, TB_FAILURE,
-      "Negative output_delay " & to_string(config.output_delay, ns) & " (not allowed).", proc_call, msg, scope, msg_id_panel);
+      "mdc_period " & to_string(C_PERIOD, ns) & " must be greater than 0 ns.", proc_call, msg, scope, msg_id_panel);
+    sta_check_condition(config.output_delay > 0 ns, TB_FAILURE,
+      "output_delay " & to_string(config.output_delay, ns) & " must be greater than 0 ns for the STA. IEEE 802.3 22.3.4 " &
+      "requires the STA to hold MDIO at least " & to_string(C_MDIO_MIN_STA_HOLD_TIME, ns) & " after the rising MDC edge.",
+      proc_call, msg, scope, msg_id_panel);
     sta_check_condition(config.output_delay < C_PERIOD, TB_FAILURE,
       "output_delay " & to_string(config.output_delay, ns) & " must be shorter than mdc_period " & to_string(C_PERIOD, ns) &
       ", the driven bit would not settle before the next edge.", proc_call, msg, scope, msg_id_panel);

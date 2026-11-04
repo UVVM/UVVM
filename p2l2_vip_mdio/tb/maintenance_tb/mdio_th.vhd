@@ -35,7 +35,9 @@ entity mdio_th is
     GC_STA_BFM_CONFIG : t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT;
     GC_PHY_BFM_CONFIG : t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT; -- phy.phy_address is set from GC_PHY_ADDRESSES
     -- One PHY VVC per element: instance 1 gets the first address, instance 2 the second, ...
-    GC_PHY_ADDRESSES  : t_natural_array   := (1, 2, 3)
+    GC_PHY_ADDRESSES  : t_natural_array   := (1, 2, 3);
+    -- struct_vvc: true = the VVCs drive the pull-up of MDIO (GC_MDIO_PULLUP), false = the harness does
+    GC_VVC_PULLUP     : boolean           := false
   );
   port(
     mdc  : inout std_logic;
@@ -56,7 +58,7 @@ begin
 end architecture struct_bfm;
 
 -- VVC TB: one STA VVC (instance 0) and one PHY VVC per element of GC_PHY_ADDRESSES (instances 1, 2, ...).
--- The harness provides the pull-up of MDIO (GC_MDIO_PULLUP of the VVCs is false by default).
+-- The harness provides the pull-up of MDIO, or with GC_VVC_PULLUP every VVC drives it (GC_MDIO_PULLUP).
 architecture struct_vvc of mdio_th is
 
   function phy_bfm_config(constant phy_address : natural) return t_mdio_bfm_config is
@@ -68,7 +70,9 @@ architecture struct_vvc of mdio_th is
 
 begin
 
-  mdio <= 'H';
+  g_th_pullup : if not GC_VVC_PULLUP generate
+    mdio <= 'H';
+  end generate g_th_pullup;
 
   -----------------------------
   -- vvc/executors
@@ -78,7 +82,8 @@ begin
     generic map(
       GC_INSTANCE_IDX    => 0,
       GC_STA_MODE        => true,
-      GC_MDIO_BFM_CONFIG => GC_STA_BFM_CONFIG
+      GC_MDIO_BFM_CONFIG => GC_STA_BFM_CONFIG,
+      GC_MDIO_PULLUP     => GC_VVC_PULLUP
     )
     port map(
       mdio_vvc_if.mdc  => mdc,
@@ -91,7 +96,8 @@ begin
       generic map(
         GC_INSTANCE_IDX    => i,
         GC_STA_MODE        => false,
-        GC_MDIO_BFM_CONFIG => phy_bfm_config(GC_PHY_ADDRESSES(GC_PHY_ADDRESSES'low + i - 1))
+        GC_MDIO_BFM_CONFIG => phy_bfm_config(GC_PHY_ADDRESSES(GC_PHY_ADDRESSES'low + i - 1)),
+        GC_MDIO_PULLUP     => GC_VVC_PULLUP
       )
       port map(
         mdio_vvc_if.mdc  => mdc,

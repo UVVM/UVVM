@@ -86,7 +86,8 @@ begin
   -----------------------------------------------------------------------------
   i_test_harness : entity work.mdio_th(struct_vvc)
     generic map(
-      GC_PHY_ADDRESSES => C_PHY_ADDRESSES
+      GC_PHY_ADDRESSES => C_PHY_ADDRESSES,
+      GC_VVC_PULLUP    => GC_TESTCASE = "vvc_pullup" -- only there the VVCs drive the pull-up, not the harness
     )
     port map(
       mdc  => mdc,
@@ -1789,6 +1790,28 @@ begin
       mdio_sta_c45_read_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"4321", "STA reads a register");
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "c45 reply_read_reg");
       check_transaction(false, PHY_C45_REPLY_READ_REG, x"ABCD", "00000", "00011", x"4321");
+
+    --============================================================================================================================
+    elsif GC_TESTCASE = "vvc_pullup" then
+      --============================================================================================================================
+      log(ID_LOG_HDR, "GC_MDIO_PULLUP = true: the VVCs drive the pull-up of MDIO, the harness does not", C_SCOPE);
+      ------------------------------------------------------------
+      check_value(mdio, 'H', ERROR, "the idle bus is pulled up", C_SCOPE);
+
+      mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY expects a write");
+      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", x"BEEF", "STA writes");
+      mdio_phy_c22_reply_read(MDIO_VVCT, C_PHY_1, "00110", x"1234", "PHY replies to a read");
+      mdio_sta_c22_check(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00110", x"1234", "STA checks");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "write and read");
+      check_value(mdio, 'H', ERROR, "both released the bus after the frames", C_SCOPE);
+
+      -- nobody drives the turnaround or the data: without a pull-up the bus would float ('Z', undefined data)
+      increment_expected_alerts_and_stop_limit(ERROR, 1); -- turnaround bit 0 not driven
+      mdio_sta_c22_read(MDIO_VVCT, C_STA, C_MISSING_PHY_ADDR, "00001", "STA reads from an address without a PHY");
+      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_STA);
+      await_completion(MDIO_VVCT, C_STA, 1 ms, "read without a PHY");
+      fetch_result(MDIO_VVCT, C_STA, v_cmd_idx, v_data, "Fetch the read nobody answered");
+      check_value(v_data, x"FFFF", ERROR, "the STA read the pull-up of the VVCs", C_SCOPE);
 
     --============================================================================================================================
     else

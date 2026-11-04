@@ -124,8 +124,14 @@ Default value for the record is C_MDIO_BFM_CONFIG_DEFAULT.
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | protocol_error_severity      | :ref:`t_alert_level`           | ERROR                           | Severity if a frame breaks the MDIO protocol, |
 |                              |                                |                                 | e.g. wrong turnaround, undefined bits,        |
-|                              |                                |                                 | preamble not driven or too short. NO_ALERT    |
-|                              |                                |                                 | disables these checks.                        |
+|                              |                                |                                 | preamble too short. NO_ALERT disables these   |
+|                              |                                |                                 | checks.                                       |
++------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
+| undriven_severity            | :ref:`t_alert_level`           | ERROR                           | Severity if a bit the sender must drive is    |
+|                              |                                |                                 | only pulled ('H' / 'L'), see                  |
+|                              |                                |                                 | :ref:`mdio_undriven_bits`. The value still    |
+|                              |                                |                                 | counts. NO_ALERT disables the check, e.g. for |
+|                              |                                |                                 | an open-drain DUT.                            |
 +------------------------------+--------------------------------+---------------------------------+-----------------------------------------------+
 | bus_contention_severity      | :ref:`t_alert_level`           | ERROR                           | Severity if the bus does not show the value   |
 |                              |                                |                                 | driven by the BFM, or is driven where it must |
@@ -295,6 +301,8 @@ The procedure reports an alert if:
     * The PHY does not drive '0' in the second turnaround bit (config.sta.turnaround_not_driven_severity), e.g. no PHY
       at that address. The data is still returned, typically all ones, so this check can be disabled to scan for PHYs.
     * The read data contains undefined bits (config.protocol_error_severity). 'H' and 'L' count as '1' and '0'.
+    * The PHY drove the second turnaround bit, but read data bits are only pulled ('H' / 'L') (config.undriven_severity).
+      The data is still returned and compared.
     * The configured timing violates the min_* settings of the config, or config.sta.mdc_period is below
       300 ns + config.min_setup_time (config.timing_violation_severity).
 
@@ -536,6 +544,8 @@ The procedure reports an alert if:
     * The PHY does not drive '0' in the second turnaround bit (config.sta.turnaround_not_driven_severity), e.g. no PHY
       at that address. The data is still returned, typically all ones, so this check can be disabled to scan for PHYs.
     * The read data contains undefined bits (config.protocol_error_severity). 'H' and 'L' count as '1' and '0'.
+    * The PHY drove the second turnaround bit, but read data bits are only pulled ('H' / 'L') (config.undriven_severity).
+      The data is still returned and compared.
     * The configured timing violates the min_* settings of the config, or config.sta.mdc_period is below
       300 ns + config.min_setup_time (config.timing_violation_severity).
 
@@ -768,6 +778,8 @@ The procedure reports an alert if:
     * The addressed frame has the wrong opcode, register address (clause 22) or data ('alert_level').
     * ST, OP, address fields or the written data contain undefined bits, the turnaround of a write or address frame is
       not "10", or the STA drives fewer than 32 preamble bits (config.protocol_error_severity).
+    * Preamble, ST, OP, address fields, the turnaround of a write or address frame or the written data are only pulled
+      ('H' / 'L') instead of driven by the STA (config.undriven_severity). The data is still compared.
 
 .. code-block::
 
@@ -895,6 +907,8 @@ The procedure reports an alert if:
     * The addressed frame has the wrong opcode or register address (clause 22) ('alert_level').
     * ST, OP or address fields contain undefined bits, or the STA drives fewer than 32 preamble bits
       (config.protocol_error_severity).
+    * Preamble, ST, OP or address fields are only pulled ('H' / 'L') instead of driven by the STA
+      (config.undriven_severity).
     * The STA does not release the first turnaround bit, or the bus does not show the bits driven by the PHY
       (config.bus_contention_severity).
     * config.output_delay is above 300 ns (config.timing_violation_severity).
@@ -1447,6 +1461,7 @@ Defining a local MDIO BFM configuration: ::
       suppress_preamble         => false,
       sync_to_frame_start       => true,
       protocol_error_severity   => ERROR,
+      undriven_severity         => ERROR,
       bus_contention_severity   => ERROR,
       timing_violation_severity => ERROR,
       phy                       => (phy_address                  => 5x"03",

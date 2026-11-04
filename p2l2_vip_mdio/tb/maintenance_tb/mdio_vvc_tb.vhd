@@ -895,6 +895,23 @@ begin
       check_value(v_data, "10111110X1101111", MATCH_EXACT, ERROR, "the PHY received the undefined bit", C_SCOPE);
       shared_mdio_vvc_config(C_PHY_1).bfm_config.protocol_error_severity := ERROR;
 
+      log(ID_LOG_HDR, "Data bit the STA releases (only pulled up): undriven_severity", C_SCOPE);
+      ------------------------------------------------------------
+      -- one ERROR, the data is still compared: 'H' counts as '1', x"BEEF"
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      mdio_phy_c22_expect_write(MDIO_VVCT, C_PHY_1, "00101", x"BEEF", "PHY expects a write");
+      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", "10111110Z1101111", "STA releases a data bit");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "pulled-up data bit");
+      -- undriven_severity NO_ALERT: received as '1'
+      shared_mdio_vvc_config(C_PHY_1).bfm_config.undriven_severity := NO_ALERT;
+      mdio_phy_c22_receive_write(MDIO_VVCT, C_PHY_1, "00101", "PHY receives a write, no undriven alert");
+      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
+      mdio_sta_c22_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00101", "10111110Z1101111", "STA releases a data bit");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "pulled-up data bit, no alert");
+      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the received write");
+      check_value(v_data, x"BEEF", MATCH_EXACT, ERROR, "the PHY received the pulled-up bit as '1'", C_SCOPE);
+      shared_mdio_vvc_config(C_PHY_1).bfm_config.undriven_severity := ERROR;
+
       log(ID_LOG_HDR, "Two PHYs on one address: bus contention", C_SCOPE);
       ------------------------------------------------------------
       -- PHY 2 gets the address of PHY 1 for this test. Both reply to the read, the data differs in bit 0: each PHY

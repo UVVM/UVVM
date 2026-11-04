@@ -46,6 +46,13 @@ architecture func of mdio_bfm_tb is
   constant C_PHY_ADDR   : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00001"; -- = phy.phy_address default
   constant C_OTHER_ADDR : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "00010"; -- nobody answers
   constant C_REG        : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "00101";
+  -- C_PHY_ADDR / C_REG with bit 0 released by the STA: the pull-up still makes it a '1'
+  constant C_PHY_ADDR_PULLED : std_ulogic_vector(C_MDIO_PHY_ADDR_WIDTH-1 downto 0) := "0000Z";
+  constant C_REG_PULLED : std_ulogic_vector(C_MDIO_REG_ADDR_WIDTH_C22-1 downto 0) := "0010Z";
+  -- Turnaround of a write with the first bit released by the STA: reads "H0", the value is right but not driven
+  constant C_TA_PULLED  : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0) := "Z0";
+  -- Wrong turnaround of a write ("11") with the first bit released by the STA: reads "H1"
+  constant C_TA_WRONG_PULLED : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0) := "Z1";
 
   -- Idle bits between a consumed frame and a short preamble: together fewer than C_MDIO_PREAMBLE_LENGTH ones
   constant C_IDLE_BITS           : natural := 10;
@@ -432,6 +439,41 @@ begin
       barrier("write turnaround done");
       check_alerts("write turnaround");
 
+      log(ID_LOG_HDR, "The STA releases bits it must drive: one ERROR per field, the frames are still taken", C_SCOPE);
+      ------------------------------------------------------------
+      -- write to another PHY with turnaround "H0" (one ERROR), then a write to this PHY with PHYAD, REGAD, turnaround and
+      -- data each only pulled up in one bit (four ERRORs): still addressed, 'H' = '1', the data matches x"8B8B"
+      increment_expected_alerts_and_stop_limit(ERROR, 5);
+      barrier("pulled bits");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_OTHER_ADDR, C_REG, C_TA_PULLED, x"0000") &
+                    C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR_PULLED, C_REG_PULLED, C_TA_PULLED, "100010111000101Z"));
+      barrier("pulled bits done");
+      check_alerts("pulled bits");
+
+      log(ID_LOG_HDR, "protocol_error_severity NO_ALERT, turnaround ""H1"": the wrong value is accepted, the pulled bit is one ERROR", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      barrier("wrong turnaround pulled");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG, C_TA_WRONG_PULLED, x"8E8E"));
+      barrier("wrong turnaround pulled done");
+      check_alerts("wrong turnaround pulled");
+
+      log(ID_LOG_HDR, "Written data with an undefined and a pulled-up bit: only the undefined bit is reported (one ERROR)", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      barrier("data undefined and pulled");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR, C_REG, "10", "X00011001000110Z"));
+      barrier("data undefined and pulled done");
+      check_alerts("data undefined and pulled");
+
+      log(ID_LOG_HDR, "undriven_severity NO_ALERT: pulled-up preamble, REGAD, turnaround and data bits are accepted", C_SCOPE);
+      ------------------------------------------------------------
+      barrier("undriven no alert");
+      sta_drive_raw(bits(C_MDIO_PREAMBLE_LENGTH, 'Z') &
+                    c22_frame(C_MDIO_OP_CL22_WRITE, C_PHY_ADDR_PULLED, C_REG_PULLED, C_TA_PULLED, "100011011000110Z")); -- x"8D8D"
+      barrier("undriven no alert done");
+      check_alerts("undriven no alert");
+
       log(ID_LOG_HDR, "Read to another PHY: turnaround bit 1 driven, bit 0 driven '1' (two ERRORs), then a frame to this PHY", C_SCOPE);
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(ERROR, 2);
@@ -533,6 +575,22 @@ begin
                          config => v_config);
       barrier("undefined read data done");
       check_alerts("undefined read data");
+
+      log(ID_LOG_HDR, "The PHY releases a data bit after turnaround bit 0: one ERROR (data still compared), none with NO_ALERT", C_SCOPE);
+      ------------------------------------------------------------
+      -- data bit 0 only pulled up: 'H' = '1', the check of x"1235" passes
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      for i in 0 to 1 loop
+        if i = 1 then
+          v_config.undriven_severity := NO_ALERT;
+        end if;
+        barrier("read data pulled, " & to_string(i));
+        mdio_sta_c22_check(unsigned(C_PHY_ADDR), unsigned(C_REG), x"1235", "check, data bit 0 only pulled up", mdio_if,
+                           terminate_loop, config => v_config);
+        barrier("read data pulled done");
+      end loop;
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      check_alerts("read data pulled");
 
       log(ID_LOG_HDR, "The PHY does not release MDIO after the frame: one ERROR (IDLE check), with 1 and with 0 IDLE bits", C_SCOPE);
       ------------------------------------------------------------
@@ -860,6 +918,31 @@ begin
       mdio_phy_c22_expect_write(unsigned(C_REG), x"8888", "wrong turnaround", mdio_if, terminate_loop, config => v_config);
       barrier("write turnaround done");
 
+      barrier("pulled bits");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"8B8B", "the write after the one to another PHY, bits only pulled up",
+                                mdio_if, terminate_loop, config => v_config);
+      barrier("pulled bits done");
+
+      v_config.protocol_error_severity := NO_ALERT;
+      barrier("wrong turnaround pulled");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"8E8E", "wrong turnaround, only pulled up", mdio_if, terminate_loop,
+                                config => v_config);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      barrier("wrong turnaround pulled done");
+
+      barrier("data undefined and pulled");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"0C8D", "undefined and pulled-up data", mdio_if, terminate_loop,
+                                config => v_config);
+      barrier("data undefined and pulled done");
+
+      -- sync_to_frame_start = true (default): the pulled-up ones count as preamble, only their driver is checked
+      v_config.undriven_severity := NO_ALERT;
+      barrier("undriven no alert");
+      mdio_phy_c22_expect_write(unsigned(C_REG), x"8D8D", "only pulled bits, no alert", mdio_if, terminate_loop,
+                                config => v_config);
+      v_config := C_MDIO_BFM_CONFIG_DEFAULT;
+      barrier("undriven no alert done");
+
       barrier("other target turnaround");
       mdio_phy_c22_expect_write(unsigned(C_REG), x"9999", "the frame after the read to another PHY", mdio_if, terminate_loop,
                                 config => v_config);
@@ -919,6 +1002,12 @@ begin
       barrier("undefined read data");
       phy_drive_raw(C_HEADER_EDGES, "Z0" & "00010010001101X0");
       barrier("undefined read data done");
+
+      for i in 0 to 1 loop
+        barrier("read data pulled, " & to_string(i));
+        phy_drive_raw(C_HEADER_EDGES, "Z0" & "000100100011010Z"); -- x"1235"
+        barrier("read data pulled done");
+      end loop;
 
       for i in 1 downto 0 loop
         barrier("no release, " & to_string(i) & " IDLE bits");

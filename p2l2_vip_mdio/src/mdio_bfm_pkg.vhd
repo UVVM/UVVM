@@ -141,9 +141,8 @@ package mdio_bfm_pkg is
     --      up to the first '0' are the preamble (must be 32), or ST itself if
     --      suppress_preamble. Only applies to the first frame of a call.
     sync_to_frame_start       : boolean;
-    -- the frame breaks the MDIO protocol. PHY role: preamble only pulled up (not driven by
-    -- the STA), turnaround not "10" in a write / address frame or second turnaround bit
-    -- of a read to another target driven to anything but '0' (undriven = no PHY at that
+    -- the frame breaks the MDIO protocol. PHY role: turnaround not "10" in a write / address
+    -- frame or second turnaround bit of a read to another target driven to anything but '0' (undriven = no PHY at that
     -- address, not reported), undefined bits ('X', 'U', 'Z', ...) in the
     -- ST / OP / address fields of any frame or in the data written by the STA, and with
     -- sync_to_frame_start = false fewer than 32 driven preamble bits (the frame is still
@@ -151,6 +150,12 @@ package mdio_bfm_pkg is
     -- (the call is aborted). STA role: undefined bits in the data read from the PHY.
     -- NO_ALERT disables the checks, e.g. when frames are broken on purpose.
     protocol_error_severity   : t_alert_level;
+    -- a bit the owner of the bus must drive (IEEE 802.3 22.2.4.5) is only pulled ('H' / 'L'). The value still counts
+    -- ('H' = '1', 'L' = '0'), the data is still compared / returned. PHY role: preamble, ST / OP / address fields of any
+    -- frame, turnaround of an addressed write / address frame or one to another target, data written by the STA.
+    -- STA role: data read from the PHY (only if the PHY drove the second turnaround bit, a missing PHY is
+    -- config.sta.turnaround_not_driven_severity). NO_ALERT disables the check, e.g. for an open-drain DUT.
+    undriven_severity         : t_alert_level;
     -- the bus does not show what this role drives, or is driven where it must be released.
     -- PHY role: reply bits, first turnaround bit of a read not released by the STA.
     -- STA role: frame bits, first turnaround bit of a read, IDLE after the frame.
@@ -180,6 +185,7 @@ package mdio_bfm_pkg is
     suppress_preamble         => false,
     sync_to_frame_start       => true,
     protocol_error_severity   => ERROR,
+    undriven_severity         => ERROR,
     bus_contention_severity   => ERROR,
     timing_violation_severity => ERROR,
     phy                       => C_MDIO_PHY_BFM_CONFIG_DEFAULT,
@@ -261,17 +267,18 @@ package mdio_bfm_pkg is
   --   The output is set to all 'X' at the start and only assigned once the payload was received
   --   with the right opcode, so a terminated / timed-out call or a frame with a wrong opcode leaves 'X'.
   -- - Frames to other targets are consumed according to their own opcode, and their turnaround
-  --   is checked (config.protocol_error_severity). A read to an address without a PHY (second turnaround bit
-  --   undriven, e.g. the STA scans the bus) is not reported. Frames with an undefined ST/OP combination are skipped.
+  --   is checked (config.protocol_error_severity, config.undriven_severity). A read to an address without
+  --   a PHY (second turnaround bit undriven, e.g. the STA scans the bus) is not reported. Frames with an undefined ST/OP combination are skipped.
   -- - An addressed frame with the wrong opcode is alerted and consumed without driving the bus.
   -- - alert_level: severity when the addressed frame differs from what the call expects: wrong opcode,
   --   wrong register address (clause 22) and, for expect_*, wrong data / register address written by the STA.
   -- - A frame starts with >= 32 preamble '1' bits followed by the ST field. The BFM searches
   --   for this pattern, so a call may start at any time, also in the middle of other traffic.
-  --   Frames with a shorter preamble are ignored. Preamble bits the STA does not drive
-  --   (only pulled up, 'H') are reported with config.protocol_error_severity.
+  --   Frames with a shorter preamble are ignored.
   -- - Bus checks: undefined bits (not a clear 0/1, 'H'/'L' count as 1/0) in the ST / OP / address fields of
-  --   any frame and in STA-written data are reported with config.protocol_error_severity. While replying
+  --   any frame and in STA-written data are reported with config.protocol_error_severity. Bits the STA must drive
+  --   that are only pulled ('H' / 'L') in the preamble, ST / OP / address fields, turnaround of a write / address
+  --   frame and the written data are reported with config.undriven_severity, their value still counts. While replying
   --   to a read, the bus must show what the PHY drives and be released by the STA in the first turnaround
   --   bit, otherwise config.bus_contention_severity applies (part of the call result).
   -- - config.suppress_preamble: the STA sends no preamble, a frame starts directly with ST.
@@ -436,7 +443,9 @@ package mdio_bfm_pkg is
   --   'Z' is accepted, anything else is bus contention (config.bus_contention_severity). The PHY must
   --   drive a strong '0' in the second one (config.sta.turnaround_not_driven_severity, e.g. no PHY at that address - the
   --   data is still returned, typically all ones, so this check can be turned off to test for an absent PHY).
-  --   Read data: 'H'/'L' count as 1/0, undefined bits are reported with config.protocol_error_severity.
+  --   Read data: 'H'/'L' count as 1/0, undefined bits are reported with config.protocol_error_severity. If the PHY
+  --   drove the second turnaround bit, read data bits only pulled ('H' / 'L') are reported with config.undriven_severity
+  --   (the data is still returned and compared).
   -- - *_check: compares the read data with 'data_exp' only if turnaround and data were fine, otherwise that
   --   alert is reported instead of a (misleading) data mismatch.
   -- - Reads sample the PHY's bits at the next MDC edge, the PHY may take up to 300 ns to drive them
@@ -572,6 +581,9 @@ end package mdio_bfm_pkg;
 
 package body mdio_bfm_pkg is
 
+  -- turnaround of a write / address frame, driven by the STA
+  constant C_TA_STA_DRIVEN : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0) := "10";
+
   -- Result of the bus waits in an mdio_phy_* / mdio_sta_* call - anything but WAIT_OK ends the call.
   -- WAIT_BAD_TIMEOUT, WAIT_TIMEOUT, WAIT_BAD_START and WAIT_STALL only occur in the PHY role (the STA generates MDC itself).
   type t_mdio_wait_status is (
@@ -589,6 +601,17 @@ package body mdio_bfm_pkg is
   begin
     return value = 'H' or value = 'Z';
   end function is_undriven;
+
+  -- Every bit is driven strong ('0' / '1'). Weak values ('H' / 'L') are only pulled, the owner of the bit did not drive it.
+  function is_driven(constant value : in std_ulogic_vector) return boolean is
+  begin
+    for i in value'range loop
+      if value(i) /= '0' and value(i) /= '1' then
+        return false;
+      end if;
+    end loop;
+    return true;
+  end function is_driven;
 
   -- Wait for the next MDC rising edge within a frame (watchdog: config.phy.max_wait_mdc_change, 0 ns = none).
   -- No alert here - the caller reports once at the end (report_phy_access_end).
@@ -756,7 +779,7 @@ package body mdio_bfm_pkg is
 
     return check_value(
       value        => driven_preamble_bits >= preamble_bits,
-      alert_level  => config.protocol_error_severity,
+      alert_level  => config.undriven_severity,
       msg          => "Preamble not driven by STA: only the last " & to_string(driven_preamble_bits) & " of " &
                       to_string(preamble_bits) & " bits before ST were driven '1', the others were only pulled up ('H')." &
                       add_msg_delimiter(msg),
@@ -764,10 +787,10 @@ package body mdio_bfm_pkg is
       msg_id       => ID_NEVER,
       msg_id_panel => msg_id_panel,
       caller_name  => proc_call)
-      or config.protocol_error_severity = NO_ALERT;
+      or config.undriven_severity = NO_ALERT;
   end function check_preamble_driven;
 
-  -- Fields sampled from the bus are normalized with to_X01, so anything not a clear 0/1 ('X', 'U',
+  -- The caller normalizes the raw field with to_X01, so anything not a clear 0/1 ('X', 'U',
   -- 'Z', 'W', '-') shows up as 'X'. Returns true if all bits are defined or the check is disabled (NO_ALERT).
   impure function check_defined(
     constant value        : in std_ulogic_vector;
@@ -788,6 +811,33 @@ package body mdio_bfm_pkg is
       caller_name  => proc_call)
       or config.protocol_error_severity = NO_ALERT;
   end function check_defined;
+
+  -- A field sampled raw from the bus must be driven by its owner (IEEE 802.3 22.2.4.5): bits only pulled ('H' / 'L')
+  -- are reported with config.undriven_severity. Their value still counts ('H' = '1'). A field with undefined bits is
+  -- left to check_defined(), so one fault gives one alert. Returns true if all bits are driven or the check is disabled.
+  impure function check_driven(
+    constant raw          : in std_ulogic_vector; -- as sampled on the bus, not normalised
+    constant field        : in string;
+    constant proc_call    : in string;
+    constant msg          : in string;
+    constant scope        : in string;
+    constant msg_id_panel : in t_msg_id_panel;
+    constant config       : in t_mdio_bfm_config) return boolean is
+  begin
+    if is_x(to_X01(raw)) then
+      return true;
+    end if;
+    return check_value(
+      value        => is_driven(raw),
+      alert_level  => config.undriven_severity,
+      msg          => "Bit(s) in " & field & " not driven, only pulled ('H' / 'L'): " & to_string(raw) & "." &
+                      add_msg_delimiter(msg),
+      scope        => scope,
+      msg_id       => ID_NEVER,
+      msg_id_panel => msg_id_panel,
+      caller_name  => proc_call)
+      or config.undriven_severity = NO_ALERT;
+  end function check_driven;
 
   -- The bus must show what the PHY drives, otherwise someone else drives it as well.
   -- Returns true if it matches or the check is disabled (NO_ALERT).
@@ -931,6 +981,8 @@ package body mdio_bfm_pkg is
     end case;
   end procedure report_phy_access_end;
 
+  -- Samples 'bits' at the next rising MDC edges, raw ('H' stays 'H'): the caller checks who drove them
+  -- (check_driven) and normalizes them with to_X01 for the value.
   procedure receive_data(
     variable bits           : out std_ulogic_vector;
     signal   mdio_if        : in t_mdio_if;
@@ -945,13 +997,12 @@ package body mdio_bfm_pkg is
       if v_status /= WAIT_OK then
         return;
       end if;
-      -- weak values count as their strong counterpart ('H' = '1'), anything undefined becomes 'X'
-      bits(i) := to_X01(mdio_if.mdio);
+      bits(i) := mdio_if.mdio;
     end loop;
   end procedure receive_data;
 
   -- Call right after await_start_of_frame(): takes the already sampled first ST bit, then
-  -- receives the rest of ST, OP and both address fields
+  -- receives the rest of ST, OP and both address fields. The fields are raw bus values (see receive_data).
   procedure receive_frame_header(
     variable st              : out std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
     variable op              : out std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
@@ -965,7 +1016,7 @@ package body mdio_bfm_pkg is
     variable v_data   : t_mdio_header;
     variable v_status : t_mdio_wait_status;
   begin
-    v_data(v_data'high) := to_X01(mdio_if.mdio);
+    v_data(v_data'high) := mdio_if.mdio;
     receive_data(v_data(v_data'high-1 downto 0), mdio_if, terminate_loop, config, v_status);
     status := v_status;
     if v_status /= WAIT_OK then
@@ -979,7 +1030,8 @@ package body mdio_bfm_pkg is
   end procedure receive_frame_header;
 
   -- verify a turnaround fully driven by the STA, i.e. "10" (write and address-set frames,
-  -- where the master owns both TA bits)
+  -- where the master owns both TA bits). Not "10" is a protocol error, bits only pulled (e.g. "H0": the STA
+  -- released MDIO a bit early) are reported as undriven - one alert per turnaround.
   procedure expect_sta_turnaround(
     signal   mdio_if        : in t_mdio_if;
     signal   terminate_loop : in std_logic;
@@ -991,7 +1043,8 @@ package body mdio_bfm_pkg is
     variable check_ok       : inout boolean;
     variable status         : out t_mdio_wait_status)
   is
-    variable v_ta     : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0);
+    variable v_ta     : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0); -- raw
+    variable v_ta_ok  : boolean;
     variable v_status : t_mdio_wait_status;
   begin
     receive_data(v_ta, mdio_if, terminate_loop, config, v_status);
@@ -999,17 +1052,23 @@ package body mdio_bfm_pkg is
     if v_status /= WAIT_OK then
       return;
     end if;
-    check_ok := (check_value(value        => v_ta,
-                             exp          => "10",
-                             alert_level  => config.protocol_error_severity,
-                             msg          => "Turnaround driven by STA is not ""10""." & add_msg_delimiter(msg),
-                             scope        => scope,
-                             radix        => BIN,
-                             format       => KEEP_LEADING_0,
-                             msg_id       => ID_NEVER,
-                             msg_id_panel => msg_id_panel,
-                             caller_name  => proc_call)
-                 or config.protocol_error_severity = NO_ALERT) and check_ok;
+    v_ta_ok := check_value(value        => to_X01(v_ta),
+                           exp          => C_TA_STA_DRIVEN,
+                           alert_level  => config.protocol_error_severity,
+                           msg          => "Turnaround driven by STA is not ""10""." & add_msg_delimiter(msg),
+                           scope        => scope,
+                           radix        => BIN,
+                           format       => KEEP_LEADING_0,
+                           msg_id       => ID_NEVER,
+                           msg_id_panel => msg_id_panel,
+                           caller_name  => proc_call)
+               or config.protocol_error_severity = NO_ALERT;
+    -- only if no wrong value was reported above: one alert per turnaround. With protocol_error_severity NO_ALERT a
+    -- wrong value is still checked for being driven (e.g. "H1").
+    if v_ta_ok then
+      v_ta_ok := check_driven(v_ta, "turnaround of a write / address frame", proc_call, msg, scope, msg_id_panel, config);
+    end if;
+    check_ok := v_ta_ok and check_ok;
   end procedure expect_sta_turnaround;
 
   -- passively consume the turnaround of a read frame addressed to another target and
@@ -1260,7 +1319,25 @@ package body mdio_bfm_pkg is
     variable v_driven_preamble_bits : natural;
     variable v_preamble_ok          : boolean := true;
     variable v_sync                 : boolean := config.sync_to_frame_start;
-    variable v_defined              : boolean;
+    variable v_defined              : boolean; -- header checks: reported, they don't affect the result of the call
+    variable v_driven               : boolean;
+    variable v_cl45                 : boolean; -- for the field names in the alerts
+
+    function phy_addr_name(constant cl45 : in boolean) return string is
+    begin
+      if cl45 then
+        return "PRTAD";
+      end if;
+      return "PHYAD";
+    end function phy_addr_name;
+
+    function reg_or_dev_addr_name(constant cl45 : in boolean) return string is
+    begin
+      if cl45 then
+        return "DEVAD";
+      end if;
+      return "REGAD";
+    end function reg_or_dev_addr_name;
   begin
     -- reported by resolve_phy_timeout. A negative "wait for" would stop the simulator.
     if config.phy.max_wait_mdc_change < 0 ns then
@@ -1283,8 +1360,20 @@ package body mdio_bfm_pkg is
       receive_frame_header(v_st, v_op, v_phy_addr, v_reg_or_dev_addr, mdio_if, terminate_loop, config, status);
       exit when status /= WAIT_OK;
       -- checked for every frame on the bus, not only addressed ones (an undefined frame is never addressed)
-      v_defined := check_defined(v_st & v_op & v_phy_addr & v_reg_or_dev_addr, "ST / OP / address fields", proc_call, msg, scope,
-                                 msg_id_panel, config);
+      v_defined := check_defined(to_X01(v_st & v_op & v_phy_addr & v_reg_or_dev_addr), "ST / OP / address fields", proc_call,
+                                 msg, scope, msg_id_panel, config);
+      -- check if the header is driven the alert names the field that is only pulled
+      v_cl45    := to_X01(v_st) = C_MDIO_ST_CL45;
+      v_driven  := check_driven(v_st, "ST", proc_call, msg, scope, msg_id_panel, config);
+      v_driven  := check_driven(v_op, "OP", proc_call, msg, scope, msg_id_panel, config) and v_driven;
+      v_driven  := check_driven(v_phy_addr, phy_addr_name(v_cl45), proc_call, msg, scope, msg_id_panel, config) and v_driven;
+      v_driven  := check_driven(v_reg_or_dev_addr, reg_or_dev_addr_name(v_cl45), proc_call, msg, scope, msg_id_panel, config)
+                   and v_driven;
+      -- normalize the values for logical checks (like a real dut would see the data)
+      v_st              := to_X01(v_st);
+      v_op              := to_X01(v_op);
+      v_phy_addr        := to_X01(v_phy_addr);
+      v_reg_or_dev_addr := to_X01(v_reg_or_dev_addr);
       -- compared as bit vectors: the received fields may hold 'X' (checked above), numeric_std's "=" is not meant for that
       exit when v_st = st and v_phy_addr = std_ulogic_vector(config.phy.phy_address) and (st = C_MDIO_ST_CL22 or v_reg_or_dev_addr = std_ulogic_vector(dev_addr));
       consume_other_target_frame(v_st, v_op, mdio_if, terminate_loop, proc_call, msg, scope, msg_id_panel, config, status);
@@ -1345,7 +1434,8 @@ package body mdio_bfm_pkg is
 
   -- Rest of an addressed STA-driven frame (write / address-set): check the turnaround and receive the 16 bits
   -- the STA sends (the data of a write frame, the address of an address frame). payload is only assigned once
-  -- all bits were received, payload_defined is false if one of them is undefined (reported).
+  -- all bits were received, payload_defined is false if one of them is undefined (reported). Bits only pulled
+  -- ('H' / 'L') are reported (config.undriven_severity) but count as defined, so the payload is still compared.
   -- With a wrong opcode (op_ok false) the frame is only consumed.
   procedure receive_payload(
     constant op_ok           : in boolean;
@@ -1361,7 +1451,8 @@ package body mdio_bfm_pkg is
     variable check_ok        : inout boolean;
     variable status          : out t_mdio_wait_status)
   is
-    variable v_data   : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
+    variable v_data   : std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0); -- raw
+    variable v_driven : boolean;
     variable v_status : t_mdio_wait_status;
   begin
     payload         := (others => 'X'); -- an out parameter that is not assigned would return 'U'
@@ -1383,9 +1474,11 @@ package body mdio_bfm_pkg is
       return;
     end if;
 
-    payload         := v_data;
-    payload_defined := check_defined(v_data, "data written by STA", proc_call, msg, scope, msg_id_panel, config);
-    check_ok        := payload_defined and check_ok;
+    -- the value: 'H' / 'L' count as '1' / '0'. Undriven bits are reported but still compared / returned.
+    payload         := to_X01(v_data);
+    payload_defined := check_defined(to_X01(v_data), "data written by STA", proc_call, msg, scope, msg_id_panel, config);
+    v_driven        := check_driven(v_data, "data written by STA", proc_call, msg, scope, msg_id_panel, config);
+    check_ok        := payload_defined and v_driven and check_ok;
   end procedure receive_payload;
 
   -- Rest of an addressed STA-driven frame (write / address-set): receive_payload, then compare the 16 bits
@@ -1468,8 +1561,6 @@ package body mdio_bfm_pkg is
   -- calls). Bit k of a frame is driven config.output_delay after the rising edge that samples
   -- bit k-1 and is itself sampled by the next rising edge; the very first bit is driven one MDC
   -- low phase before its edge. MDIO is released config.output_delay after the last sampling edge.
-
-  constant C_TA_STA_DRIVEN : std_ulogic_vector(C_MDIO_TA_WIDTH-1 downto 0) := "10";
 
   -- Wait for the given time, ending early when terminate_loop is set
   procedure sta_wait(
@@ -1770,6 +1861,7 @@ package body mdio_bfm_pkg is
     variable v_ta1_ok  : boolean;
     variable v_ta2_ok  : boolean;
     variable v_defined : boolean;
+    variable v_driven  : boolean;
   begin
     data       := (others => 'X');
     payload_ok := false;
@@ -1809,9 +1901,16 @@ package body mdio_bfm_pkg is
     data      := to_X01(v_sampled(C_MDIO_DATA_WIDTH-1 downto 0));
     v_defined := check_defined(to_X01(v_sampled(C_MDIO_DATA_WIDTH-1 downto 0)), "data read from PHY", proc_call, msg, scope,
                                msg_id_panel, config);
+    -- the PHY must drive the data. Only checked if it drove TA bit 2: without a PHY the data is only the pull-up,
+    -- that was reported once above (turnaround_not_driven_severity). Undriven data is still compared.
+    v_driven := true;
+    if v_sampled(C_MDIO_DATA_WIDTH) = '0' then
+      v_driven := check_driven(v_sampled(C_MDIO_DATA_WIDTH-1 downto 0), "data read from PHY", proc_call, msg, scope,
+                               msg_id_panel, config);
+    end if;
 
     payload_ok := v_ta1_ok and v_ta2_ok and v_defined;
-    check_ok   := payload_ok and check_ok;
+    check_ok   := payload_ok and v_driven and check_ok;
   -- NO_ALERT'ed checks count as ok for the compare, but not for the OK log
   end procedure sta_read_frame;
 

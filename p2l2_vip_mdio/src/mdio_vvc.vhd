@@ -198,7 +198,7 @@ begin
     variable v_read_data          : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) := (others => 'X'); -- STA reads, PHY receives
     variable v_received_reg_addr  : unsigned(C_MDIO_REG_ADDR_WIDTH_C45-1 downto 0);                       -- PHY receive of an address frame
     variable v_result             : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_address_ok         : boolean;      -- *_REG commands: the address frame was sent without alert
+    variable v_address_ok         : boolean;      -- *_REG commands: STA: the address frame was sent without alert, PHY: an address frame was received
 
     -- Result of an STA read or a PHY receive: checked in the scoreboard (TO_SB) or stored for fetch_result()
     procedure route_result(
@@ -475,6 +475,123 @@ begin
               scope          => C_SCOPE,
               msg_id_panel   => v_msg_id_panel,
               config         => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
+        when PHY_C45_EXPECT_WRITE_REG =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+          mdio_phy_c45_expect_address(
+              dev_addr         => v_cmd.dev_addr,
+              reg_addr         => v_cmd.reg_addr,
+              address_received => v_address_ok,
+              msg              => format_msg(v_cmd),
+              mdio_if          => mdio_vvc_if,
+              terminate_loop   => terminate_current_cmd.is_active,
+              timeout          => v_cmd.timeout,
+              alert_level      => v_cmd.alert_level,
+              scope            => C_SCOPE,
+              msg_id_panel     => v_msg_id_panel,
+              config           => vvc_config.bfm_config);
+          -- no address frame (timed out, terminated, wrong opcode) ends the command, the access frame is not awaited.
+          -- A wrong register address was reported, the STA still sends the access frame: it is awaited.
+          if v_address_ok then
+            mdio_phy_c45_expect_write(
+                dev_addr       => v_cmd.dev_addr,
+                data           => v_cmd.data,
+                msg            => format_msg(v_cmd),
+                mdio_if        => mdio_vvc_if,
+                terminate_loop => terminate_current_cmd.is_active,
+                timeout        => v_cmd.timeout,
+                alert_level    => v_cmd.alert_level,
+                scope          => C_SCOPE,
+                msg_id_panel   => v_msg_id_panel,
+                config         => vvc_config.bfm_config);
+          else -- the BFM has reported why no address frame was received
+            log(vvc_config.bfm_config.id_for_bfm, to_string(v_cmd.proc_call) & "=> No address frame received, the access " &
+                  "frame is not awaited. " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
+          end if;
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
+        when PHY_C45_RECEIVE_WRITE_REG =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+          v_read_data := (others => 'X'); -- stays 'X' if the access frame is not received
+          mdio_phy_c45_expect_address(
+              dev_addr         => v_cmd.dev_addr,
+              reg_addr         => v_cmd.reg_addr,
+              address_received => v_address_ok,
+              msg              => format_msg(v_cmd),
+              mdio_if          => mdio_vvc_if,
+              terminate_loop   => terminate_current_cmd.is_active,
+              timeout          => v_cmd.timeout,
+              alert_level      => v_cmd.alert_level,
+              scope            => C_SCOPE,
+              msg_id_panel     => v_msg_id_panel,
+              config           => vvc_config.bfm_config);
+          -- no address frame (timed out, terminated, wrong opcode) ends the command, the access frame is not awaited.
+          -- A wrong register address was reported, the STA still sends the access frame: it is awaited.
+          if v_address_ok then
+            mdio_phy_c45_receive_write(
+                dev_addr       => v_cmd.dev_addr,
+                data           => v_read_data,
+                msg            => format_msg(v_cmd),
+                mdio_if        => mdio_vvc_if,
+                terminate_loop => terminate_current_cmd.is_active,
+                timeout        => v_cmd.timeout,
+                alert_level    => v_cmd.alert_level,
+                scope          => C_SCOPE,
+                msg_id_panel   => v_msg_id_panel,
+                config         => vvc_config.bfm_config);
+          else -- the BFM has reported why no address frame was received
+            log(vvc_config.bfm_config.id_for_bfm, to_string(v_cmd.proc_call) & "=> No address frame received, the access " &
+                  "frame is not awaited. " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
+          end if;
+
+          -- Check the received value in the scoreboard (TO_SB) or store the result (fetch_result), and update vvc transaction info
+          v_result := v_read_data;
+          route_result(v_result);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+
+        when PHY_C45_REPLY_READ_REG =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+
+          mdio_phy_c45_expect_address(
+              dev_addr         => v_cmd.dev_addr,
+              reg_addr         => v_cmd.reg_addr,
+              address_received => v_address_ok,
+              msg              => format_msg(v_cmd),
+              mdio_if          => mdio_vvc_if,
+              terminate_loop   => terminate_current_cmd.is_active,
+              timeout          => v_cmd.timeout,
+              alert_level      => v_cmd.alert_level,
+              scope            => C_SCOPE,
+              msg_id_panel     => v_msg_id_panel,
+              config           => vvc_config.bfm_config);
+          -- no address frame (timed out, terminated, wrong opcode) ends the command, the access frame is not awaited.
+          -- A wrong register address was reported, the STA still sends the access frame: it is awaited.
+          if v_address_ok then
+            mdio_phy_c45_reply_read(
+                dev_addr       => v_cmd.dev_addr,
+                data           => v_cmd.data,
+                msg            => format_msg(v_cmd),
+                mdio_if        => mdio_vvc_if,
+                terminate_loop => terminate_current_cmd.is_active,
+                timeout        => v_cmd.timeout,
+                alert_level    => v_cmd.alert_level,
+                scope          => C_SCOPE,
+                msg_id_panel   => v_msg_id_panel,
+                config         => vvc_config.bfm_config);
+          else -- the BFM has reported why no address frame was received
+            log(vvc_config.bfm_config.id_for_bfm, to_string(v_cmd.proc_call) & "=> No address frame received, the access " &
+                  "frame is not awaited. " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
+          end if;
 
           -- Update vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);

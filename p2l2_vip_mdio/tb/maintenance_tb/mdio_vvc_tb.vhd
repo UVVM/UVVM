@@ -65,6 +65,7 @@ architecture func of mdio_vvc_tb is
 
   constant C_NUM_RANDOM_FRAMES : positive := 50;
   constant C_AWAIT_TIMEOUT     : time     := 10 ms; -- enough for C_NUM_RANDOM_FRAMES frames of up to 51.2 us
+  constant C_REG_TIMEOUT       : time     := 10 us; -- PHY *_reg command timeout test: no frame comes
 
   type t_data_array is array (natural range <>) of std_ulogic_vector(C_MDIO_DATA_WIDTH-1 downto 0);
 
@@ -496,6 +497,56 @@ begin
       mdio_sta_c45_check_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"4321", x"ABCE", "STA checks a register, data differs", ERROR);
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 check_reg mismatch");
 
+      log(ID_LOG_HDR, "PHY *_reg commands: address frame + access frame as one command", C_SCOPE);
+      ------------------------------------------------------------
+      mdio_phy_c45_expect_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", x"CAFE", "PHY expects a register write");
+      mdio_sta_c45_write_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1234", x"CAFE", "STA writes a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 expect_write_reg");
+
+      mdio_phy_c45_receive_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", "PHY receives a register write");
+      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
+      mdio_sta_c45_write_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1234", x"5A5A", "STA writes a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 receive_write_reg");
+      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the received register write");
+      check_value(v_data, x"5A5A", ERROR, "C45 receive_write_reg data", C_SCOPE);
+
+      mdio_vvc_sb.add_expected(C_PHY_1, pad_mdio_sb(x"A5A5"));
+      mdio_phy_c45_receive_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", TO_SB, "PHY receives a register write, to the scoreboard");
+      mdio_sta_c45_write_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1234", x"A5A5", "STA writes a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 receive_write_reg TO_SB");
+      check_value(mdio_vvc_sb.get_match_count(C_PHY_1), 1, ERROR, "the scoreboard matched the received write", C_SCOPE);
+
+      mdio_phy_c45_reply_read_reg(MDIO_VVCT, C_PHY_1, "00011", x"4321", x"ABCD", "PHY replies to a register read");
+      mdio_sta_c45_check_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"4321", x"ABCD", "STA checks a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 reply_read_reg");
+
+      log(ID_LOG_HDR, "PHY *_reg, wrong register address: one ERROR, the access frame is still taken", C_SCOPE);
+      ------------------------------------------------------------
+      -- no unwanted transaction for the access frame: the command waits for it
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      mdio_phy_c45_reply_read_reg(MDIO_VVCT, C_PHY_1, "00011", x"4321", x"ABCD", "PHY replies to a register read");
+      mdio_sta_c45_check_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"4322", x"ABCD", "STA checks another register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 reply_read_reg, wrong register address");
+
+      log(ID_LOG_HDR, "PHY *_reg, no address frame: one ERROR (wrong OP code), the command ends with the first frame", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      mdio_phy_c45_expect_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", x"CAFE", "PHY expects a register write");
+      mdio_sta_c45_write(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"CAFE", "STA writes without an address frame");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "C45 expect_write_reg without address frame");
+
+      log(ID_LOG_HDR, "PHY *_reg, timeout of the address frame: one ERROR, the access frame is not awaited", C_SCOPE);
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      v_start := now;
+      mdio_phy_c45_receive_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", "PHY receives a register write, nothing comes",
+                                     timeout => C_REG_TIMEOUT);
+      v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, C_PHY_1);
+      await_completion(MDIO_VVCT, C_PHY_1, 1 ms, "C45 receive_write_reg timeout");
+      check_value(now - v_start < 2 * C_REG_TIMEOUT, ERROR, "only the address frame was awaited", C_SCOPE);
+      fetch_result(MDIO_VVCT, C_PHY_1, v_cmd_idx, v_data, "Fetch the receive_write_reg");
+      check_value(v_data, (v_data'range => 'X'), MATCH_EXACT, ERROR, "receive_write_reg returns no data", C_SCOPE);
+
       log(ID_LOG_HDR, "Failed address frame: the access frame is not sent", C_SCOPE);
       ------------------------------------------------------------
       -- The first register address bit of the address frame is forced to '1' while the STA drives '0': bus contention,
@@ -528,17 +579,16 @@ begin
         v_dev_addr := unsigned(random(C_MDIO_DEV_ADDR_WIDTH));
         v_wdata    := random(C_MDIO_DATA_WIDTH);
         v_data     := random(C_MDIO_DATA_WIDTH); -- register address
-        mdio_phy_c45_expect_address(MDIO_VVCT, C_PHY_1, v_dev_addr, unsigned(v_data), "PHY expects the address frame");
         case random(0, 2) is
           when 0 =>
-            mdio_phy_c45_expect_write(MDIO_VVCT, C_PHY_1, v_dev_addr, v_wdata, "PHY expects a random write");
+            mdio_phy_c45_expect_write_reg(MDIO_VVCT, C_PHY_1, v_dev_addr, unsigned(v_data), v_wdata, "PHY expects a random register write");
             mdio_sta_c45_write_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, v_dev_addr, unsigned(v_data), v_wdata, "STA writes a random register");
           when 1 =>
-            mdio_phy_c45_reply_read(MDIO_VVCT, C_PHY_1, v_dev_addr, v_wdata, "PHY replies random data");
+            mdio_phy_c45_reply_read_reg(MDIO_VVCT, C_PHY_1, v_dev_addr, unsigned(v_data), v_wdata, "PHY replies random register data");
             mdio_sta_c45_read_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, v_dev_addr, unsigned(v_data), "STA reads a random register");
             add_read(C_STA, v_wdata);
           when others =>
-            mdio_phy_c45_reply_read(MDIO_VVCT, C_PHY_1, v_dev_addr, v_wdata, "PHY replies random data");
+            mdio_phy_c45_reply_read_reg(MDIO_VVCT, C_PHY_1, v_dev_addr, unsigned(v_data), v_wdata, "PHY replies random register data");
             mdio_sta_c45_check_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, v_dev_addr, unsigned(v_data), v_wdata, "STA checks a random register");
         end case;
       end loop;
@@ -1723,6 +1773,21 @@ begin
       mdio_sta_c45_check_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"4321", x"ABCD", "STA checks a register");
       await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "c45 check_reg");
       check_transaction(true, STA_C45_CHECK_REG, x"ABCD", C_PHY_1_ADDR, "00011", x"4321");
+
+      mdio_phy_c45_expect_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", x"CAFE", "PHY expects a register write");
+      mdio_sta_c45_write_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1234", x"CAFE", "STA writes a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "c45 expect_write_reg");
+      check_transaction(false, PHY_C45_EXPECT_WRITE_REG, x"CAFE", "00000", "00011", x"1234");
+
+      mdio_phy_c45_receive_write_reg(MDIO_VVCT, C_PHY_1, "00011", x"1234", "PHY receives a register write");
+      mdio_sta_c45_write_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"1234", x"5A5A", "STA writes a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "c45 receive_write_reg");
+      check_transaction(false, PHY_C45_RECEIVE_WRITE_REG, x"5A5A", "00000", "00011", x"1234");
+
+      mdio_phy_c45_reply_read_reg(MDIO_VVCT, C_PHY_1, "00011", x"4321", x"ABCD", "PHY replies to a register read");
+      mdio_sta_c45_read_reg(MDIO_VVCT, C_STA, C_PHY_1_ADDR, "00011", x"4321", "STA reads a register");
+      await_completion(MDIO_VVCT, ALL_INSTANCES, 1 ms, "c45 reply_read_reg");
+      check_transaction(false, PHY_C45_REPLY_READ_REG, x"ABCD", "00000", "00011", x"4321");
 
     --============================================================================================================================
     else

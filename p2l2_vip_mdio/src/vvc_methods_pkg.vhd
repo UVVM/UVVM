@@ -278,6 +278,63 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  -- *_reg: one command for a complete clause 45 access, the counterpart of the STA's *_reg commands: an address frame
+  -- to MMD 'dev_addr' that sets 'reg_addr' (checked like mdio_phy_c45_expect_address), then the access frame.
+  -- The access frame is awaited once an address frame was received, also with a wrong register address (the STA
+  -- sends it anyway). Without an address frame (timeout, terminated, wrong OP code) the command ends.
+  procedure mdio_phy_c45_expect_write_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant data                : in    std_ulogic_vector;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  -- The written data is stored in the result queue: await_completion() + fetch_result()
+  procedure mdio_phy_c45_receive_write_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  -- As above, data_routing = TO_SB: the received value is sent to the VVC scoreboard (mdio_vvc_sb) instead of the result queue
+  procedure mdio_phy_c45_receive_write_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure mdio_phy_c45_reply_read_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant data                : in    std_ulogic_vector;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
   --------------------------------------------------------------------------------------
   -- STA methods (VVC with GC_STA_MODE = true)
   -- - The STA drives MDC and the frames, the PHY (DUT) answers. There is no timeout parameter:
@@ -868,6 +925,141 @@ package body vvc_methods_pkg is
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
+
+  procedure mdio_phy_c45_expect_write_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant data                : in    std_ulogic_vector;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant C_PROC_NAME : string := "mdio_phy_c45_expect_write_reg";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
+             normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
+    variable v_normalised_address  : unsigned(C_VVC_CMD_REG_ADDR_LENGTH-1 downto 0) :=
+             normalize_and_check(reg_addr, shared_vvc_cmd.reg_addr, ALLOW_WIDER_NARROWER, "reg_addr", "shared_vvc_cmd.reg_addr", C_PROC_CALL & " called with too wide reg_addr. " & msg);
+    variable v_normalised_data     : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
+             normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data. " & msg);
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, PHY_C45_EXPECT_WRITE_REG);
+    shared_vvc_cmd.dev_addr            := v_normalised_dev_addr;
+    shared_vvc_cmd.reg_addr            := v_normalised_address;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.timeout             := timeout;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure mdio_phy_c45_receive_write_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    mdio_phy_c45_receive_write_reg(VVCT, vvc_instance_idx, dev_addr, reg_addr, NA, msg, timeout, alert_level, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure mdio_phy_c45_receive_write_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant C_PROC_NAME : string := "mdio_phy_c45_receive_write_reg";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX)
+                                     & return_string1_if_true_otherwise_string2(", " & to_upper(to_string(data_routing)), "", data_routing /= NA) & ")";
+    variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
+             normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
+    variable v_normalised_address  : unsigned(C_VVC_CMD_REG_ADDR_LENGTH-1 downto 0) :=
+             normalize_and_check(reg_addr, shared_vvc_cmd.reg_addr, ALLOW_WIDER_NARROWER, "reg_addr", "shared_vvc_cmd.reg_addr", C_PROC_CALL & " called with too wide reg_addr. " & msg);
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, PHY_C45_RECEIVE_WRITE_REG);
+    shared_vvc_cmd.dev_addr            := v_normalised_dev_addr;
+    shared_vvc_cmd.reg_addr            := v_normalised_address;
+    shared_vvc_cmd.timeout             := timeout;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure mdio_phy_c45_reply_read_reg (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant dev_addr            : in    unsigned;
+    constant reg_addr            : in    unsigned;
+    constant data                : in    std_ulogic_vector;
+    constant msg                 : in    string;
+    constant timeout             : in    time           := C_UNDEFINED_TIME; -- default: bfm_config.phy.timeout, 0 ns: none, for each frame
+    constant alert_level         : in    t_alert_level  := ERROR; -- wrong OP code, register address (clause 22) or data (expect_*)
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant C_PROC_NAME : string := "mdio_phy_c45_reply_read_reg";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+                                     & ", " & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(reg_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+    variable v_normalised_dev_addr : unsigned(C_VVC_CMD_DEV_ADDR_LENGTH-1 downto 0) :=
+             normalize_and_check(dev_addr, shared_vvc_cmd.dev_addr, ALLOW_WIDER_NARROWER, "dev_addr", "shared_vvc_cmd.dev_addr", C_PROC_CALL & " called with too wide dev_addr. " & msg);
+    variable v_normalised_address  : unsigned(C_VVC_CMD_REG_ADDR_LENGTH-1 downto 0) :=
+             normalize_and_check(reg_addr, shared_vvc_cmd.reg_addr, ALLOW_WIDER_NARROWER, "reg_addr", "shared_vvc_cmd.reg_addr", C_PROC_CALL & " called with too wide reg_addr. " & msg);
+    variable v_normalised_data     : std_ulogic_vector(C_VVC_CMD_DATA_LENGTH-1 downto 0) :=
+             normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data. " & msg);
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, PHY_C45_REPLY_READ_REG);
+    shared_vvc_cmd.dev_addr            := v_normalised_dev_addr;
+    shared_vvc_cmd.reg_addr            := v_normalised_address;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.timeout             := timeout;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  --==========================================================================================
+  -- STA methods
+  --==========================================================================================
 
   --==========================================================================================
   -- STA methods

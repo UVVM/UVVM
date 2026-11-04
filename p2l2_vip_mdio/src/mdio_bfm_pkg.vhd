@@ -353,6 +353,23 @@ package mdio_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel;
     constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT);
 
+  -- PHY: expect_address as above, 'address_received' is true if an address frame to this PHY was received, also
+  -- with a wrong register address (reported). False if the call timed out, was terminated, MDC stalled or the frame
+  -- was not an address frame (wrong opcode). Used to wait for the access frame that follows, see the VVC's PHY *_REG
+  -- commands.
+  procedure mdio_phy_c45_expect_address(
+    constant dev_addr         : in unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0); -- target MMD within this PHY
+    constant reg_addr         : in unsigned(C_MDIO_REG_ADDR_WIDTH_C45-1 downto 0);
+    variable address_received : out boolean;
+    constant msg              : in string;
+    signal   mdio_if          : in t_mdio_if;
+    signal   terminate_loop   : in std_logic;
+    constant timeout          : in time              := C_UNDEFINED_TIME;
+    constant alert_level      : in t_alert_level     := ERROR;
+    constant scope            : in string            := C_BFM_SCOPE;
+    constant msg_id_panel     : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config           : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT);
+
   -- PHY: receives an address frame to MMD 'dev_addr' and returns the address in 'reg_addr' (IEEE 802.3 Clause 45)
   procedure mdio_phy_c45_receive_address(
     constant dev_addr       : in unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0); -- target MMD within this PHY
@@ -2282,16 +2299,17 @@ package body mdio_bfm_pkg is
 
   -- PHY: expects an address frame to MMD 'dev_addr' and compares the address with 'reg_addr' (IEEE 802.3 Clause 45)
   procedure mdio_phy_c45_expect_address(
-    constant dev_addr       : in unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
-    constant reg_addr       : in unsigned(C_MDIO_REG_ADDR_WIDTH_C45-1 downto 0);
-    constant msg            : in string;
-    signal   mdio_if        : in t_mdio_if;
-    signal   terminate_loop : in std_logic;
-    constant timeout        : in time              := C_UNDEFINED_TIME;
-    constant alert_level    : in t_alert_level     := ERROR;
-    constant scope          : in string            := C_BFM_SCOPE;
-    constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel;
-    constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
+    constant dev_addr         : in unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
+    constant reg_addr         : in unsigned(C_MDIO_REG_ADDR_WIDTH_C45-1 downto 0);
+    variable address_received : out boolean;
+    constant msg              : in string;
+    signal   mdio_if          : in t_mdio_if;
+    signal   terminate_loop   : in std_logic;
+    constant timeout          : in time              := C_UNDEFINED_TIME;
+    constant alert_level      : in t_alert_level     := ERROR;
+    constant scope            : in string            := C_BFM_SCOPE;
+    constant msg_id_panel     : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config           : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
   is
     constant C_PROC_NAME : string := "mdio_phy_c45_expect_address";
     constant C_PROC_CALL : string := C_PROC_NAME & "(DEV:" & to_string(dev_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", A:" &
@@ -2300,7 +2318,7 @@ package body mdio_bfm_pkg is
 
     variable v_op       : std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
     variable v_dev_addr : std_ulogic_vector(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
-    variable v_op_ok    : boolean;
+    variable v_op_ok    : boolean := false;
     variable v_check_ok : boolean;
     variable v_status   : t_mdio_wait_status;
   begin
@@ -2314,6 +2332,26 @@ package body mdio_bfm_pkg is
                       v_check_ok, v_status);
     end if;
     report_phy_access_end(v_status, v_check_ok, C_TIMEOUT, "PHY/DEVAD", C_PROC_CALL, msg, scope, msg_id_panel, config);
+    -- a complete address frame: the STA sends the access frame next, also after a wrong register address
+    address_received := v_status = WAIT_OK and v_op_ok;
+  end procedure mdio_phy_c45_expect_address;
+
+  procedure mdio_phy_c45_expect_address(
+    constant dev_addr       : in unsigned(C_MDIO_DEV_ADDR_WIDTH-1 downto 0);
+    constant reg_addr       : in unsigned(C_MDIO_REG_ADDR_WIDTH_C45-1 downto 0);
+    constant msg            : in string;
+    signal   mdio_if        : in t_mdio_if;
+    signal   terminate_loop : in std_logic;
+    constant timeout        : in time              := C_UNDEFINED_TIME;
+    constant alert_level    : in t_alert_level     := ERROR;
+    constant scope          : in string            := C_BFM_SCOPE;
+    constant msg_id_panel   : in t_msg_id_panel    := shared_msg_id_panel;
+    constant config         : in t_mdio_bfm_config := C_MDIO_BFM_CONFIG_DEFAULT)
+  is
+    variable v_address_received : boolean; -- not needed, the alerts are raised in the procedure
+  begin
+    mdio_phy_c45_expect_address(dev_addr, reg_addr, v_address_received, msg, mdio_if, terminate_loop, timeout, alert_level, scope,
+                                msg_id_panel, config);
   end procedure mdio_phy_c45_expect_address;
 
   -- PHY: receives an address frame to MMD 'dev_addr' and returns the address in 'reg_addr' (IEEE 802.3 Clause 45)

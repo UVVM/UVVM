@@ -52,6 +52,9 @@ package transaction_pkg is
     PHY_C45_RECEIVE_WRITE,
     PHY_C45_REPLY_READ,
     PHY_C45_REPLY_POST_READ_INCREMENT,
+    PHY_C45_EXPECT_WRITE_REG,   -- address frame + write frame as one command
+    PHY_C45_RECEIVE_WRITE_REG,  -- address frame + write frame as one command, the written data is the result
+    PHY_C45_REPLY_READ_REG,     -- address frame + read frame as one command
     -- STA (station / bus master) operations
     STA_C22_WRITE,
     STA_C22_READ,
@@ -151,7 +154,8 @@ package body transaction_pkg is
     case operation is
       when PHY_C22_EXPECT_WRITE | PHY_C22_RECEIVE_WRITE | PHY_C22_REPLY_READ |
            PHY_C45_EXPECT_ADDRESS | PHY_C45_RECEIVE_ADDRESS | PHY_C45_EXPECT_WRITE | PHY_C45_RECEIVE_WRITE |
-           PHY_C45_REPLY_READ | PHY_C45_REPLY_POST_READ_INCREMENT =>
+           PHY_C45_REPLY_READ | PHY_C45_REPLY_POST_READ_INCREMENT |
+           PHY_C45_EXPECT_WRITE_REG | PHY_C45_RECEIVE_WRITE_REG | PHY_C45_REPLY_READ_REG =>
         return true;
       when others =>
         return false;
@@ -183,7 +187,7 @@ package body transaction_pkg is
   function is_phy_receive_operation(constant operation : t_operation) return boolean is
   begin
     case operation is
-      when PHY_C22_RECEIVE_WRITE | PHY_C45_RECEIVE_ADDRESS | PHY_C45_RECEIVE_WRITE =>
+      when PHY_C22_RECEIVE_WRITE | PHY_C45_RECEIVE_ADDRESS | PHY_C45_RECEIVE_WRITE | PHY_C45_RECEIVE_WRITE_REG =>
         return true;
       when others =>
         return false;

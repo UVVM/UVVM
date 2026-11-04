@@ -50,6 +50,9 @@ P2L2 VIP MDIO
   * :ref:`mdio_phy_c45_receive_write_vvc`
   * :ref:`mdio_phy_c45_reply_read_vvc`
   * :ref:`mdio_phy_c45_reply_post_read_increment_vvc`
+  * :ref:`mdio_phy_c45_expect_write_reg_vvc`
+  * :ref:`mdio_phy_c45_receive_write_reg_vvc`
+  * :ref:`mdio_phy_c45_reply_read_reg_vvc`
 
 
 **********************************************************************************************************************************
@@ -2830,6 +2833,191 @@ in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'fals
     -- Examples:
     mdio_phy_c45_reply_post_read_increment(MDIO_VVCT, 1, 5x"03", x"2040", "Reply PCS register, increment");
     mdio_phy_c45_reply_post_read_increment(MDIO_VVCT, 1, 5x"03", x"2040", "Reply PCS register, increment", 1 ms, ERROR, C_SCOPE);
+
+.. _mdio_phy_c45_expect_write_reg_vvc:
+
+mdio_phy_c45_expect_write_reg()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a clause 45 expect write register command to the MDIO VVC executor queue, which will run as soon as all preceding
+commands have completed. The command is a complete register access, the counterpart of the STA's ``*_reg`` commands: when it
+is scheduled to run, the executor calls the BFM :ref:`mdio_phy_c45_expect_address_bfm` procedure for the address frame, then
+the BFM :ref:`mdio_phy_c45_expect_write_bfm` procedure for the access frame. The access frame is awaited once an address frame was
+received, also with a wrong register address (reported, the STA sends the access frame anyway). If no address frame was
+received (timeout, terminated, wrong opcode), the command ends without waiting for the access frame. This procedure can only be
+called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'false'.
+
+.. code-block::
+
+    mdio_phy_c45_expect_write_reg(VVCT, vvc_instance_idx, dev_addr, reg_addr, data, msg, [timeout, [alert_level, [scope]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that both frames must       |
+|          |                    |        |                              | address. Normalized to 5 bits.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
+|          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
+|          |                    |        |                              | with severity 'alert_level'.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data               | in     | std_ulogic_vector            | The data value to expect in the write frame. Normalized |
+|          |                    |        |                              | to 16 bits. A mismatch results in an alert with         |
+|          |                    |        |                              | severity 'alert_level'.                                 |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout            | in     | time                         | Maximum time to wait for each of the two frames to      |
+|          |                    |        |                              | start. Default value is C_UNDEFINED_TIME, which uses    |
+|          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong opcode,   |
+|          |                    |        |                              | wrong register address in the address frame or wrong    |
+|          |                    |        |                              | written data. Default value is ERROR.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
+|          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
+|          |                    |        |                              | defined in adaptations_pkg.                             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    mdio_phy_c45_expect_write_reg(MDIO_VVCT, 1, 5x"03", x"0000", x"2040", "Expect PCS control register write");
+    mdio_phy_c45_expect_write_reg(MDIO_VVCT, 1, 5x"03", x"0000", x"2040", "Expect PCS control register write", 1 ms, ERROR, C_SCOPE);
+
+.. _mdio_phy_c45_receive_write_reg_vvc:
+
+mdio_phy_c45_receive_write_reg()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a clause 45 receive write register command to the MDIO VVC executor queue, which will run as soon as all preceding
+commands have completed. The command is a complete register access, the counterpart of the STA's ``*_reg`` commands: when it
+is scheduled to run, the executor calls the BFM :ref:`mdio_phy_c45_expect_address_bfm` procedure for the address frame, then
+the BFM :ref:`mdio_phy_c45_receive_write_bfm` procedure for the access frame. The access frame is awaited once an address frame was
+received, also with a wrong register address (reported, the STA sends the access frame anyway). If no address frame was
+received (timeout, terminated, wrong opcode), the command ends without waiting for the access frame. This procedure can only be
+called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'false'.
+
+The data received in the write frame will not be returned in this procedure call since it is non-blocking for the
+sequencer/caller, but it will be stored in the VVC for a potential future fetch (see example with fetch_result below). It is
+all 'X' if no write frame was received. If the data_routing is set to TO_SB, the received data will be sent to the MDIO VVC
+dedicated scoreboard where it will be checked against the expected value (provided by the testbench).
+
+.. code-block::
+
+    mdio_phy_c45_receive_write_reg(VVCT, vvc_instance_idx, dev_addr, reg_addr, [data_routing,] msg, [timeout, [alert_level, [scope]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that both frames must       |
+|          |                    |        |                              | address. Normalized to 5 bits.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
+|          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
+|          |                    |        |                              | with severity 'alert_level'.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data_routing       | in     | :ref:`t_data_routing`        | Selects the destination of the received data. TO_SB     |
+|          |                    |        |                              | sends it to the VVC scoreboard instead of the result    |
+|          |                    |        |                              | queue.                                                  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout            | in     | time                         | Maximum time to wait for each of the two frames to      |
+|          |                    |        |                              | start. Default value is C_UNDEFINED_TIME, which uses    |
+|          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong opcode,   |
+|          |                    |        |                              | wrong register address in the address frame. Default    |
+|          |                    |        |                              | value is ERROR.                                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
+|          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
+|          |                    |        |                              | defined in adaptations_pkg.                             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    mdio_phy_c45_receive_write_reg(MDIO_VVCT, 1, 5x"03", x"0000", "Receive PCS control register write");
+    mdio_phy_c45_receive_write_reg(MDIO_VVCT, 1, 5x"03", x"0000", TO_SB, "Receive PCS control register write and send to Scoreboard", 1 ms, ERROR, C_SCOPE);
+    
+    -- Example with fetch_result() call: Result is placed in v_result
+    variable v_cmd_idx : natural;                       -- Command index for the last receive
+    variable v_result  : work.vvc_cmd_pkg.t_vvc_result; -- Result from receive
+    ...
+    mdio_phy_c45_receive_write_reg(MDIO_VVCT, 1, 5x"03", x"0000", "Receive PCS control register write");
+    v_cmd_idx := get_last_received_cmd_idx(MDIO_VVCT, 1);
+    await_completion(MDIO_VVCT, 1, v_cmd_idx, 1 ms, "Wait for receive to finish");
+    fetch_result(MDIO_VVCT, 1, v_cmd_idx, v_result, "Fetching result from receive operation");
+
+.. hint::
+
+    :ref:`t_vvc_result` is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.
+
+.. _mdio_phy_c45_reply_read_reg_vvc:
+
+mdio_phy_c45_reply_read_reg()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a clause 45 reply read register command to the MDIO VVC executor queue, which will run as soon as all preceding
+commands have completed. The command is a complete register access, the counterpart of the STA's ``*_reg`` commands: when it
+is scheduled to run, the executor calls the BFM :ref:`mdio_phy_c45_expect_address_bfm` procedure for the address frame, then
+the BFM :ref:`mdio_phy_c45_reply_read_bfm` procedure for the access frame. The access frame is awaited once an address frame was
+received, also with a wrong register address (reported, the STA sends the access frame anyway). If no address frame was
+received (timeout, terminated, wrong opcode), the command ends without waiting for the access frame. This procedure can only be
+called when the MDIO VVC is instantiated in PHY mode, i.e. setting the VVC entity generic constant 'GC_STA_MODE' to 'false'.
+
+.. code-block::
+
+    mdio_phy_c45_reply_read_reg(VVCT, vvc_instance_idx, dev_addr, reg_addr, data, msg, [timeout, [alert_level, [scope]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | dev_addr           | in     | unsigned                     | MMD within this PHY (DEVAD) that both frames must       |
+|          |                    |        |                              | address. Normalized to 5 bits.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | reg_addr           | in     | unsigned                     | Expected register address in the address frame.         |
+|          |                    |        |                              | Normalized to 16 bits. A mismatch results in an alert   |
+|          |                    |        |                              | with severity 'alert_level'.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data               | in     | std_ulogic_vector            | The data value returned to the STA. Normalized to 16    |
+|          |                    |        |                              | bits.                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout            | in     | time                         | Maximum time to wait for each of the two frames to      |
+|          |                    |        |                              | start. Default value is C_UNDEFINED_TIME, which uses    |
+|          |                    |        |                              | bfm_config.phy.timeout. 0 ns = no timeout.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Severity if a frame is not as expected: wrong opcode,   |
+|          |                    |        |                              | wrong register address in the address frame. Default    |
+|          |                    |        |                              | value is ERROR.                                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert            |
+|          |                    |        |                              | originates. Default value is C_VVC_CMD_SCOPE_DEFAULT    |
+|          |                    |        |                              | defined in adaptations_pkg.                             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    mdio_phy_c45_reply_read_reg(MDIO_VVCT, 1, 5x"03", x"0000", x"2040", "Reply PCS control register");
+    mdio_phy_c45_reply_read_reg(MDIO_VVCT, 1, 5x"03", x"0000", x"2040", "Reply PCS control register", 1 ms, ERROR, C_SCOPE);
 
 
 Activity Watchdog

@@ -219,24 +219,34 @@ package mdio_bfm_pkg is
     last_fall : time;
   end record t_mdio_mdc_edges;
 
-  -- Who drives turnaround and data of a frame, given by its own ST and OP fields
+  -- For internal use only: who drives turnaround and data of a frame, given by its own ST and
+  -- OP fields
   type t_mdio_frame_kind is (
     FRAME_STA_DRIVEN, -- write / address-set: the STA drives TA "10" and the data
     FRAME_PHY_DRIVEN, -- read / post-read-increment: the PHY drives TA 'Z','0' and the data
     FRAME_INVALID     -- undefined ST/OP combination
   );
 
-  -- Kind of a frame from its ST and OP fields
+  -- For internal use only: kind of a frame from its ST and OP fields
   function mdio_get_frame_kind(
     constant st : in std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
     constant op : in std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0)) return t_mdio_frame_kind;
 
-  -- Fields of a received frame header (ST OP PHYAD/PRTAD REGAD/DEVAD, C_MDIO_HEADER_WIDTH bits, first bit left)
+  -- For internal use only: fields of a received frame header (ST OP PHYAD/PRTAD REGAD/DEVAD,
+  -- C_MDIO_HEADER_WIDTH bits, first bit left)
   subtype t_mdio_header is std_ulogic_vector(C_MDIO_HEADER_WIDTH-1 downto 0);
+
+  -- For internal use only: ST field of a frame header
   function mdio_header_st(constant header : in t_mdio_header) return std_ulogic_vector;
+
+  -- For internal use only: OP field of a frame header
   function mdio_header_op(constant header : in t_mdio_header) return std_ulogic_vector;
-  function mdio_header_phy_addr(constant header : in t_mdio_header) return std_ulogic_vector;        -- PHYAD (clause 22) / PRTAD (clause 45)
-  function mdio_header_reg_or_dev_addr(constant header : in t_mdio_header) return std_ulogic_vector; -- REGAD (clause 22) / DEVAD (clause 45)
+
+  -- For internal use only: PHYAD (clause 22) / PRTAD (clause 45) field of a frame header
+  function mdio_header_phy_addr(constant header : in t_mdio_header) return std_ulogic_vector;
+
+  -- For internal use only: REGAD (clause 22) / DEVAD (clause 45) field of a frame header
+  function mdio_header_reg_or_dev_addr(constant header : in t_mdio_header) return std_ulogic_vector;
 
   --==========================================================================================
   -- BFM procedures

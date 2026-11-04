@@ -587,6 +587,19 @@ begin
       terminate_loop <= '0';
       check_alerts("no MDC watchdog");
 
+      log(ID_LOG_HDR, "Terminate a reply mid-data: the PHY releases MDIO at once, not output_delay later (no alert)", C_SCOPE);
+      ------------------------------------------------------------
+      -- the read up to data bit 12, then MDC stops: the PHY drives data bit 11 ('0') and waits for its edge
+      barrier("terminate reply");
+      sta_drive_raw(C_PREAMBLE & c22_frame(C_MDIO_OP_CL22_READ, C_PHY_ADDR, C_REG, "ZZ", bits(16, 'Z'))(31 downto 12));
+      check_value(mdio_if.mdio, '0', ERROR, "the PHY drives its reply", C_SCOPE);
+      terminate_loop <= '1';
+      wait for 1 ns; -- far less than output_delay
+      check_value(mdio_if.mdio, 'H', ERROR, "the terminated PHY has released MDIO", C_SCOPE);
+      barrier("terminate reply done");
+      terminate_loop <= '0';
+      check_alerts("terminate reply");
+
       log(ID_LOG_HDR, "Reply to a read: the STA drives turnaround bit 1 and data bit 15 (two ERRORs)", C_SCOPE);
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(ERROR, 2);
@@ -1136,6 +1149,10 @@ begin
       mdio_phy_c22_expect_write(unsigned(C_REG), x"EEEE", "MDC stops, max_wait_mdc_change 0 ns", mdio_if, terminate_loop,
                                 config => v_config);
       barrier("no MDC watchdog, stall done");
+
+      barrier("terminate reply");
+      mdio_phy_c22_reply_read(unsigned(C_REG), x"0000", "terminated mid-data", mdio_if, terminate_loop, config => v_config);
+      barrier("terminate reply done");
       v_config := C_MDIO_BFM_CONFIG_DEFAULT;
 
       barrier("reply contention");

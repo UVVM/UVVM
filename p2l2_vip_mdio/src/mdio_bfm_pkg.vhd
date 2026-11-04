@@ -1628,8 +1628,13 @@ package body mdio_bfm_pkg is
     if v_status = WAIT_OK then
       drive_data(data, mdio_if, terminate_loop, proc_call, msg, scope, msg_id_panel, config, check_ok, v_status);
     end if;
-    -- always release the bus, also after an abort
-    release_mdio(mdio_if, config);
+    -- always release the bus. Normal end: output_delay after the last edge (hold time of the last data bit).
+    -- Aborted (terminate / MDC stall): at once, the zero-delay assignment also cancels a pending drive.
+    if v_status = WAIT_OK then
+      release_mdio(mdio_if, config);
+    else
+      mdio_if.mdio <= 'Z';
+    end if;
     status := v_status;
   end procedure drive_payload;
 

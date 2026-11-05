@@ -524,6 +524,20 @@ begin
       avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE_1, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_stream, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE_1, 10 us);
 
+      log(ID_LOG_HDR, "Testing that ready deasserted right after a transfer doesn't repeat the data (DUT FIFO gets full)");
+      shared_avalon_st_vvc_config(C_VVC_SLAVE_1).unwanted_transaction_checking_enabled := false; -- The FIFO output is valid before the expects
+      for i in 0 to 4 loop
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER_1, v_data_stream, "");
+      end loop;
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER_1, v_data_stream(0 to 11), ""); -- 512 words in total, the FIFO deasserts ready after the last one
+      await_completion(AVALON_ST_VVCT, C_VVC_MASTER_1, 20 us);
+      for i in 0 to 4 loop
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE_1, v_data_stream, "");
+      end loop;
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE_1, v_data_stream(0 to 11), "");
+      await_completion(AVALON_ST_VVCT, C_VVC_SLAVE_1, 20 us);
+      shared_avalon_st_vvc_config(C_VVC_SLAVE_1).unwanted_transaction_checking_enabled := true;
+
       log(ID_LOG_HDR, "Testing receive and fetch");
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER_1, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), v_data_stream(0 to 4), "");
       avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE_1, 5, v_data_stream(0)'length, "");

@@ -14,7 +14,7 @@ used as STA (station management entity) and PHY.
 IMPORTANT
 Besides generating and receiving frames, the VIP checks the MDIO protocol and
 timing of the other side of the bus (protocol errors, bus timing, unwanted
-activity). See the Quick Reference under 'doc' for what is checked and its
+transactions). See the Quick Reference under 'doc' for what is checked and its
 limitations.
 The timing checks only see the timing the DUT has in simulation. In a zero-delay
 RTL simulation, the DUT (or a wrapper in the testbench) must model the relevant

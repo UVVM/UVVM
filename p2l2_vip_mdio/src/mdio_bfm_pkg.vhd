@@ -1232,7 +1232,8 @@ package body mdio_bfm_pkg is
     constant config         : in t_mdio_bfm_config;
     variable check_ok       : inout boolean;
     variable status         : out t_mdio_wait_status) is
-    variable v_status : t_mdio_wait_status;
+    variable v_status     : t_mdio_wait_status;
+    variable v_ta_bit1_ok : boolean;
   begin
     mdio_if.mdio <= 'Z' after config.output_delay;
     await_mdc_rising_edge(mdio_if, terminate_loop, config, v_status);
@@ -1241,7 +1242,7 @@ package body mdio_bfm_pkg is
       return;
     end if;
     -- nobody drives the bus in TA bit 1: only the pull-up ('H') or nothing ('Z') is left
-    check_ok := check_value(
+    v_ta_bit1_ok := check_value(
       value        => is_undriven(mdio_if.mdio),
       alert_level  => config.bus_contention_severity,
       msg          => "Bus contention: STA did not release the bus in turnaround bit 1 of a read, bus was '" &
@@ -1250,7 +1251,8 @@ package body mdio_bfm_pkg is
       msg_id       => ID_NEVER,
       msg_id_panel => msg_id_panel,
       caller_name  => proc_call)
-      and check_ok;
+      or config.bus_contention_severity = NO_ALERT;
+    check_ok := v_ta_bit1_ok and check_ok;
 
     mdio_if.mdio <= '0' after config.output_delay;
     await_mdc_rising_edge(mdio_if, terminate_loop, config, v_status);
@@ -1393,21 +1395,21 @@ package body mdio_bfm_pkg is
   -- clause_ok: the frame has the clause (ST) the call expects, otherwise the caller only consumes the rest of it.
   -- header_ok: result of the preamble checks, the defined check and the REGAD / DEVAD check of the addressed frame.
   procedure await_addressed_frame(
-    constant st              : in std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
-    constant exp_addr        : in unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0); -- expected REGAD (clause 22) / DEVAD (clause 45)
-    constant timeout         : in time;
-    constant alert_level     : in t_alert_level;
-    signal   mdio_if         : in t_mdio_if;
-    signal   terminate_loop  : in std_logic;
-    constant proc_call       : in string;
-    constant msg             : in string;
-    constant scope           : in string;
-    constant msg_id_panel    : in t_msg_id_panel;
-    constant config          : in t_mdio_bfm_config;
-    variable op              : out std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
-    variable clause_ok       : out boolean;
-    variable header_ok       : out boolean;
-    variable status          : out t_mdio_wait_status)
+    constant st             : in std_ulogic_vector(C_MDIO_ST_WIDTH-1 downto 0);
+    constant exp_addr       : in unsigned(C_MDIO_PHY_ADDR_WIDTH-1 downto 0); -- expected REGAD (clause 22) / DEVAD (clause 45)
+    constant timeout        : in time;
+    constant alert_level    : in t_alert_level;
+    signal   mdio_if        : in t_mdio_if;
+    signal   terminate_loop : in std_logic;
+    constant proc_call      : in string;
+    constant msg            : in string;
+    constant scope          : in string;
+    constant msg_id_panel   : in t_msg_id_panel;
+    constant config         : in t_mdio_bfm_config;
+    variable op             : out std_ulogic_vector(C_MDIO_OP_WIDTH-1 downto 0);
+    variable clause_ok      : out boolean;
+    variable header_ok      : out boolean;
+    variable status         : out t_mdio_wait_status)
   is
     constant C_START_TIME : time := now;
 

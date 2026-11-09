@@ -8,7 +8,7 @@ rule:
       # Exceptions are: VOID parameter and all signals which address the VVCs.
       case_exceptions: ['VOID', 'VVCT', 'THIS_VVCT', 'VVC_BROADCAST',
         'AVALON_MM_VVCT', 'AVALON_ST_VVCT', 'AXI_VVCT', 'AXILITE_VVCT', 'AXISTREAM_VVCT', 'CLOCK_GENERATOR_VVCT', 'ETHERNET_VVCT',
-        'GMII_VVCT', 'GPIO_VVCT', 'I2C_VVCT', 'RGMII_VVCT', 'SBI_VVCT', 'SPI_VVCT', 'UART_VVCT', 'WISHBONE_VVCT', 'APB_VVCT']
+        'GMII_VVCT', 'GPIO_VVCT', 'I2C_VVCT', 'RGMII_VVCT', 'SBI_VVCT', 'SPI_VVCT', 'UART_VVCT', 'WISHBONE_VVCT', 'APB_VVCT', 'MDIO_VVCT']
     indent: # Check all code has indentation of 2 spaces.
       disable: false
       indent_size: 2

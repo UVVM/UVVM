@@ -51,7 +51,7 @@ begin
   axi_if.write_response_channel.bresp  <= "00";
   axi_if.write_response_channel.bvalid <= '1' when address_seen and num_beats = C_DATA'length else '0';
 
-  p_subordinate : process(clk)
+  p_subordinate : process(clk) is
   begin
     if rising_edge(clk) then
       if axi_if.write_data_channel.wvalid = '1' and axi_if.write_data_channel.wready = '1' then
@@ -71,7 +71,7 @@ begin
     end if;
   end process;
 
-  p_main : process
+  p_main : process is
     variable v_config : t_axi_bfm_config := C_AXI_BFM_CONFIG_DEFAULT;
     variable v_buser  : std_logic_vector(0 downto 0);
     variable v_bresp  : t_xresp;
@@ -103,7 +103,7 @@ begin
     wait;
   end process;
 
-  p_watchdog : process
+  p_watchdog : process is
   begin
     wait for 2 us;
     tb_failure("AXI write did not return", C_SCOPE);

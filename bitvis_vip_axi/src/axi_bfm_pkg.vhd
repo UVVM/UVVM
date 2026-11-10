@@ -693,23 +693,24 @@ package body axi_bfm_pkg is
         axi_if.write_data_channel.wuser  <= (axi_if.write_data_channel.wuser'range => '0');
         axi_if.write_data_channel.wvalid <= '0';
       end if;
-      if v_await_awready then
-        axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0');
-        axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0');
-        axi_if.write_address_channel.awlen    <= (others => '0');
-        axi_if.write_address_channel.awsize   <= (others => '0');
-        axi_if.write_address_channel.awburst  <= (others => '0');
-        axi_if.write_address_channel.awlock   <= '0';
-        axi_if.write_address_channel.awcache  <= (others => '0');
-        axi_if.write_address_channel.awprot   <= (others => '0');
-        axi_if.write_address_channel.awqos    <= (others => '0');
-        axi_if.write_address_channel.awregion <= (others => '0');
-        axi_if.write_address_channel.awuser   <= (axi_if.write_address_channel.awuser'range => '0');
-        axi_if.write_address_channel.awvalid  <= '0';
-      end if;
 
       v_await_wready := true;
     end loop;
+
+    if v_await_awready then
+      axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0');
+      axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0');
+      axi_if.write_address_channel.awlen    <= (others => '0');
+      axi_if.write_address_channel.awsize   <= (others => '0');
+      axi_if.write_address_channel.awburst  <= (others => '0');
+      axi_if.write_address_channel.awlock   <= '0';
+      axi_if.write_address_channel.awcache  <= (others => '0');
+      axi_if.write_address_channel.awprot   <= (others => '0');
+      axi_if.write_address_channel.awqos    <= (others => '0');
+      axi_if.write_address_channel.awregion <= (others => '0');
+      axi_if.write_address_channel.awuser   <= (axi_if.write_address_channel.awuser'range => '0');
+      axi_if.write_address_channel.awvalid  <= '0';
+    end if;
 
     for cycle in 0 to config.max_wait_cycles loop
 

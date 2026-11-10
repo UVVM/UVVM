@@ -1,6 +1,17 @@
 Bitvis VIP Wishbone - Overview on Versions and Changes
 ==============================================================
 
+v1.0.2
+----------
+Released: 2026-10-27
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v1.0.1
 ----------
 Released: 2026-02-14
@@ -53,7 +64,7 @@ Released: 2023-09-16
 v0.1.2 BETA
 ----------
 Released: 2023-03-21
-- Renamed C_SCOPE to C_SCOPE_BFM in BFM package. 
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
 
 v0.1.1 BETA
 ----------
@@ -63,10 +74,10 @@ Released: 2022-05-05
 v0.1.0 BETA
 ----------
 Released: 2021-05-26
-- BFM config defaults setup_time, hold_time and clock_period are now 
+- BFM config defaults setup_time, hold_time and clock_period are now
   default -1 ns.
-- VVC command insert_delay() will raise a TB_ERROR when called if the 
-  bfm_config.clock_period has not been set.  
+- VVC command insert_delay() will raise a TB_ERROR when called if the
+  bfm_config.clock_period has not been set.
 - Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
   vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
   for future HVVC support.
@@ -79,9 +90,8 @@ v0.0.1 BETA
 Released: 2017-01-10
 - Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
 - Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
-- Added AWAIT_ANY_COMPLETION. 
+- Added AWAIT_ANY_COMPLETION.
 - Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
 -  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
 -  - updated call to store_result()
 - Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
-

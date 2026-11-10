@@ -1,0 +1,4 @@
+# library bitvis_uart
+# toplevel: uart_vvc_demo_tb
+../tb/uart_vvc_demo_th.vhd
+../tb/uart_vvc_demo_tb.vhd

@@ -70,6 +70,7 @@ package transaction_pkg is
   type t_base_transaction is record
     operation          : t_operation;
     data_array         : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1)(7 downto 0);
+    data_length        : natural;
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
   end record;
@@ -77,6 +78,7 @@ package transaction_pkg is
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation          => NO_OPERATION,
     data_array         => (others => (others => '0')),
+    data_length        => 0,
     vvc_meta           => C_VVC_META_DEFAULT,
     transaction_status => INACTIVE
   );
@@ -94,7 +96,7 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_gmii_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;
-  signal global_gmii_vvc_transaction_trigger : t_gmii_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => '0'));
+  signal global_gmii_vvc_transaction_trigger : t_gmii_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => 'Z'));
 
   -- Shared transaction info variable
   type t_gmii_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;

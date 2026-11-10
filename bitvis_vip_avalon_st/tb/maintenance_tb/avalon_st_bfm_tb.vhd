@@ -45,6 +45,7 @@ architecture func of avalon_st_bfm_tb is
   constant C_SYMBOL_WIDTH : natural := 8;
   constant C_EMPTY_WIDTH  : natural := maximum(log2(GC_DATA_WIDTH / C_SYMBOL_WIDTH), 1);
   constant C_MAX_CHANNEL  : natural := 64;
+  constant C_MAX_WORDS    : natural := C_AVALON_ST_BFM_MAX_DATA_WORDS;
 
   --------------------------------------------------------------------------------
   -- Signal declarations
@@ -95,6 +96,9 @@ begin
     variable v_data_packet       : t_slv_array(0 to 99)(C_SYMBOL_WIDTH - 1 downto 0);
     variable v_data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH - 1 downto 0);
 
+    variable v_oversized_data_array : t_slv_array(0 to C_MAX_WORDS +1)(C_SYMBOL_WIDTH -1 downto 0);
+    variable v_num_words            : natural;
+
     procedure new_random_data(
       data_array : inout t_slv_array) is
     begin
@@ -124,6 +128,14 @@ begin
       data_array : out t_slv_array) is
     begin
       avalon_st_receive(data_array, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, v_avl_st_bfm_config);
+    end procedure;
+
+    procedure avalon_st_receive_with_unknown_length(
+      data_array  : out t_slv_array;
+      num_words   : out natural
+      ) is
+    begin
+      avalon_st_receive(data_array, num_words, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, v_avl_st_bfm_config);
     end procedure;
 
     procedure avalon_st_expect(
@@ -266,6 +278,17 @@ begin
       avalon_st_transmit(v_data_packet, 1);
       avalon_st_expect(v_data_packet, 5);
 
+      log(ID_LOG_HDR, "Testing receive() overload with unknown data length");
+      avalon_st_transmit(v_data_packet(0 to 4));
+      avalon_st_receive_with_unknown_length(v_data_packet, v_num_words);
+      if v_num_words /= v_data_packet(0 to 4)'length then
+        alert(TB_ERROR, "Expected num_words to be equal to number of transmitted words (" & to_string(v_data_packet(0 to 4)'length) & "), got num_words = " & to_string(v_num_words));
+      end if;
+
+      log(ID_LOG_HDR, "Testing error case: receive() overload with num words parameter and array lenght > max +1");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      avalon_st_receive_with_unknown_length(v_oversized_data_array, v_num_words);
+
     elsif GC_TESTCASE = "test_stream_data" then
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet)");
@@ -315,6 +338,26 @@ begin
       avalon_st_transmit(v_data_stream, C_MAX_CHANNEL);
       avalon_st_expect(v_data_stream, C_MAX_CHANNEL);
 
+      log(ID_LOG_HDR, "Testing that ready deasserted right after a transfer doesn't repeat the data (DUT FIFO gets full)");
+      for i in 0 to 4 loop
+        avalon_st_transmit(v_data_stream);
+      end loop;
+      avalon_st_transmit(v_data_stream(0 to 11)); -- 512 words in total, the FIFO deasserts ready after the last one
+      for i in 0 to 4 loop
+        avalon_st_expect(v_data_stream);
+      end loop;
+      avalon_st_expect(v_data_stream(0 to 11));
+
+      log(ID_LOG_HDR, "Testing that ready deasserted longer than max_wait_cycles doesn't time out");
+      v_avl_st_bfm_config.max_wait_cycles       := 20;
+      v_avl_st_bfm_config.ready_low_at_word_idx := 2;
+      v_avl_st_bfm_config.ready_low_duration    := 30;
+      avalon_st_transmit(v_data_stream(0 to 4));
+      avalon_st_expect(v_data_stream(0 to 4));
+      v_avl_st_bfm_config.max_wait_cycles       := C_AVALON_ST_BFM_CONFIG_DEFAULT.max_wait_cycles;
+      v_avl_st_bfm_config.ready_low_at_word_idx := C_AVALON_ST_BFM_CONFIG_DEFAULT.ready_low_at_word_idx;
+      v_avl_st_bfm_config.ready_low_duration    := C_AVALON_ST_BFM_CONFIG_DEFAULT.ready_low_duration;
+
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_receive(v_data_stream);
@@ -335,6 +378,10 @@ begin
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_transmit(v_data_stream, 1);
       avalon_st_expect(v_data_stream, 5);
+
+      log(ID_LOG_HDR, "Testing error case: receive() overload with num words parameter should not work for stream transfer");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      avalon_st_receive_with_unknown_length(v_data_packet, v_num_words);
 
     elsif GC_TESTCASE = "test_setup_and_hold_times" then
       v_avl_st_bfm_config.clock_period        := C_CLK_PERIOD;

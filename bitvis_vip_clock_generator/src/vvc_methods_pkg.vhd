@@ -60,6 +60,7 @@ package vvc_methods_pkg is
     clock_name                            : string(1 to 30);
     clock_period                          : time;
     clock_high_time                       : time;
+    clock_max_jitter                      : time;
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -76,7 +77,8 @@ package vvc_methods_pkg is
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     clock_name                            => ("Set clock name", others => NUL),
     clock_period                          => 10 ns,
-    clock_high_time                       => 5 ns
+    clock_high_time                       => 5 ns,
+    clock_max_jitter                      => 0 ns
   );
 
   type t_vvc_status is record
@@ -149,6 +151,14 @@ package vvc_methods_pkg is
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
+  procedure set_clock_max_jitter(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant clock_max_jitter : in time;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -216,5 +226,21 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.clock_high_time := clock_high_time;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure set_clock_high_time;
+
+  procedure set_clock_max_jitter(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant clock_max_jitter : in time;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+    constant C_PROC_NAME : string := "set_clock_max_jitter";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                     & ", " & to_string(clock_max_jitter) & ")";
+  begin
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, SET_CLOCK_MAX_JITTER);
+    shared_vvc_cmd.clock_max_jitter := clock_max_jitter;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure set_clock_max_jitter;
 
 end package body vvc_methods_pkg;

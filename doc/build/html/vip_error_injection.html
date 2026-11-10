@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_mdio.html">P2L2 VIP MDIO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
@@ -103,6 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -215,9 +217,9 @@ the UART RX signal line.</p>
 
 <span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">error_type</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">DELAY</span><span class="p">;</span>
 <span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">delay_min</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
-<span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">base_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">base_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">'0'</span><span class="p">;</span>
 
-<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data&quot;</span><span class="p">);</span>
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x"AA"</span><span class="p">,</span><span class="w"> </span><span class="s">"Transmitting data"</span><span class="p">);</span>
 
 <span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
 <span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">C_EI_CONFIG_DEFAULT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Set the configuration back to BYPASS when done</span>

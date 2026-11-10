@@ -74,13 +74,13 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((100, 1310))
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((100, 1310))=> Sampled illegal_bin(1310)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((100, 1419))
 UVVM: 
 UVVM: ***  WARNING #2  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((100, 1419))=> Sampled illegal_bin_range(1415 to 1419)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((200, 1004))
@@ -93,13 +93,13 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((207, 1310))
 UVVM: 
 UVVM: ***  WARNING #3  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((207, 1310))=> Sampled illegal_bin(1310)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((206, 1419))
 UVVM: 
 UVVM: ***  WARNING #4  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((206, 1419))=> Sampled illegal_bin_range(1415 to 1419)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((300, 1004))
@@ -112,13 +112,13 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((300, 1310))
 UVVM: 
 UVVM: ***  WARNING #5  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((300, 1310))=> Sampled illegal_bin(1310)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((300, 1419))
 UVVM: 
 UVVM: ***  WARNING #6  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((300, 1419))=> Sampled illegal_bin_range(1415 to 1419)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((400, 1004))
@@ -131,13 +131,13 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((407, 1310))
 UVVM: 
 UVVM: ***  WARNING #7  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((407, 1310))=> Sampled illegal_bin(1310)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((406, 1419))
 UVVM: 
 UVVM: ***  WARNING #8  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((406, 1419))=> Sampled illegal_bin_range(1415 to 1419)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((501, 1004))
@@ -145,7 +145,7 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((505, 1004))
 UVVM: 
 UVVM: ***  WARNING #9  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((505, 1004))=> Sampled illegal_bin_transition(501->503->505)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((501, 1116))
@@ -153,7 +153,7 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((505, 1118))
 UVVM: 
 UVVM: ***  WARNING #10  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((505, 1118))=> Sampled illegal_bin_transition(501->503->505)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((501, 1212))
@@ -161,7 +161,7 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((505, 1216))
 UVVM: 
 UVVM: ***  WARNING #11  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((505, 1216))=> Sampled illegal_bin_transition(501->503->505)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((501, 1310))
@@ -169,7 +169,7 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((505, 1310))
 UVVM: 
 UVVM: ***  WARNING #12  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((505, 1310))=> Sampled illegal_bin(1310)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((501, 1419))
@@ -177,7 +177,7 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((505, 1419))
 UVVM: 
 UVVM: ***  WARNING #13  ***
-UVVM:             0 ns   TB seq.
+UVVM:            -0 ns   TB seq.
 UVVM:                    [Covpt_3] sample_coverage((505, 1419))=> Sampled illegal_bin_range(1415 to 1419)
 UVVM: 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1[1]

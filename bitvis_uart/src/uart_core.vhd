@@ -29,6 +29,7 @@ entity uart_core is
   generic(
     GC_START_BIT                 : std_logic := '0';
     GC_STOP_BIT                  : std_logic := '1';
+    GC_DATA_WIDTH                : integer   := 8;
     GC_CLOCKS_PER_BIT            : integer   := 16;
     GC_MIN_EQUAL_SAMPLES_PER_BIT : integer   := 15); -- Number of equal samples needed for valid bit, uart samples on every clock
   port(
@@ -36,8 +37,8 @@ entity uart_core is
     clk  : in  std_logic;
     arst : in  std_logic;
     -- PIF-core interface
-    p2c  : in  t_p2c;
-    c2p  : out t_c2p;
+    p2c  : in  t_p2c(awo_tx_data(GC_DATA_WIDTH - 1 downto 0));
+    c2p  : out t_c2p(aro_rx_data(GC_DATA_WIDTH - 1 downto 0));
     -- Interrupt related signals
     rx_a : in  std_logic;
     tx   : out std_logic
@@ -45,30 +46,30 @@ entity uart_core is
 end entity uart_core;
 
 architecture rtl of uart_core is
-  type t_slv_array is array (3 downto 0) of std_logic_vector(7 downto 0);
+  type t_slv_array is array (3 downto 0) of std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+  constant C_UART_DATA_ZERO : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
 
   -- tx signals
   signal tx_data       : t_slv_array                  := (others => (others => '0'));
-  signal tx_buffer     : std_logic_vector(7 downto 0) := (others => '0');
+  signal tx_buffer     : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
   signal tx_data_valid : std_logic                    := '0';
 
   signal tx_ready       : std_logic                                        := '0';
   signal tx_active      : std_logic                                        := '0';
   signal tx_clk_counter : unsigned(f_log2(GC_CLOCKS_PER_BIT) - 1 downto 0) := (others => '0');
-  -- count through the bits (12 total)
+  -- count through the bits (up to 13 total)
   signal tx_bit_counter : unsigned(3 downto 0)                             := (others => '0');
 
   -- receive signals
-  signal rx_buffer      : std_logic_vector(7 downto 0)                     := (others => '0');
+  signal rx_buffer      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
   signal rx_active      : std_logic                                        := '0';
   signal rx_clk_counter : unsigned(f_log2(GC_CLOCKS_PER_BIT) - 1 downto 0) := (others => '0');
-  -- count through the bits (12 total)
+  -- count through the bits (up to 11 total)
   signal rx_bit_counter : unsigned(3 downto 0)                             := (others => '0');
   signal rx_bit_samples : std_logic_vector(GC_CLOCKS_PER_BIT - 1 downto 0) := (others => '0');
 
   signal rx_data       : t_slv_array := (others => (others => '0'));
   signal rx_data_valid : std_logic   := '0';
-  signal rx_data_full  : std_logic   := '0';
 
   -- rx synced to clk
   signal rx_s : std_logic_vector(1 downto 0) := (others => '1'); -- synchronized serial data input
@@ -79,7 +80,7 @@ architecture rtl of uart_core is
   signal stop_err      : std_logic := '0'; -- stop error detected
   signal transient_err : std_logic := '0'; -- data value is transient
 
-  signal c2p_i : t_c2p;                 -- Internal version of output
+  signal c2p_i : t_c2p(aro_rx_data(GC_DATA_WIDTH - 1 downto 0));                 -- Internal version of output
 begin
   c2p                     <= c2p_i;
   c2p_i.aro_tx_ready      <= tx_ready;
@@ -131,7 +132,7 @@ begin
       if tx_data_valid = '1' and tx_active = '0' then
         tx_active <= '1';
         tx_buffer <= tx_data(0);
-        tx_data   <= x"00" & tx_data(3 downto 1);
+        tx_data   <= C_UART_DATA_ZERO & tx_data(3 downto 1);
 
         if vr_tx_data_idx > 0 then
           -- Decrement idx
@@ -200,11 +201,7 @@ begin
           -- mux out the correct tx bit
           tx <= tx_buffer(to_integer(tx_bit_counter) - 1);
         elsif to_integer(tx_bit_counter) = p2c.rw_num_data_bits + 1 then
-          if p2c.rw_num_data_bits = 8 then
-            tx <= odd_parity(tx_buffer);
-          elsif p2c.rw_num_data_bits = 7 then
-            tx <= odd_parity(tx_buffer(6 downto 0));
-          end if;
+          tx <= odd_parity(tx_buffer(p2c.rw_num_data_bits - 1 downto 0));
         elsif to_integer(tx_bit_counter) = p2c.rw_num_data_bits + 2 then
           tx <= GC_STOP_BIT;
         else
@@ -224,6 +221,7 @@ begin
   p_uart_rx : process(clk, arst) is
     variable vr_rx_data_idx   : unsigned(2 downto 0) := (others => '0');
     variable v_error_detected : boolean              := false;
+    variable v_rx_data        : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
   begin                                 -- process p_uart_rx
     if arst = '1' then                  -- asynchronous reset (active high)
       rx_active        <= '0';
@@ -238,7 +236,6 @@ begin
       parity_err       <= '0';
       transient_err    <= '0';
       vr_rx_data_idx   := (others => '0');
-      rx_data_full     <= '1';
       v_error_detected := false;
     elsif rising_edge(clk) then         -- rising clock edge
 
@@ -246,8 +243,7 @@ begin
       -- When there is data available in rx_data,
       -- output the data when read enable detected.
       if p2c.aro_rx_data_re = '1' and rx_data_valid = '1' then
-        rx_data      <= x"00" & rx_data(3 downto 1);
-        rx_data_full <= '0';
+        rx_data <= C_UART_DATA_ZERO & rx_data(3 downto 1);
 
         if vr_rx_data_idx > 0 then
           vr_rx_data_idx := vr_rx_data_idx - 1;
@@ -310,18 +306,12 @@ begin
           if to_integer(rx_bit_counter) < p2c.rw_num_data_bits then
             -- mux in new bit
             rx_buffer(to_integer(rx_bit_counter)) <= find_most_repeated_bit(rx_bit_samples);
+
           elsif to_integer(rx_bit_counter) = p2c.rw_num_data_bits then
             -- check parity based on number of data bits
-            if p2c.rw_num_data_bits = 8 then -- num_data_bits = 8
-              if (odd_parity(rx_buffer(7 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
-                parity_err       <= '1';
-                v_error_detected := true;
-              end if;
-            elsif p2c.rw_num_data_bits = 7 then -- num_data_bits = 7
-              if (odd_parity(rx_buffer(6 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
-                parity_err       <= '1';
-                v_error_detected := true;
-              end if;
+            if (odd_parity(rx_buffer(p2c.rw_num_data_bits - 1 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
+              parity_err       <= '1';
+              v_error_detected := true;
             end if;
           elsif to_integer(rx_bit_counter) = p2c.rw_num_data_bits + 1 then
             rx_data_valid <= '1';     -- ready for higher level protocol
@@ -337,15 +327,11 @@ begin
               rx_data_valid <= '0';
             else
               -- Add data bits to rx_data
-              if p2c.rw_num_data_bits = 8 then -- num_data_bits = 8
-                rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
-              elsif p2c.rw_num_data_bits = 7 then -- num_data_bits = 7
-                rx_data(to_integer(vr_rx_data_idx)) <= ("0" & rx_buffer(p2c.rw_num_data_bits-1 downto 0));
-              end if;
+              v_rx_data := (others => '0');
+              v_rx_data(p2c.rw_num_data_bits - 1 downto 0) := rx_buffer(p2c.rw_num_data_bits - 1 downto 0);
+              rx_data(to_integer(vr_rx_data_idx)) <= v_rx_data;
               if vr_rx_data_idx < 3 then
                 vr_rx_data_idx := vr_rx_data_idx + 1;
-              else
-                rx_data_full <= '1';
               end if;
             end if;
           else

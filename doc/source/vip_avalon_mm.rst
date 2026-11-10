@@ -246,6 +246,29 @@ The read data is placed on the output 'data_value' when the read has completed.
   * The maximum number of cycles acceptable to be stalled by waitrequest is given in 'config.max_wait_cycles'
   * If use_waitrequest and use_readdatavalid are disabled in the config, the read procedure will use the num_wait_states as readWaitTime.
   * The BFM can be configured to use waitrequest and readdatavalid in the config parameter.
+  * The procedure does not support the combination of wait-request and fixed wait-states.
+
+The following table explains the timing behavior for the sampling of readdata for the different configurations of 'use_waitrequest',
+'num_wait_states_read' and 'use_readdatavalid'.
+
++-----------------+-------------------+----------------------+--------------------------------------------------+
+| use_waitrequest | use_readdatavalid | num_wait_states_read | Description                                      |
++=================+===================+======================+==================================================+
+| false           | true              | 0 (default)          | Variable latency. BFM will start listening for   |
+|                 |                   |                      | 'readdatavalid' from the first rising edge after |
+|                 |                   |                      | 'read' assert.                                   |
++-----------------+-------------------+----------------------+--------------------------------------------------+
+| false           | false             | N                    | 'readdata' sampled at the Nth rising clock edge  |
+|                 |                   |                      | after 'read' asserted.                           |
++-----------------+-------------------+----------------------+--------------------------------------------------+
+| true            | true              | X                    | Variable latency. BFM will start listening for   |
+|                 |                   |                      | 'readdatavalid' when 'waitrequest' deasserted,   |
+|                 |                   |                      | or minimum one clock cyle after 'read' assert    |
++-----------------+-------------------+----------------------+--------------------------------------------------+
+| true            | false             | X                    | Fixed latency. 'readdata' sampled when           |
+|                 |                   |                      | 'waitrequest' deasserted, or minimum one clock   |
+|                 |                   |                      | after 'read' assert                              |
++-----------------+-------------------+----------------------+--------------------------------------------------+
 
 The procedure reports an alert if:
 
@@ -480,7 +503,7 @@ signal can be specified in the lock_value argument.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | data_width         | in     | natural                      | Width of the data signals                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | lock_value         | in     | natural                      | Initial value of the lock signal. Default value is '0'  |
+| constant | lock_value         | in     | std_logic                    | Initial value of the lock signal. Default value is '0'  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -829,9 +852,13 @@ Configuration Record
 |                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
 |                              |                              |                 | use verbosity control.                          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_avalon_mm_unwanted_t\| C_AVALON_MM_UNW\| Severity of alert to be issued if unwanted      |
+|                              | ransaction<t_avalon_mm_unwan\| ANTED_TRANSACTI\| transactions are detected on the DUT outputs.   |
+|                              | ted_transaction>`            | ON              |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -1134,17 +1161,21 @@ Transaction Info
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | Info field                   | Type                         | Default         | Description                                     |
     +==============================+==============================+=================+=================================================+
-    | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
-    |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
+    | operation                    | t_operation                  | NO_OPERATION    | Base operation: WRITE, RESET, LOCK or UNLOCK    |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | addr                         | unsigned(63 downto 0)        | 0x0             | Address of the Avalon-MM read or write          |
-    |                              |                              |                 | transaction                                     |
+    | addr                         | unsigned(63 downto 0)        | 0x0             | Address field from the executing command        |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data                         | std_logic_vector(1023 downto | 0x0             | Data of the Avalon-MM read or write transaction |
+    | data                         | std_logic_vector(1023 downto | 0x0             | Data field from the executing command           |
     |                              | 0)                           |                 |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | write                        | std_logic                    | '0'             | Write qualifier from the executing command      |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | read                         | std_logic                    | '0'             | Read qualifier from the executing command       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | byte_enable                  | std_logic_vector(127 downto  | 0x0             | Used to indicate which data bytes to use. When  |
     |                              | 0)                           |                 | all bits are set to '1', all bytes are enabled. |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | response                     | std_logic_vector(1 downto 0) | 0b00            | Reserved; Avalon-MM VVC sets this to 0b00       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
     |                              |                              | ULT             |                                                 |
@@ -1157,19 +1188,64 @@ Transaction Info
     |                              |                              |                 | SUCCEEDED during a transaction                  |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
-.. table:: Avalon-MM transaction info record fields. Transaction Type: t_sub_transaction (ST) - accessible via **shared_avalon_mm_vvc_transaction_info.st**
+The previous sub-transaction field ``st`` has been split into ``st_request`` and ``st_response``.
+Use ``st_request`` for the READ/CHECK request phase and ``st_response`` for the pipelined
+READ_RESPONSE/CHECK_RESPONSE phase.
+
+.. table:: Avalon-MM transaction info record fields. Transaction Type: t_st_request (ST) - accessible via **shared_avalon_mm_vvc_transaction_info.st_request**
 
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | Info field                   | Type                         | Default         | Description                                     |
     +==============================+==============================+=================+=================================================+
-    | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
-    |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
+    | operation                    | t_operation                  | NO_OPERATION    | Request phase operation: READ or CHECK          |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | addr                         | unsigned(63 downto 0)        | 0x0             | Address of the Avalon-MM read or write          |
-    |                              |                              |                 | transaction                                     |
+    | addr                         | unsigned(63 downto 0)        | 0x0             | Address of the Avalon-MM read/check request     |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | data                         | std_logic_vector(1023 downto | 0x0             | Data of the Avalon-MM read or write transaction |
+    | data                         | std_logic_vector(1023 downto | 0x0             | Request data field                              |
     |                              | 0)                           |                 |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | write                        | std_logic                    | '0'             | Write qualifier from the request command        |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | read                         | std_logic                    | '0'             | Read qualifier from the request command         |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | byte_enable                  | std_logic_vector(127 downto  | 0x0             | Byte enable field from the request command      |
+    |                              | 0)                           |                 |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | response                     | std_logic_vector(1 downto 0) | 0b00            | Reserved; Avalon-MM VVC sets this to 0b00       |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
+    |                              |                              | ULT             |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    |  -> msg                      | string                       | ""              | Message of executing VVC command                |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | transaction_status           | :ref:`t_transaction_status`  | INACTIVE        | Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    |                              |                              |                 | SUCCEEDED during a transaction                  |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+For CHECK, the ``data`` field contains the expected data. For a non-pipelined READ completion,
+the ``data`` field is updated with the returned data. When use_read_pipeline is enabled, the
+read/check response is reported separately in the ``st_response`` sub-transaction, using the
+READ_RESPONSE and CHECK_RESPONSE operations respectively.
+
+.. table:: Avalon-MM transaction info record fields. Transaction Type: t_st_response (ST) - accessible via **shared_avalon_mm_vvc_transaction_info.st_response**
+
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | Info field                   | Type                         | Default         | Description                                     |
+    +==============================+==============================+=================+=================================================+
+    | operation                    | t_operation                  | NO_OPERATION    | Response phase operation: READ_RESPONSE or      |
+    |                              |                              |                 | CHECK_RESPONSE                                  |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | data                         | std_logic_vector(1023 downto | 0x0             | Data returned by READ_RESPONSE, or expected     |
+    |                              | 0)                           |                 | data for CHECK_RESPONSE                         |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | read                         | std_logic                    | '0'             | Read qualifier from the response command        |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | byte_enable                  | std_logic_vector(127 downto  | 0x0             | Byte enable field from the response command     |
+    |                              | 0)                           |                 |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | response                     | std_logic_vector(1 downto 0) | 0b00            | Reserved; Avalon-MM VVC sets this to 0b00       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
     |                              |                              | ULT             |                                                 |
@@ -1203,21 +1279,44 @@ See the :ref:`vip_scoreboard` for a complete list of available commands and addi
 Scoreboard commands are available for the Avalon-MM VVC scoreboard using the ``avalon_mm_vvc_sb``.
 
 
-Unwanted Activity Detection
+.. _t_avalon_mm_unwanted_transaction:
+
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_avalon_mm_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| readdata                | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| response                | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| waitrequest             | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| readdatavalid           | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+| irq                     | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_avalon_mm_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_avalon_mm_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-The unwanted activity detection is ignored when the readdatavalid signal goes low within one clock period after the VVC becomes 
+    -- Set severity of alert for each signal
+    shared_avalon_mm_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.readdata      := WARNING;
+    shared_avalon_mm_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.readdatavalid := ERROR;
+
+The unwanted transaction detection is ignored when the readdatavalid signal goes low within one clock period after the VVC becomes 
 inactive. This is to handle the situation when the read command exits before the next rising edge, causing signal transitions 
 during the first clock cycle after the VVC is inactive. 
 
-For Avalon-MM VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For the Avalon-MM VVC, the unwanted transaction detection is enabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

@@ -38,6 +38,11 @@ package string_methods_pkg is
     scope      : string
   );
 
+  -- Issues a VHDL report with the severity corresponding to the alert level, if enabled by C_REPORT_ALERTS_TO_SIMULATOR
+  procedure report_alert_to_simulator(
+    alert_level : t_alert_level
+  );
+
   -- DEPRECATED: will be removed in v3
   function justify(
     val       : string;
@@ -377,6 +382,21 @@ package body string_methods_pkg is
     assert val
     report LF & C_LOG_PREFIX & " *** " & to_string(severeness) & "*** caused by Bitvis Util > string handling > " & scope & LF & C_LOG_PREFIX & add_msg_delimiter(msg) & LF
     severity severeness;
+  end procedure;
+
+  procedure report_alert_to_simulator(
+    alert_level : t_alert_level
+  ) is
+    constant C_MSG : string := "UVVM " & to_upper(to_string(alert_level)) & " - see the UVVM alert message above";
+  begin
+    if C_REPORT_ALERTS_TO_SIMULATOR then
+      case alert_level is
+        when WARNING | TB_WARNING => report C_MSG severity warning;
+        when ERROR | TB_ERROR     => report C_MSG severity error;
+        when FAILURE | TB_FAILURE => report C_MSG severity failure;
+        when others               => null;
+      end case;
+    end if;
   end procedure;
 
   function to_upper(

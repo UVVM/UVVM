@@ -208,7 +208,7 @@ begin
         tb_error("command_type is not IMMEDIATE or QUEUED", C_SCOPE);
       end if;
 
-      -- 3. Acknowledge command after runing or queuing the command
+      -- 3. Acknowledge command after running or queuing the command
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
         work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
@@ -227,6 +227,7 @@ begin
   p_cmd_executor : process is
     constant C_EXECUTOR_ID                           : natural                                            := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
+    variable v_read_response_cmd                     : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time                                               := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time                                               := 0 ns;
@@ -350,7 +351,12 @@ begin
                                    scope        => C_SCOPE,
                                    msg_id_panel => v_msg_id_panel,
                                    config       => vvc_config.bfm_config);
-            work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
+            -- Queue read response command for the response executor
+            v_read_response_cmd           := v_cmd;
+            v_read_response_cmd.operation := READ_RESPONSE;
+            work.td_vvc_entity_support_pkg.put_command_on_queue(v_read_response_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
+            -- Mark request phase as completed (response is handled by READ_RESPONSE in p_read_response)
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
           else
 
@@ -404,7 +410,12 @@ begin
                                    config        => vvc_config.bfm_config,
                                    ext_proc_call => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")"
                                   );
-            work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
+            -- Queue check response command for the response executor
+            v_read_response_cmd           := v_cmd;
+            v_read_response_cmd.operation := CHECK_RESPONSE;
+            work.td_vvc_entity_support_pkg.put_command_on_queue(v_read_response_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
+            -- Mark request phase as completed (response is handled by CHECK_RESPONSE in p_read_response)
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
           else
             avalon_mm_check(addr_value   => v_normalised_addr,
                             data_exp     => v_normalised_data,
@@ -496,7 +507,8 @@ begin
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 
-      -- Pipelined read commands are divided into read requests executed here and read responses executed in another executor.
+      -- Pipelined READ/CHECK commands are divided into requests executed here and responses executed in p_read_response.
+      -- READ requests queue a READ_RESPONSE command and CHECK requests queue a CHECK_RESPONSE command.
       -- Since the commands can finish in any order, to detect when this specific command has finished, we store the cmd_idx
       -- in a list with pending commands which will be cleared in the corresponding executor when it has finished.
       if (v_cmd.operation = READ or v_cmd.operation = CHECK) and vvc_config.use_read_pipeline = true then
@@ -515,9 +527,9 @@ begin
 
   --===============================================================================================
   -- Read response command execution.
-  -- - READ (and CHECK) data received from the slave after the command executor has issued an
-  --   read request (or check).
-  -- - Note the use of propagation delayed avalon_mm_vv_master_if signal
+  -- - READ_RESPONSE commands receive read data after the command executor has issued a READ request.
+  -- - CHECK_RESPONSE commands check the read data after the command executor has issued a CHECK request.
+  -- - Note the use of propagation delayed avalon_mm_vvc_master_if signal
   --===============================================================================================
   p_read_response : process is
     constant C_EXECUTOR_ID          : natural                                      := 1;
@@ -542,7 +554,7 @@ begin
     loop
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_read_response_idx_executed, command_response_queue.is_empty(VOID), C_SCOPE);
-      -- Fetch commands
+      -- Fetch READ_RESPONSE/CHECK_RESPONSE commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_response_queue, vvc_config, vvc_status, response_queue_is_increasing, read_response_is_busy, C_READ_RESP_VVC_LABELS);
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_read_response_idx_executed, command_response_queue.is_empty(VOID), C_SCOPE);
@@ -556,11 +568,11 @@ begin
       v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "Function called with too wide data. " & v_cmd.msg);
 
       case v_cmd.operation is
-        when READ =>
-          -- Set vvc transaction info
+        when READ_RESPONSE =>
+          -- Set read response transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_READ_RESP_SCOPE);
 
-          -- Initiate read response
+          -- Receive read response
           avalon_mm_read_response(addr_value   => v_normalised_addr,
                                   data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
                                   msg          => format_msg(v_cmd),
@@ -580,11 +592,11 @@ begin
                                                         result       => v_read_data);
           end if;
 
-          -- Update vvc transaction info
+          -- Update read response transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_READ_RESP_SCOPE);
 
-        when CHECK =>
-          -- Set vvc transaction info
+        when CHECK_RESPONSE =>
+          -- Set check response transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_READ_RESP_SCOPE);
 
           -- Initiate check response
@@ -598,7 +610,7 @@ begin
                                    msg_id_panel => v_msg_id_panel,
                                    config       => vvc_config.bfm_config);
 
-          -- Update vvc transaction info
+          -- Update check response transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_READ_RESP_SCOPE);
 
         when others =>
@@ -637,10 +649,10 @@ begin
   --===============================================================================================
 
   --===============================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transactions from the DUT
   --===============================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -657,22 +669,24 @@ begin
         end loop;
       end if;
 
-      wait on avalon_mm_vvc_master_if.readdata, avalon_mm_vvc_master_if.response, avalon_mm_vvc_master_if.waitrequest, avalon_mm_vvc_master_if.readdatavalid, avalon_mm_vvc_master_if.irq, global_trigger_vvc_activity_register;
+      wait on avalon_mm_vvc_master_if.readdata, avalon_mm_vvc_master_if.response, avalon_mm_vvc_master_if.waitrequest,
+              avalon_mm_vvc_master_if.readdatavalid, avalon_mm_vvc_master_if.irq, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        -- Skip checking the changes if the readdatavalid signal goes low within one clock period after the VVC becomes inactive
-        if not (falling_edge(avalon_mm_vvc_master_if.readdatavalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(avalon_mm_vvc_master_if.readdatavalid, vvc_config.unwanted_activity_severity, "readdatavalid", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.readdata, vvc_config.unwanted_activity_severity, "readdata", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.response, vvc_config.unwanted_activity_severity, "response", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.waitrequest, vvc_config.unwanted_activity_severity, "waitrequest", C_SCOPE);
-          check_unwanted_activity(avalon_mm_vvc_master_if.irq, vvc_config.unwanted_activity_severity, "irq", C_SCOPE);
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          -- Skip checking the changes if the readdatavalid signal goes low within one clock period after the VVC becomes inactive
+          if not (falling_edge(avalon_mm_vvc_master_if.readdatavalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+            check_unwanted_transaction(avalon_mm_vvc_master_if.readdatavalid, vvc_config.unwanted_transaction_severity.readdatavalid, "readdatavalid", C_SCOPE);
+            check_unwanted_transaction(avalon_mm_vvc_master_if.readdata, vvc_config.unwanted_transaction_severity.readdata, "readdata", C_SCOPE);
+            check_unwanted_transaction(avalon_mm_vvc_master_if.response, vvc_config.unwanted_transaction_severity.response, "response", C_SCOPE);
+            check_unwanted_transaction(avalon_mm_vvc_master_if.waitrequest, vvc_config.unwanted_transaction_severity.waitrequest, "waitrequest", C_SCOPE);
+            check_unwanted_transaction(avalon_mm_vvc_master_if.irq, vvc_config.unwanted_transaction_severity.irq, "irq", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --===============================================================================================
 
 end architecture behave;
-

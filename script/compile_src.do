@@ -126,15 +126,6 @@ if {$lib_name == "uvvm_assertions"} {
     quietly vmap uvvm_util $uvvm_root/uvvm_util/sim/uvvm_util
   }
 }
-# uvvm_assertions only requires uvvm_util and therefore we dont compile uvvm_vvc_framework
-if {$lib_name == "uvvm_assertions"} {
-  echo "Mapping uvvm_util"
-  if {[file exists $target_path/uvvm_util]} {
-    quietly vmap uvvm_util $target_path/uvvm_util
-  } else {
-    quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
-  }
-}
 
 if { [string equal -nocase $simulator "modelsim"] } {
   quietly set compdirectives "-quiet -suppress 1346,1246,1236 -2008 -work $lib_name"

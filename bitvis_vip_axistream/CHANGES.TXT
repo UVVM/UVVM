@@ -1,6 +1,19 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v6.1.5
+----------
+Released: 2026-10-27
+- Changed the VVC transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Changed definition of array types to t_slv_array subtypes for compatibility
+  with other UVVM functions without need for type conversion.
+- Changed the type of gen_integer_array in vvc_cmd_pkg from t_integer_array to the VHDL-2008 type integer_vector.
+- Renamed 'unwanted activity' to 'unwanted transaction' to better reflect functionality.
+- Changed unwanted_transaction_severity (unwanted_activity_severity) configuration from t_alert_level to record
+  to allow setting unwanted transaction severity separately for each monitored signal.
+- Added unwanted_transaction_checking_enabled configuration to allow disabling of the feature.
+- Note: the unwanted transaction functionality is not compatible with the previous version and must be updated.
+
 v6.1.4
 ----------
 Released: 2026-02-14
@@ -79,7 +92,7 @@ v4.7.7
 Released: 2023-03-21
 - Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
 - In axistream_vvc: When calling a BFM procedure,
-  always use the non-record version to avoid fatal error: (SIGSEGV) Bad handle or reference 
+  always use the non-record version to avoid fatal error: (SIGSEGV) Bad handle or reference
 
 v4.7.6
 ----------
@@ -126,7 +139,7 @@ Released: 2020-05-19
 - Added shared_axistream_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section and BFM config record description.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 - Removed extra log in receive procedure when called from another BFM procedure.
 
@@ -156,12 +169,12 @@ Released: 2020-01-24
 - Added new BFM synchronisation methods with default SYNC_ON_CLOCK_ONLY.
   The BFM will synchronise and start with falling edge, detect clock period, and
   exit after a quarter clock period.
-- BFM config defaults setup_time, hold_time and clock_period are now 
+- BFM config defaults setup_time, hold_time and clock_period are now
   default -1 ns, i.e. will require user configuration if BFM synchronisation is
   used with other than SYNC_ON_CLOCK_ONLY.
-- VVC command insert_delay() will raise a TB_ERROR when called if the 
-  bfm_config.clock_period has not been set.  
-- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+- VVC command insert_delay() will raise a TB_ERROR when called if the
+  bfm_config.clock_period has not been set.
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and
   shared variable with transfer related information.
 - Removed unused config elements id_for_bfm_wait & id_for_bfm_poll.
 - Only check for TLast in receive procedure when config check_packet_length is true.

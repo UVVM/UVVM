@@ -492,7 +492,7 @@ package body td_vvc_framework_common_methods_pkg is
                                            & ", " & to_string(timeout, ns) & ")";
     variable v_msg_id_panel                 : t_msg_id_panel                         := shared_msg_id_panel;
     variable v_proc_call                    : line;
-    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_vvc_idx_in_activity_register : integer_vector(0 to C_MAX_TB_VVC_NUM)  := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM    := 0;
     variable v_vvc_instance_idx             : integer                                := vvc_instance_idx;
     variable v_vvc_channel                  : t_channel                              := vvc_channel;

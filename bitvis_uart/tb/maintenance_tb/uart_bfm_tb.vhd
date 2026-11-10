@@ -33,12 +33,18 @@ use work.uart_pif_pkg.all;
 -- Test case entity
 entity uart_bfm_tb is
   generic(
-    GC_TESTCASE : string := "UVVM"
+    GC_TESTCASE    : string                := "UVVM";
+    GC_DATA_WIDTH  : natural range 5 to 9  := 8
   );
 end entity;
 
 -- Test case architecture
 architecture func of uart_bfm_tb is
+
+  -- DUT CPU-bus is fixed at 9 bits (max UART frame width). The serial-frame
+  -- width above is independent from this bus width and is set in the DUT via
+  -- the NUM_DATA_BITS register
+  constant C_DUT_BUS_WIDTH : natural := C_UART_MAX_DATA_WIDTH; -- 9 bits 
 
   -- DSP interface and general control signals
   signal clk            : std_logic                    := '0';
@@ -48,8 +54,8 @@ architecture func of uart_bfm_tb is
   signal addr           : unsigned(2 downto 0)         := (others => '0');
   signal wr             : std_logic                    := '0';
   signal rd             : std_logic                    := '0';
-  signal wdata          : std_logic_vector(7 downto 0) := (others => '0'); --
-  signal rdata          : std_logic_vector(7 downto 0) := (others => '0');
+  signal wdata          : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) := (others => '0'); --
+  signal rdata          : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) := (others => '0');
   signal ready          : std_logic                    := '1'; -- Always ready in the same clock cycle
   -- UART related signals
   signal rx             : std_logic                    := '1';
@@ -60,28 +66,10 @@ architecture func of uart_bfm_tb is
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
-  -- Config for 8-bit UART transactions
-  constant C_UART_BFM_CONFIG_0 : t_uart_bfm_config := (
+  -- Default BFM config; num_data_bits is overridden in p_main from GC_DATA_WIDTH
+  constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
     bit_time                              => 160 ns,
     num_data_bits                         => 8,
-    idle_state                            => '1',
-    num_stop_bits                         => STOP_BITS_ONE,
-    parity                                => PARITY_ODD,
-    timeout                               => 0 ns,
-    timeout_severity                      => error,
-    match_strictness                      => MATCH_EXACT,
-    num_bytes_to_log_before_expected_data => 10,
-    id_for_bfm                            => ID_BFM,
-    id_for_bfm_wait                       => ID_BFM_WAIT,
-    id_for_bfm_poll                       => ID_BFM_POLL,
-    id_for_bfm_poll_summary               => ID_BFM_POLL_SUMMARY,
-    error_injection                       => C_BFM_ERROR_INJECTION_INACTIVE
-  );
-
-  -- Config for 7-bit UART transactions
-  constant C_UART_BFM_CONFIG_1 : t_uart_bfm_config := (
-    bit_time                              => 160 ns,
-    num_data_bits                         => 7,
     idle_state                            => '1',
     num_stop_bits                         => STOP_BITS_ONE,
     parity                                => PARITY_ODD,
@@ -120,6 +108,9 @@ begin
   -- Instantiate DUT
   -----------------------------------------------------------------------------
   i_uart : entity work.uart
+    generic map(
+      GC_DATA_WIDTH => C_DUT_BUS_WIDTH
+    )
     port map(
       -- DSP interface and general control signals
       clk   => clk,                     --
@@ -145,7 +136,46 @@ begin
   p_main : process
     constant C_SCOPE         : string := C_TB_SCOPE_DEFAULT;
     -- Helper variables
-    variable v_received_data : std_logic_vector(7 downto 0);
+    variable v_received_data    : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    variable v_uart_bfm_config  : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
+
+    -- Test patterns sized to GC_DATA_WIDTH. The 9-bit literals are masked to
+    -- GC_DATA_WIDTH by to_unsigned.
+    variable v_pattern_a : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(16#155#, GC_DATA_WIDTH));
+    variable v_pattern_b : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(16#0AA#, GC_DATA_WIDTH));
+    variable v_pattern_c : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(16#1BB#, GC_DATA_WIDTH));
+    variable v_pattern_d : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(16#1FF#, GC_DATA_WIDTH));
+    variable v_pattern_e : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(16#0DD#, GC_DATA_WIDTH));
+    variable v_pattern_f : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(16#0EE#, GC_DATA_WIDTH));
+    variable v_pattern_zero : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) :=
+      (others => '0');
+
+    -- DUT zero-extends received frames into the 9-bit RX_DATA register.
+    -- See uart_core.vhd p_uart_rx (v_rx_data assignment).
+    variable v_reg_a    : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(resize(unsigned(v_pattern_a), C_DUT_BUS_WIDTH));
+    variable v_reg_b    : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(resize(unsigned(v_pattern_b), C_DUT_BUS_WIDTH));
+    variable v_reg_c    : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(resize(unsigned(v_pattern_c), C_DUT_BUS_WIDTH));
+    variable v_reg_d    : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(resize(unsigned(v_pattern_d), C_DUT_BUS_WIDTH));
+    variable v_reg_e    : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(resize(unsigned(v_pattern_e), C_DUT_BUS_WIDTH));
+    variable v_reg_f    : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(resize(unsigned(v_pattern_f), C_DUT_BUS_WIDTH));
+    variable v_reg_zero : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      (others => '0');
+
+    -- GC_DATA_WIDTH packed for the SBI write to the NUM_DATA_BITS register.
+    variable v_reg_width : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0) :=
+      std_logic_vector(to_unsigned(GC_DATA_WIDTH, C_DUT_BUS_WIDTH));
 
     procedure pulse(
       signal   target       : inout std_logic;
@@ -230,39 +260,31 @@ begin
 
     -- Overloads for BFMs for UART
     procedure uart_transmit(
-      constant data_value : in std_logic_vector(7 downto 0)
+      constant data_value     : in std_logic_vector;
+      constant num_data_bits  : in natural := 8
     ) is
     begin
-      uart_transmit(data_value, "", rx, C_UART_BFM_CONFIG_0, C_SCOPE);
-    end;
-
-    procedure uart_transmit_7_bit(
-      constant data_value : in std_logic_vector(6 downto 0)
-    ) is
-    begin
-      uart_transmit(data_value, "", rx, C_UART_BFM_CONFIG_1, C_SCOPE);
+      v_uart_bfm_config.num_data_bits := num_data_bits;
+      uart_transmit(data_value, "", rx, v_uart_bfm_config, C_SCOPE);
     end;
 
     procedure uart_receive(
-      variable data_value : out std_logic_vector(7 downto 0)
+      variable data_value     : out std_logic_vector;
+      constant num_data_bits  : in natural := 8
     ) is
       constant msg : string := "";
     begin
-      uart_receive(data_value, msg, tx, terminate_loop, C_UART_BFM_CONFIG_0, C_SCOPE);
+      v_uart_bfm_config.num_data_bits := num_data_bits;
+      uart_receive(data_value, msg, tx, terminate_loop, v_uart_bfm_config, C_SCOPE);
     end;
 
     procedure uart_expect(
-      constant data_exp : in std_logic_vector(7 downto 0)
+      constant data_exp       : in std_logic_vector;
+      constant num_data_bits  : in natural := 8
     ) is
     begin
-      uart_expect(data_exp, "", tx, terminate_loop, 1, 0 ns, ERROR, C_UART_BFM_CONFIG_0, C_SCOPE);
-    end;
-
-    procedure uart_expect_7_bit(
-      constant data_exp : in std_logic_vector(6 downto 0)
-    ) is 
-    begin
-      uart_expect(data_exp, "", tx, terminate_loop, 1, 0 ns, ERROR, C_UART_BFM_CONFIG_1, C_SCOPE);
+      v_uart_bfm_config.num_data_bits := num_data_bits;
+      uart_expect(data_exp, "", tx, terminate_loop, 1, 0 ns, ERROR, v_uart_bfm_config, C_SCOPE);
     end;
 
     procedure set_inputs_passive(
@@ -280,8 +302,8 @@ begin
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TESTCASE & "_Log.txt");
-    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_" & to_string(GC_DATA_WIDTH) & "bit_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_" & to_string(GC_DATA_WIDTH) & "bit_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -291,7 +313,7 @@ begin
     --disable_log_msg(ALL_MESSAGES);
     --enable_log_msg(ID_LOG_HDR);
 
-    log(ID_LOG_HDR, "Start Simulation of TB for UART", C_SCOPE);
+    log(ID_LOG_HDR, "Start Simulation of TB for UART, GC_DATA_WIDTH = " & to_string(GC_DATA_WIDTH), C_SCOPE);
     ------------------------------------------------------------
 
     set_inputs_passive(VOID);
@@ -301,159 +323,138 @@ begin
     log(ID_LOG_HDR, "Check defaults on output ports", C_SCOPE);
     ------------------------------------------------------------
     check_value(tx, '1', ERROR, "UART TX port must be default '1'", C_SCOPE);
-    check_value(rdata, x"00", ERROR, "Register data bus output must be default passive");
+    check_value(rdata, 9x"00", ERROR, "Register data bus output must be default passive");
+
+    -- Apply GC_DATA_WIDTH to the DUT and BFM. NUM_DATA_BITS resets to 8 (the
+    -- PIF default), so this SBI write must be repeated after every reset.
+    log(ID_LOG_HDR, "Apply GC_DATA_WIDTH = " & to_string(GC_DATA_WIDTH) & " to DUT and BFM", C_SCOPE);
+    ------------------------------------------------------------
+    sbi_check(C_ADDR_NUM_DATA_BITS, 9x"08", ERROR, "NUM_DATA_BITS default = 8 (PIF reset value)");
+    sbi_write(C_ADDR_NUM_DATA_BITS, v_reg_width, "Writing NUM_DATA_BITS = " & to_string(GC_DATA_WIDTH));
+    sbi_check(C_ADDR_NUM_DATA_BITS, v_reg_width, ERROR, "NUM_DATA_BITS readback");
+    v_uart_bfm_config.num_data_bits := GC_DATA_WIDTH;
 
     log(ID_LOG_HDR, "Check register defaults and access (transmit + receive)", C_SCOPE);
     ------------------------------------------------------------
-    log("\nChecking Register defaults");
-    sbi_check(C_ADDR_RX_DATA, x"00", ERROR, "RX_DATA default");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY default");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"00", ERROR, "RX_DATA_VALID default");
+    log(ID_LOG_HDR, "Checking Register defaults", C_SCOPE);
+    sbi_check(C_ADDR_RX_DATA, 9x"00", ERROR, "RX_DATA default");
+    sbi_check(C_ADDR_TX_READY, 9x"01", ERROR, "TX_READY default");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"00", ERROR, "RX_DATA_VALID default");
 
-    log("\nChecking Register UART DUT transmission (BFM uart_expect)");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
-    uart_expect(x"55");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"AA", "TX_DATA");
-    uart_expect(x"AA");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"00", "TX_DATA");
-    uart_expect(x"00");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+    log(ID_LOG_HDR, "Checking Register UART DUT transmission (BFM uart_expect)", C_SCOPE);
+    sbi_check(C_ADDR_TX_READY, 9x"01", ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, v_reg_a, "TX_DATA");
+    uart_expect(v_pattern_a, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, v_reg_b, "TX_DATA");
+    uart_expect(v_pattern_b, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, v_reg_zero, "TX_DATA");
+    uart_expect(v_pattern_zero, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
 
-    log("\nChecking Register UART DUT transmission (BFM uart_receive)");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
-    uart_receive(v_received_data);
-    check_value(v_received_data, x"55", ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"AA", "TX_DATA");
-    uart_receive(v_received_data);
-    check_value(v_received_data, x"AA", ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"00", "TX_DATA");
-    uart_receive(v_received_data);
-    check_value(v_received_data, x"00", ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+    log(ID_LOG_HDR, "Checking Register UART DUT transmission (BFM uart_receive)", C_SCOPE);
+    sbi_check(C_ADDR_TX_READY, 9x"01", ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, v_reg_a, "TX_DATA");
+    uart_receive(v_received_data, GC_DATA_WIDTH);
+    check_value(v_received_data, v_pattern_a, ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, v_reg_b, "TX_DATA");
+    uart_receive(v_received_data, GC_DATA_WIDTH);
+    check_value(v_received_data, v_pattern_b, ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, v_reg_zero, "TX_DATA");
+    uart_receive(v_received_data, GC_DATA_WIDTH);
+    check_value(v_received_data, v_pattern_zero, ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
 
-    log("\nChecking two consecutive UART DUT transmissions (BFM uart_expect)");
-    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
-    sbi_write(C_ADDR_TX_DATA, x"AA", "TX_DATA");
-    uart_expect(x"55");
-    uart_expect(x"AA");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+    log(ID_LOG_HDR, "Checking two consecutive UART DUT transmissions (BFM uart_expect)", C_SCOPE);
+    sbi_write(C_ADDR_TX_DATA, v_reg_a, "TX_DATA");
+    sbi_write(C_ADDR_TX_DATA, v_reg_b, "TX_DATA");
+    uart_expect(v_pattern_a, GC_DATA_WIDTH);
+    uart_expect(v_pattern_b, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
 
-    log("\nChecking six consecutive UART DUT transmissions (BFM uart_expect)");
-    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
-    sbi_write(C_ADDR_TX_DATA, x"AA", "TX_DATA");
-    uart_expect(x"55");
-    uart_expect(x"AA");
-    sbi_write(C_ADDR_TX_DATA, x"BB", "TX_DATA");
-    sbi_write(C_ADDR_TX_DATA, x"FF", "TX_DATA");
-    uart_expect(x"BB");
-    uart_expect(x"FF");
-    sbi_write(C_ADDR_TX_DATA, x"DD", "TX_DATA");
-    sbi_write(C_ADDR_TX_DATA, x"EE", "TX_DATA");
-    uart_expect(x"DD");
-    uart_expect(x"EE");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+    log(ID_LOG_HDR, "Checking six consecutive UART DUT transmissions (BFM uart_expect)", C_SCOPE);
+    sbi_write(C_ADDR_TX_DATA, v_reg_a, "TX_DATA");
+    sbi_write(C_ADDR_TX_DATA, v_reg_b, "TX_DATA");
+    uart_expect(v_pattern_a, GC_DATA_WIDTH);
+    uart_expect(v_pattern_b, GC_DATA_WIDTH);
+    sbi_write(C_ADDR_TX_DATA, v_reg_c, "TX_DATA");
+    sbi_write(C_ADDR_TX_DATA, v_reg_d, "TX_DATA");
+    uart_expect(v_pattern_c, GC_DATA_WIDTH);
+    uart_expect(v_pattern_d, GC_DATA_WIDTH);
+    sbi_write(C_ADDR_TX_DATA, v_reg_e, "TX_DATA");
+    sbi_write(C_ADDR_TX_DATA, v_reg_f, "TX_DATA");
+    uart_expect(v_pattern_e, GC_DATA_WIDTH);
+    uart_expect(v_pattern_f, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_TX_READY, 9x"01", 10, ERROR, "TX_READY active");
 
-    log("\nChecking UART DUT reception (BFM uart_transmit)");
-    uart_transmit(x"55");
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
-    sbi_check(C_ADDR_RX_DATA, x"55", ERROR, "RX_DATA pure readback");
-    uart_transmit(x"AA");
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
-    sbi_check(C_ADDR_RX_DATA, x"AA", ERROR, "RX_DATA pure readback");
-    uart_transmit(x"00");
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
-    sbi_check(C_ADDR_RX_DATA, x"00", ERROR, "RX_DATA pure readback");
+    log(ID_LOG_HDR, "Checking UART DUT reception (BFM uart_transmit)", C_SCOPE);
+    uart_transmit(v_pattern_a, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_RX_DATA_VALID, 9x"01", 10, ERROR, "RX_DATA_VALID enable");
+    sbi_check(C_ADDR_RX_DATA, v_reg_a, ERROR, "RX_DATA pure readback");
+    uart_transmit(v_pattern_b, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_RX_DATA_VALID, 9x"01", 10, ERROR, "RX_DATA_VALID enable");
+    sbi_check(C_ADDR_RX_DATA, v_reg_b, ERROR, "RX_DATA pure readback");
+    uart_transmit(v_pattern_zero, GC_DATA_WIDTH);
+    sbi_await_value(C_ADDR_RX_DATA_VALID, 9x"01", 10, ERROR, "RX_DATA_VALID enable");
+    sbi_check(C_ADDR_RX_DATA, v_reg_zero, ERROR, "RX_DATA pure readback");
 
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"00", 10, ERROR, "");
-    log("\nChecking five consecutive UART DUT receptions (BFM uart_transmit)");
-    uart_transmit(x"55");
-    uart_transmit(x"AA");
-    uart_transmit(x"BB");
-    uart_transmit(x"FF");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"55", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"AA", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"BB", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"FF", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"00", ERROR, "");
+    sbi_await_value(C_ADDR_RX_DATA_VALID, 9x"00", 10, ERROR, "");
+    log(ID_LOG_HDR, "Checking five consecutive UART DUT receptions (BFM uart_transmit)", C_SCOPE);
+    uart_transmit(v_pattern_a, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_b, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_c, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_d, GC_DATA_WIDTH);
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_a, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_b, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_c, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_d, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"00", ERROR, "");
 
-    uart_transmit(x"55");
-    uart_transmit(x"AA");
-    uart_transmit(x"BB");
-    uart_transmit(x"FF");
-    uart_transmit(x"DD");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"55", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"AA", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"BB", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"01", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA, x"DD", ERROR, "");
-    sbi_check(C_ADDR_RX_DATA_VALID, x"00", ERROR, "");
+    uart_transmit(v_pattern_a, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_b, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_c, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_d, GC_DATA_WIDTH);
+    uart_transmit(v_pattern_e, GC_DATA_WIDTH);
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_a, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_b, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_c, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"01", ERROR, "");
+    sbi_check(C_ADDR_RX_DATA, v_reg_e, ERROR, "");
+    sbi_check(C_ADDR_RX_DATA_VALID, 9x"00", ERROR, "");
 
     log(ID_LOG_HDR, "Check Reset", C_SCOPE);
     ------------------------------------------------------------
-    log("\nChecking tx output");
-    sbi_write(C_ADDR_TX_DATA, x"FF", "TX_DATA : Set to 0xFF");
+    log(ID_LOG_HDR, "Checking tx output", C_SCOPE);
+    sbi_write(C_ADDR_TX_DATA, v_reg_d, "TX_DATA : Set to all-ones pattern");
     pulse(arst, clk, 1, "Pulse reset");
     check_value(tx, '1', ERROR, "UART TX port must be default '1'", C_SCOPE);
 
-    log("\nChecking Register UART TX_READY");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY default");
-    sbi_write(C_ADDR_TX_DATA, x"FF", "");
-    sbi_write(C_ADDR_TX_DATA, x"AA", "");
-    sbi_write(C_ADDR_TX_DATA, x"55", "");
-    sbi_write(C_ADDR_TX_DATA, x"BB", "");
-    sbi_write(C_ADDR_TX_DATA, x"EE", "");
-    sbi_check(C_ADDR_TX_READY, x"00", ERROR, "TX_READY inactive");
+    log(ID_LOG_HDR, "Checking Register UART TX_READY", C_SCOPE);
+    -- Reset returns NUM_DATA_BITS to the PIF default (8); reapply GC_DATA_WIDTH
+    -- before queuing further TX_DATA writes.
+    sbi_check(C_ADDR_NUM_DATA_BITS, 9x"08", ERROR, "NUM_DATA_BITS default = 8 after reset");
+    sbi_write(C_ADDR_NUM_DATA_BITS, v_reg_width, "Reapplying NUM_DATA_BITS = " & to_string(GC_DATA_WIDTH));
+    sbi_check(C_ADDR_TX_READY, 9x"01", ERROR, "TX_READY default");
+    sbi_write(C_ADDR_TX_DATA, v_reg_d, "");
+    sbi_write(C_ADDR_TX_DATA, v_reg_b, "");
+    sbi_write(C_ADDR_TX_DATA, v_reg_a, "");
+    sbi_write(C_ADDR_TX_DATA, v_reg_c, "");
+    sbi_write(C_ADDR_TX_DATA, v_reg_f, "");
+    sbi_check(C_ADDR_TX_READY, 9x"00", ERROR, "TX_READY inactive");
     pulse(arst, clk, 1, "Pulse reset");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY default");
+    sbi_check(C_ADDR_TX_READY, 9x"01", ERROR, "TX_READY default");
     check_value(tx, '1', ERROR, "UART TX port must be default '1'", C_SCOPE);
 
-    log(ID_LOG_HDR, "Check 7-bit functionality", C_SCOPE);
-    ------------------------------------------------------------
-    sbi_check(C_ADDR_NUM_DATA_BITS, x"08", ERROR, "Checking NUM_DATA_BITS default = 8");
-    sbi_write(C_ADDR_NUM_DATA_BITS, x"07", "Writing NUM_DATA_BITS = 7");
-    sbi_check(C_ADDR_NUM_DATA_BITS, x"07", ERROR, "Checking NUM_DATA_BITS = 7");
-
-    log("\nChecking Register UART DUT transmission (BFM uart_expect) for 7-bit data");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
-    uart_expect_7_bit(7x"55");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"7A", "TX_DATA");
-    uart_expect_7_bit(7x"7A");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-    sbi_write(C_ADDR_TX_DATA, x"00", "TX_DATA");
-    uart_expect_7_bit(7x"00");
-    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-
-    pulse(arst, clk, 1, "Pulse reset");
-    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
-    sbi_check(C_ADDR_NUM_DATA_BITS, x"08", ERROR, "Checking NUM_DATA_BITS default = 8 after reset");
-    sbi_write(C_ADDR_NUM_DATA_BITS, x"07", "Writing NUM_DATA_BITS = 7");
-    sbi_check(C_ADDR_NUM_DATA_BITS, x"07", ERROR, "Checking NUM_DATA_BITS = 7");
-
-    log("\nChecking UART DUT reception (BFM uart_transmit)");
-    uart_transmit_7_bit(7x"55");
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
-    sbi_check(C_ADDR_RX_DATA, x"55", ERROR, "RX_DATA pure readback");
-    uart_transmit_7_bit(7x"7A");
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
-    sbi_check(C_ADDR_RX_DATA, x"7A", ERROR, "RX_DATA pure readback");
-    uart_transmit_7_bit(7x"00");
-    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
-    sbi_check(C_ADDR_RX_DATA, x"00", ERROR, "RX_DATA pure readback");
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------

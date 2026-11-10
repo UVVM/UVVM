@@ -1,12 +1,28 @@
 UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
+v2.22.0
+----------
+Released: 2026-10-27
+- Added t_bit_order type to types_pkg.
+- Fixed bin_range(), ignore_bin_range() and illegal_bin_range() in func_cov_pkg for ranges wider than 2^31-1, which
+  created bins with wrong values due to integer overflow.
+- Added C_AVALON_ST_BFM_MAX_DATA_WORDS to adaptations_pkg. C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS now defaults to this value.
+- Replaced t_boolean_array and t_integer_array in types_pkg with aliases to the VHDL-2008 types boolean_vector and
+  integer_vector. The aliases are deprecated and will be removed in v3.
+- Added C_REPORT_ALERTS_TO_SIMULATOR to adaptations_pkg to report UVVM alerts to the simulator's test status. Disabled by default.
+- Fixed a fatal error with hierarchical alerts enabled when set_alert_stop_limit(), increment_expected_alerts() or
+  another alert hierarchy procedure was called before the first log or alert.
+- Added simulation_status to shared_uvvm_status: 2 until report_alert_counters(FINAL) is called, then 0=passed or 1=failed.
+- Fixed elements removed from generic_queue_pkg keeping their next_element pointer, which with garbage-collecting
+  simulators such as nvc could keep the rest of the queue reachable and exhaust the heap. From pull request by user bwandl98.
+
 v2.21.4
 ----------
 Released: 2026-02-14
 - Fixed a fatal error in await_sb_completion() when waiting for a sb_poll_time equal or greater than the timeout.
 - Fixed typos in string_methods_pkg.vhd. From pull request by user JHertz5.
-- Extended randomization and functional coverage functionality for Questa One is now supported. 
+- Extended randomization and functional coverage functionality for Questa One is now supported.
 
 v2.21.3
 ----------
@@ -187,7 +203,7 @@ v2.17.0
 ----------
 Released: 2021-05-26
 - Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
-- Summary alert report and hierarchical alerts report updated to 
+- Summary alert report and hierarchical alerts report updated to
   warn for minor alert mismatch.
 - Generic queue allow to insert to an empty queue with identifier position
   set to POSITION and position set to 1.
@@ -229,7 +245,7 @@ Released: 2020-08-21
 v2.14.1
 ----------
 Released: 2020-08-18
-- Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
+- Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES.
 - Added fix with gen_pulse() method for slv with don't care.
 - Added more info to set_log_destination method in Util QR.
 
@@ -280,7 +296,7 @@ Released: 2020-01-24
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
 - Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
 - Added wait_on_bfm_sync_start(), wait_on_bfm_exit() and check_clock_period_margin()
-  methods for synchronising clock signal driven BFMs and verifying specified 
+  methods for synchronising clock signal driven BFMs and verifying specified
   clock period.
 - Added t_slv_array_ptr type.
 - Added a log2 function.

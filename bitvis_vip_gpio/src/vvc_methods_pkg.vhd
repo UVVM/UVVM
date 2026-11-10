@@ -49,6 +49,15 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => warning
   );
 
+  -- Record for configuring the severity of unwanted transaction detection for each monitored DUT output
+  type t_gpio_unwanted_transaction is record
+    gpio_vvc_if : t_alert_level;
+  end record t_gpio_unwanted_transaction;
+
+  constant C_GPIO_UNWANTED_TRANSACTION : t_gpio_unwanted_transaction := (
+    gpio_vvc_if => ERROR
+  );
+
   type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay;
     cmd_queue_count_max                   : natural;
@@ -61,7 +70,8 @@ package vvc_methods_pkg is
     bfm_config                            : t_gpio_bfm_config;
     msg_id_panel                          : t_msg_id_panel;
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
-    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
+    unwanted_transaction_checking_enabled : boolean; -- Enable unwanted transaction checking
+    unwanted_transaction_severity         : t_gpio_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -77,7 +87,8 @@ package vvc_methods_pkg is
     bfm_config                            => C_GPIO_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
-    unwanted_activity_severity            => NO_ALERT
+    unwanted_transaction_checking_enabled => false,
+    unwanted_transaction_severity         => C_GPIO_UNWANTED_TRANSACTION
   );
 
   type t_vvc_status is record
@@ -213,6 +224,16 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  procedure gpio_pulse(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data                : in std_logic_vector;
+    constant pulse_duration      : in time;
+    constant msg                 : in string         := "";
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
   --==============================================================================
   -- Transaction info methods
   --==============================================================================
@@ -253,7 +274,7 @@ package body vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant C_PROC_NAME : string := "gpio_set";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)
                                      & ", " & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
@@ -295,7 +316,7 @@ package body vvc_methods_pkg is
     constant ext_proc_call       : in string         := ""
   ) is
     constant C_PROC_NAME       : string := "gpio_get";
-    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+    constant C_PROC_CALL       : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)
                                            & ", " & to_upper(to_string(data_routing)) & ")";
     constant C_LOCAL_PROC_CALL : string := return_string1_if_true_otherwise_string2(C_PROC_CALL, ext_proc_call, ext_proc_call = "");
     variable v_msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
@@ -321,7 +342,7 @@ package body vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant C_PROC_NAME : string := "gpio_get";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)
                                      & ", " & ")";
   begin
     gpio_get(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel, C_PROC_CALL);
@@ -337,7 +358,7 @@ package body vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant C_PROC_NAME : string := "gpio_check";
-    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)
                                      & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
     variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data_exp'length - 1 downto 0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                                := shared_msg_id_panel;
@@ -468,6 +489,36 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
+  procedure gpio_pulse(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data                : in std_logic_vector;
+    constant pulse_duration      : in time;
+    constant msg                 : in string         := "";
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant C_PROC_NAME : string := "gpio_pulse";
+    constant C_PROC_CALL : string := C_PROC_NAME & "(" & to_string(VVCT, vvc_instance_idx)
+                                     & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ", " & to_string(pulse_duration) & ")";
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", C_PROC_CALL & " called with too wide data." & add_msg_delimiter(msg));
+    variable v_msg_id_panel    : t_msg_id_panel   := shared_msg_id_panel;
+  begin
+    -- First part common for all
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, C_PROC_CALL, msg, QUEUED, PULSE);
+    shared_vvc_cmd.data           := v_normalised_data;
+    shared_vvc_cmd.pulse_duration := pulse_duration;
+
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
   --==============================================================================
   -- Transaction info methods
   --==============================================================================
@@ -480,10 +531,11 @@ package body vvc_methods_pkg is
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
-      when SET | GET | CHECK | CHECK_STABLE | EXPECT | EXPECT_STABLE =>
+      when SET | GET | CHECK | CHECK_STABLE | EXPECT | EXPECT_STABLE | PULSE =>
         vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
         vvc_transaction_info_group.bt.data               := vvc_cmd.data;
         vvc_transaction_info_group.bt.data_exp           := vvc_cmd.data_exp;
+        vvc_transaction_info_group.bt.pulse_duration     := vvc_cmd.pulse_duration;
         vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
         vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.bt.transaction_status := transaction_status;
@@ -522,7 +574,7 @@ package body vvc_methods_pkg is
     constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
-      when SET | GET | CHECK | CHECK_STABLE | EXPECT | EXPECT_STABLE =>
+      when SET | GET | CHECK | CHECK_STABLE | EXPECT | EXPECT_STABLE | PULSE =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when others =>

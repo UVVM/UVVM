@@ -2090,10 +2090,58 @@ UVVM:                                                                           
 UVVM:                                                                           100000004, 100000005, 100000006, 1000..., "")
 UVVM: 
 UVVM: 
+UVVM: ID_LOG_HDR                       100.0 ns  TB seq.                        Testing bins with very large ranges of values
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_CONFIG               100.0 ns  TB seq.                        [Covpt_21] delete_coverpoint()
+UVVM: ID_LOG_MSG_CTRL                  100.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS_INFO).
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_22] add_bins(bin_range(-2147483648, 2147483647), "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_22] Adding bins: (-2147483648 to 2147483647), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_22] add_bins(bin_range(-2147483647, 2147483646), "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_22] Adding bins: (-2147483647 to 2147483646), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_22] add_bins(bin_range(-2147483648, 2147483647, num_bins:4), "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_22] Adding bins: (-2147483648 to -1073741825),(-1073741824 to -1),(0 to
+UVVM:                                                                             1073741823),(1073741824 to 2147483647), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_22] add_bins(bin_range(-2147483647, 2147483646, num_bins:3), "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_22] Adding bins: (-2147483647 to -715827884),(-715827883 to 715827881),(715827882 to
+UVVM:                                                                             2147483646), min_hits:1, rand_weight:1, ""
+UVVM: ID_UTIL_SETUP                    100.0 ns  TB seq.                        incremented expected TB_ERRORs by 1.
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    bin_range(-2147483648, 2147483647, num_bins:0)=> Failed. Number of bins (>2147483647) added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.
+UVVM:                     Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_22] add_bins(, "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_22] Adding bins: , min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, -2147483648) => OK. Value was -2147483648. 'Checking bin_1 min value'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, 2147483647) => OK. Value was 2147483647. 'Checking bin_1 max value'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_2
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, -2147483648) => OK. Value was -2147483648. 'Checking bin_3[1] min value'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, -1073741825) => OK. Value was -1073741825. 'Checking bin_3[1] max value'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_3[2]
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_3[3]
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_3[4]
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_4[1]
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_4[2]
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_bin => OK, for bin_4[3]
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, 9) => OK. Value was 9. 'Checking number of valid bins'
+UVVM: ID_FUNC_COV_CONFIG               100.0 ns  TB seq.                        [Covpt_22] delete_coverpoint()
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_23] add_bins(ignore_bin_range(-2147483648,2147483647), "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_23] Adding bins: IGN(-2147483648 to 2147483647), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_23] add_bins(illegal_bin_range(-2147483647,2147483646), "")
+UVVM: ID_FUNC_COV_BINS_INFO            100.0 ns  TB seq.                          [Covpt_23] Adding bins: ILL(-2147483647 to 2147483646), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(bool, true) => OK. Value was true. 'Checking ignore bin type'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, -2147483648) => OK. Value was -2147483648. 'Checking ignore bin min value'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_value(int, 2147483647) => OK. Value was 2147483647. 'Checking ignore bin max value'
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.                        check_invalid_bin => OK, for bin_2
+UVVM: ID_LOG_MSG_CTRL                  100.0 ns  TB seq.                        disable_log_msg(ID_FUNC_COV_BINS_INFO).
+UVVM: 
+UVVM: 
 UVVM: ID_LOG_HDR                       100.0 ns  TB seq.                        Testing C_FC_MAX_NUM_COVERPOINTS limit
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_21] add_bins(bin(0), "")
-UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_22] add_bins(bin(0), "")
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_23] add_bins(bin(0), "")
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_24] add_bins(bin(0), "")
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_25] add_bins(bin(0), "")
@@ -2112,6 +2160,8 @@ UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_38] add_bins(bin(0), "")
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_39] add_bins(bin(0), "")
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_40] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_41] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_42] add_bins(bin(0), "")
 UVVM: ID_UTIL_SETUP                    100.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1.
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -2133,7 +2183,7 @@ UVVM:                WARNING      :     49        49         0         ok
 UVVM:                TB_WARNING   :     18        18         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
-UVVM:                TB_ERROR     :     10        10         0         ok
+UVVM:                TB_ERROR     :     11        11         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      1         1         0         ok
 UVVM:      ====================================================================================================================================================================

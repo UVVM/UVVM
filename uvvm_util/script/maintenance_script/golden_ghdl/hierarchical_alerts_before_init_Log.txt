@@ -1,0 +1,62 @@
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq                         Verifying the global alert hierarchy procedures before the hierarchy is initialized
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                         0.0 ns  TB seq                         check_value(int, 0) => OK. Value was 0. 'Verifying default top level stop limit'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq                         check_value(int, 2) => OK. Value was 2. 'Verifying top level stop limit'
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:            -0 ns   test_hier_1 -> Total
+UVVM:                    this is a test
+UVVM: 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq                         check_value(bool, true) => OK. Value was true. 'Verifying parent scope'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq                         check_value(int, 3) => OK. Value was 3. 'Verifying stop limit'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq                         check_value(int, 1) => OK. Value was 1. 'Verifying expected alerts'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***     Format: REGARDED/EXPECTED/IGNORED
+UVVM:      ====================================================================================================================================================================
+UVVM:                                               NOTE      TB_NOTE     WARNING   TB_WARNING  MANUAL_CHECK   ERROR     TB_ERROR     FAILURE   TB_FAILURE
+UVVM:      Total                            :      0/0/0       0/0/0       1/1/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0 
+UVVM:      `- test_hier_1                   :      0/0/0       0/0/0       1/1/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0 
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

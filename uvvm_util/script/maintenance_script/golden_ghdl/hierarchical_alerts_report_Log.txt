@@ -25,7 +25,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing NOTE with fourth_node
 UVVM: 
 UVVM: ***  NOTE #1  ***
-UVVM:             0 ns   fourth_node -> third_node -> TB seq
+UVVM:            -0 ns   fourth_node -> third_node -> TB seq
 UVVM:                    
 UVVM: 
 UVVM:      
@@ -62,7 +62,7 @@ UVVM:
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_NOTE with third_node
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   third_node -> TB seq
+UVVM:            -0 ns   third_node -> TB seq
 UVVM:                    
 UVVM: 
 UVVM:      
@@ -99,7 +99,7 @@ UVVM:
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing WARNING with second_node
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:             0 ns   second_node -> first_node -> TB seq
+UVVM:            -0 ns   second_node -> first_node -> TB seq
 UVVM:                    
 UVVM: 
 UVVM:      
@@ -136,7 +136,7 @@ UVVM:
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_WARNING with first_node
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   first_node -> TB seq
+UVVM:            -0 ns   first_node -> TB seq
 UVVM:                    
 UVVM: 
 UVVM:      
@@ -173,7 +173,7 @@ UVVM:
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing MANUAL_CHECK with TB seq
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
-UVVM:             0 ns   TB seq
+UVVM:            -0 ns   TB seq
 UVVM:                    
 UVVM: 
 UVVM:      

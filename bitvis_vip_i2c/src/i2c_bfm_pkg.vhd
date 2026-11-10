@@ -52,6 +52,7 @@ package i2c_bfm_pkg is
     max_wait_sda_change_severity    : t_alert_level;        -- The above timeout will have this severity.
     i2c_bit_time                    : time;                 -- The bit period.
     i2c_bit_time_severity           : t_alert_level;        -- A master method will report an alert with this severity if a slave performs clock stretching for longer than i2c_bit_time.
+    data_hold_time                  : time;                 -- SDA-stable-after-SCL-falls window for data + ACK on master and slave. C_UNDEFINED_TIME (default) = legacy i2c_bit_time/4.
     acknowledge_severity            : t_alert_level;        -- Severity if message not acknowledged
     slave_mode_address              : unsigned(9 downto 0); -- The slave methods expect to receive this address from the I2C master DUT.
     slave_mode_address_severity     : t_alert_level;        -- The methods will report an alert with this severity if the address format is wrong or the address is not as expected.
@@ -74,6 +75,7 @@ package i2c_bfm_pkg is
     max_wait_sda_change_severity    => failure,
     i2c_bit_time                    => C_UNDEFINED_TIME,
     i2c_bit_time_severity           => failure,
+    data_hold_time                  => C_UNDEFINED_TIME,
     acknowledge_severity            => failure,
     slave_mode_address              => "0000000000",
     slave_mode_address_severity     => failure,
@@ -97,6 +99,12 @@ package i2c_bfm_pkg is
   function init_i2c_if_signals(
     constant VOID : in t_void
   ) return t_i2c_if;
+
+  function set_data_hold_time(
+    constant config         : in t_i2c_bfm_config;
+    constant data_hold_time : in time;
+    constant scope          : in string := C_BFM_SCOPE
+  ) return t_i2c_bfm_config;
 
   ------------------------------------------
   -- i2c_master_transmit
@@ -431,6 +439,38 @@ end package i2c_bfm_pkg;
 
 package body i2c_bfm_pkg is
 
+  function set_data_hold_time(
+    constant config         : in t_i2c_bfm_config;
+    constant data_hold_time : in time;
+    constant scope          : in string := C_BFM_SCOPE
+  ) return t_i2c_bfm_config is
+    variable v_config : t_i2c_bfm_config := config;
+  begin
+    check_value(data_hold_time < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time.", scope);
+    v_config.data_hold_time := data_hold_time;
+    return v_config;
+  end function;
+
+  function get_data_hold_time(
+    constant config : in t_i2c_bfm_config;
+    constant scope  : in string := C_BFM_SCOPE
+  ) return time is
+  begin
+    -- Backwards-compatibility contract:
+    --   data_hold_time = C_UNDEFINED_TIME  =>  returns i2c_bit_time/4 (legacy
+    --   timing). Preserves identical waveforms for testbenches written before
+    --   the data_hold_time field existed.
+    if config.i2c_bit_time = C_UNDEFINED_TIME then
+      alert(failure, "get_data_hold_time: i2c_bit_time is undefined", scope);
+      return 0 ns;
+    end if;
+    if config.data_hold_time = C_UNDEFINED_TIME then
+      alert(TB_NOTE, "data_hold_time not set in config => using default i2c_bit_time/4.", scope);
+      return config.i2c_bit_time / 4;
+    end if;
+    return config.data_hold_time;
+  end function;
+
   ---------------------------------------------------------------------------------
   -- check slave address
   --
@@ -511,19 +551,21 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
 
     for i in 7 downto 0 loop
-      wait for config.i2c_bit_time / 4;
+      wait for C_DATA_HOLD_TIME;        -- Hold SDA stable after SCL falls
       if byte(i) = '1' then
         sda <= 'Z';
       else
         sda <= '0';
       end if;
-      wait for config.i2c_bit_time / 4;
+      wait for (config.i2c_bit_time / 2) - C_DATA_HOLD_TIME;  -- Allow SDA setup before SCL rises; keep SCL low for i2c_bit_time/2
       scl <= 'Z';                       -- release
       wait for config.i2c_bit_time / 2;
       -- check for clock stretching
@@ -566,24 +608,26 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
 
-    wait for config.i2c_bit_time / 4;
+    wait for C_DATA_HOLD_TIME;          -- Hold SDA stable after SCL falls
     if ack = '1' then
       sda <= 'Z';
     else
       sda <= '0';
     end if;
-    wait for config.i2c_bit_time / 4;
+    wait for (config.i2c_bit_time / 2) - C_DATA_HOLD_TIME;  -- Allow SDA setup before SCL rises; keep SCL low for i2c_bit_time/2
     scl <= 'Z';                         -- release
     wait for config.i2c_bit_time / 2;
     -- check for clock stretching
     await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, "Waiting for clock stretching (ACK)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
     scl <= '0';
-    wait for config.i2c_bit_time / 4;
+    wait for C_DATA_HOLD_TIME;          -- Hold SDA stable after SCL falls before releasing SDA
     sda <= 'Z';                         -- release
   end procedure;
 
@@ -596,17 +640,18 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
-
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Check ACK
     -- The master shall drive scl during the acknowledge cycle
     -- A valid ack is detected when sda is '0'.
-    wait for config.i2c_bit_time / 4;
+    wait for C_DATA_HOLD_TIME;          -- Hold SDA stable after SCL falls before releasing SDA
     sda <= 'Z';                         -- release
-    wait for config.i2c_bit_time / 4;
+    wait for (config.i2c_bit_time / 2) - C_DATA_HOLD_TIME;  -- Allow SDA setup before SCL rises; keep SCL low for i2c_bit_time/2
     scl <= 'Z';
     wait for config.i2c_bit_time / 4;
     check_value(sda, ack_exp, MATCH_STD, config.acknowledge_severity, msg, scope, ID_NEVER, msg_id_panel);
@@ -626,17 +671,18 @@ package body i2c_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel   := shared_msg_id_panel;
     constant config         : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
-
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Check ACK
     -- The master shall drive scl during the acknowledge cycle
     -- A valid ack is detected when sda is '0'.
-    wait for config.i2c_bit_time / 4;
+    wait for C_DATA_HOLD_TIME;          -- Hold SDA stable after SCL falls before releasing SDA
     sda            <= 'Z';              -- release
-    wait for config.i2c_bit_time / 4;
+    wait for (config.i2c_bit_time / 2) - C_DATA_HOLD_TIME;  -- Allow SDA setup before SCL rises; keep SCL low for i2c_bit_time/2
     scl            <= 'Z';
     wait for config.i2c_bit_time / 4;
     v_ack_received := check_value(sda, ack_exp, MATCH_STD, NO_ALERT, msg, scope, ID_NEVER, msg_id_panel);
@@ -657,13 +703,15 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
 
     for i in 7 downto 0 loop
-      wait for config.i2c_bit_time / 4;
+      wait for C_DATA_HOLD_TIME;
       if byte(i) = '1' then
         sda <= 'Z';
       else
@@ -705,12 +753,13 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
-
-    wait for config.i2c_bit_time / 4;
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
+    wait for C_DATA_HOLD_TIME;
     if ack = '1' then
       sda <= 'Z';
     else
@@ -718,7 +767,7 @@ package body i2c_bfm_pkg is
     end if;
     await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change / 100, config.max_wait_scl_change_severity, "Waiting for SCL rising edge (ACK)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
     await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change / 100, config.max_wait_scl_change_severity, "Waiting for SCL falling edge (ACK)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
-    wait for config.i2c_bit_time / 4;
+    wait for C_DATA_HOLD_TIME;
     sda <= 'Z';
   end procedure;
 
@@ -731,15 +780,16 @@ package body i2c_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
   ) is
+    constant C_DATA_HOLD_TIME : time := get_data_hold_time(config);
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
-
+    check_value(C_DATA_HOLD_TIME < config.i2c_bit_time/2, TB_ERROR, "Data hold time must be less than 1/2 the I2C bit time." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
     -- Check ACK
     -- The master shall drive scl during the acknowledge cycle
     -- A valid ack is detected when sda is '0'.
-    wait for config.i2c_bit_time / 4;
+    wait for C_DATA_HOLD_TIME;
     sda <= 'Z';                         -- release
     await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change / 100, config.max_wait_scl_change_severity, "Waiting for SCL rising edge (ACK)." & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
     check_value(sda, ack_exp, MATCH_STD, config.acknowledge_severity, msg, scope, ID_NEVER, msg_id_panel);
@@ -766,9 +816,8 @@ package body i2c_bfm_pkg is
     constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
 
     -- Normalize to the 7 bit addr and 8 bit data widths
-    variable v_normalized_addr : unsigned(9 downto 0) := normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
-
-    constant C_FIRST_10_BIT_ADDRESS_BITS : std_logic_vector(6 downto 0) := C_10_BIT_ADDRESS_PATTERN & std_logic_vector(v_normalized_addr(9 downto 8));
+    variable v_normalized_addr            : unsigned(9 downto 0) := normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
+    constant C_FIRST_10_BIT_ADDRESS_BITS  : std_logic_vector(6 downto 0) := C_10_BIT_ADDRESS_PATTERN & std_logic_vector(v_normalized_addr(9 downto 8));
 
     procedure i2c_master_transmit_single_byte(
       constant byte : in std_logic_vector(7 downto 0)
@@ -787,7 +836,6 @@ package body i2c_bfm_pkg is
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= C_UNDEFINED_TIME, TB_ERROR, "I2C Bit time was not set in config." & add_msg_delimiter(msg), C_BFM_SCOPE, ID_NEVER, msg_id_panel);
-
     if not config.enable_10_bits_addressing then
       check_value(v_normalized_addr(9 downto 7), unsigned'("000"), config.slave_mode_address_severity,
                   "Verifying that top slave address bits (9-7) are not set in 7-bit addressing mode.",
@@ -1153,16 +1201,15 @@ package body i2c_bfm_pkg is
     constant ext_proc_call                : in string                         := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
 
-    -- Local proc_name; used if called from sequncer or VVC
+    -- Local proc_name; used if called from sequencer or VVC
     constant C_LOCAL_PROC_NAME : string := "i2c_master_receive";
-    -- Local proc_call; used if called from sequncer or VVC
+    -- Local proc_call; used if called from sequencer or VVC
     constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "(A:" & to_string(addr_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
 
     constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
 
     -- Normalize to the 7 bit addr and 8 bit data widths
-    variable v_normalized_addr : unsigned(9 downto 0) := normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
-
+    variable v_normalized_addr  : unsigned(9 downto 0) := normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
     constant C_FIRST_10_BIT_ADDRESS_BITS : std_logic_vector(6 downto 0) := C_10_BIT_ADDRESS_PATTERN & std_logic_vector(v_normalized_addr(9 downto 8));
 
     variable v_proc_call : line;
@@ -1381,9 +1428,9 @@ package body i2c_bfm_pkg is
     constant config        : in t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string           := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    -- Local proc_name; used if called from sequncer or VVC
+    -- Local proc_name; used if called from sequencer or VVC
     constant C_LOCAL_PROC_NAME : string := "i2c_slave_receive";
-    -- Local proc_call; used if called from sequncer or VVC
+    -- Local proc_call; used if called from sequencer or VVC
     constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "()";
 
     variable v_proc_call     : line;
@@ -1764,7 +1811,6 @@ package body i2c_bfm_pkg is
 
     -- Normalize to the 7 bit addr and 8 bit data widths
     variable v_normalized_addr : unsigned(9 downto 0) := normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
-
     constant C_FIRST_10_BIT_ADDRESS_BITS : std_logic_vector(6 downto 0) := C_10_BIT_ADDRESS_PATTERN & std_logic_vector(v_normalized_addr(9 downto 8));
 
     variable v_ack_received : boolean := false;

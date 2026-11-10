@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import time
 from itertools import product
 
 
@@ -35,6 +36,18 @@ def cleanup(msg="Cleaning up..."):
                 os.remove(path)
     else:
         print('Current directory is not "sim". Skipping cleanup.')
+
+
+# Rename the generator output folder. Retry because on Windows a virus scanner or
+# file indexer may still hold one of the newly generated files open for a moment.
+def rename_output(new_name, retries=50, delay=0.1):
+    for _ in range(retries):
+        try:
+            os.rename("output", new_name)
+            return
+        except PermissionError:
+            time.sleep(delay)
+    os.rename("output", new_name)  # last attempt raises the real error
 
 
 # Test the VVC Framework
@@ -117,55 +130,55 @@ def test_5(mock_choice):
     vvc_generator.main()
 
 
-# Test 6: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 6: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_6", "y", "n", "n", "n", 1, "n"])
 def test_6(mock_choice):
     vvc_generator.main()
 
 
-# Test 7: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 7: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_7", "y", "n", "y", "n", 1, "n"])
 def test_7(mock_choice):
     vvc_generator.main()
 
 
-# Test 8: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 8: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_8", "y", "y", "n", "n", 1, "n"])
 def test_8(mock_choice):
     vvc_generator.main()
 
 
-# Test 9: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 9: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_9", "y", "y", "y", "n", 1, "n"])
 def test_9(mock_choice):
     vvc_generator.main()
 
 
-# Test 10: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
+# Test 10: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
 @mock.patch("vvc_generator.input", side_effect=["test_10", "y", "y", "y", "n", 2, "RX", "TX", 1, "y", 3, "response", "request"])
 def test_10(mock_choice):
     vvc_generator.main()
 
 
-# Test 11: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 11: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_11", "y", "n", "n", "y", 1, "n"])
 def test_11(mock_choice):
     vvc_generator.main()
 
 
-# Test 12: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 12: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_12", "y", "y", "n", "y", 1, "n"])
 def test_12(mock_choice):
     vvc_generator.main()
 
 
-# Test 13: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+# Test 13: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, vvc_multiple_executors
 @mock.patch("vvc_generator.input", side_effect=["test_13", "y", "y", "y", "y", 1, "n"])
 def test_13(mock_choice):
     vvc_generator.main()
 
 
-# Test 14: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
+# Test 14: name, extended_features, scoreboard, transaction_info, unwanted_transaction, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
 @mock.patch("vvc_generator.input", side_effect=["test_14", "y", "y", "y", "y", 2, "RX", "TX", 1, "y", 3, "response", "request"])
 def test_14(mock_choice):
     vvc_generator.main()
@@ -177,33 +190,49 @@ def test_vvc_generator():
 
     # Generate the files with different inputs
     test_1()
-    os.rename("output", "generated_vip_1")
+    rename_output("generated_vip_1")
     test_2()
-    os.rename("output", "generated_vip_2")
+    rename_output("generated_vip_2")
     test_3()
-    os.rename("output", "generated_vip_3")
+    rename_output("generated_vip_3")
     test_4()
-    os.rename("output", "generated_vip_4")
+    rename_output("generated_vip_4")
     test_5()
-    os.rename("output", "generated_vip_5")
+    rename_output("generated_vip_5")
     test_6()
-    os.rename("output", "generated_vip_6")
+    rename_output("generated_vip_6")
     test_7()
-    os.rename("output", "generated_vip_7")
+    rename_output("generated_vip_7")
     test_8()
-    os.rename("output", "generated_vip_8")
+    rename_output("generated_vip_8")
     test_9()
-    os.rename("output", "generated_vip_9")
+    rename_output("generated_vip_9")
     test_10()
-    os.rename("output", "generated_vip_10")
+    rename_output("generated_vip_10")
     test_11()
-    os.rename("output", "generated_vip_11")
+    rename_output("generated_vip_11")
     test_12()
-    os.rename("output", "generated_vip_12")
+    rename_output("generated_vip_12")
     test_13()
-    os.rename("output", "generated_vip_13")
+    rename_output("generated_vip_13")
     test_14()
-    os.rename("output", "generated_vip_14")
+    rename_output("generated_vip_14")
+
+    with open("generated_vip_7/transaction_pkg.vhd", encoding="utf-8") as transaction_pkg:
+        generated_transaction_pkg = transaction_pkg.read()
+    assert (
+        "signal global_test_7_vvc_transaction_trigger : "
+        "t_test_7_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) "
+        ":= (others => 'Z');"
+    ) in generated_transaction_pkg
+
+    with open("generated_vip_10/transaction_pkg.vhd", encoding="utf-8") as transaction_pkg:
+        generated_transaction_pkg = transaction_pkg.read()
+    assert (
+        "signal global_test_10_vvc_transaction_trigger : "
+        "t_test_10_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, "
+        "0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => 'Z'));"
+    ) in generated_transaction_pkg
 
     hr = HDLRegression()
 

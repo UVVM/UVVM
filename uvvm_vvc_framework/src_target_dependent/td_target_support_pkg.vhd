@@ -139,7 +139,7 @@ package td_target_support_pkg is
     signal   vvc_target                   : in t_vvc_target_record;
     constant vvc_instance_idx             : in integer;
     constant vvc_channel                  : in t_channel;
-    variable vvc_idx_in_activity_register : inout t_integer_array(0 to C_MAX_TB_VVC_NUM);
+    variable vvc_idx_in_activity_register : inout integer_vector(0 to C_MAX_TB_VVC_NUM);
     variable num_vvc_instances            : inout natural range 0 to C_MAX_TB_VVC_NUM
   );
 
@@ -292,7 +292,7 @@ package body td_target_support_pkg is
     variable v_local_vvc_cmd                : t_vvc_cmd_record;
     variable v_local_cmd_idx                : integer;
     variable v_was_multicast                : boolean                                := false;
-    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_vvc_idx_in_activity_register : integer_vector(0 to C_MAX_TB_VVC_NUM)  := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM    := 0;
 
     variable v_vvc_instance_idx : integer   := vvc_target.vvc_instance_idx;
@@ -410,7 +410,7 @@ package body td_target_support_pkg is
     signal   vvc_target                   : in t_vvc_target_record;
     constant vvc_instance_idx             : in integer;
     constant vvc_channel                  : in t_channel;
-    variable vvc_idx_in_activity_register : inout t_integer_array(0 to C_MAX_TB_VVC_NUM);
+    variable vvc_idx_in_activity_register : inout integer_vector(0 to C_MAX_TB_VVC_NUM);
     variable num_vvc_instances            : inout natural range 0 to C_MAX_TB_VVC_NUM
   ) is
   begin

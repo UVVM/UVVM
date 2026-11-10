@@ -887,6 +887,48 @@ from the command line. The CSV delimiter is fetched by the Python script from th
      - Display the script argument options.
 
 
+Return codes
+==================================================================================================================================
+The run_spec_cov.py script returns a process exit code reflecting the outcome of the run. This allows a regression or CI flow to
+gate on the coverage result directly, without parsing the output CSV files.
+
+.. _return_codes_table:
+
+.. list-table:: run_spec_cov.py return codes
+   :widths: 10 90
+   :header-rows: 1
+
+   * - Code
+     - Meaning
+   * - 0
+     - Processing completed and every listed requirement is compliant. Without a Requirement List, every ticked-off
+       requirement passed.
+   * - 1
+     - A technical, configuration, parsing, usage or I/O failure prevented successful processing.
+   * - 2
+     - Processing completed and at least one listed requirement is ``NON_COMPLIANT``. Without a Requirement List, at least
+       one ticked-off requirement failed.
+   * - 3
+     - Processing completed without non-compliance, but warnings, ``NOT_TESTED`` requirements or tick-offs for unlisted
+       requirements exist. Without a Requirement List, unlisted tick-offs and their warnings do not raise code 3.
+
+When more than one condition applies the most severe code is returned, with precedence **1 > 2 > 3 > 0**. Technical failures stop
+processing and return code 1. Codes 2 and 3 are determined only after all output report files have been written, so a coverage
+outcome never prevents the reports from being generated.
+Successful ``--help`` and ``--clean`` operations return code 0. Usage errors such as calling the script with no arguments,
+omitting an option's required value or selecting an invalid strictness return code 1. All technical failures return code 1; the
+printed message identifies the cause.
+
+.. note::
+
+   Code 2 is returned only when a listed requirement is NON_COMPLIANT. Code 3 groups the incomplete coverage conditions: warnings,
+   not-tested requirements and unlisted tick-offs. The individual conditions are detailed in the ``*.req_compliance_*.csv``,
+   ``*.req_non_compliance.csv`` and ``*.warnings.csv`` reports. A failing testcase does not affect the exit status by itself; if it
+   covers a listed requirement, the existing compliance calculation makes that requirement non-compliant and the script returns code
+   2. In strictness 0 *without* a Requirement List (no ``-r``) every tick-off is unlisted, so the exit code is based on the
+   tick-off results: 2 if any ticked-off requirement failed, otherwise 0. Missing requirements cannot be detected in this mode.
+
+
 Strictness levels
 ==================================================================================================================================
 Strictness does not apply to VHDL testcases - only to the post processing Python script.

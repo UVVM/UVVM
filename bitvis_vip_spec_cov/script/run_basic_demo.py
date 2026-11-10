@@ -31,7 +31,10 @@ num_errors = 0
 
 try:
     from hdlregression import HDLRegression
+except ImportError:
+    HDLRegression = None
 
+if HDLRegression is not None:
     hr = HDLRegression()
 
     # Add Util, VVC Framework and Scoreboard VIP
@@ -62,14 +65,16 @@ try:
 
     num_errors += hr.start(sim_options=sim_options)
 
-except:
+else:
+    # HDLRegression is not installed: compile and simulate with ModelSim/Questa
     # Compile
     num_errors += subprocess.call(['vsim', '-c', '-do', 'do ../script/compile_demo.do basic' + ';exit'], stderr=subprocess.PIPE)
     # Run simulation
     num_errors += subprocess.call(['vsim', '-c', '-do', 'do ../script/simulate_demo.do' + ';exit'], stderr=subprocess.PIPE)
 
 # Run the specification coverage python script
-num_errors += subprocess.call([find_python3_executable(), '../script/run_spec_cov.py', '-r', '../tb/basic_demo/req_list_basic_demo.csv', '-p', '../sim/partial_cov_basic_demo.csv', '-s', '../sim/spec_cov_basic_demo.csv'], stderr=subprocess.PIPE)
+if subprocess.call([find_python3_executable(), '../script/run_spec_cov.py', '-r', '../tb/basic_demo/req_list_basic_demo.csv', '-p', '../sim/partial_cov_basic_demo.csv', '-s', '../sim/spec_cov_basic_demo.csv'], stderr=subprocess.PIPE) != 0:
+    num_errors += 1
 
 if num_errors != 0:
     sys.exit(num_errors)

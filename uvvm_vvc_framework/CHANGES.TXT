@@ -1,6 +1,14 @@
 UVVM VVC Framework - Overview on Versions and Changes
 ==============================================================
 
+v2.12.16
+----------
+Released: 2026-10-27
+- Changed the VVC generator transaction info trigger default value from '0' to 'Z' for consistency with multiple executor VVC bugfix.
+- Replaced t_integer_array with the VHDL-2008 type integer_vector in the framework packages and the VVC generator.
+- Fixed elements removed from the deprecated ti_generic_queue_pkg keeping their next_element pointer, as in
+  uvvm_util generic_queue_pkg. From pull request by user bwandl98.
+
 v2.12.15
 ----------
 Released: 2026-02-14
@@ -108,7 +116,7 @@ v2.12.1
 ----------
 Released: 2021-05-26
 - Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
-- Fixed issue where calling the same VVC at the same time from different processes 
+- Fixed issue where calling the same VVC at the same time from different processes
   could lead to a timeout.
 
 v2.12.0
@@ -121,7 +129,7 @@ v2.11.1
 ----------
 Released: 2020-08-18
 - Added deprecated warning to ti_data_fifo_pkg, ti_data_queue_pkg, ti_data_stack_pkg and
-  ti_generic_queue_pkg. These will no longer be maintained and users should use the 
+  ti_generic_queue_pkg. These will no longer be maintained and users should use the
   packages in Utility Library.
 - Fixed wrongly commented code generated from vvc_generator.
 - Generated code from vvc_generator.py will now compile without user editing.
@@ -180,7 +188,7 @@ Released: 2020-01-24
 v2.7.0
 ----------
 Released: 2019-12-04
-- Changed activity watchdog type name to t_activity_watchdog, 
+- Changed activity watchdog type name to t_activity_watchdog,
   changed shared_inactivity_watchdog to shared_activity_watchdog,
   and changed global_trigger_testcase_inactivity_watchdog to global_trigger_activity_watchdog.
 - Renamed "UVVM Essential Mechanisms" to "UVVM VVC Framework Essential Mechanisms".

@@ -73,6 +73,8 @@ package transaction_pkg is
     operation          : t_operation;
     channel_value      : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0);
     data_array         : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1)(C_VVC_CMD_WORD_MAX_LENGTH - 1 downto 0);
+    num_words          : natural;
+    word_length        : natural;
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
   end record;
@@ -81,6 +83,8 @@ package transaction_pkg is
     operation          => NO_OPERATION,
     channel_value      => (others => '0'),
     data_array         => (others => (others => '0')),
+    num_words          => 0,
+    word_length        => 0,
     vvc_meta           => C_VVC_META_DEFAULT,
     transaction_status => INACTIVE
   );
@@ -96,7 +100,7 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
+  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => 'Z');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;

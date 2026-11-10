@@ -42,6 +42,8 @@ package vvc_cmd_pkg is
     addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0); -- Max width may be increased if required
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     byte_enable         : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH - 1 downto 0);
+    write               : std_logic;
+    read                : std_logic;
     max_polls           : integer;
     -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation           : t_operation;
@@ -51,7 +53,7 @@ package vvc_cmd_pkg is
     cmd_idx             : natural;
     command_type        : t_immediate_or_queued;
     msg_id              : t_msg_id;
-    gen_integer_array   : t_integer_array(0 to 1);
+    gen_integer_array   : integer_vector(0 to 1);
     gen_boolean         : boolean; -- DEPRECATED: will be removed in v3
     timeout             : time;    -- DEPRECATED: will be removed in v3
     alert_level         : t_alert_level;
@@ -65,6 +67,8 @@ package vvc_cmd_pkg is
     addr                => (others => '0'),
     data                => (others => '0'),
     byte_enable         => (others => '1'), -- All bytes enabled by default
+    write               => '0',
+    read                => '0',
     max_polls           => 1,
     -- Common VVC fields
     operation           => NO_OPERATION,

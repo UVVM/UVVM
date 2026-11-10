@@ -121,7 +121,7 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_sbi_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_sbi_vvc_transaction_trigger : t_sbi_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
+  signal global_sbi_vvc_transaction_trigger : t_sbi_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => 'Z');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_sbi_transaction_group_array is array (natural range <>) of t_transaction_group;

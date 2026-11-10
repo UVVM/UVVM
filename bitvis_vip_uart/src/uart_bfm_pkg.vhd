@@ -36,10 +36,10 @@ package uart_bfm_pkg is
 
   constant C_BFM_SCOPE : string := "UART BFM";
 
-  constant C_DATA_MAX_LENGTH                       : natural := 8;
+  constant C_MAX_NUM_DATA_BITS                       : natural := 9;
   constant C_DEFAULT_TIMEOUT                       : natural := 100; -- This value should cover the transmission of a byte frame
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR : string  := "; ";
-  type t_uart_expect_received_data_array is array (natural range <>) of std_logic_vector(C_DATA_MAX_LENGTH - 1 downto 0);
+  type t_uart_expect_received_data_array is array (natural range <>) of std_logic_vector(C_MAX_NUM_DATA_BITS - 1 downto 0);
 
   type t_bfm_error_injection is record
     parity_bit_error : boolean;
@@ -52,19 +52,19 @@ package uart_bfm_pkg is
   );
 
   type t_uart_bfm_config is record
-    bit_time                              : time;                  -- The time it takes to transfer one bit
-    num_data_bits                         : natural range 7 to 8;  -- Number of data bits to send per transmission
-    idle_state                            : std_logic;             -- Bit value when line is idle
-    num_stop_bits                         : t_stop_bits;           -- Number of stop-bits to use per transmission {STOP_BITS_ONE, STOP_BITS_ONE_AND_HALF, STOP_BITS_TWO}
-    parity                                : t_parity;              -- Transmission parity bit {PARITY_NONE, PARITY_ODD, PARITY_EVEN}
-    timeout                               : time;                  -- The maximum time to pass before the expected data must be received. A value of 0 means it will never time out.
-    timeout_severity                      : t_alert_level;         -- The above timeout will have this severity
-    num_bytes_to_log_before_expected_data : natural;               -- Maximum number of bytes to save ahead of the expected data in the receive buffer. The bytes in the receive buffer will be logged.
-    match_strictness                      : t_match_strictness;    -- Matching strictness for std_logic values in check procedures.
-    id_for_bfm                            : t_msg_id;              -- The message ID used as a general message ID in the UART BFM
-    id_for_bfm_wait                       : t_msg_id;              -- The message ID used for logging waits in the UART BFM
-    id_for_bfm_poll                       : t_msg_id;              -- DEPRECATED: will be removed in v3
-    id_for_bfm_poll_summary               : t_msg_id;              -- The message ID used for logging polling summary in the UART BFM
+    bit_time                              : time;                                   -- The time it takes to transfer one bit
+    num_data_bits                         : natural range 5 to C_MAX_NUM_DATA_BITS;   -- Number of data bits to send per transmission
+    idle_state                            : std_logic;                              -- Bit value when line is idle
+    num_stop_bits                         : t_stop_bits;                            -- Number of stop-bits to use per transmission {STOP_BITS_ONE, STOP_BITS_ONE_AND_HALF, STOP_BITS_TWO}
+    parity                                : t_parity;                               -- Transmission parity bit {PARITY_NONE, PARITY_ODD, PARITY_EVEN}
+    timeout                               : time;                                   -- The maximum time to pass before the expected data must be received. A value of 0 means it will never time out.
+    timeout_severity                      : t_alert_level;                          -- The above timeout will have this severity
+    num_bytes_to_log_before_expected_data : natural;                                -- Maximum number of bytes to save ahead of the expected data in the receive buffer. The bytes in the receive buffer will be logged.
+    match_strictness                      : t_match_strictness;                     -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm                            : t_msg_id;                               -- The message ID used as a general message ID in the UART BFM
+    id_for_bfm_wait                       : t_msg_id;                               -- The message ID used for logging waits in the UART BFM
+    id_for_bfm_poll                       : t_msg_id;                               -- DEPRECATED: will be removed in v3
+    id_for_bfm_poll_summary               : t_msg_id;                               -- The message ID used for logging polling summary in the UART BFM
     error_injection                       : t_bfm_error_injection;
   end record;
 

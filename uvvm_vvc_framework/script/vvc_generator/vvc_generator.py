@@ -22,7 +22,7 @@ division_line = "--=============================================================
 extended_features = {"scoreboard": False,
                      "transaction_pkg": False,
                      "transaction_info": False,
-                     "unwanted_activity": False}
+                     "unwanted_transaction": False}
 
 
 class Channel:
@@ -111,8 +111,8 @@ def get_generating_level():
         if get_user_input("\rAdd transaction info to VVC? [y/n]: ") == 'y':
             selected_features["transaction_pkg"] = True
             selected_features["transaction_info"] = True
-        if get_user_input("\rAdd unwanted activity detection to VVC? [y/n]: ") == 'y':
-            selected_features["unwanted_activity"] = True
+        if get_user_input("\rAdd unwanted transaction detection to VVC? [y/n]: ") == 'y':
+            selected_features["unwanted_transaction"] = True
 
     return selected_features
 
@@ -426,7 +426,7 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
 
     file_handle.write("  signal terminate_current_cmd              : t_flag_record;\n")
     file_handle.write("  signal entry_num_in_vvc_activity_register : integer;\n")
-    if features["unwanted_activity"]:
+    if features["unwanted_transaction"]:
         file_handle.write("  --<USER_INPUT> Uncomment if the VVC has a valid signal, e.g. tvalid in AXI-Stream\n")
         file_handle.write("  -- signal clock_period                       : time;\n")
     print_linefeed(file_handle)
@@ -1064,12 +1064,12 @@ def add_clock_period(file_handle):
     print_linefeed(file_handle)
 
 
-def add_unwanted_activity_detection(file_handle, vvc_name, vvc_channel):
+def add_unwanted_transaction_detection(file_handle, vvc_name, vvc_channel):
     file_handle.write("  " + division_line + "\n")
-    file_handle.write("  -- Unwanted activity detection\n")
-    file_handle.write("  -- - Monitors unwanted activity from the DUT\n")
+    file_handle.write("  -- Unwanted transaction detection\n")
+    file_handle.write("  -- - Monitors unwanted transaction from the DUT\n")
     file_handle.write("  " + division_line + "\n")
-    file_handle.write("  p_unwanted_activity : process is\n")
+    file_handle.write("  p_unwanted_transaction : process is\n")
     file_handle.write("  begin\n")
     file_handle.write("    -- Add a delay to allow the VVC to be registered in the activity register\n")
     file_handle.write("    wait for std.env.resolution_limit;\n")
@@ -1094,32 +1094,34 @@ def add_unwanted_activity_detection(file_handle, vvc_name, vvc_channel):
         file_handle.write("      -- Example: wait on " + vvc_name.lower() + "_vvc_if.valid, " + vvc_name.lower() + "_vvc_if.data, global_trigger_vvc_activity_register;\n")
     file_handle.write("      wait on global_trigger_vvc_activity_register;\n")
     print_linefeed(file_handle)
-    file_handle.write("      -- Check the changes on the DUT outputs only when the vvc is inactive\n")
-    file_handle.write("      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
-    file_handle.write("        --<USER_INPUT> Use the check_unwanted_activity() procedure defined in the VVC framework support package to check the changes on the DUT outputs\n")
-    file_handle.write("        -- Example:\n")
+    file_handle.write("      if vvc_config.unwanted_transaction_checking_enabled = true then\n")
+    file_handle.write("        -- Check the changes on the DUT outputs only when the vvc is inactive\n")
+    file_handle.write("        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
+    file_handle.write("          --<USER_INPUT> Use the check_unwanted_transaction() procedure defined in the VVC framework support package to check the changes on the DUT outputs\n")
+    file_handle.write("          -- Example:\n")
     if vvc_channel != "NA":
-        file_handle.write("        -- check_unwanted_activity(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.last, vvc_config.unwanted_activity_severity, \"last\", C_SCOPE);\n")
-        file_handle.write("        -- check_unwanted_activity(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("          -- check_unwanted_transaction(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.last, vvc_config.unwanted_transaction_severity.last, \"last\", C_SCOPE);\n")
+        file_handle.write("          -- check_unwanted_transaction(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.data, vvc_config.unwanted_transaction_severity.data, \"data\", C_SCOPE);\n")
     else:
-        file_handle.write("        -- check_unwanted_activity(" + vvc_name.lower() + "_vvc_if.last, vvc_config.unwanted_activity_severity, \"last\", C_SCOPE);\n")
-        file_handle.write("        -- check_unwanted_activity(" + vvc_name.lower() + "_vvc_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("          -- check_unwanted_transaction(" + vvc_name.lower() + "_vvc_if.last, vvc_config.unwanted_transaction_severity.last, \"last\", C_SCOPE);\n")
+        file_handle.write("          -- check_unwanted_transaction(" + vvc_name.lower() + "_vvc_if.data, vvc_config.unwanted_transaction_severity.data, \"data\", C_SCOPE);\n")
     print_linefeed(file_handle)
-    file_handle.write("        -- Note: Use the following example instead if the interface has a valid signal, e.g. tvalid in AXI-Stream\n")
-    file_handle.write("        -- Example:\n")
-    file_handle.write("        -- Skip checking the changes if the valid signal goes low within one clock period after the VVC becomes inactive\n")
+    file_handle.write("          -- Note: Use the following example instead if the interface has a valid signal, e.g. tvalid in AXI-Stream\n")
+    file_handle.write("          -- Example:\n")
+    file_handle.write("          -- Skip checking the changes if the valid signal goes low within one clock period after the VVC becomes inactive\n")
     if vvc_channel != "NA":
-        file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
-        file_handle.write("        --   check_unwanted_activity(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.valid, vvc_config.unwanted_activity_severity, \"valid\", C_SCOPE);\n")
-        file_handle.write("        --   check_unwanted_activity(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("          -- if not (falling_edge(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
+        file_handle.write("          --   check_unwanted_transaction(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.valid, vvc_config.unwanted_transaction_severity.valid, \"valid\", C_SCOPE);\n")
+        file_handle.write("          --   check_unwanted_transaction(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_vvc_if.data, vvc_config.unwanted_transaction_severity.data, \"data\", C_SCOPE);\n")
     else:
-        file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_vvc_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
-        file_handle.write("        --   check_unwanted_activity(" + vvc_name.lower() + "_vvc_if.valid, vvc_config.unwanted_activity_severity, \"valid\", C_SCOPE);\n")
-        file_handle.write("        --   check_unwanted_activity(" + vvc_name.lower() + "_vvc_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
-    file_handle.write("        -- end if;\n")
+        file_handle.write("          -- if not (falling_edge(" + vvc_name.lower() + "_vvc_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
+        file_handle.write("          --   check_unwanted_transaction(" + vvc_name.lower() + "_vvc_if.valid, vvc_config.unwanted_transaction_severity.valid, \"valid\", C_SCOPE);\n")
+        file_handle.write("          --   check_unwanted_transaction(" + vvc_name.lower() + "_vvc_if.data, vvc_config.unwanted_transaction_severity.data, \"data\", C_SCOPE);\n")
+    file_handle.write("          -- end if;\n")
+    file_handle.write("        end if;\n")
     file_handle.write("      end if;\n")
     file_handle.write("    end loop;\n")
-    file_handle.write("  end process p_unwanted_activity;\n")
+    file_handle.write("  end process p_unwanted_transaction;\n")
     file_handle.write("  " + division_line + "\n")
     print_linefeed(file_handle)
 
@@ -1235,7 +1237,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
     file_handle.write("    cmd_idx                   : natural;\n")
     file_handle.write("    command_type              : t_immediate_or_queued;\n")
     file_handle.write("    msg_id                    : t_msg_id;\n")
-    file_handle.write("    gen_integer_array         : t_integer_array(0 to 1);\n")
+    file_handle.write("    gen_integer_array         : integer_vector(0 to 1);\n")
     file_handle.write("    gen_boolean               : boolean; -- DEPRECATED: will be removed in v3\n")
     file_handle.write("    timeout                   : time;    -- DEPRECATED: will be removed in v3\n")
     file_handle.write("    alert_level               : t_alert_level;\n")
@@ -1380,9 +1382,19 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    delay_in_time                      => 0 ns,\n")
     file_handle.write("    inter_bfm_delay_violation_severity => WARNING\n")
     file_handle.write("  );\n")
+    if features["unwanted_transaction"]:
+        print_linefeed(file_handle)
+        file_handle.write("  --<USER_INPUT> Add a field for each DUT output that should be checked for unwanted transactions\n")
+        file_handle.write("  type t_" + vvc_name.lower() + "_unwanted_transaction is record\n")
+        file_handle.write("    valid : t_alert_level;\n")
+        file_handle.write("  end record t_" + vvc_name.lower() + "_unwanted_transaction;\n")
+        print_linefeed(file_handle)
+        file_handle.write("  constant C_" + vvc_name.upper() + "_UNWANTED_TRANSACTION : t_" + vvc_name.lower() + "_unwanted_transaction := (\n")
+        file_handle.write("    valid => ERROR\n")
+        file_handle.write("  );\n")
     print_linefeed(file_handle)
     file_handle.write("  type t_vvc_config is record\n")
-    file_handle.write("    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM " + 
+    file_handle.write("    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM " +
                       "accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.\n")
     file_handle.write("    cmd_queue_count_max                   : natural;           -- DEPRECATED: will be removed in v3. Use entity generic constants instead.\n")
     file_handle.write("    cmd_queue_count_threshold             : natural;           -- DEPRECATED: will be removed in v3. Use entity generic constants instead.\n")
@@ -1392,7 +1404,9 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    result_queue_count_threshold_severity : t_alert_level;     -- DEPRECATED: will be removed in v3. Use entity generic constants instead.\n")
     file_handle.write("    bfm_config                            : t_bfm_config;      -- Configuration for the BFM. See BFM quick reference.\n")
     file_handle.write("    msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.\n")
-    file_handle.write("    unwanted_activity_severity            : t_alert_level;     -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected.\n")
+    if features["unwanted_transaction"]:
+        file_handle.write("    unwanted_transaction_checking_enabled : boolean;           -- Enable unwanted transaction checking\n")
+        file_handle.write("    unwanted_transaction_severity         : t_" + vvc_name.lower() + "_unwanted_transaction; -- Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected.\n")
     file_handle.write("  end record t_vvc_config;\n")
     print_linefeed(file_handle)
     if vvc_channels.__len__() == 1:
@@ -1409,8 +1423,12 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,\n")
     file_handle.write("    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
     file_handle.write("    bfm_config                            => C_" + vvc_name.upper() + "_BFM_CONFIG_DEFAULT,\n")
-    file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,\n")
-    file_handle.write("    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY\n")
+    if features["unwanted_transaction"]:
+        file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,\n")
+        file_handle.write("    unwanted_transaction_checking_enabled => C_UNWANTED_TRANSACTION_CHECKING_DEFAULT,\n")
+        file_handle.write("    unwanted_transaction_severity         => C_" + vvc_name.upper() + "_UNWANTED_TRANSACTION\n")
+    else:
+        file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
     file_handle.write("  type t_vvc_status is record\n")
@@ -1859,7 +1877,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             file_handle.write("  -- Global vvc_transaction_info trigger signal\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (natural range <>) of std_logic;\n")
             file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() +
-                              "_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');\n")
+                              "_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => 'Z');\n")
             print_linefeed(file_handle)
             file_handle.write("  -- Shared vvc_transaction_info info variable\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (natural range <>) of t_transaction_group;\n")
@@ -1873,7 +1891,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             file_handle.write("  -- Global vvc_transaction_info trigger signal\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;\n")
             file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() +
-                              "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => '0'));\n")
+                              "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => 'Z'));\n")
             print_linefeed(file_handle)
             file_handle.write("  -- Shared vvc_transaction_info info variable\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;\n")
@@ -2002,9 +2020,9 @@ def generate_vvc_file(vvc_name, vvc_channels, features):
                 add_vvc_pipeline_step(f, vvc_name, channel.executor_names[i], i, features)
 
         add_vvc_terminator(f)
-        if features["unwanted_activity"]:
+        if features["unwanted_transaction"]:
             add_clock_period(f)
-            add_unwanted_activity_detection(f, vvc_name, channel.name)
+            add_unwanted_transaction_detection(f, vvc_name, channel.name)
         add_end_of_architecture(f)
 
         f.close()

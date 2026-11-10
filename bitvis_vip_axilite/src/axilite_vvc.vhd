@@ -759,10 +759,10 @@ begin
   --===============================================================================================
 
   --===============================================================================================
-  -- Unwanted activity detection
-  -- - Monitors unwanted activity from the DUT
+  -- Unwanted transaction detection
+  -- - Monitors unwanted transactions from the DUT
   --===============================================================================================
-  p_unwanted_activity : process is
+  p_unwanted_transaction : process is
   begin
     -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
@@ -783,23 +783,25 @@ begin
       wait on axilite_vvc_master_if.write_response_channel.bresp, axilite_vvc_master_if.write_response_channel.bvalid, axilite_vvc_master_if.read_data_channel.rdata,
               axilite_vvc_master_if.read_data_channel.rresp, axilite_vvc_master_if.read_data_channel.rvalid, global_trigger_vvc_activity_register;
 
-      -- Check the changes on the DUT outputs only when the vvc is inactive
-      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
-        -- Skip checking the changes if the bvalid signal goes low within one clock period after the VVC becomes inactive
-        if not (falling_edge(axilite_vvc_master_if.write_response_channel.bvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(axilite_vvc_master_if.write_response_channel.bvalid, vvc_config.unwanted_activity_severity, "bvalid", C_SCOPE);
-          check_unwanted_activity(axilite_vvc_master_if.write_response_channel.bresp, vvc_config.unwanted_activity_severity, "bresp", C_SCOPE);
-        end if;
+      if vvc_config.unwanted_transaction_checking_enabled = true then
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          -- Skip checking the changes if the bvalid signal goes low within one clock period after the VVC becomes inactive
+          if not (falling_edge(axilite_vvc_master_if.write_response_channel.bvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+            check_unwanted_transaction(axilite_vvc_master_if.write_response_channel.bvalid, vvc_config.unwanted_transaction_severity.bvalid, "bvalid", C_SCOPE);
+            check_unwanted_transaction(axilite_vvc_master_if.write_response_channel.bresp, vvc_config.unwanted_transaction_severity.bresp, "bresp", C_SCOPE);
+          end if;
 
-        -- Skip checking the changes if the rvalid signal goes low within one clock period after the VVC becomes inactive
-        if not (falling_edge(axilite_vvc_master_if.read_data_channel.rvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(axilite_vvc_master_if.read_data_channel.rvalid, vvc_config.unwanted_activity_severity, "rvalid", C_SCOPE);
-          check_unwanted_activity(axilite_vvc_master_if.read_data_channel.rdata, vvc_config.unwanted_activity_severity, "rdata", C_SCOPE);
-          check_unwanted_activity(axilite_vvc_master_if.read_data_channel.rresp, vvc_config.unwanted_activity_severity, "rresp", C_SCOPE);
+          -- Skip checking the changes if the rvalid signal goes low within one clock period after the VVC becomes inactive
+          if not (falling_edge(axilite_vvc_master_if.read_data_channel.rvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+            check_unwanted_transaction(axilite_vvc_master_if.read_data_channel.rvalid, vvc_config.unwanted_transaction_severity.rvalid, "rvalid", C_SCOPE);
+            check_unwanted_transaction(axilite_vvc_master_if.read_data_channel.rdata, vvc_config.unwanted_transaction_severity.rdata, "rdata", C_SCOPE);
+            check_unwanted_transaction(axilite_vvc_master_if.read_data_channel.rresp, vvc_config.unwanted_transaction_severity.rresp, "rresp", C_SCOPE);
+          end if;
         end if;
       end if;
     end loop;
-  end process p_unwanted_activity;
+  end process p_unwanted_transaction;
 --===============================================================================================
 
 end architecture behave;

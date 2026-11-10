@@ -416,7 +416,7 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_uniform_distribution => OK.
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[-1:1], ADD:(-10), ADD:(15, 16))=> Used same specifier for both set of values: ADD
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1:1], ADD:(-10), ADD:(15, 16))=> -10
@@ -653,7 +653,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[10:0])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -661,7 +661,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(ADD:(1, 2))=> Invalid parameter: ADD
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -669,7 +669,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #3  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1:10], ONLY:(1, 2, 3))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -678,7 +678,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1:10], ONLY:(1, 2, 3), EXCL:(1, 2, 3))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -687,7 +687,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1:10], EXCL:(1, 2, 3), ONLY:(1, 2, 3))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -696,7 +696,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #6  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[-2147483648:2147483647], ADD:(0))=> Constraints are greater than integer's range
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -705,7 +705,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #7  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[-2147483648:2147483647], ADD:(0), EXCL:(1))=> Constraints are greater than integer's range
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -714,7 +714,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #8  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[-2147483648:2147483647], EXCL:(-1), ADD:(0))=> Constraints are greater than integer's range
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -980,7 +980,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #9  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[10:1])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -989,7 +989,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #10  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ADD:(1, 2))=> Invalid parameter: ADD
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -998,7 +998,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #11  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:10], ONLY:(1, 2, 3))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1008,7 +1008,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #12  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:10], ONLY:(1, 2, 3), EXCL:(1, 2, 3))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1018,7 +1018,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #13  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:10], EXCL:(1, 2, 3), ONLY:(1, 2, 3))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1028,7 +1028,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #14  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[-2147483648:2147483647], ADD:(1, 2, 3))=> Constraints are greater than integer's range
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1038,7 +1038,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #15  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(0, 1), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1916,7 +1916,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #16  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[10.00:0.00])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1924,7 +1924,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #17  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(ADD:(1.00, 2.00))=> Invalid parameter: ADD
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1932,7 +1932,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #18  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1.00:10.00], ONLY:(1.00, 2.00, 3.00))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1941,7 +1941,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #19  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1.00:10.00], ONLY:(1.00, 2.00, 3.00), EXCL:(1.00, 2.00, 3.00))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1951,7 +1951,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #20  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1.00:10.00], EXCL:(1.00, 2.00, 3.00), ONLY:(1.00, 2.00, 3.00))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2748,7 +2748,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #21  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[10.00:1.00])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2758,7 +2758,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #22  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ADD:(1.00, 2.00))=> Invalid parameter: ADD
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2768,7 +2768,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #23  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:10.00], ONLY:(1.00, 2.00, 3.00))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2779,7 +2779,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #24  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:10.00], ONLY:(1.00, 2.00, 3.00), EXCL:(1.00, 2.00, 3.00))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2790,7 +2790,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #25  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:10.00], EXCL:(1.00, 2.00, 3.00), ONLY:(1.00, 2.00, 3.00))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2801,7 +2801,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #26  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(0.00, 1.00), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -2840,18 +2840,18 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 2 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 2 fs
@@ -2870,16 +2870,16 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs])=> 2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 2 fs.
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_uniform_distribution => OK.
@@ -3006,8 +3006,8 @@ UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -15 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -15 fs
@@ -3016,18 +3016,18 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -15 fs
@@ -3042,8 +3042,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -15 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs))=> -1 fs
@@ -3178,8 +3178,8 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing time (range + 2 sets of values)
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
@@ -3202,8 +3202,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -15 fs
@@ -3226,16 +3226,16 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 2 fs
@@ -3250,8 +3250,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> -2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], ADD:(-15 fs, 16 fs, 17 fs), EXCL:(1 fs, 16 fs))=> 17 fs
@@ -3395,8 +3395,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -15 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -15 fs
@@ -3441,8 +3441,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 2 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 2 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 2 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 17 fs
@@ -3457,8 +3457,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-2 fs:2 fs], EXCL:(1 fs, 16 fs), ADD:(-15 fs, 16 fs, 17 fs))=> 2 fs
@@ -3478,26 +3478,26 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 18 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 18 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 18 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 18 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 18 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 17 fs
@@ -3508,8 +3508,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 18 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 18 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 18 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 18 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -1 fs
@@ -3522,12 +3522,12 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -15 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -15 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 18 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 18 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 17 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 17 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-1 fs:1 fs], ADD:(-15 fs), ADD:(17 fs, 18 fs))=> 1 fs
@@ -3651,8 +3651,8 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -3 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 3 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 3 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -1 fs
@@ -3691,22 +3691,22 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 3 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -3 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -3 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -1 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -3 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -3 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 3 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 3 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 1 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 1 fs.
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 0 fs
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 0 fs.
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -0 fs
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for -0 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> 3 fs
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_rand_value => OK, for 3 fs.
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[-3 fs:3 fs], EXCL:(-2 fs), EXCL:(2 fs))=> -3 fs
@@ -3792,15 +3792,15 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #27  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(RANGE:[10 ns:0 fs])=> min_value must be less than max_value
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(RANGE:[: ns:-0 fs])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #28  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(ADD:(1 fs, 2 fs))=> Invalid parameter: ADD
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -3808,32 +3808,32 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #29  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs))=> -9223372036854775808 hr
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs))=> -2.5620477880152155022 hr
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #30  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=>
-UVVM:                                                                           -9223372036854775808 hr
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=>
+UVVM:                                                                           -2.5620477880152155022 hr
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #31  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(RANGE:[1 fs:10 fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(RANGE:[1 fs:: fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[1 fs:10 fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=>
-UVVM:                                                                           -9223372036854775808 hr
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(RANGE:[1 fs:: fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=>
+UVVM:                                                                           -2.5620477880152155022 hr
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing time_vector (range)
@@ -4332,17 +4332,17 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #32  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(LEN:5, RANGE:[10 fs:1 fs])=> min_value must be less than max_value
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(LEN:5, RANGE:[: fs:1 fs])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[10 fs:1 fs])=> (-9223372036854775808 fs, -9223372036854775808 fs,
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[: fs:1 fs])=> (-9223372036854775808 fs, -9223372036854775808 fs,
 UVVM:                                                                           -9223372036854775808 fs, -9223372036854775808 fs, -9223372036854775808 fs)
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #33  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ADD:(1 fs, 2 fs))=> Invalid parameter: ADD
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -4352,40 +4352,40 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #34  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(LEN:5, RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(LEN:5, RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs))=> (-9223372036854775808 fs,
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs))=> (-9223372036854775808 fs,
 UVVM:                                                                           -9223372036854775808 fs, -9223372036854775808 fs, -9223372036854775808 fs, -9223372036854775808
 UVVM:                                                                           fs)
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #35  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(LEN:5, RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(LEN:5, RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[1 fs:10 fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=>
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[1 fs:: fs], ONLY:(1 fs, 2 fs, 3 fs), EXCL:(1 fs, 2 fs, 3 fs))=>
 UVVM:                                                                           (-9223372036854775808 fs, -9223372036854775808 fs, -9223372036854775808 fs,
 UVVM:                                                                           -9223372036854775808 fs, -9223372036854775808 fs)
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #36  ***
-UVVM:             0 ns   MY SCOPE
-UVVM:                    rand(LEN:5, RANGE:[1 fs:10 fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
+UVVM:            -0 ns   MY SCOPE
+UVVM:                    rand(LEN:5, RANGE:[1 fs:: fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=> Invalid parameter: ONLY
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[1 fs:10 fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=>
+UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, RANGE:[1 fs:: fs], EXCL:(1 fs, 2 fs, 3 fs), ONLY:(1 fs, 2 fs, 3 fs))=>
 UVVM:                                                                           (-9223372036854775808 fs, -9223372036854775808 fs, -9223372036854775808 fs,
 UVVM:                                                                           -9223372036854775808 fs, -9223372036854775808 fs)
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #37  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(0 fs, 1 fs), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5144,7 +5144,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #38  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[5:0])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5153,7 +5153,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #39  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536])=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5161,7 +5161,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #40  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, ONLY:(131072, 262144))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5169,7 +5169,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #41  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536], ADD:(0, 2))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5177,7 +5177,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #42  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(131072, 262144))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5185,7 +5185,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #43  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536], ADD:(0, 2), EXCL:(0, 1))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5193,7 +5193,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #44  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(131072, 262144), EXCL:(0, 1))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -5201,7 +5201,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #45  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(0, 2), EXCL:(131072, 262144))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6032,7 +6032,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #46  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:128, RANGE:[x"00F00000000000000000000000000003":x"00F00000000000000000000000000000"])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6040,7 +6040,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #47  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[x"00F00000000000000000000000000003":x"00F00000000000000000000000000000"])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6915,7 +6915,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #48  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[5:0])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6924,7 +6924,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #49  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536])=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6932,7 +6932,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #50  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, ONLY:(131072, 262144))=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6940,7 +6940,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #51  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536], ADD:(0, 2))=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6948,7 +6948,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #52  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(131072, 262144))=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6956,7 +6956,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #53  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536], ADD:(0, 2), EXCL:(0, 1))=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6964,7 +6964,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #54  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(131072, 262144), EXCL:(0, 1))=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -6972,7 +6972,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #55  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(0, 2), EXCL:(131072, 262144))=> constraints must be within range [-8:7] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8139,7 +8139,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #56  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:128, RANGE:[x"00F00000000000000000000000000003":x"00F00000000000000000000000000000"])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8147,7 +8147,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #57  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[x"00F00000000000000000000000000003":x"00F00000000000000000000000000000"])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8962,7 +8962,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #58  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[5:0])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8971,7 +8971,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #59  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536])=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8979,7 +8979,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #60  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, ONLY:(131072, 262144))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8987,7 +8987,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #61  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536], ADD:(0, 2))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -8995,7 +8995,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #62  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(131072, 262144))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9003,7 +9003,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #63  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:65536], ADD:(0, 2), EXCL:(0, 1))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9011,7 +9011,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #64  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(131072, 262144), EXCL:(0, 1))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9019,7 +9019,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #65  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, RANGE:[0:2], ADD:(0, 2), EXCL:(131072, 262144))=> constraints must be within range [0:15] due to length parameter
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9850,7 +9850,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #66  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:128, RANGE:[x"00F00000000000000000000000000003":x"00F00000000000000000000000000000"])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9858,7 +9858,7 @@ UVVM:
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #67  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[x"00F00000000000000000000000000003":x"00F00000000000000000000000000000"])=> min_value must be less than max_value
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9893,7 +9893,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #68  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1:2], EXCL:(1, 2))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9902,7 +9902,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #69  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1:2], ADD:(5), EXCL:(1, 2, 5))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9911,7 +9911,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #70  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1:2], EXCL:(1, 2, 5, 6), ADD:(5, 6))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9921,7 +9921,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #71  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1.00:1.00], EXCL:(1.00))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9930,7 +9930,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #72  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1.00:1.00], ADD:(5.00), EXCL:(1.00, 5.00))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9939,7 +9939,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #73  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1.00:1.00], EXCL:(1.00, 5.00, 6.00), ADD:(5.00, 6.00))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9949,7 +9949,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #74  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1 fs:2 fs], EXCL:(1 fs, 2 fs))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9958,7 +9958,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #75  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1 fs:2 fs], ADD:(5 fs), EXCL:(1 fs, 2 fs, 5 fs))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9967,7 +9967,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #76  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(RANGE:[1 fs:2 fs], EXCL:(1 fs, 2 fs, 5 fs, 6 fs), ADD:(5 fs, 6 fs))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9977,7 +9977,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #77  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, EXCL:(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9987,7 +9987,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #78  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:4, EXCL:(-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -9997,7 +9997,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #79  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:2], EXCL:(1, 2))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10006,7 +10006,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #80  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:2], EXCL:(1, 2), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10016,7 +10016,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #81  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:2], ADD:(5), EXCL:(1, 2, 5))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10026,7 +10026,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #82  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:2], ADD:(5), EXCL:(1, 2, 5), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10036,7 +10036,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #83  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:2], EXCL:(1, 2, 5, 6), ADD:(5, 6))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10046,7 +10046,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #84  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:2], EXCL:(1, 2, 5, 6), ADD:(5, 6), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10057,7 +10057,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #85  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], EXCL:(1.00))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10067,7 +10067,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #86  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], EXCL:(1.00), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10077,7 +10077,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #87  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], ADD:(5.00), EXCL:(1.00, 5.00))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10087,7 +10087,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #88  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], ADD:(5.00), EXCL:(1.00, 5.00), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10098,7 +10098,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #89  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], EXCL:(1.00, 5.00, 6.00), ADD:(5.00, 6.00))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10109,7 +10109,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #90  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], EXCL:(1.00, 5.00, 6.00), ADD:(5.00, 6.00), UNIQUE)=> Random generator cannot find a legal value within the given
 UVVM:                    constraints
 UVVM: =========================================================================================================================================================================
@@ -10122,7 +10122,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #91  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:2 fs], EXCL:(1 fs, 2 fs))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10132,7 +10132,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #92  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:2 fs], EXCL:(1 fs, 2 fs), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10142,7 +10142,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #93  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:2 fs], ADD:(5 fs), EXCL:(1 fs, 2 fs, 5 fs))=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10153,7 +10153,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #94  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:2 fs], ADD:(5 fs), EXCL:(1 fs, 2 fs, 5 fs), UNIQUE)=> Random generator cannot find a legal value within the given constraints
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10164,7 +10164,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #95  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:2 fs], EXCL:(1 fs, 2 fs, 5 fs, 6 fs), ADD:(5 fs, 6 fs))=> Random generator cannot find a legal value within the given
 UVVM:                    constraints
 UVVM: =========================================================================================================================================================================
@@ -10176,7 +10176,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #96  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:2 fs], EXCL:(1 fs, 2 fs, 5 fs, 6 fs), ADD:(5 fs, 6 fs), UNIQUE)=> Random generator cannot find a legal value within the given
 UVVM:                    constraints
 UVVM: =========================================================================================================================================================================
@@ -10193,7 +10193,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #97  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:1], UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10202,7 +10202,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #98  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:4], UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10211,7 +10211,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #99  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(1, 2, 3, 4), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10220,7 +10220,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #100  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(1, 2, 3, 4, 4), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10229,7 +10229,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #101  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:6], EXCL:(1, 2), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10238,7 +10238,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #102  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:6], ADD:(7), EXCL:(1, 2, 3), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10247,7 +10247,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #103  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:6], ADD:(6, 7, 7), EXCL:(1, 2, 3), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10256,7 +10256,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #104  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1:6], EXCL:(1, 2, 3), ADD:(6, 7, 7), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10266,7 +10266,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #105  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10276,7 +10276,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #106  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(1.00, 2.00, 3.00, 4.00), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10285,7 +10285,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #107  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(1.00, 2.00, 3.00, 4.00, 4.00), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10294,7 +10294,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #108  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], ADD:(2.00, 3.00, 4.00, 5.00, 6.00, 7.00), EXCL:(1.00, 2.00, 3.00), UNIQUE)=> The given constraints are not enough to
 UVVM:                    generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
@@ -10305,7 +10305,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #109  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], ADD:(1.00, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 7.00), EXCL:(1.00, 2.00, 3.00), UNIQUE)=> The given constraints are not
 UVVM:                    enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
@@ -10316,7 +10316,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #110  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1.00:1.00], EXCL:(1.00, 2.00, 3.00), ADD:(1.00, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 7.00), UNIQUE)=> The given constraints are not
 UVVM:                    enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
@@ -10328,7 +10328,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #111  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:1 fs], UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10338,7 +10338,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #112  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:4 fs], UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10347,7 +10347,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #113  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(1 fs, 2 fs, 3 fs, 4 fs), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10356,7 +10356,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #114  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, ONLY:(1 fs, 2 fs, 3 fs, 4 fs, 4 fs), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10365,7 +10365,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #115  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:6 fs], EXCL:(1 fs, 2 fs), UNIQUE)=> The given constraints are not enough to generate unique values for the whole vector
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -10374,7 +10374,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #116  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:6 fs], ADD:(7 fs), EXCL:(1 fs, 2 fs, 3 fs), UNIQUE)=> The given constraints are not enough to generate unique values for the
 UVVM:                    whole vector
 UVVM: =========================================================================================================================================================================
@@ -10385,7 +10385,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #117  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:6 fs], ADD:(6 fs, 7 fs, 7 fs), EXCL:(1 fs, 2 fs, 3 fs), UNIQUE)=> The given constraints are not enough to generate unique
 UVVM:                    values for the whole vector
 UVVM: =========================================================================================================================================================================
@@ -10396,7 +10396,7 @@ UVVM:                                                                           
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #118  ***
-UVVM:             0 ns   MY SCOPE
+UVVM:            -0 ns   MY SCOPE
 UVVM:                    rand(LEN:5, RANGE:[1 fs:6 fs], EXCL:(1 fs, 2 fs, 3 fs), ADD:(6 fs, 7 fs, 7 fs), UNIQUE)=> The given constraints are not enough to generate unique
 UVVM:                    values for the whole vector
 UVVM: =========================================================================================================================================================================

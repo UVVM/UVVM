@@ -35,11 +35,14 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
+use work.uart_pif_pkg.all;
+
 --hdlregression:tb
 -- Test bench entity
 entity uart_vvc_tb is
   generic(
-    GC_TESTCASE : string := "UVVM"
+    GC_TESTCASE   : string                := "UVVM";
+    GC_DATA_WIDTH : natural range 5 to 9  := 8
   );
 end entity;
 
@@ -52,14 +55,32 @@ architecture func of uart_vvc_tb is
   constant C_CLK_PERIOD : time := 10 ns;
   constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD;
 
-  -- Time for one UART transmission to complete
-  constant C_TIME_OF_ONE_UART_TX : time := 11 * C_BIT_PERIOD; -- =1760 ns;
+  -- Time for one UART transmission to complete:
+  -- start bit + GC_DATA_WIDTH data bits + parity + stop bit = N+3 bit periods.
+  constant C_TIME_OF_ONE_UART_TX : time := (GC_DATA_WIDTH + 3) * C_BIT_PERIOD;
 
-  -- Predefined SBI addresses
+  -- await_completion timeout for one UART frame: frame time + 2 bit periods margin.
+  constant C_FRAME_TIMEOUT       : time := C_TIME_OF_ONE_UART_TX + 2 * C_BIT_PERIOD;
+
+  -- Predefined SBI addresses. 4-bit form retained; the TH's addr port is
+  -- unconstrained unsigned, so the top bit is ignored.
   constant C_ADDR_RX_DATA       : unsigned(3 downto 0) := x"0";
   constant C_ADDR_RX_DATA_VALID : unsigned(3 downto 0) := x"1";
   constant C_ADDR_TX_DATA       : unsigned(3 downto 0) := x"2";
   constant C_ADDR_TX_READY      : unsigned(3 downto 0) := x"3";
+  constant C_ADDR_NUM_DATA_BITS : unsigned(3 downto 0) := x"4";
+
+  -- Width-mask a natural to GC_DATA_WIDTH bits. For uart_transmit/expect/receive payloads.
+  function uart_data(value : natural) return std_logic_vector is
+  begin
+    return std_logic_vector(to_unsigned(value mod (2 ** GC_DATA_WIDTH), GC_DATA_WIDTH));
+  end function;
+
+  -- Zero-extend to C_UART_MAX_DATA_WIDTH. For sbi_write/check of C_ADDR_TX_DATA / C_ADDR_RX_DATA.
+  function sbi_data(value : natural) return std_logic_vector is
+  begin
+    return std_logic_vector(resize(unsigned(uart_data(value)), C_UART_MAX_DATA_WIDTH));
+  end function;
 
 begin
 
@@ -75,8 +96,8 @@ begin
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TESTCASE & "_Log.txt");
-    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_" & to_string(GC_DATA_WIDTH) & "bit_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_" & to_string(GC_DATA_WIDTH) & "bit_Alert.txt");
 
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
@@ -113,6 +134,15 @@ begin
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD);       -- for reset to be turned off
 
+    -- Apply GC_DATA_WIDTH to DUT (NUM_DATA_BITS register) and BFM config
+    -- after reset has settled.
+    shared_uart_vvc_config(TX, 1).bfm_config.num_data_bits := GC_DATA_WIDTH;
+    shared_uart_vvc_config(RX, 1).bfm_config.num_data_bits := GC_DATA_WIDTH;
+    sbi_write(SBI_VVCT, 1, C_ADDR_NUM_DATA_BITS,
+              std_logic_vector(to_unsigned(GC_DATA_WIDTH, C_UART_MAX_DATA_WIDTH)),
+              "NUM_DATA_BITS = " & to_string(GC_DATA_WIDTH));
+    await_completion(SBI_VVCT, 1, C_FRAME_TIMEOUT);
+
     if GC_TESTCASE = "check_register_defaults" then
       log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
       ------------------------------------------------------------
@@ -130,9 +160,14 @@ begin
       -- This will cause the DUT to transmit x"55" on the UART line. In order to receive the data, the
       -- UART VVC is instructed to expect the data x"55" on the RX port. The test sequence will not continue
       -- until the UART VVC has received the data from the DUT, indicated by the await_completion method.
-      sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "TX_DATA");
-      uart_expect(UART_VVCT, 1, RX, x"55", "Expecting data on UART RX");
-      await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+      -- Literal x"55" is masked to GC_DATA_WIDTH; SBI bus image zero-extended to C_UART_MAX_DATA_WIDTH.
+      sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA,
+                sbi_data(16#55#),
+                "TX_DATA");
+      uart_expect(UART_VVCT, 1, RX,
+                  uart_data(16#55#),
+                  "Expecting data on UART RX");
+      await_completion(UART_VVCT, 1, RX, C_FRAME_TIMEOUT);
       wait for 200 ns;                  -- margin
 
     elsif GC_TESTCASE = "check_simple_receive" then
@@ -143,11 +178,15 @@ begin
       -- the transmission, the SBI VVC is instructed to check read and check (sbi_check) the C_ADDR_RX_DATA
       -- register, and verify that it is in fact x"AA" that the DUT received. The test sequencer will continue
       -- when the SBI VVC is done checking the C_ADDR_RX_DATA register.
-      uart_transmit(UART_VVCT, 1, TX, x"AA", "UART TX");
-      await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
+      uart_transmit(UART_VVCT, 1, TX,
+                    uart_data(16#AA#),
+                    "UART TX");
+      await_completion(UART_VVCT, 1, TX, C_FRAME_TIMEOUT);
       wait for 200 ns;                  -- margin
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"AA", "RX_DATA");
-      await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#AA#),
+                "RX_DATA");
+      await_completion(SBI_VVCT, 1, C_FRAME_TIMEOUT);
 
     elsif GC_TESTCASE = "check_single_simultaneous_transmit_and_receive" then
 
@@ -160,13 +199,21 @@ begin
       -- to the DUT, the SBI VVC will be instructed to read and check the DUT C_ADDR_RX_DATA register and verify
       -- that the DUT received the correct data from the UART VVC. After this check is completed, the test sequencer
       -- can continue to the next test case.
-      sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"B4", "TX_DATA");
-      uart_transmit(UART_VVCT, 1, TX, x"87", "UART TX");
-      uart_expect(UART_VVCT, 1, RX, x"B4", "Expecting data on UART RX");
-      await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
+      sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA,
+                sbi_data(16#B4#),
+                "TX_DATA");
+      uart_transmit(UART_VVCT, 1, TX,
+                    uart_data(16#87#),
+                    "UART TX");
+      uart_expect(UART_VVCT, 1, RX,
+                  uart_data(16#B4#),
+                  "Expecting data on UART RX");
+      await_completion(UART_VVCT, 1, TX, C_FRAME_TIMEOUT);
       wait for 200 ns;                  -- margin
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"87", "RX_DATA");
-      await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#87#),
+                "RX_DATA");
+      await_completion(SBI_VVCT, 1, C_FRAME_TIMEOUT);
 
     elsif GC_TESTCASE = "check_multiple_simultaneous_receive_and_read" then
       log(ID_LOG_HDR, "Check multiple simultaneous receive and read", C_SCOPE);
@@ -177,14 +224,26 @@ begin
       -- verify that the three consecutive bytes from the C_ADDR_RX_DATA register of the DUT are equal to the data
       -- transmitted from the UART VVC. When the SBI VVC is done with these checks, the testbench sequencer can continue
       -- to the next test case.
-      uart_transmit(UART_VVCT, 1, TX, x"A1", "UART TX");
-      uart_transmit(UART_VVCT, 1, TX, x"A2", "UART TX");
-      uart_transmit(UART_VVCT, 1, TX, x"A3", "UART TX");
-      await_completion(UART_VVCT, 1, TX, 3 * 13 * C_BIT_PERIOD);
+      uart_transmit(UART_VVCT, 1, TX,
+                    uart_data(16#A1#),
+                    "UART TX");
+      uart_transmit(UART_VVCT, 1, TX,
+                    uart_data(16#A2#),
+                    "UART TX");
+      uart_transmit(UART_VVCT, 1, TX,
+                    uart_data(16#A3#),
+                    "UART TX");
+      await_completion(UART_VVCT, 1, TX, 3 * (C_FRAME_TIMEOUT));
       wait for 200 ns;                  -- margin
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"A1", "RX_DATA");
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"A2", "RX_DATA");
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"A3", "RX_DATA");
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#A1#),
+                "RX_DATA");
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#A2#),
+                "RX_DATA");
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#A3#),
+                "RX_DATA");
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
 
     elsif GC_TESTCASE = "skew_sbi_read_over_uart_receive" then
@@ -206,7 +265,9 @@ begin
       -- is done, the test case is complete.
       log("Setting up the UART VVC to transmit 102 samples to the DUT");
       for i in 1 to 102 loop
-        uart_transmit(UART_VVCT, 1, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i + 2)));
+        uart_transmit(UART_VVCT, 1, TX,
+                      uart_data(16#80# + i),
+                      string'("Set up new data. Now byte # " & to_string(i + 2)));
       end loop;
 
       log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
@@ -218,15 +279,24 @@ begin
         -- Every read will now be 1T later relative to a new byte being valid internally
         insert_delay(SBI_VVCT, 1, C_TIME_OF_ONE_UART_TX, "Delaying for the time of one uart transmission");
         insert_delay(SBI_VVCT, 1, C_CLK_PERIOD, "Skewing the SBI read one clock cycle");
-        sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
+        sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                  sbi_data(16#80# + i),
+                  "Reading data number " & to_string(i));
       end loop;
 
       await_completion(UART_VVCT, 1, TX, 102 * C_TIME_OF_ONE_UART_TX + C_CLK_PERIOD);
       wait for 50 ns;                   -- to assure UART RX complete internally
       -- Check the last two bytes in the DUT RX buffer.
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
-      await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#80# + 101),
+                "Reading data number " & to_string(101));
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#80# + 102),
+                "Reading data number " & to_string(102));
+      -- 2 * C_TIME_OF_ONE_UART_TX scales with GC_DATA_WIDTH. At narrow widths
+      -- the SBI queue may still be draining when per-iteration UART time
+      -- shrinks relative to fixed SBI overhead.
+      await_completion(SBI_VVCT, 1, 2 * C_TIME_OF_ONE_UART_TX);
 
     elsif GC_TESTCASE = "skew_sbi_read_over_uart_receive_with_delay_functionality" then
       log(ID_LOG_HDR, "Skew SBI read over UART receive with delay functionality", C_SCOPE);
@@ -234,7 +304,9 @@ begin
       -- This test case will test the same as the test case above, but using the built in delay functionality in the SBI VVC
       log("Setting up the UART VVC to transmit 102 samples to the DUT");
       for i in 1 to 102 loop
-        uart_transmit(UART_VVCT, 1, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i + 2)));
+        uart_transmit(UART_VVCT, 1, TX,
+                      uart_data(16#80# + i),
+                      string'("Set up new data. Now byte # " & to_string(i + 2)));
       end loop;
 
       log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
@@ -247,7 +319,9 @@ begin
       shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := C_TIME_OF_ONE_UART_TX + C_CLK_PERIOD;
 
       for i in 1 to 100 loop
-        sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
+        sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                  sbi_data(16#80# + i),
+                  "Reading data number " & to_string(i));
       end loop;
 
       await_completion(UART_VVCT, 1, TX, 102 * C_TIME_OF_ONE_UART_TX + C_CLK_PERIOD);
@@ -259,8 +333,12 @@ begin
       shared_sbi_vvc_config(1).inter_bfm_delay.delay_type    := NO_DELAY;
       shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
 
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#80# + 101),
+                "Reading data number " & to_string(101));
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA,
+                sbi_data(16#80# + 102),
+                "Reading data number " & to_string(102));
       await_completion(SBI_VVCT, 1, 2 * C_TIME_OF_ONE_UART_TX);
     end if;
 

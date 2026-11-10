@@ -42,10 +42,10 @@ package axistream_bfm_pkg is
   constant C_MAX_TID_BITS   : positive := C_AXISTREAM_BFM_MAX_TID_BITS;
   constant C_MAX_TDEST_BITS : positive := C_AXISTREAM_BFM_MAX_TDEST_BITS;
 
-  type t_user_array is array (natural range <>) of std_logic_vector(C_MAX_TUSER_BITS - 1 downto 0);
-  type t_strb_array is array (natural range <>) of std_logic_vector(C_MAX_TSTRB_BITS - 1 downto 0);
-  type t_id_array is array (natural range <>) of std_logic_vector(C_MAX_TID_BITS - 1 downto 0);
-  type t_dest_array is array (natural range <>) of std_logic_vector(C_MAX_TDEST_BITS - 1 downto 0);
+  subtype t_user_array is t_slv_array(open)(C_MAX_TUSER_BITS - 1 downto 0);
+  subtype t_strb_array is t_slv_array(open)(C_MAX_TSTRB_BITS - 1 downto 0);
+  subtype t_id_array is t_slv_array(open)(C_MAX_TID_BITS - 1 downto 0);
+  subtype t_dest_array is t_slv_array(open)(C_MAX_TDEST_BITS - 1 downto 0);
 
   -- Interface record for BFM signals
   type t_axistream_if is record

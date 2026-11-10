@@ -407,7 +407,7 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant allowed_values : t_integer_array;
+    constant allowed_values : integer_vector;
     constant msg            : string;
     constant alert_level    : t_alert_level  := ERROR;
     constant scope          : string         := C_SCOPE;
@@ -419,7 +419,7 @@ package uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant allowed_values : t_integer_array;
+    constant allowed_values : integer_vector;
     constant msg            : string;
     constant alert_level    : t_alert_level  := ERROR;
     constant scope          : string         := C_SCOPE;
@@ -2530,7 +2530,7 @@ package body uvvm_assertions_pkg is
   -- assert_one_of (integer):
   function f_assert_one_of_core(
     tracked_value  : integer;
-    allowed_values : t_integer_array;
+    allowed_values : integer_vector;
     alert_level    : t_alert_level;
     msg            : string;
     scope          : string;
@@ -2543,7 +2543,7 @@ package body uvvm_assertions_pkg is
   ) return boolean is
     variable v_first_ack     : boolean := first_ack;
 
-    function one_of(int : integer; int_array : t_integer_array) return boolean is
+    function one_of(int : integer; int_array : integer_vector) return boolean is
       variable v_found : boolean := false;
     begin
       for i in int_array'range loop
@@ -2559,7 +2559,7 @@ package body uvvm_assertions_pkg is
     variable v_print_line : line;
   begin
     if not one_of(tracked_value, allowed_values) then
-      -- line to print out t_integer_array with variable length of entries
+      -- line to print out integer_vector with variable length of entries
       for i in allowed_values'range loop
         if i /= allowed_values'right then
           write(v_print_line, "'" & to_string(allowed_values(i)) & "'" & "/");
@@ -2584,7 +2584,7 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant allowed_values : t_integer_array;
+    constant allowed_values : integer_vector;
     constant msg            : string;
     constant alert_level    : t_alert_level  := ERROR;
     constant scope          : string         := C_SCOPE;
@@ -2617,7 +2617,7 @@ package body uvvm_assertions_pkg is
     signal   ena           : std_logic;
     signal   tracked_value : integer;
 
-    constant allowed_values : t_integer_array;
+    constant allowed_values : integer_vector;
     constant msg            : string;
     constant alert_level    : t_alert_level  := ERROR;
     constant scope          : string         := C_SCOPE;
@@ -3512,8 +3512,8 @@ package body uvvm_assertions_pkg is
     constant C_NAME              : string                                  := "assert_shift_one_from_left()";
     variable v_first_alert       : boolean                                 := true;
     -- used for logic:
-    variable v_active_pipe_arr   : t_boolean_array(tracked_value'range)    := (others => false);
-    variable v_cycle_count_arr   : t_integer_array(tracked_value'range)    := (others => tracked_value'high);
+    variable v_active_pipe_arr   : boolean_vector(tracked_value'range)     := (others => false);
+    variable v_cycle_count_arr   : integer_vector(tracked_value'range)     := (others => tracked_value'high);
     variable v_active_pipe_idx   : integer range 0 to tracked_value'length := tracked_value'high;
     variable v_print_cycle_count : integer range 0 to tracked_value'high + 1;
     variable v_print_pipe_num    : integer range 0 to tracked_value'high + 1;
@@ -3638,13 +3638,13 @@ package body uvvm_assertions_pkg is
     variable v_elapsed_time : time;
 
     type     t_time_array is array(natural range <>) of time;
-    variable v_cycle_count_arr  : t_integer_array(0 to max_cycles) := (others => 0);
+    variable v_cycle_count_arr  : integer_vector(0 to max_cycles)  := (others => 0);
     variable v_trigger_time_arr : t_time_array(0 to max_cycles)    := (others => now);
-    variable v_active_pipe_arr  : t_boolean_array(0 to max_cycles) := (others => false);
-    variable v_pipe_check_ok    : t_boolean_array(0 to max_cycles) := (others => false);
+    variable v_active_pipe_arr  : boolean_vector(0 to max_cycles)  := (others => false);
+    variable v_pipe_check_ok    : boolean_vector(0 to max_cycles)  := (others => false);
 
     variable v_prev_tracked_value_arr : std_logic_vector(0 to max_cycles) := (others => tracked_value);
-    variable v_when_changed_cycle     : t_integer_array(0 to max_cycles)  := (others => 0);
+    variable v_when_changed_cycle     : integer_vector(0 to max_cycles)   := (others => 0);
 
     variable v_pipe_index : integer range -1 to max_cycles := -1; -- default to -1 to start at 0
 
@@ -3895,13 +3895,13 @@ package body uvvm_assertions_pkg is
     variable v_elapsed_time : time;
 
     type     t_time_array is array(natural range <>) of time;
-    variable v_cycle_count_arr  : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => 0);
+    variable v_cycle_count_arr  : integer_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => 0);
     variable v_trigger_time_arr : t_time_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)    := (others => now);
-    variable v_active_pipe_arr  : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
-    variable v_pipe_check_ok    : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
+    variable v_active_pipe_arr  : boolean_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => false);
+    variable v_pipe_check_ok    : boolean_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => false);
 
     variable v_prev_tracked_value_arr : std_logic_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => tracked_value);
-    variable v_when_changed_cycle     : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => 0);
+    variable v_when_changed_cycle     : integer_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)   := (others => 0);
 
     variable v_pipe_index : integer range -1 to C_WINDOW_ASSERTIONS_MAX_CYCLES := -1; -- default to -1 to start at 0
 
@@ -4173,13 +4173,13 @@ package body uvvm_assertions_pkg is
     variable v_elapsed_time : time;
 
     type     t_time_array is array(natural range <>) of time;
-    variable v_cycle_count_arr  : t_integer_array(0 to max_cycles) := (others => 0);
+    variable v_cycle_count_arr  : integer_vector(0 to max_cycles)  := (others => 0);
     variable v_trigger_time_arr : t_time_array(0 to max_cycles)    := (others => now);
-    variable v_active_pipe_arr  : t_boolean_array(0 to max_cycles) := (others => false);
-    variable v_pipe_check_ok    : t_boolean_array(0 to max_cycles) := (others => false);
+    variable v_active_pipe_arr  : boolean_vector(0 to max_cycles)  := (others => false);
+    variable v_pipe_check_ok    : boolean_vector(0 to max_cycles)  := (others => false);
 
     variable v_prev_tracked_value_arr : t_slv_array(0 to max_cycles)(tracked_value'range) := (others => tracked_value);
-    variable v_when_changed_cycle     : t_integer_array(0 to max_cycles)                  := (others => 0);
+    variable v_when_changed_cycle     : integer_vector(0 to max_cycles)                   := (others => 0);
 
     variable v_pipe_index : integer range -1 to max_cycles := -1; -- default to -1 to start at 0
 
@@ -4452,13 +4452,13 @@ package body uvvm_assertions_pkg is
     variable v_elapsed_time : time;
 
     type     t_time_array is array(natural range <>) of time;
-    variable v_cycle_count_arr  : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => 0);
+    variable v_cycle_count_arr  : integer_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => 0);
     variable v_trigger_time_arr : t_time_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)    := (others => now);
-    variable v_active_pipe_arr  : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
-    variable v_pipe_check_ok    : t_boolean_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES) := (others => false);
+    variable v_active_pipe_arr  : boolean_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => false);
+    variable v_pipe_check_ok    : boolean_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => false);
 
     variable v_prev_tracked_value_arr : t_slv_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)(tracked_value'range) := (others => tracked_value);
-    variable v_when_changed_cycle     : t_integer_array(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)  := (others => 0);
+    variable v_when_changed_cycle     : integer_vector(0 to C_WINDOW_ASSERTIONS_MAX_CYCLES)                   := (others => 0);
 
     variable v_pipe_index : integer range -1 to C_WINDOW_ASSERTIONS_MAX_CYCLES := -1; -- default to -1 to start at 0
 

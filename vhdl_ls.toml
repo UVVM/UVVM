@@ -107,6 +107,11 @@ external_vip_apb.files = [
 'external_vip_apb/**/*.vhd',
 ]
 
+p2l2_vip_mdio.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'p2l2_vip_mdio/**/*.vhd',
+]
+
 bitvis_uart.files = [
 'bitvis_uart/**/*.vhd',
 ]

@@ -45,7 +45,7 @@ package transaction_pkg is
     TRANSMIT, RECEIVE, EXPECT
   );
 
-  alias C_VVC_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_DATA_MAX_LENGTH;
+  alias C_VVC_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_MAX_NUM_DATA_BITS;
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
   alias C_VVC_CMD_STRING_MAX_LENGTH is C_UART_VVC_CMD_STRING_MAX_LENGTH;
@@ -109,7 +109,7 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_uart_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;
-  signal global_uart_vvc_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => '0'));
+  signal global_uart_vvc_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => 'Z'));
 
   -- Shared transaction info variable
   type t_uart_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;

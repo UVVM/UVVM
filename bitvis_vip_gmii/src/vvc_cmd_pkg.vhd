@@ -41,7 +41,7 @@ package vvc_cmd_pkg is
     data_array                   : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1)(7 downto 0);
     data_array_length            : natural;
     action_when_transfer_is_done : t_action_when_transfer_is_done;
-    num_bytes_read               : natural;
+    num_bytes_read               : natural; -- DEPRECATED: will be removed in v3
     -- Common VVC fields  (Used by td_vvc_framework_common_methods_pkg procedures, and thus mandatory)
     operation                    : t_operation;
     proc_call                    : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -50,7 +50,7 @@ package vvc_cmd_pkg is
     cmd_idx                      : natural;
     command_type                 : t_immediate_or_queued;
     msg_id                       : t_msg_id;
-    gen_integer_array            : t_integer_array(0 to 1);
+    gen_integer_array            : integer_vector(0 to 1);
     gen_boolean                  : boolean; -- DEPRECATED: will be removed in v3
     timeout                      : time;    -- DEPRECATED: will be removed in v3
     alert_level                  : t_alert_level;

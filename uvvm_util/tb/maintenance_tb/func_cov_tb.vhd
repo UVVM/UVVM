@@ -1161,6 +1161,45 @@ begin
       v_coverpoint_a.add_bins(bin_transition((100000000, 100000001, 100000002, 100000003, 100000004, 100000005, 100000006, 100000007, 100000008, 100000009)) & bin_transition((100000000, 100000001, 100000002, 100000003, 100000004, 100000005, 100000006, 100000007, 100000008, 100000009)));
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bins with very large ranges of values");
+      ------------------------------------------------------------
+      delete_coverpoint(v_coverpoint_a);
+      enable_log_msg(ID_FUNC_COV_BINS_INFO);
+      v_coverpoint_a.add_bins(bin_range(integer'low, integer'high));
+      v_coverpoint_a.add_bins(bin_range(integer'low + 1, integer'high - 1));
+      v_coverpoint_a.add_bins(bin_range(integer'low, integer'high, 4));
+      v_coverpoint_a.add_bins(bin_range(integer'low + 1, integer'high - 1, 3));
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_coverpoint_a.add_bins(bin_range(integer'low, integer'high, 0));
+
+      -- check_bin() can't be used for bins containing integer'low since it is used as C_NULL
+      check_value(v_coverpoint_a.get_valid_bin(v_bin_idx).cross_bins(0).values(0), integer'low, ERROR, "Checking bin_1 min value");
+      check_value(v_coverpoint_a.get_valid_bin(v_bin_idx).cross_bins(0).values(1), integer'high, ERROR, "Checking bin_1 max value");
+      v_bin_idx := v_bin_idx + 1;
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (integer'low + 1, integer'high - 1), name => "bin_2");
+      check_value(v_coverpoint_a.get_valid_bin(v_bin_idx).cross_bins(0).values(0), integer'low, ERROR, "Checking bin_3[1] min value");
+      check_value(v_coverpoint_a.get_valid_bin(v_bin_idx).cross_bins(0).values(1), -(2 ** 30) - 1, ERROR, "Checking bin_3[1] max value");
+      v_bin_idx := v_bin_idx + 1;
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (-(2 ** 30), -1), name => "bin_3[2]");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0, 2 ** 30 - 1), name => "bin_3[3]");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2 ** 30, integer'high), name => "bin_3[4]");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (integer'low + 1, -715827884), name => "bin_4[1]");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (-715827883, 715827881), name => "bin_4[2]");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (715827882, integer'high - 1), name => "bin_4[3]");
+      check_value(v_coverpoint_a.get_num_valid_bins(VOID), 9, ERROR, "Checking number of valid bins");
+
+      delete_coverpoint(v_coverpoint_a);
+
+      v_coverpoint_a.add_bins(ignore_bin_range(integer'low, integer'high));
+      v_coverpoint_a.add_bins(illegal_bin_range(integer'low + 1, integer'high - 1));
+      check_value(v_coverpoint_a.get_invalid_bin(v_invalid_bin_idx).cross_bins(0).contains = RAN_IGNORE, ERROR, "Checking ignore bin type");
+      check_value(v_coverpoint_a.get_invalid_bin(v_invalid_bin_idx).cross_bins(0).values(0), integer'low, ERROR, "Checking ignore bin min value");
+      check_value(v_coverpoint_a.get_invalid_bin(v_invalid_bin_idx).cross_bins(0).values(1), integer'high, ERROR, "Checking ignore bin max value");
+      v_invalid_bin_idx := v_invalid_bin_idx + 1;
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (integer'low + 1, integer'high - 1));
+      disable_log_msg(ID_FUNC_COV_BINS_INFO);
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_COVERPOINTS limit");
       ------------------------------------------------------------
       v_coverpoint_a.add_bins(bin(0));
@@ -2253,6 +2292,21 @@ begin
       randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400, 700, 900, 1000));
 
       v_coverpoint_b.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization of a bin with a very large range of values");
+      ------------------------------------------------------------
+      v_coverpoint_c.delete_coverpoint(VOID);
+      v_coverpoint_c.add_bins(bin_range(integer'low + 1, integer'high - 1), "large_range");
+      v_values_x2 := (integer'high, integer'low); -- (min, max) randomized values
+      for i in 1 to 1000 loop
+        v_value := v_coverpoint_c.rand(SAMPLE_COV);
+        v_values_x2(0) := minimum(v_values_x2(0), v_value);
+        v_values_x2(1) := maximum(v_values_x2(1), v_value);
+      end loop;
+      check_value(v_values_x2(0) < -(2 ** 30), ERROR, "Checking randomized values cover the lower part of the range");
+      check_value(v_values_x2(1) > 2 ** 30, ERROR, "Checking randomized values cover the upper part of the range");
+      check_value(v_coverpoint_c.get_coverage(BINS) = 100.0, ERROR, "Checking large range bin is covered");
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_cross" then

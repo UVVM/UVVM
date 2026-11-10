@@ -25,6 +25,7 @@ library bitvis_vip_sbi;
 library bitvis_vip_uart;
 library bitvis_uart;
 library bitvis_vip_clock_generator;
+use bitvis_uart.uart_pif_pkg.all;
 
 -- Test harness entity
 entity uart_vvc_demo_th is
@@ -37,13 +38,18 @@ architecture struct of uart_vvc_demo_th is
   signal clk  : std_logic := '0';
   signal arst : std_logic := '0';
 
+  -- DUT CPU-bus is fixed at 9 bits (max UART frame width). The serial-frame
+  -- width above is independent from this bus width and is set in the DUT via
+  -- the NUM_DATA_BITS register
+  constant C_DUT_BUS_WIDTH : natural := C_UART_MAX_DATA_WIDTH;  -- 9 bits
+
   -- SBI VVC signals
   signal cs    : std_logic;
   signal addr  : unsigned(2 downto 0);
   signal wr    : std_logic;
   signal rd    : std_logic;
-  signal wdata : std_logic_vector(7 downto 0);
-  signal rdata : std_logic_vector(7 downto 0);
+  signal wdata : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0);
+  signal rdata : std_logic_vector(C_DUT_BUS_WIDTH - 1 downto 0);
   signal ready : std_logic;
 
   -- UART VVC signals
@@ -53,6 +59,7 @@ architecture struct of uart_vvc_demo_th is
   constant C_CLK_PERIOD : time    := 10 ns; -- 100 MHz
   constant C_CLOCK_GEN  : natural := 1;
 
+  
 begin
 
   -----------------------------------------------------------------------------
@@ -64,6 +71,9 @@ begin
   -- Instantiate DUT
   -----------------------------------------------------------------------------
   i_uart : entity work.uart
+    generic map(
+      GC_DATA_WIDTH => C_DUT_BUS_WIDTH
+    )
     port map(
       -- DSP interface and general control signals
       clk   => clk,
@@ -86,7 +96,7 @@ begin
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
       GC_ADDR_WIDTH   => 3,
-      GC_DATA_WIDTH   => 8,
+      GC_DATA_WIDTH   => C_DUT_BUS_WIDTH,
       GC_INSTANCE_IDX => 1
     )
     port map(
@@ -105,6 +115,7 @@ begin
   -----------------------------------------------------------------------------
   i1_uart_vvc : entity bitvis_vip_uart.uart_vvc
     generic map(
+      GC_DATA_WIDTH   => C_DUT_BUS_WIDTH,
       GC_INSTANCE_IDX => 1
     )
     port map(

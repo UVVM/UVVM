@@ -1,0 +1,34 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : None
+partial_cov          : ../sim/pc_tc_fail.csv
+requirement_map_list : None
+spec_cov             : ../sim/sc_unlisted_tc_fail.csv
+clean                : None
+strictness           : 0
+config               : None
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 0
+Number of non compliant requirements : 0
+Number of non verified requirements  : 0
+Number of not listed requirements    : 3
+Number of passing testcases : 0
+Number of failing testcases : 1
+Number of not run testcases : 0
+
+
+Not listed requirement(s) :
+REQ_ANDOR_NONCOMPLIANT, REQ_NONCOMPLIANT, REQ_UNLISTED_FAIL, 
+
+Failing testcase(s) :
+TC_FAIL, 
+
+Following 1 partial coverage file(s) have been previously executed :
+../sim/pc_tc_fail.csv
+
+
+Potential problems found. Please see ../sim/sc_unlisted_tc_fail.warnings.csv.

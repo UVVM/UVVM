@@ -1,0 +1,9 @@
+P2L2 VIP PWM - Overview on Versions and Changes
+==============================================================
+
+v1.0.0
+----------
+Released: 2026-XX-XX
+- Initial version of PWM VIP.
+- BFM procedures for PWM generation, measurement and checking.
+- VVC with GENERATOR and OBSERVER roles, including transaction info.

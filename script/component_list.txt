@@ -24,3 +24,4 @@ bitvis_vip_uart
 bitvis_vip_wishbone
 external_vip_apb
 p2l2_vip_mdio
+p2l2_vip_pwm

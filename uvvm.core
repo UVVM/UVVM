@@ -28,6 +28,7 @@ filesets:
     - uvvm:uvvm:bitvis_vip_uart:5.1.0
     - uvvm:uvvm:bitvis_vip_wishbone:1.0.2
     - uvvm:uvvm:external_vip_apb:1.0.1
+    - uvvm:uvvm:p2l2_vip_pwm:1.0.0
 targets:
   default:
     filesets:

@@ -57,4 +57,6 @@ context uvvm_all_context is
   context external_vip_apb.vvc_context;
   library p2l2_vip_mdio;
   context p2l2_vip_mdio.vvc_context;
+  library p2l2_vip_pwm;
+  context p2l2_vip_pwm.vvc_context;
 end context;
